@@ -31,6 +31,7 @@ const listWorkspaces = ({
     .aliases(["ls", "list"])
     .description("List all workspaces")
     .option("--name-only", "Only show workspace names")
+    .option("--json", "Output the list as a json object")
     .action((pattern, options) => {
       logger.debug("Command: List workspaces");
 
@@ -38,14 +39,26 @@ const listWorkspaces = ({
         logger.debug("Showing more metadata");
       }
 
-      const lines: string[] = [];
+      let lines: string[] = [];
       (pattern
         ? project.findWorkspacesByPattern(pattern)
         : project.workspaces
       ).forEach((workspace) => {
         if (options.nameOnly) {
           lines.push(workspace.name);
-        } else {
+        } 
+        else if (options.json){
+          for(const workspace of project.workspaces) {
+            // Yarn outputs each workspace on its own line as a JSON object
+            const data = {
+              name: workspace.name,
+              location: workspace.path,
+            };
+            lines.push(JSON.stringify(data));
+          };
+          lines = Array.from(new Set(lines).values())
+        }
+        else {
           lines.push(...createWorkspaceInfoLines(workspace));
         }
       });

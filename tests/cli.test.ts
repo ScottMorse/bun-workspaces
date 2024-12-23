@@ -141,6 +141,42 @@ describe("Test CLI", () => {
       );
     });
 
+    test("JSON output prints one object per line", async ({
+      run,
+      assertLastWrite,
+      writeOutSpy,
+    }) => {
+      // Run the command with the --json flag
+      await run( "list-workspaces", "--json");
+    
+      // Grab the raw output
+      const output = writeOutSpy.mock.lastCall?.[0] ?? "";
+    
+      // Split into lines (dropping empty lines, if any)
+      const lines = output
+        .trim()
+        .split("\n")
+        .filter((line) => line.trim().length > 0);
+
+      console.log(lines)
+    
+      // Expect N lines, one per workspace
+      expect(lines.length).toBe(5);
+    
+      // Parse each line as JSON and confirm it has `name` and `location`
+      lines.forEach((line) => {
+        const obj = JSON.parse(line);
+        expect(obj).toHaveProperty("name");
+        expect(obj).toHaveProperty("location");
+      });
+    
+      // Optional: if you want to ensure the exact names appear, check them:
+      const foundNames = lines.map((line) => JSON.parse(line).name).sort();
+      expect(foundNames).toEqual(
+        ["application-a", "application-b", "library-a", "library-b", "library-c"].sort()
+      );
+    });
+
     test("Using wildcard pattern", async ({ run, assertLastWrite }) => {
       await run("list-workspaces *-a");
       assertLastWrite("application-a");
@@ -170,6 +206,8 @@ describe("Test CLI", () => {
       );
       assertLastWrite(/^\n?application-a\n?$/);
     });
+
+    
   });
 
   describe("Invalid project", () => {
@@ -355,3 +393,5 @@ describe("Test CLI", () => {
     });
   });
 });
+
+
