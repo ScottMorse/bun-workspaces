@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import { Glob } from "bun";
 import { logger } from "../internal/logger";
 import { ERRORS } from "./errors";
 import {
@@ -52,8 +51,7 @@ export const findWorkspaces = ({
   for (const pattern of workspaceGlobs) {
     if (!validatePattern(pattern)) continue;
 
-    const glob = new Glob(pattern);
-    for (const item of scanWorkspaceGlob(glob, rootDir)) {
+    for (const item of scanWorkspaceGlob(pattern, rootDir)) {
       const packageJsonPath = resolvePackageJsonPath(item);
       if (packageJsonPath) {
         const packageJsonContent = resolvePackageJsonContent(

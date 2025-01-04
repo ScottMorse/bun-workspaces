@@ -5,7 +5,7 @@ import typescriptEslint from "typescript-eslint";
 export default [
   ...typescriptEslint.config(
     js.configs.recommended,
-    typescriptEslint.configs.recommended,
+    typescriptEslint.configs.recommended
   ),
   {
     plugins: {

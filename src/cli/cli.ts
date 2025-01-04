@@ -6,8 +6,8 @@ import {
 } from "../internal/bunVersion";
 import { logger } from "../internal/logger";
 import { initializeWithGlobalOptions } from "./globalOptions";
-import { defineProjectCommands } from "./projectCommands";
 import { OUTPUT_CONFIG } from "./output";
+import { defineProjectCommands } from "./projectCommands";
 
 export interface RunCliOptions {
   argv?: string | string[];
