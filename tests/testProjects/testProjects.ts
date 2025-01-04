@@ -9,6 +9,7 @@ const TEST_PROJECTS = {
   invalidNoName: "invalid/noName",
   invalidDuplicateName: "invalid/duplicateName",
   invalidBadTypeWorkspaces: "invalid/badTypeWorkspaces",
+  badWorkspaceInvalidName: "invalid/badWorkspaceInvalidName",
   invalidBadTypeScripts: "invalid/badTypeScripts",
   invalidNoPackageJson: "invalid/noPackageJson",
   invalidBadWorkspaceGlobType: "invalid/badWorkspaceGlobType",

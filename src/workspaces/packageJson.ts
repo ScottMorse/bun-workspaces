@@ -42,6 +42,18 @@ const validateName = (json: UnknownPackageJson) => {
     );
   }
 
+  if (!json.name.trim()) {
+    throw new ERRORS.NoWorkspaceName(
+      `Expected package.json to have a non-empty "name" field`,
+    );
+  }
+
+  if (json.name.includes("*")) {
+    throw new ERRORS.InvalidWorkspaceName(
+      `Package name cannot contain the character '*' (workspace: "${json.name}")`,
+    );
+  }
+
   return json.name;
 };
 

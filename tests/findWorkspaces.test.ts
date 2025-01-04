@@ -192,6 +192,12 @@ describe("Test finding workspaces", () => {
 
     expect(() =>
       findWorkspacesFromPackage({
+        rootDir: getProjectRoot("badWorkspaceInvalidName"),
+      }),
+    ).toThrow(ERRORS.InvalidWorkspaceName);
+
+    expect(() =>
+      findWorkspacesFromPackage({
         rootDir: getProjectRoot("invalidBadTypeWorkspaces"),
       }),
     ).toThrow(ERRORS.InvalidWorkspaces);

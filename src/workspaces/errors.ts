@@ -4,6 +4,7 @@ export const ERRORS = defineErrors(
   "PackageNotFound",
   "InvalidPackageJson",
   "DuplicateWorkspaceName",
+  "InvalidWorkspaceName",
   "NoWorkspaceName",
   "InvalidScripts",
   "InvalidWorkspaces",
