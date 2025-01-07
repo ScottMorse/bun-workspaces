@@ -23,6 +23,7 @@ alias bw="bunx bun-workspaces"
 # List all workspaces
 bw list-workspaces
 bw ls
+
 # List workspace names only
 bw list-workspaces --name-only
 
@@ -31,6 +32,7 @@ bw list-workspaces "my-*"
 
 # List all workspace scripts
 bw list-scripts
+
 # List script names only
 bw list-scripts --name-only
 
@@ -40,8 +42,15 @@ bw info my-workspace
 
 # Get info about a script
 bw script-info my-script
+
 # Only print list of workspace names that have the script
 bw script-info my-script --workspaces-only
+
+# Get JSON output
+bw list-workspaces --json --pretty # optionally pretty print JSON
+bw list-scripts --json
+bw workspace-info my-workspace --json
+bw script-info my-script --json
 
 # Run a script for all
 # workspaces that have it
@@ -62,6 +71,7 @@ bw run my-script --parallel
 
 # Append args to each script call
 bw run my-script --args "--my --args"
+
 # Use the workspace name in args
 bw run my-script --args "--my --args=<workspace>"
 
