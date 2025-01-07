@@ -70,6 +70,7 @@ class _Project implements Project {
       );
     });
     return Array.from(scripts)
+      .sort((a, b) => a.localeCompare(b))
       .map((name) => ({
         name,
         workspaces: this.listWorkspacesWithScript(name),

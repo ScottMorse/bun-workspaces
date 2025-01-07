@@ -204,7 +204,12 @@ const scriptInfo = ({
             ? createJsonLines(
                 options.workspacesOnly
                   ? scriptMetadata.workspaces.map(({ name }) => name)
-                  : scriptMetadata,
+                  : {
+                      name: scriptMetadata.name,
+                      workspaces: scriptMetadata.workspaces.map(
+                        ({ name }) => name,
+                      ),
+                    },
                 options,
               )
             : options.workspacesOnly
