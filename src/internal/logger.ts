@@ -17,5 +17,5 @@ export const logger = createPinoLogger({
   },
 });
 
-export const createLogger = (prefixContent = "bun-workspaces") =>
+export const createLogger = (prefixContent: string) =>
   logger.child({}, { msgPrefix: `[${prefixContent}] ` });
