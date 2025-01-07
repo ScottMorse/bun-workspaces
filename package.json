@@ -9,7 +9,7 @@
   "custom": {
     "bunVersion": {
       "build": "1.1.38",
-      "libraryConsumer": "^1.1.x"
+      "libraryConsumer": "^1.x.x"
     }
   },
   "scripts": {
