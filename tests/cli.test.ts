@@ -149,6 +149,11 @@ describe("Test CLI", () => {
         ),
       );
 
+      await run("list-workspaces *-b --name-only");
+      assertLastWrite(
+        new RegExp("^\n?" + ["application-b", "library-b"].join("\n") + "\n?$"),
+      );
+
       await run("list-workspaces --json --name-only");
       assertLastWrite(
         JSON.stringify([
@@ -159,6 +164,9 @@ describe("Test CLI", () => {
           "library-c",
         ]),
       );
+
+      await run("list-workspaces library-* --json --name-only");
+      assertLastWrite(JSON.stringify(["library-a", "library-b", "library-c"]));
 
       await run("list-workspaces --json");
       assertLastWrite(JSON.stringify(defaultProject.workspaces));
