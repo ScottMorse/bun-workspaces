@@ -185,7 +185,7 @@ const runScript = ({ program, project }: ProjectCommandsContext) => {
             scriptName: script,
             workspaceName,
             method: "cd",
-            args: options.args.replace(/{{workspace}}/g, workspaceName),
+            args: options.args.replace(/<workspace>/g, workspaceName),
           }),
         );
       } catch (error) {
@@ -213,7 +213,6 @@ const runScript = ({ program, project }: ProjectCommandsContext) => {
         const proc = Bun.spawn(command.command.split(/\s+/g), {
           cwd: command.cwd,
           env: process.env,
-          stdin: "inherit",
           stdout: silent ? "ignore" : "pipe",
           stderr: silent ? "ignore" : "pipe",
         });

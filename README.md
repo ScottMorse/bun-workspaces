@@ -62,6 +62,8 @@ bw run my-script --parallel
 
 # Append args to each script call
 bw run my-script --args "--my --args"
+# Use the workspace name in args
+bw run my-script --args "--my --args=<workspace>"
 
 # Help (--help can also be passed to any command)
 bw help
