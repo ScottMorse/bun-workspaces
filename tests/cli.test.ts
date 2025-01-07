@@ -103,7 +103,7 @@ describe("Test CLI", () => {
   });
 
   describe("list-workspaces", () => {
-    test("Default project", async ({ run, assertLastWrite, writeOutSpy }) => {
+    test("Default project", async ({ run, assertLastWrite }) => {
       await run("list-workspaces");
       assertLastWrite("application-a");
       assertLastWrite("application-b");

@@ -1,7 +1,7 @@
-import createLogger from "pino";
+import createPinoLogger from "pino";
 
-export const logger = createLogger({
-  msgPrefix: "[bun-workspaces] ",
+export const logger = createPinoLogger({
+  msgPrefix: `[bw] `,
   level:
     process.env.NODE_ENV === "test"
       ? "silent"
@@ -12,6 +12,10 @@ export const logger = createLogger({
     target: "pino-pretty",
     options: {
       color: true,
+      ignore: "hostname,pid,time",
     },
   },
 });
+
+export const createLogger = (prefixContent = "bun-workspaces") =>
+  logger.child({}, { msgPrefix: `[${prefixContent}] ` });

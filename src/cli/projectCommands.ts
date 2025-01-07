@@ -1,5 +1,6 @@
 import { type Command } from "commander";
-import { logger } from "../internal/logger";
+import { BunWorkspacesError } from "../internal/error";
+import { logger, createLogger } from "../internal/logger";
 import type { Project } from "../project";
 import type { Workspace } from "../workspaces";
 
@@ -142,11 +143,7 @@ const scriptInfo = ({
     });
 };
 
-const runScript = ({
-  program,
-  project,
-  printLines,
-}: ProjectCommandsContext) => {
+const runScript = ({ program, project }: ProjectCommandsContext) => {
   program
     .command("run <script> [workspaces...]")
     .description("Run a script in all workspaces")
@@ -188,7 +185,7 @@ const runScript = ({
             scriptName: script,
             workspaceName,
             method: "cd",
-            args: options.args.replace(/<workspace>/g, workspaceName),
+            args: options.args.replace(/{{workspace}}/g, workspaceName),
           }),
         );
       } catch (error) {
@@ -201,9 +198,11 @@ const runScript = ({
         scriptName,
         workspace,
       }: (typeof scriptCommands)[number]) => {
+        const commandLogger = createLogger(`${workspace.name}:${scriptName}`);
+
         const splitCommand = command.command.split(/\s+/g);
 
-        logger.debug(
+        commandLogger.debug(
           `Running script ${scriptName} in workspace ${workspace.name} (cwd: ${
             command.cwd
           }): ${splitCommand.join(" ")}`,
@@ -211,20 +210,25 @@ const runScript = ({
 
         const silent = logger.level === "silent";
 
-        if (!silent) {
-          printLines(
-            `Running script ${JSON.stringify(
-              scriptName,
-            )} in workspace ${JSON.stringify(workspace.name)}`,
-          );
-        }
-
         const proc = Bun.spawn(command.command.split(/\s+/g), {
           cwd: command.cwd,
           env: process.env,
-          stdout: silent ? "ignore" : "inherit",
-          stderr: silent ? "ignore" : "inherit",
+          stdin: "inherit",
+          stdout: silent ? "ignore" : "pipe",
+          stderr: silent ? "ignore" : "pipe",
         });
+
+        if (proc.stdout) {
+          for await (const chunk of proc.stdout) {
+            commandLogger.info(new TextDecoder().decode(chunk).trim());
+          }
+        }
+
+        if (proc.stderr) {
+          for await (const chunk of proc.stderr) {
+            commandLogger.error(new TextDecoder().decode(chunk).trim());
+          }
+        }
 
         await proc.exited;
 
@@ -233,30 +237,20 @@ const runScript = ({
           workspace,
           command,
           success: proc.exitCode === 0,
+          error:
+            proc.exitCode === 0
+              ? null
+              : new BunWorkspacesError(
+                  `Script exited with code ${proc.exitCode}`,
+                ),
         };
       };
 
-      const handleError = (error: unknown, workspace: string) => {
-        logger.error(error);
-        program.error(
-          `Script failed in ${workspace} (error: ${JSON.stringify((error as Error).message ?? error)})`,
-        );
-      };
-
-      const handleResult = ({
-        scriptName,
-        workspace,
-        success,
-      }: (typeof scriptCommands)[number] & { success: boolean }) => {
-        logger.info(
-          `${success ? "✅" : "❌"} ${workspace.name}: ${scriptName}`,
-        );
-        if (!success) {
-          program.error(
-            `Script ${scriptName} failed in workspace ${workspace.name}`,
-          );
-        }
-      };
+      const results = [] as {
+        success: boolean;
+        workspaceName: string;
+        error: Error | null;
+      }[];
 
       if (options.parallel) {
         let i = 0;
@@ -264,9 +258,17 @@ const runScript = ({
           scriptCommands.map(runCommand),
         )) {
           if (result.status === "rejected") {
-            handleError(result.reason, workspaces[i]);
+            results.push({
+              success: false,
+              workspaceName: workspaces[i],
+              error: result.reason,
+            });
           } else {
-            handleResult(result.value);
+            results.push({
+              success: result.value.success,
+              workspaceName: workspaces[i],
+              error: result.value.error,
+            });
           }
           i++;
         }
@@ -275,12 +277,35 @@ const runScript = ({
         for (const command of scriptCommands) {
           try {
             const result = await runCommand(command);
-            handleResult(result);
+            results.push({
+              success: result.success,
+              workspaceName: workspaces[i],
+              error: result.error,
+            });
           } catch (error) {
-            handleError(error, workspaces[i]);
+            results.push({
+              success: false,
+              workspaceName: workspaces[i],
+              error: error as Error,
+            });
           }
+          i++;
         }
-        i++;
+      }
+
+      let failCount = 0;
+      results.forEach(({ success, workspaceName }) => {
+        if (!success) failCount++;
+        logger.info(`${success ? "✅" : "❌"} ${workspaceName}: ${script}`);
+      });
+
+      const s = results.length === 1 ? "" : "s";
+      if (failCount) {
+        const message = `${failCount} of ${results.length} script${s} failed`;
+        logger.info(message);
+        process.exit(1);
+      } else {
+        logger.info(`${results.length} script${s} ran successfully`);
       }
     });
 };
