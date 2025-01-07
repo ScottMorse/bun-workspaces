@@ -3,8 +3,8 @@ import packageJson from "../package.json";
 import { CliProgram, createCliProgram } from "../src/cli/cli";
 import { OUTPUT_CONFIG } from "../src/cli/output";
 import { createRawPattern } from "../src/internal/regex";
-import { getProjectRoot } from "./testProjects";
 import { createProject, Project } from "../src/project";
+import { getProjectRoot } from "./testProjects";
 
 const createWriteOutMock = () => mock(OUTPUT_CONFIG.writeOut);
 const createWriteErrMock = () => mock(OUTPUT_CONFIG.writeErr);
