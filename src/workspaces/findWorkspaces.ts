@@ -87,10 +87,30 @@ export const findWorkspaces = ({
   return { workspaces };
 };
 
+export const validateWorkspaceAliases = (
+  workspaces: Workspace[],
+  workspaceAliases: ProjectConfig["workspaceAliases"],
+) => {
+  for (const [alias, name] of Object.entries(workspaceAliases ?? {})) {
+    if (workspaces.find((ws) => ws.name === alias)) {
+      throw new ERRORS.AliasConflict(
+        `Alias ${JSON.stringify(alias)} conflicts with workspace name ${JSON.stringify(name)}`,
+      );
+    }
+    if (!workspaces.find((ws) => ws.name === name)) {
+      throw new ERRORS.AliasedWorkspaceNotFound(
+        `Workspace ${JSON.stringify(name)} was aliased by ${JSON.stringify(
+          alias,
+        )} but was not found`,
+      );
+    }
+  }
+};
+
 export const findWorkspacesFromPackage = ({
-  rootDir = ".",
+  rootDir,
   workspaceAliases,
-}: ProjectConfig) => {
+}: ProjectConfig & { rootDir: string }) => {
   const packageJsonPath = path.join(rootDir, "package.json");
   if (!fs.existsSync(packageJsonPath)) {
     throw new ERRORS.PackageNotFound(
@@ -102,12 +122,16 @@ export const findWorkspacesFromPackage = ({
     "workspaces",
   ]);
 
+  const result = findWorkspaces({
+    rootDir,
+    workspaceGlobs: packageJson.workspaces ?? [],
+    workspaceAliases,
+  });
+
+  validateWorkspaceAliases(result.workspaces, workspaceAliases);
+
   return {
-    ...findWorkspaces({
-      rootDir,
-      workspaceGlobs: packageJson.workspaces ?? [],
-      workspaceAliases,
-    }),
+    ...result,
     name: packageJson.name ?? "",
   };
 };

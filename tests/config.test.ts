@@ -36,15 +36,6 @@ describe("Test bun-workspaces config", () => {
     ).toThrow();
 
     expect(() =>
-      // @ts-expect-error - Invalid rootDir
-      validateBunWorkspacesConfig({ project: { rootDir: 123 } }),
-    ).toThrow();
-
-    expect(() =>
-      validateBunWorkspacesConfig({ project: { rootDir: "invalid" } }),
-    ).toThrow();
-
-    expect(() =>
       // @ts-expect-error - Invalid workspaceAliases
       validateBunWorkspacesConfig({ project: { workspaceAliases: 123 } }),
     ).toThrow();
@@ -59,7 +50,6 @@ describe("Test bun-workspaces config", () => {
       validateBunWorkspacesConfig({
         cli: { logLevel: "silent" },
         project: {
-          rootDir: ".",
           workspaceAliases: { app: "@test/a", lib: "@test/b" },
         },
       }),
@@ -75,7 +65,6 @@ describe("Test bun-workspaces config", () => {
     expect(loadConfigFile("tests/testConfigs/valid.json")).toEqual({
       cli: { logLevel: "info" },
       project: {
-        rootDir: ".",
         workspaceAliases: { app: "@test/a", lib: "@test/b" },
       },
     });

@@ -6,8 +6,6 @@ export interface CliConfig {
 }
 
 export interface ProjectConfig {
-  /** The directory of the project's root package.json */
-  rootDir?: string;
   /** A map of aliases to a workspace name */
   workspaceAliases?: Record<string, string>;
 }
@@ -30,24 +28,6 @@ const validateCliConfig = (cliConfig: CliConfig) => {
 const validateProjectConfig = (projectConfig: ProjectConfig) => {
   if (typeof projectConfig !== "object" || Array.isArray(projectConfig)) {
     throw new Error(`Config file: "project" must be an object`);
-  }
-
-  if (projectConfig?.rootDir) {
-    if (typeof projectConfig.rootDir !== "string") {
-      throw new Error(
-        `Config file: Expected rootDir to be a string, got ${typeof projectConfig.rootDir}`,
-      );
-    }
-    if (!fs.existsSync(projectConfig.rootDir)) {
-      throw new Error(
-        `Config file: project.rootDir "${projectConfig.rootDir}" does not exist`,
-      );
-    }
-    if (!fs.statSync(projectConfig.rootDir).isDirectory()) {
-      throw new Error(
-        `Config file: project.rootDir "${projectConfig.rootDir}" is not a directory`,
-      );
-    }
   }
 
   if (projectConfig?.workspaceAliases) {

@@ -11,6 +11,7 @@ export interface ProjectCommandsContext {
 
 const createWorkspaceInfoLines = (workspace: Workspace) => [
   `Workspace: ${workspace.name}`,
+  ` - Aliases: ${workspace.aliases.join(", ")}`,
   ` - Path: ${workspace.path}`,
   ` - Glob Match: ${workspace.matchPattern}`,
   ` - Scripts: ${Object.keys(workspace.packageJson.scripts).sort().join(", ")}`,

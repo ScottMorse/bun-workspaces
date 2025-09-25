@@ -41,17 +41,23 @@ export interface Project {
 
 export interface CreateProjectOptions {
   rootDir: string;
+  workspaceAliases?: Record<string, string>;
 }
 
 class _Project implements Project {
   public readonly rootDir: string;
+  public readonly workspaceAliases?: Record<string, string>;
   public readonly workspaces: Workspace[];
   public readonly name: string;
   constructor(private options: CreateProjectOptions) {
     this.rootDir = options.rootDir;
+    this.workspaceAliases = options.workspaceAliases;
+
     const { name, workspaces } = findWorkspacesFromPackage({
       rootDir: options.rootDir,
+      workspaceAliases: options.workspaceAliases,
     });
+
     this.name = name;
     this.workspaces = workspaces;
   }

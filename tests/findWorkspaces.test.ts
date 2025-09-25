@@ -236,5 +236,25 @@ describe("Test finding workspaces", () => {
         rootDir: getProjectRoot("invalidBadWorkspaceGlobOutsideRoot"),
       }),
     ).toThrow(ERRORS.InvalidWorkspacePattern);
+
+    expect(() =>
+      findWorkspacesFromPackage({
+        rootDir: getProjectRoot("invalidAliasConflict"),
+        workspaceAliases: {
+          appA: "application-a",
+          "application-b": "library-a",
+        },
+      }),
+    ).toThrow(ERRORS.AliasConflict);
+
+    expect(() =>
+      findWorkspacesFromPackage({
+        rootDir: getProjectRoot("invalidAliasNotFound"),
+        workspaceAliases: {
+          appA: "application-a",
+          appD: "application-d",
+        },
+      }),
+    ).toThrow(ERRORS.AliasedWorkspaceNotFound);
   });
 });

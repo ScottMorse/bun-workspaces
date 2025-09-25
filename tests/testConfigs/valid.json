@@ -3,7 +3,6 @@
     "logLevel": "info"
   },
   "project": {
-    "rootDir": ".",
     "workspaceAliases": {
       "app": "@test/a",
       "lib": "@test/b"

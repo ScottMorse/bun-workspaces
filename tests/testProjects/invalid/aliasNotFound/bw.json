@@ -1,0 +1,6 @@
+{
+  "workspaceAliases": {
+    "appA": "application-a",
+    "appD": "application-d"
+  }
+}
