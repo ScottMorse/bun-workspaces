@@ -57,13 +57,13 @@ bw script-info my-script --json
 # in their `scripts` field
 bw run my-script
 
-# Run a script for a specific workspace
+# Run a script for a specific workspace by its package.json name or alias from the config
 bw run my-script my-workspace
 
 # Run a script for multiple workspaces
 bw run my-script workspace-a workspace-b
 
-# Run a script for workspaces using wildcard
+# Run a script for workspaces using wildcard (does not take into account workspace aliases)
 bw run my-script "my-workspace-*"
 
 # Run script in parallel for all workspaces
