@@ -1,6 +1,6 @@
 {
   "name": "bun-workspaces",
-  "version": "0.3.0",
+  "version": "1.0.0-alpha",
   "main": "src/index.ts",
   "homepage": "https://github.com/ScottMorse/bun-workspaces#readme",
   "bin": {
@@ -8,13 +8,14 @@
   },
   "custom": {
     "bunVersion": {
-      "build": "1.1.38",
+      "build": "1.2.22",
       "libraryConsumer": "^1.1.x"
     }
   },
   "scripts": {
-    "cli": "NODE_ENV=production bun run bin/cli.js",
-    "cli:dev": "NODE_ENV=development bun run bin/cli.js",
+    "cli": "bun run bin/cli.js",
+    "cli:dev": "_BW_RUNTIME_MODE=development bun run bin/cli.js",
+    "test": "_BW_RUNTIME_MODE=test bun run bin/cli.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",
@@ -32,9 +33,7 @@
   },
   "dependencies": {
     "commander": "^12.1.0",
-    "glob": "^11.0.0",
-    "pino": "^9.5.0",
-    "pino-pretty": "^13.0.0"
+    "glob": "^11.0.0"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

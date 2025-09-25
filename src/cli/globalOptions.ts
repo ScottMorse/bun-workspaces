@@ -1,14 +1,10 @@
 import path from "path";
 import { type Command, Option } from "commander";
-import { logger } from "../internal/logger";
+import { LOG_LEVELS, logger, type LogLevelSetting } from "../internal/logger";
 import { createProject } from "../project";
 
-const LOG_LEVELS = ["silent", "error", "warn", "info", "debug"] as const;
-
-export type LogLevel = (typeof LOG_LEVELS)[number];
-
 export interface CliGlobalOptions {
-  logLevel: LogLevel;
+  logLevel: LogLevelSetting;
   cwd: string;
 }
 
@@ -27,7 +23,7 @@ const defineGlobalOptions = (program: Command, defaultCwd: string) => {
     logLevel: {
       shortName: "l",
       description: "Log levels",
-      defaultValue: logger.level as LogLevel,
+      defaultValue: logger.printLevel as LogLevelSetting,
       values: LOG_LEVELS,
       param: "level",
     },
@@ -52,7 +48,7 @@ const defineGlobalOptions = (program: Command, defaultCwd: string) => {
 };
 
 const applyGlobalOptions = (options: CliGlobalOptions) => {
-  logger.level = options.logLevel;
+  logger.printLevel = options.logLevel;
   logger.debug("Log level: " + options.logLevel);
 
   const project = createProject({

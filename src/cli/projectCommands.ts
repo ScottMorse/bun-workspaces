@@ -285,13 +285,13 @@ const runScript = ({ program, project }: ProjectCommandsContext) => {
           }): ${splitCommand.join(" ")}`,
         );
 
-        const silent = logger.level === "silent";
+        const isSilent = logger.printLevel === "silent";
 
         const proc = Bun.spawn(command.command.split(/\s+/g), {
           cwd: command.cwd,
           env: process.env,
-          stdout: silent ? "ignore" : "pipe",
-          stderr: silent ? "ignore" : "pipe",
+          stdout: isSilent ? "ignore" : "pipe",
+          stderr: isSilent ? "ignore" : "pipe",
         });
 
         if (proc.stdout) {

@@ -141,7 +141,7 @@ export const resolvePackageJsonContent = (
   try {
     json = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
   } catch (error) {
-    logger.error(error);
+    logger.error(error as Error);
     throw new ERRORS.InvalidPackageJson(
       `Failed to read and parse package.json at ${packageJsonPath}: ${
         (error as Error).message
