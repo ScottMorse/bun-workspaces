@@ -1,35 +1,35 @@
-import { test as _test, expect, describe, mock } from "bun:test";
+import { test as _test, expect, describe, mock, spyOn } from "bun:test";
 import packageJson from "../package.json";
 import { CliProgram, createCliProgram } from "../src/cli/cli";
-import { OUTPUT_CONFIG } from "../src/cli/output";
+import { commandOutputLogger } from "../src/cli/projectCommands";
+import { logger } from "../src/internal/logger";
 import { createRawPattern } from "../src/internal/regex";
 import { createProject, Project } from "../src/project";
 import { getProjectRoot } from "./testProjects";
 
-const createWriteOutMock = () => mock(OUTPUT_CONFIG.writeOut);
-const createWriteErrMock = () => mock(OUTPUT_CONFIG.writeErr);
 const createHandleErrorMock = () => mock((_error: Error) => void 0);
+
+const writeOutSpy = spyOn(logger, "info");
+const writeCommandOutputSpy = spyOn(commandOutputLogger, "info");
+const writeErrSpy = spyOn(logger, "error");
 
 interface TestContext {
   run: (...argv: string[]) => void;
   defaultProject: Project;
   cliProgram: CliProgram;
-  writeOutSpy: ReturnType<typeof createWriteOutMock>;
-  writeErrSpy: ReturnType<typeof createWriteErrMock>;
   handleErrorSpy: ReturnType<typeof createHandleErrorMock>;
-  assertLastWrite: (pattern: string | RegExp, err?: boolean) => void;
+  assertLastWrite: (
+    pattern: string | RegExp,
+    logType?: "commandOutput" | "error",
+  ) => void;
   assertLastErrorThrown: (error: string | RegExp | typeof Error) => void;
 }
 
 const test = (name: string, fn: (context: TestContext) => void, only = false) =>
   (only ? _test.only : _test)(name, async () => {
-    const writeOutSpy = createWriteOutMock();
-    const writeErrSpy = createWriteErrMock();
     const handleErrorSpy = createHandleErrorMock();
 
     const cliProgram = createCliProgram({
-      writeOut: writeOutSpy,
-      writeErr: writeErrSpy,
       handleError: handleErrorSpy,
       postInit: (program) => program.exitOverride(),
       defaultCwd: getProjectRoot("default"),
@@ -39,6 +39,11 @@ const test = (name: string, fn: (context: TestContext) => void, only = false) =>
       pattern instanceof RegExp
         ? pattern
         : new RegExp(createRawPattern(pattern), "i");
+
+    handleErrorSpy.mockReset();
+    writeOutSpy.mockReset();
+    writeCommandOutputSpy.mockReset();
+    writeErrSpy.mockReset();
 
     await fn({
       run: (...argv: string[]) => {
@@ -56,11 +61,17 @@ const test = (name: string, fn: (context: TestContext) => void, only = false) =>
         rootDir: getProjectRoot("default"),
       }),
       handleErrorSpy,
-      writeOutSpy,
-      writeErrSpy,
-      assertLastWrite: (pattern: string | RegExp, err = false) =>
+      assertLastWrite: (
+        pattern: string | RegExp,
+        logType?: "commandOutput" | "error",
+      ) =>
         expect(
-          (err ? writeErrSpy : writeOutSpy).mock.lastCall?.[0] ?? "",
+          (logType === "error"
+            ? writeErrSpy
+            : logType === "commandOutput"
+              ? writeCommandOutputSpy
+              : writeOutSpy
+          ).mock.lastCall?.[0] ?? "",
         ).toMatch(createPattern(pattern)),
       assertLastErrorThrown: (error: string | RegExp | typeof Error) =>
         (error as typeof Error).prototype instanceof Error
@@ -73,30 +84,25 @@ const test = (name: string, fn: (context: TestContext) => void, only = false) =>
   });
 
 describe("Test CLI", () => {
-  test("Help command shows", async ({
-    run,
-    writeOutSpy,
-    writeErrSpy,
-    assertLastWrite,
-  }) => {
+  test("Help command shows", async ({ run, assertLastWrite }) => {
     expect(writeOutSpy).not.toHaveBeenCalled();
     expect(writeErrSpy).not.toHaveBeenCalled();
 
     await run("");
-    expect(writeErrSpy).toBeCalledTimes(1);
-    assertLastWrite("Usage", true);
-
-    await run("--help");
     expect(writeOutSpy).toBeCalledTimes(1);
     assertLastWrite("Usage");
 
-    await run("help");
+    await run("--help");
     expect(writeOutSpy).toBeCalledTimes(2);
     assertLastWrite("Usage");
 
-    await run("something-very-wrong");
-    expect(writeErrSpy).toBeCalledTimes(2);
+    await run("help");
+    expect(writeOutSpy).toBeCalledTimes(3);
     assertLastWrite("Usage");
+
+    await run("something-very-wrong");
+    expect(writeErrSpy).toBeCalledTimes(1);
+    assertLastWrite(/unknown command/, "error");
   });
 
   test("Version command shows", async ({ run, assertLastWrite }) => {
@@ -114,25 +120,25 @@ describe("Test CLI", () => {
       defaultProject,
     }) => {
       await run("list-workspaces");
-      assertLastWrite("application-a");
-      assertLastWrite("application-b");
-      assertLastWrite("library-a");
-      assertLastWrite("library-b");
-      assertLastWrite("library-c");
+      assertLastWrite("application-a", "commandOutput");
+      assertLastWrite("application-b", "commandOutput");
+      assertLastWrite("library-a", "commandOutput");
+      assertLastWrite("library-b", "commandOutput");
+      assertLastWrite("library-c", "commandOutput");
 
       await run("ls");
-      assertLastWrite("application-a");
-      assertLastWrite("application-b");
-      assertLastWrite("library-a");
-      assertLastWrite("library-b");
-      assertLastWrite("library-c");
+      assertLastWrite("application-a", "commandOutput");
+      assertLastWrite("application-b", "commandOutput");
+      assertLastWrite("library-a", "commandOutput");
+      assertLastWrite("library-b", "commandOutput");
+      assertLastWrite("library-c", "commandOutput");
 
       await run("ls --name-only");
-      assertLastWrite("application-a");
-      assertLastWrite("application-b");
-      assertLastWrite("library-a");
-      assertLastWrite("library-b");
-      assertLastWrite("library-c");
+      assertLastWrite("application-a", "commandOutput");
+      assertLastWrite("application-b", "commandOutput");
+      assertLastWrite("library-a", "commandOutput");
+      assertLastWrite("library-b", "commandOutput");
+      assertLastWrite("library-c", "commandOutput");
 
       await run("list-workspaces --name-only");
       assertLastWrite(
@@ -147,11 +153,13 @@ describe("Test CLI", () => {
             ].join("\n") +
             "\n?$",
         ),
+        "commandOutput",
       );
 
       await run("list-workspaces *-b --name-only");
       assertLastWrite(
         new RegExp("^\n?" + ["application-b", "library-b"].join("\n") + "\n?$"),
+        "commandOutput",
       );
 
       await run("list-workspaces --json --name-only");
@@ -163,28 +171,38 @@ describe("Test CLI", () => {
           "library-b",
           "library-c",
         ]),
+        "commandOutput",
       );
 
       await run("list-workspaces library-* --json --name-only");
-      assertLastWrite(JSON.stringify(["library-a", "library-b", "library-c"]));
+      assertLastWrite(
+        JSON.stringify(["library-a", "library-b", "library-c"]),
+        "commandOutput",
+      );
 
       await run("list-workspaces --json");
-      assertLastWrite(JSON.stringify(defaultProject.workspaces));
+      assertLastWrite(
+        JSON.stringify(defaultProject.workspaces),
+        "commandOutput",
+      );
 
       await run("list-workspaces --json --pretty");
-      assertLastWrite(JSON.stringify(defaultProject.workspaces, null, 2));
+      assertLastWrite(
+        JSON.stringify(defaultProject.workspaces, null, 2),
+        "commandOutput",
+      );
     });
 
     test("Using wildcard pattern", async ({ run, assertLastWrite }) => {
       await run("list-workspaces *-a");
-      assertLastWrite("application-a");
-      assertLastWrite("library-a");
+      assertLastWrite("application-a", "commandOutput");
+      assertLastWrite("library-a", "commandOutput");
 
       await run("list-workspaces *-a --name-only");
-      assertLastWrite(/^\n?application-a\nlibrary-a\n?$/);
+      assertLastWrite(/^\n?application-a\nlibrary-a\n?$/, "commandOutput");
 
       await run("list-workspaces **b*-***b** --name-only");
-      assertLastWrite(/^\n?library-b\n?$/);
+      assertLastWrite(/^\n?library-b\n?$/, "commandOutput");
 
       await run("list-workspaces bad-wrong-stuff");
       assertLastWrite("No workspaces found");
@@ -202,7 +220,7 @@ describe("Test CLI", () => {
         "list-workspaces",
         "--name-only",
       );
-      assertLastWrite(/^\n?application-a\n?$/);
+      assertLastWrite(/^\n?application-a\n?$/, "commandOutput");
     });
   });
 
@@ -239,15 +257,15 @@ describe("Test CLI", () => {
       defaultProject,
     }) => {
       await run("list-scripts");
-      assertLastWrite("all-workspaces");
-      assertLastWrite("a-workspaces");
-      assertLastWrite("b-workspaces");
-      assertLastWrite("c-workspaces");
-      assertLastWrite("application-a");
-      assertLastWrite("application-b");
-      assertLastWrite("library-a");
-      assertLastWrite("library-b");
-      assertLastWrite("library-c");
+      assertLastWrite("all-workspaces", "commandOutput");
+      assertLastWrite("a-workspaces", "commandOutput");
+      assertLastWrite("b-workspaces", "commandOutput");
+      assertLastWrite("c-workspaces", "commandOutput");
+      assertLastWrite("application-a", "commandOutput");
+      assertLastWrite("application-b", "commandOutput");
+      assertLastWrite("library-a", "commandOutput");
+      assertLastWrite("library-b", "commandOutput");
+      assertLastWrite("library-c", "commandOutput");
 
       await run("list-scripts --name-only");
       assertLastWrite(
@@ -266,6 +284,7 @@ describe("Test CLI", () => {
             ].join("\n") +
             "\n?$",
         ),
+        "commandOutput",
       );
 
       await run("list-scripts --json --name-only");
@@ -281,6 +300,7 @@ describe("Test CLI", () => {
           "library-b",
           "library-c",
         ]),
+        "commandOutput",
       );
 
       const outputData = Object.values(
@@ -291,10 +311,10 @@ describe("Test CLI", () => {
       }));
 
       await run("list-scripts --json");
-      assertLastWrite(JSON.stringify(outputData));
+      assertLastWrite(JSON.stringify(outputData), "commandOutput");
 
       await run("list-scripts --json --pretty");
-      assertLastWrite(JSON.stringify(outputData, null, 2));
+      assertLastWrite(JSON.stringify(outputData, null, 2), "commandOutput");
     });
 
     test("Empty project", async ({ run, assertLastWrite }) => {
@@ -315,28 +335,36 @@ describe("Test CLI", () => {
             ["a-workspaces", "all-workspaces", "application-a"].join("\n") +
             "\n?$",
         ),
+        "commandOutput",
       );
     });
   });
 
   test("workspace-info", async ({ run, assertLastWrite, defaultProject }) => {
     await run("workspace-info application-a");
-    assertLastWrite(/(workspace|name): application-a/i);
-    assertLastWrite("path: applications/applicationA");
-    assertLastWrite("match: applications/*");
-    assertLastWrite("scripts: a-workspaces, all-workspaces, application-a");
+    assertLastWrite(/(workspace|name): application-a/i, "commandOutput");
+    assertLastWrite("path: applications/applicationA", "commandOutput");
+    assertLastWrite("match: applications/*", "commandOutput");
+    assertLastWrite(
+      "scripts: a-workspaces, all-workspaces, application-a",
+      "commandOutput",
+    );
 
     await run("workspace-info library-a");
-    assertLastWrite(/(workspace|name): library-a/i);
-    assertLastWrite("path: libraries/libraryA");
-    assertLastWrite("match: libraries/**/*");
-    assertLastWrite("scripts: a-workspaces, all-workspaces, library-a");
+    assertLastWrite(/(workspace|name): library-a/i, "commandOutput");
+    assertLastWrite("path: libraries/libraryA", "commandOutput");
+    assertLastWrite("match: libraries/**/*", "commandOutput");
+    assertLastWrite(
+      "scripts: a-workspaces, all-workspaces, library-a",
+      "commandOutput",
+    );
 
     await run("workspace-info application-b --json");
     assertLastWrite(
       JSON.stringify({
         ...defaultProject.findWorkspaceByName("application-b"),
       }),
+      "commandOutput",
     );
 
     await run("workspace-info library-b --json --pretty");
@@ -348,6 +376,7 @@ describe("Test CLI", () => {
         null,
         2,
       ),
+      "commandOutput",
     );
   });
 
@@ -358,12 +387,12 @@ describe("Test CLI", () => {
       defaultProject,
     }) => {
       await run("script-info all-workspaces");
-      assertLastWrite(/(script|name): all-workspaces/i);
-      assertLastWrite("application-a");
-      assertLastWrite("application-a");
-      assertLastWrite("library-a");
-      assertLastWrite("library-b");
-      assertLastWrite("library-c");
+      assertLastWrite(/(script|name): all-workspaces/i, "commandOutput");
+      assertLastWrite("application-a", "commandOutput");
+      assertLastWrite("application-a", "commandOutput");
+      assertLastWrite("library-a", "commandOutput");
+      assertLastWrite("library-b", "commandOutput");
+      assertLastWrite("library-c", "commandOutput");
 
       await run("script-info a-workspaces --workspaces-only");
       assertLastWrite(
@@ -371,6 +400,7 @@ describe("Test CLI", () => {
           "^\n?" + ["application-a", "library-a"].join("\n") + "\n?$",
           "i",
         ),
+        "commandOutput",
       );
 
       const outputData = {
@@ -381,20 +411,20 @@ describe("Test CLI", () => {
       };
 
       await run("script-info b-workspaces --json");
-      assertLastWrite(JSON.stringify(outputData));
+      assertLastWrite(JSON.stringify(outputData), "commandOutput");
 
       await run("script-info b-workspaces --json --pretty");
-      assertLastWrite(JSON.stringify(outputData, null, 2));
+      assertLastWrite(JSON.stringify(outputData, null, 2), "commandOutput");
     });
 
     test("No script found", async ({ run, assertLastWrite }) => {
       await run("script-info not-found");
-      assertLastWrite("Script not found");
+      assertLastWrite("Script not found", "error");
     });
   });
 
   describe("run", () => {
-    test("Valid commands", async ({ run, handleErrorSpy, writeErrSpy }) => {
+    test("Valid commands", async ({ run, handleErrorSpy }) => {
       await run("run all-workspaces");
       expect(handleErrorSpy).not.toBeCalled();
       expect(writeErrSpy).not.toBeCalled();
@@ -437,21 +467,21 @@ describe("Test CLI", () => {
 
     test("Invalid commands", async ({ run, assertLastWrite }) => {
       await run("run not-found");
-      assertLastWrite('No workspaces found for script "not-found"', true);
+      assertLastWrite('No workspaces found for script "not-found"', "error");
 
       await run("run not-found *not-found*");
       assertLastWrite(
         'No matching workspaces found for script "not-found"',
-        true,
+        "error",
       );
 
       await run("run all-workspaces not-found");
-      assertLastWrite('Workspace not found: "not-found"', true);
+      assertLastWrite('Workspace not found: "not-found"', "error");
 
       await run("run b-workspaces *-a");
       assertLastWrite(
         'No matching workspaces found for script "b-workspaces"',
-        true,
+        "error",
       );
     });
   });

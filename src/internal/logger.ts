@@ -1,4 +1,4 @@
-import { IS_PRODUCTION } from "./env";
+import { IS_PRODUCTION, IS_TEST } from "./env";
 
 export const LOG_LEVELS = ["debug", "info", "warn", "error"] as const;
 
@@ -109,13 +109,23 @@ class _Logger implements Logger {
     return this._printLevel;
   }
 
-  private formatLogMessage(message: Error | string, level: LogLevel): string {
-    return `[${this.name} ${level.toUpperCase()}]: ${
-      message instanceof Error ? message.message : message
-    }`;
+  set printLevel(level: LogLevelSetting) {
+    this._printLevel = level;
   }
 
-  private _printLevel: LogLevelSetting = IS_PRODUCTION ? "warn" : "debug";
+  // Info prints normally for standard user-facing logs. Debug and Warn are highlighted with a prefix. Errors print as Error instances
+  private formatLogMessage(message: Error | string, level: LogLevel): string {
+    const content = message instanceof Error ? message.message : message;
+    return level === "debug" || level === "warn"
+      ? `[${this.name} ${level.toUpperCase()}]: ${content}`
+      : content;
+  }
+
+  private _printLevel: LogLevelSetting = IS_PRODUCTION
+    ? "info"
+    : IS_TEST
+      ? "silent"
+      : "debug";
 
   private shouldPrint(level: LogLevel): boolean {
     if (this.printLevel === "silent") return false;
@@ -123,4 +133,4 @@ class _Logger implements Logger {
   }
 }
 
-export const logger = createLogger("bw");
+export const logger = createLogger("bun-workspaces");

@@ -24,7 +24,7 @@ const defineGlobalOptions = (program: Command, defaultCwd: string) => {
       shortName: "l",
       description: "Log levels",
       defaultValue: logger.printLevel as LogLevelSetting,
-      values: LOG_LEVELS,
+      values: [...LOG_LEVELS, "silent"],
       param: "level",
     },
     cwd: {
