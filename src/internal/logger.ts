@@ -8,6 +8,15 @@ export type LogLevel = (typeof LOG_LEVELS)[number];
 
 export type LogLevelSetting = LogLevel | "silent";
 
+export const validateLogLevel = (level: LogLevelSetting) => {
+  if (level === "silent") return;
+  if (!LOG_LEVELS.includes(level)) {
+    throw new Error(
+      `Invalid log level: "${level}". Accepted values: ${LOG_LEVELS.join(", ")}`,
+    );
+  }
+};
+
 export type LogMetadata = Record<string, any>;
 
 export interface Log<
@@ -65,11 +74,11 @@ class _Logger implements Logger {
 
     if (this.shouldPrint(level)) {
       const formattedMessage = this.formatLogMessage(message, level);
+      if (message instanceof Error) {
+        message.message = formattedMessage;
+      }
       console[level](
-        getLevelNumber(level) >= getLevelNumber("warn") &&
-          !(message instanceof Error)
-          ? new Error(formattedMessage)
-          : formattedMessage,
+        message instanceof Error ? message : formattedMessage,
         ...(metadata ? [{ metadata }] : []),
       );
     }

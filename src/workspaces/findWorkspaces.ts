@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import type { ProjectConfig } from "../config";
 import { logger } from "../internal/logger";
 import { ERRORS } from "./errors";
 import {
@@ -12,6 +13,7 @@ import type { Workspace } from "./workspace";
 export interface FindWorkspacesOptions {
   rootDir: string;
   workspaceGlobs: string[];
+  workspaceAliases?: ProjectConfig["workspaceAliases"];
 }
 
 const validatePattern = (pattern: string) => {
@@ -43,6 +45,7 @@ const validateWorkspace = (workspace: Workspace, workspaces: Workspace[]) => {
 export const findWorkspaces = ({
   rootDir,
   workspaceGlobs,
+  workspaceAliases,
 }: FindWorkspacesOptions) => {
   rootDir = path.resolve(rootDir);
 
@@ -65,6 +68,9 @@ export const findWorkspaces = ({
           matchPattern: pattern,
           path: path.relative(rootDir, path.dirname(packageJsonPath)),
           packageJson: packageJsonContent,
+          aliases: Object.entries(workspaceAliases ?? {})
+            .filter(([_, value]) => value === packageJsonContent.name)
+            .map(([key]) => key),
         };
 
         if (validateWorkspace(workspace, workspaces)) {
@@ -81,13 +87,10 @@ export const findWorkspaces = ({
   return { workspaces };
 };
 
-export interface FindWorkspacesFromPackageOptions {
-  rootDir: string;
-}
-
 export const findWorkspacesFromPackage = ({
-  rootDir,
-}: FindWorkspacesFromPackageOptions) => {
+  rootDir = ".",
+  workspaceAliases,
+}: ProjectConfig) => {
   const packageJsonPath = path.join(rootDir, "package.json");
   if (!fs.existsSync(packageJsonPath)) {
     throw new ERRORS.PackageNotFound(
@@ -103,6 +106,7 @@ export const findWorkspacesFromPackage = ({
     ...findWorkspaces({
       rootDir,
       workspaceGlobs: packageJson.workspaces ?? [],
+      workspaceAliases,
     }),
     name: packageJson.name ?? "",
   };

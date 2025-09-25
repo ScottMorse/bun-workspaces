@@ -1,0 +1,9 @@
+{
+  "cli": {
+    "logLevel": "debug"
+  },
+  "project": {
+    "rootDir": "./tests/testProjects/fullProject",
+    "workspaceAliases": {}
+  }
+}

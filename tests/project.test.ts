@@ -39,6 +39,7 @@ describe("Test Project utilities", () => {
             "application-a": "echo 'script for application-a'",
           },
         },
+        aliases: [],
       },
       {
         name: "application-b",
@@ -53,6 +54,7 @@ describe("Test Project utilities", () => {
             "application-b": "echo 'script for application-b'",
           },
         },
+        aliases: [],
       },
       {
         name: "library-a",
@@ -67,6 +69,7 @@ describe("Test Project utilities", () => {
             "library-a": "echo 'script for library-a'",
           },
         },
+        aliases: [],
       },
       {
         name: "library-b",
@@ -81,6 +84,7 @@ describe("Test Project utilities", () => {
             "library-b": "echo 'script for library-b'",
           },
         },
+        aliases: [],
       },
       {
         name: "library-c",
@@ -95,6 +99,7 @@ describe("Test Project utilities", () => {
             "library-c": "echo 'script for library-c'",
           },
         },
+        aliases: [],
       },
     ]);
   });
@@ -170,26 +175,31 @@ describe("Test Project utilities", () => {
         name: "application-a",
         matchPattern: "applications/*",
         path: "applications/applicationA",
+        aliases: [],
       },
       {
         name: "application-b",
         matchPattern: "applications/*",
         path: "applications/applicationB",
+        aliases: [],
       },
       {
         name: "library-a",
         matchPattern: "libraries/**/*",
         path: "libraries/libraryA",
+        aliases: [],
       },
       {
         name: "library-b",
         matchPattern: "libraries/**/*",
         path: "libraries/libraryB",
+        aliases: [],
       },
       {
         name: "library-c",
         matchPattern: "libraries/**/*",
         path: "libraries/nested/libraryC",
+        aliases: [],
       },
     ]);
 
@@ -310,6 +320,7 @@ describe("Test Project utilities", () => {
         matchPattern: "applications/*",
         path: "applications/applicationA",
         packageJson: expect.any(Object),
+        aliases: [],
       },
     });
 
@@ -331,6 +342,7 @@ describe("Test Project utilities", () => {
         matchPattern: "applications/*",
         path: "applications/applicationA",
         packageJson: expect.any(Object),
+        aliases: [],
       },
     });
 
@@ -352,6 +364,7 @@ describe("Test Project utilities", () => {
         matchPattern: "applications/*",
         path: "applications/applicationA",
         packageJson: expect.any(Object),
+        aliases: [],
       },
     });
 
@@ -373,6 +386,7 @@ describe("Test Project utilities", () => {
         matchPattern: "applications/*",
         path: "applications/applicationA",
         packageJson: expect.any(Object),
+        aliases: [],
       },
     });
 
@@ -394,6 +408,7 @@ describe("Test Project utilities", () => {
         matchPattern: "libraries/**/*",
         path: "libraries/libraryB",
         packageJson: expect.any(Object),
+        aliases: [],
       },
     });
 
@@ -415,6 +430,7 @@ describe("Test Project utilities", () => {
         matchPattern: "libraries/**/*",
         path: "libraries/libraryB",
         packageJson: expect.any(Object),
+        aliases: [],
       },
     });
 
