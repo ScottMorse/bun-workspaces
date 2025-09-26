@@ -138,7 +138,7 @@ class _Logger implements Logger {
 
   private shouldPrint(level: LogLevel): boolean {
     if (this.printLevel === "silent") return false;
-    return LOG_LEVELS.indexOf(level) >= LOG_LEVELS.indexOf(this.printLevel);
+    return getLevelNumber(level) >= getLevelNumber(this.printLevel);
   }
 }
 

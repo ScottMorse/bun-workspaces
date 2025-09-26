@@ -283,15 +283,23 @@ const runScript = ({ program, project }: ProjectCommandsContext) => {
           stderr: isSilent ? "ignore" : "pipe",
         });
 
+        const linePrefix = `[${workspace.name}:${scriptName}] `;
+
         if (proc.stdout) {
           for await (const chunk of proc.stdout) {
-            commandLogger.info(new TextDecoder().decode(chunk).trim());
+            const line = new TextDecoder().decode(chunk).trim();
+            line.split("\n").forEach((line) => {
+              commandLogger.info(linePrefix + line);
+            });
           }
         }
 
         if (proc.stderr) {
           for await (const chunk of proc.stderr) {
-            commandLogger.error(new TextDecoder().decode(chunk).trim());
+            const line = new TextDecoder().decode(chunk).trim();
+            line.split("\n").forEach((line) => {
+              commandLogger.error(linePrefix + line);
+            });
           }
         }
 
