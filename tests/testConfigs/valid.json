@@ -1,0 +1,11 @@
+{
+  "cli": {
+    "logLevel": "info"
+  },
+  "project": {
+    "workspaceAliases": {
+      "app": "@test/a",
+      "lib": "@test/b"
+    }
+  }
+}

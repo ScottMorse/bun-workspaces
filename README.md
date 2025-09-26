@@ -13,6 +13,30 @@ $ bun add --dev bun-workspaces
 $ bunx bun-workspaces --help
 ```
 
+### Config file
+
+You can create a config file at `bw.json` in your project root, or you can pass a config file to the CLI with the `--configFile` (or `-c`) option.
+
+#### Example config
+
+In this config, "app-a" is an alias for package "@my-org/application-a" and "app-b" is an alias for package "@my-org/application-b".
+
+CLI log levels are `debug`, `info`, `warn`, and `error` or `silent`. The default log level is `info`. Commands that are intended to print specific output will still print at `silent`, such as `list-workspaces`, `list-scripts`, `workspace-info`, `script-info`, etc., but other logs will be suppressed.
+
+```json
+{
+  "workspaceAliases": {
+    "app-a": "@my-org/application-a",
+    "app-b": "@my-org/application-b"
+  },
+  "cli": {
+    "logLevel": "warn"
+  }
+}
+```
+
+You can also pass a config file to the CLI with the `-c` or `--configFile` option.
+
 ### Examples
 
 You might consider making a shorter alias in your `.bashrc`, `.zshrc`, or similar shell configuration file, such as `alias bw="bunx bun-workspaces"`, for convenience.
@@ -57,13 +81,13 @@ bw script-info my-script --json
 # in their `scripts` field
 bw run my-script
 
-# Run a script for a specific workspace
+# Run a script for a specific workspace by its package.json name or alias from the config
 bw run my-script my-workspace
 
 # Run a script for multiple workspaces
 bw run my-script workspace-a workspace-b
 
-# Run a script for workspaces using wildcard
+# Run a script for workspaces using wildcard (does not take into account workspace aliases)
 bw run my-script "my-workspace-*"
 
 # Run script in parallel for all workspaces
@@ -82,4 +106,10 @@ bw --help
 # Pass --cwd to any command
 bw --cwd /path/to/your/project ls
 bw --cwd /path/to/your/project run-script my-script
+
+# Pass --configFile to any command
+bw --configFile /path/to/your/config.json ls
+
+# Pass --logLevel to any command (debug, info, warn, error, or silent)
+bw --logLevel silent run my-script
 ```

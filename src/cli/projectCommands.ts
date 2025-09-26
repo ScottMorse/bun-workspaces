@@ -7,11 +7,11 @@ import type { Workspace } from "../workspaces";
 export interface ProjectCommandsContext {
   project: Project;
   program: Command;
-  printLines: (...lines: string[]) => void;
 }
 
 const createWorkspaceInfoLines = (workspace: Workspace) => [
   `Workspace: ${workspace.name}`,
+  ` - Aliases: ${workspace.aliases.join(", ")}`,
   ` - Path: ${workspace.path}`,
   ` - Glob Match: ${workspace.matchPattern}`,
   ` - Scripts: ${Object.keys(workspace.packageJson.scripts).sort().join(", ")}`,
@@ -25,11 +25,10 @@ const createScriptInfoLines = (script: string, workspaces: Workspace[]) => [
 const createJsonLines = (data: unknown, options: { pretty: boolean }) =>
   JSON.stringify(data, null, options.pretty ? 2 : undefined).split("\n");
 
-const listWorkspaces = ({
-  program,
-  project,
-  printLines,
-}: ProjectCommandsContext) => {
+export const commandOutputLogger = createLogger("");
+commandOutputLogger.printLevel = "info";
+
+const listWorkspaces = ({ program, project }: ProjectCommandsContext) => {
   program
     .command("list-workspaces [pattern]")
     .aliases(["ls", "list"])
@@ -72,19 +71,15 @@ const listWorkspaces = ({
         }
 
         if (!lines.length) {
-          lines.push("No workspaces found");
+          logger.info("No workspaces found");
         }
 
-        printLines(...lines);
+        if (lines.length) commandOutputLogger.info(lines.join("\n"));
       },
     );
 };
 
-const listScripts = ({
-  program,
-  project,
-  printLines,
-}: ProjectCommandsContext) => {
+const listScripts = ({ program, project }: ProjectCommandsContext) => {
   program
     .command("list-scripts")
     .description("List all scripts available with their workspaces")
@@ -126,20 +121,16 @@ const listScripts = ({
             });
 
           if (!lines.length) {
-            lines.push("No scripts found");
+            logger.info("No scripts found");
           }
         }
 
-        printLines(...lines);
+        if (lines.length) commandOutputLogger.info(lines.join("\n"));
       },
     );
 };
 
-const workspaceInfo = ({
-  program,
-  project,
-  printLines,
-}: ProjectCommandsContext) => {
+const workspaceInfo = ({ program, project }: ProjectCommandsContext) => {
   program
     .command("workspace-info <workspace>")
     .aliases(["info"])
@@ -160,20 +151,17 @@ const workspaceInfo = ({
           return;
         }
 
-        printLines(
-          ...(options.json
+        commandOutputLogger.info(
+          (options.json
             ? createJsonLines(workspace, options)
-            : createWorkspaceInfoLines(workspace)),
+            : createWorkspaceInfoLines(workspace)
+          ).join("\n"),
         );
       },
     );
 };
 
-const scriptInfo = ({
-  program,
-  project,
-  printLines,
-}: ProjectCommandsContext) => {
+const scriptInfo = ({ program, project }: ProjectCommandsContext) => {
   program
     .command("script-info <script>")
     .description("Show information about a script")
@@ -192,15 +180,15 @@ const scriptInfo = ({
         const scripts = project.listScriptsWithWorkspaces();
         const scriptMetadata = scripts[script];
         if (!scriptMetadata) {
-          printLines(
+          logger.error(
             `Script not found: ${JSON.stringify(
               script,
             )} (available: ${Object.keys(scripts).join(", ")})`,
           );
           return;
         }
-        printLines(
-          ...(options.json
+        commandOutputLogger.info(
+          (options.json
             ? createJsonLines(
                 options.workspacesOnly
                   ? scriptMetadata.workspaces.map(({ name }) => name)
@@ -214,7 +202,8 @@ const scriptInfo = ({
               )
             : options.workspacesOnly
               ? scriptMetadata.workspaces.map(({ name }) => name)
-              : createScriptInfoLines(script, scriptMetadata.workspaces)),
+              : createScriptInfoLines(script, scriptMetadata.workspaces)
+          ).join("\n"),
         );
       },
     );
@@ -285,24 +274,32 @@ const runScript = ({ program, project }: ProjectCommandsContext) => {
           }): ${splitCommand.join(" ")}`,
         );
 
-        const silent = logger.level === "silent";
+        const isSilent = logger.printLevel === "silent";
 
         const proc = Bun.spawn(command.command.split(/\s+/g), {
           cwd: command.cwd,
           env: process.env,
-          stdout: silent ? "ignore" : "pipe",
-          stderr: silent ? "ignore" : "pipe",
+          stdout: isSilent ? "ignore" : "pipe",
+          stderr: isSilent ? "ignore" : "pipe",
         });
+
+        const linePrefix = `[${workspace.name}:${scriptName}] `;
 
         if (proc.stdout) {
           for await (const chunk of proc.stdout) {
-            commandLogger.info(new TextDecoder().decode(chunk).trim());
+            const line = new TextDecoder().decode(chunk).trim();
+            line.split("\n").forEach((line) => {
+              commandLogger.info(linePrefix + line);
+            });
           }
         }
 
         if (proc.stderr) {
           for await (const chunk of proc.stderr) {
-            commandLogger.error(new TextDecoder().decode(chunk).trim());
+            const line = new TextDecoder().decode(chunk).trim();
+            line.split("\n").forEach((line) => {
+              commandLogger.error(linePrefix + line);
+            });
           }
         }
 
@@ -372,16 +369,20 @@ const runScript = ({ program, project }: ProjectCommandsContext) => {
       let failCount = 0;
       results.forEach(({ success, workspaceName }) => {
         if (!success) failCount++;
-        logger.info(`${success ? "✅" : "❌"} ${workspaceName}: ${script}`);
+        commandOutputLogger.info(
+          `${success ? "✅" : "❌"} ${workspaceName}: ${script}`,
+        );
       });
 
       const s = results.length === 1 ? "" : "s";
       if (failCount) {
         const message = `${failCount} of ${results.length} script${s} failed`;
-        logger.info(message);
+        commandOutputLogger.info(message);
         process.exit(1);
       } else {
-        logger.info(`${results.length} script${s} ran successfully`);
+        commandOutputLogger.info(
+          `${results.length} script${s} ran successfully`,
+        );
       }
     });
 };

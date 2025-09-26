@@ -14,6 +14,8 @@ const TEST_PROJECTS = {
   invalidNoPackageJson: "invalid/noPackageJson",
   invalidBadWorkspaceGlobType: "invalid/badWorkspaceGlobType",
   invalidBadWorkspaceGlobOutsideRoot: "invalid/badWorkspaceGlobOutsideRoot",
+  invalidAliasConflict: "invalid/aliasConflict",
+  invalidAliasNotFound: "invalid/aliasNotFound",
 };
 
 type TestProject = keyof typeof TEST_PROJECTS;

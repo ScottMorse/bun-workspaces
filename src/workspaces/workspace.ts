@@ -9,4 +9,6 @@ export interface Workspace {
   matchPattern: string;
   /** The contents of the workspace's package.json, with `"workspaces"` and `"scripts"` resolved */
   packageJson: ResolvedPackageJsonContent;
+  /** Aliases assigned to the workspace via the `"workspaceAliases"` field in the config */
+  aliases: string[];
 }

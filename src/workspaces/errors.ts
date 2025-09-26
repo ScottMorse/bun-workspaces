@@ -9,4 +9,6 @@ export const ERRORS = defineErrors(
   "InvalidScripts",
   "InvalidWorkspaces",
   "InvalidWorkspacePattern",
+  "AliasConflict",
+  "AliasedWorkspaceNotFound",
 );

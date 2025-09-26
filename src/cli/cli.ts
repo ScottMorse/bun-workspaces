@@ -6,7 +6,6 @@ import {
 } from "../internal/bunVersion";
 import { logger } from "../internal/logger";
 import { initializeWithGlobalOptions } from "./globalOptions";
-import { OUTPUT_CONFIG } from "./output";
 import { defineProjectCommands } from "./projectCommands";
 
 export interface RunCliOptions {
@@ -18,16 +17,12 @@ export interface CliProgram {
 }
 
 export interface CreateCliProgramOptions {
-  writeOut?: (s: string) => void;
-  writeErr?: (s: string) => void;
   handleError?: (error: Error) => void;
   postInit?: (program: Command) => unknown;
   defaultCwd?: string;
 }
 
 export const createCliProgram = ({
-  writeOut = OUTPUT_CONFIG.writeOut,
-  writeErr = OUTPUT_CONFIG.writeErr,
   handleError,
   postInit,
   defaultCwd = process.cwd(),
@@ -48,8 +43,9 @@ export const createCliProgram = ({
         .description("CLI for utilities for Bun workspaces")
         .version(packageJson.version)
         .configureOutput({
-          writeOut,
-          writeErr,
+          writeOut: (s) => logger.info(s),
+          writeErr: (s) =>
+            s.startsWith("Usage") ? logger.info(s) : logger.error(s),
         });
 
       postInit?.(program);
@@ -75,7 +71,6 @@ export const createCliProgram = ({
       defineProjectCommands({
         program,
         project,
-        printLines: (...lines: string[]) => writeOut(lines.join("\n") + "\n"),
       });
 
       await program.parseAsync(args);

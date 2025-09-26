@@ -1,22 +1,48 @@
 import path from "path";
 import { type Command, Option } from "commander";
-import { logger } from "../internal/logger";
+import { loadConfigFile, type BunWorkspacesConfig } from "../config";
+import { LOG_LEVELS, logger, type LogLevelSetting } from "../internal/logger";
 import { createProject } from "../project";
 
-const LOG_LEVELS = ["silent", "error", "warn", "info", "debug"] as const;
-
-export type LogLevel = (typeof LOG_LEVELS)[number];
-
 export interface CliGlobalOptions {
-  logLevel: LogLevel;
+  logLevel: LogLevelSetting;
   cwd: string;
+  configFile?: string;
 }
 
 export type CliGlobalOptionName = keyof CliGlobalOptions;
 
-const defineGlobalOptions = (program: Command, defaultCwd: string) => {
+const getWorkingDirectory = (
+  program: Command,
+  args: string[],
+  defaultCwd: string,
+) => {
+  program.addOption(
+    new Option("-d --cwd <path>", "Working directory").default(defaultCwd),
+  );
+  program.parseOptions(args);
+  return program.opts().cwd;
+};
+
+const getConfig = (program: Command, args: string[]) => {
+  program.addOption(new Option("-c --configFile <path>", "Config file"));
+  program.parseOptions(args);
+  return program.opts().configFile;
+};
+
+const defineGlobalOptions = (
+  program: Command,
+  args: string[],
+  defaultCwd: string,
+) => {
+  const cwd = getWorkingDirectory(program, args, defaultCwd);
+
+  const configFilePath = getConfig(program, args);
+
+  const config = loadConfigFile(configFilePath, cwd);
+
   const globalOptions: {
-    [K in CliGlobalOptionName]: {
+    [K in Exclude<CliGlobalOptionName, "configFile" | "cwd">]: {
       shortName: string;
       description: string;
       defaultValue: CliGlobalOptions[K];
@@ -27,36 +53,39 @@ const defineGlobalOptions = (program: Command, defaultCwd: string) => {
     logLevel: {
       shortName: "l",
       description: "Log levels",
-      defaultValue: logger.level as LogLevel,
-      values: LOG_LEVELS,
+      defaultValue:
+        config?.cli?.logLevel ?? (logger.printLevel as LogLevelSetting),
+      values: [...LOG_LEVELS, "silent"],
       param: "level",
-    },
-    cwd: {
-      shortName: "d",
-      description: "Working directory",
-      defaultValue: defaultCwd ?? process.cwd(),
-      param: "dir",
     },
   };
 
   Object.entries(globalOptions).forEach(
-    ([name, { shortName, description, defaultValue, param, values }]) => {
+    ([name, { shortName, description, param, values, defaultValue }]) => {
       const option = new Option(
         `-${shortName} --${name}${param ? ` <${param}>` : ""}`,
         description,
       ).default(defaultValue);
 
-      program.addOption(values?.length ? option.choices(values) : option);
+      program.addOption(
+        values?.length ? option.choices(values as string[]) : option,
+      );
     },
   );
+
+  return { cwd, config };
 };
 
-const applyGlobalOptions = (options: CliGlobalOptions) => {
-  logger.level = options.logLevel;
+const applyGlobalOptions = (
+  options: CliGlobalOptions,
+  config: BunWorkspacesConfig | null,
+) => {
+  logger.printLevel = options.logLevel;
   logger.debug("Log level: " + options.logLevel);
 
   const project = createProject({
     rootDir: options.cwd,
+    workspaceAliases: config?.project?.workspaceAliases ?? {},
   });
 
   logger.debug(
@@ -74,11 +103,20 @@ export const initializeWithGlobalOptions = (
   args: string[],
   defaultCwd: string,
 ) => {
-  defineGlobalOptions(program, defaultCwd);
-
   program.allowUnknownOption(true);
+
+  const { cwd, config } = defineGlobalOptions(program, args, defaultCwd);
+
   program.parseOptions(args);
   program.allowUnknownOption(false);
 
-  return applyGlobalOptions(program.opts() as CliGlobalOptions);
+  const options = program.opts() as CliGlobalOptions;
+
+  return applyGlobalOptions(
+    {
+      ...options,
+      cwd,
+    },
+    config,
+  );
 };

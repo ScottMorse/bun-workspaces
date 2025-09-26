@@ -33,6 +33,8 @@ export interface Project {
   listWorkspacesWithScript(scriptName: string): Workspace[];
   listScriptsWithWorkspaces(): Record<string, ScriptMetadata>;
   findWorkspaceByName(workspaceName: string): Workspace | null;
+  findWorkspaceByAlias(alias: string): Workspace | null;
+  findWorkspaceByNameOrAlias(nameOrAlias: string): Workspace | null;
   findWorkspacesByPattern(workspaceName: string): Workspace[];
   createScriptCommand(
     options: CreateProjectScriptCommandOptions,
@@ -41,17 +43,23 @@ export interface Project {
 
 export interface CreateProjectOptions {
   rootDir: string;
+  workspaceAliases?: Record<string, string>;
 }
 
 class _Project implements Project {
   public readonly rootDir: string;
+  public readonly workspaceAliases?: Record<string, string>;
   public readonly workspaces: Workspace[];
   public readonly name: string;
   constructor(private options: CreateProjectOptions) {
     this.rootDir = options.rootDir;
+    this.workspaceAliases = options.workspaceAliases;
+
     const { name, workspaces } = findWorkspacesFromPackage({
       rootDir: options.rootDir,
+      workspaceAliases: options.workspaceAliases,
     });
+
     this.name = name;
     this.workspaces = workspaces;
   }
@@ -91,6 +99,20 @@ class _Project implements Project {
     );
   }
 
+  findWorkspaceByAlias(alias: string): Workspace | null {
+    return (
+      this.workspaces.find((workspace) => workspace.aliases.includes(alias)) ??
+      null
+    );
+  }
+
+  findWorkspaceByNameOrAlias(nameOrAlias: string): Workspace | null {
+    return (
+      this.findWorkspaceByName(nameOrAlias) ||
+      this.findWorkspaceByAlias(nameOrAlias)
+    );
+  }
+
   /** Accepts wildcard for finding a list of workspaces */
   findWorkspacesByPattern(workspacePattern: string): Workspace[] {
     if (!workspacePattern) return [];
@@ -101,7 +123,8 @@ class _Project implements Project {
   createScriptCommand(
     options: CreateProjectScriptCommandOptions,
   ): CreateProjectScriptCommandResult {
-    const workspace = this.findWorkspaceByName(options.workspaceName);
+    const workspace = this.findWorkspaceByNameOrAlias(options.workspaceName);
+
     if (!workspace) {
       throw new ERRORS.ProjectWorkspaceNotFound(
         `Workspace not found: ${JSON.stringify(options.workspaceName)}`,

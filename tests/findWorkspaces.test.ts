@@ -44,6 +44,7 @@ describe("Test finding workspaces", () => {
               "application-a": "echo 'script for application-a'",
             },
           },
+          aliases: [],
         },
         {
           name: "application-b",
@@ -58,6 +59,7 @@ describe("Test finding workspaces", () => {
               "application-b": "echo 'script for application-b'",
             },
           },
+          aliases: [],
         },
         {
           name: "library-a",
@@ -72,6 +74,7 @@ describe("Test finding workspaces", () => {
               "library-a": "echo 'script for library-a'",
             },
           },
+          aliases: [],
         },
         {
           name: "library-b",
@@ -86,6 +89,7 @@ describe("Test finding workspaces", () => {
               "library-b": "echo 'script for library-b'",
             },
           },
+          aliases: [],
         },
         {
           name: "library-c",
@@ -100,6 +104,7 @@ describe("Test finding workspaces", () => {
               "library-c": "echo 'script for library-c'",
             },
           },
+          aliases: [],
         },
       ],
     });
@@ -126,21 +131,25 @@ describe("Test finding workspaces", () => {
             name: "application-a",
             matchPattern: "applications/*",
             path: "applications/applicationA",
+            aliases: [],
           },
           {
             name: "application-b",
             matchPattern: "applications/*",
             path: "applications/applicationB",
+            aliases: [],
           },
           {
             name: "library-a",
             matchPattern: "libraries/*",
             path: "libraries/libraryA",
+            aliases: [],
           },
           {
             name: "library-b",
             matchPattern: "libraries/*",
             path: "libraries/libraryB",
+            aliases: [],
           },
         ],
       }),
@@ -160,11 +169,13 @@ describe("Test finding workspaces", () => {
             name: "application-a",
             matchPattern: "applications/*",
             path: "applications/applicationA",
+            aliases: [],
           },
           {
             name: "application-b",
             matchPattern: "applications/*",
             path: "applications/applicationB",
+            aliases: [],
           },
         ],
       }),
@@ -225,5 +236,25 @@ describe("Test finding workspaces", () => {
         rootDir: getProjectRoot("invalidBadWorkspaceGlobOutsideRoot"),
       }),
     ).toThrow(ERRORS.InvalidWorkspacePattern);
+
+    expect(() =>
+      findWorkspacesFromPackage({
+        rootDir: getProjectRoot("invalidAliasConflict"),
+        workspaceAliases: {
+          appA: "application-a",
+          "application-b": "library-a",
+        },
+      }),
+    ).toThrow(ERRORS.AliasConflict);
+
+    expect(() =>
+      findWorkspacesFromPackage({
+        rootDir: getProjectRoot("invalidAliasNotFound"),
+        workspaceAliases: {
+          appA: "application-a",
+          appD: "application-d",
+        },
+      }),
+    ).toThrow(ERRORS.AliasedWorkspaceNotFound);
   });
 });

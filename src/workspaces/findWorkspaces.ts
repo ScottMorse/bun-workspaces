@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import type { ProjectConfig } from "../config";
 import { logger } from "../internal/logger";
 import { ERRORS } from "./errors";
 import {
@@ -12,6 +13,7 @@ import type { Workspace } from "./workspace";
 export interface FindWorkspacesOptions {
   rootDir: string;
   workspaceGlobs: string[];
+  workspaceAliases?: ProjectConfig["workspaceAliases"];
 }
 
 const validatePattern = (pattern: string) => {
@@ -43,6 +45,7 @@ const validateWorkspace = (workspace: Workspace, workspaces: Workspace[]) => {
 export const findWorkspaces = ({
   rootDir,
   workspaceGlobs,
+  workspaceAliases,
 }: FindWorkspacesOptions) => {
   rootDir = path.resolve(rootDir);
 
@@ -65,6 +68,9 @@ export const findWorkspaces = ({
           matchPattern: pattern,
           path: path.relative(rootDir, path.dirname(packageJsonPath)),
           packageJson: packageJsonContent,
+          aliases: Object.entries(workspaceAliases ?? {})
+            .filter(([_, value]) => value === packageJsonContent.name)
+            .map(([key]) => key),
         };
 
         if (validateWorkspace(workspace, workspaces)) {
@@ -81,13 +87,30 @@ export const findWorkspaces = ({
   return { workspaces };
 };
 
-export interface FindWorkspacesFromPackageOptions {
-  rootDir: string;
-}
+export const validateWorkspaceAliases = (
+  workspaces: Workspace[],
+  workspaceAliases: ProjectConfig["workspaceAliases"],
+) => {
+  for (const [alias, name] of Object.entries(workspaceAliases ?? {})) {
+    if (workspaces.find((ws) => ws.name === alias)) {
+      throw new ERRORS.AliasConflict(
+        `Alias ${JSON.stringify(alias)} conflicts with workspace name ${JSON.stringify(name)}`,
+      );
+    }
+    if (!workspaces.find((ws) => ws.name === name)) {
+      throw new ERRORS.AliasedWorkspaceNotFound(
+        `Workspace ${JSON.stringify(name)} was aliased by ${JSON.stringify(
+          alias,
+        )} but was not found`,
+      );
+    }
+  }
+};
 
 export const findWorkspacesFromPackage = ({
   rootDir,
-}: FindWorkspacesFromPackageOptions) => {
+  workspaceAliases,
+}: ProjectConfig & { rootDir: string }) => {
   const packageJsonPath = path.join(rootDir, "package.json");
   if (!fs.existsSync(packageJsonPath)) {
     throw new ERRORS.PackageNotFound(
@@ -99,11 +122,16 @@ export const findWorkspacesFromPackage = ({
     "workspaces",
   ]);
 
+  const result = findWorkspaces({
+    rootDir,
+    workspaceGlobs: packageJson.workspaces ?? [],
+    workspaceAliases,
+  });
+
+  validateWorkspaceAliases(result.workspaces, workspaceAliases);
+
   return {
-    ...findWorkspaces({
-      rootDir,
-      workspaceGlobs: packageJson.workspaces ?? [],
-    }),
+    ...result,
     name: packageJson.name ?? "",
   };
 };
