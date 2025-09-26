@@ -2,8 +2,6 @@
 
 This is a CLI meant to help manage [Bun workspaces](https://bun.sh/docs/install/workspaces).
 
-This was created primarily due to issues and limitations with Bun's `--filter` option for running commands from workspaces.
-
 ## Installation
 
 You can install the CLI in your project or simply use `bunx bun-workspaces`.
