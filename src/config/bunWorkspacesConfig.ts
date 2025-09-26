@@ -1,4 +1,3 @@
-import fs from "fs";
 import { validateLogLevel, type LogLevelSetting } from "../internal/logger";
 
 export interface CliConfig {

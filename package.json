@@ -22,20 +22,20 @@
     "format-check": "prettier --check ."
   },
   "devDependencies": {
-    "@types/bun": "^1.1.14",
-    "@typescript-eslint/eslint-plugin": "^8.17.0",
-    "@typescript-eslint/parser": "^8.17.0",
+    "@types/bun": "^1.2.22",
+    "@typescript-eslint/eslint-plugin": "^8.44.1",
+    "@typescript-eslint/parser": "^8.44.1",
     "bun-workspaces": "file:.",
-    "eslint": "^9.16.0",
-    "eslint-plugin-import": "^2.31.0",
-    "prettier": "^3.4.2",
-    "typescript-eslint": "^8.17.0"
+    "eslint": "^9.36.0",
+    "eslint-plugin-import": "^2.32.0",
+    "prettier": "^3.6.2",
+    "typescript-eslint": "^8.44.1"
   },
   "dependencies": {
     "commander": "^12.1.0",
-    "glob": "^11.0.0"
+    "glob": "^11.0.3"
   },
   "peerDependencies": {
-    "typescript": "^5.0.0"
+    "typescript": "^5.9.2"
   }
 }
