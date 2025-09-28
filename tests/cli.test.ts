@@ -359,6 +359,15 @@ describe("Test CLI", () => {
       "commandOutput",
     );
 
+    await run("-c some-config.json workspace-info libA");
+    assertLastWrite(/(workspace|name): library-a/i, "commandOutput");
+    assertLastWrite("path: libraries/libraryA", "commandOutput");
+    assertLastWrite("match: libraries/**/*", "commandOutput");
+    assertLastWrite(
+      "scripts: a-workspaces, all-workspaces, library-a",
+      "commandOutput",
+    );
+
     await run("workspace-info application-b --json");
     assertLastWrite(
       JSON.stringify({

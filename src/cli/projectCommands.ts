@@ -143,7 +143,7 @@ const workspaceInfo = ({ program, project }: ProjectCommandsContext) => {
           `Command: Workspace info for ${workspaceName} (options: ${JSON.stringify(options)})`,
         );
 
-        const workspace = project.findWorkspaceByName(workspaceName);
+        const workspace = project.findWorkspaceByNameOrAlias(workspaceName);
         if (!workspace) {
           logger.error(
             `Workspace not found: (options: ${JSON.stringify(workspaceName)})`,
