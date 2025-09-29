@@ -1,6 +1,6 @@
 {
   "name": "bun-workspaces",
-  "version": "1.0.0-alpha",
+  "version": "1.0.1-alpha",
   "main": "src/index.ts",
   "homepage": "https://github.com/ScottMorse/bun-workspaces#readme",
   "bin": {
@@ -15,7 +15,6 @@
   "scripts": {
     "cli": "bun run bin/cli.js",
     "cli:dev": "_BW_RUNTIME_MODE=development bun run bin/cli.js",
-    "test": "_BW_RUNTIME_MODE=test bun run bin/cli.js",
     "type-check": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",
