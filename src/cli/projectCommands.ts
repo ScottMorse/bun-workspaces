@@ -278,7 +278,7 @@ const runScript = ({ program, project }: ProjectCommandsContext) => {
 
         const proc = Bun.spawn(command.command.split(/\s+/g), {
           cwd: command.cwd,
-          env: process.env,
+          env: { ...process.env, FORCE_COLOR: "1" },
           stdout: isSilent ? "ignore" : "pipe",
           stderr: isSilent ? "ignore" : "pipe",
         });
@@ -287,19 +287,13 @@ const runScript = ({ program, project }: ProjectCommandsContext) => {
 
         if (proc.stdout) {
           for await (const chunk of proc.stdout) {
-            const line = new TextDecoder().decode(chunk).trim();
-            line.split("\n").forEach((line) => {
-              commandLogger.info(linePrefix + line);
-            });
+            commandLogger.logOutput(chunk, "info", process.stdout, linePrefix);
           }
         }
 
         if (proc.stderr) {
           for await (const chunk of proc.stderr) {
-            const line = new TextDecoder().decode(chunk).trim();
-            line.split("\n").forEach((line) => {
-              commandLogger.error(linePrefix + line);
-            });
+            commandLogger.logOutput(chunk, "error", process.stderr, linePrefix);
           }
         }
 
