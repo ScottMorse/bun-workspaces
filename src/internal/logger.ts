@@ -41,6 +41,13 @@ export type Logger = {
     metadata?: Metadata,
   ): Log<Message, Metadata>;
 
+  logOutput(
+    chunk: Uint8Array,
+    level: LogLevel,
+    stream: NodeJS.WriteStream,
+    prefix: string,
+  ): Log<string, Record<string, unknown>>;
+
   printLevel: LogLevelSetting;
 } & {
   [Level in LogLevel]: <
@@ -81,6 +88,41 @@ class _Logger implements Logger {
         message instanceof Error ? message : formattedMessage,
         ...(metadata ? [{ metadata }] : []),
       );
+    }
+
+    return log;
+  }
+
+  logOutput(
+    chunk: Uint8Array,
+    level: LogLevel,
+    stream: NodeJS.WriteStream,
+    prefix: string,
+  ) {
+    const message = new TextDecoder().decode(chunk).trim();
+
+    const log: Log<string, Record<string, unknown>> = {
+      message,
+      level,
+      metadata: { stream, isLogOutput: true },
+      time: new Date(),
+    };
+
+    if (!this.shouldPrint(level)) {
+      return log;
+    }
+
+    const linePrefix = `${prefix}\x1b[0m`;
+    const lines = message.split(/\r?\n/);
+    for (let i = 0; i < lines.length; i += 2) {
+      const line = lines[i];
+      const sep = lines[i + 1] ?? "";
+      if (line.length > 0) {
+        stream.write(linePrefix);
+        stream.write(line + "\n");
+      } else if (sep) {
+        stream.write(sep + "\n");
+      }
     }
 
     return log;
