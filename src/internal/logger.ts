@@ -114,16 +114,9 @@ class _Logger implements Logger {
 
     const linePrefix = `${prefix}\x1b[0m`;
     const lines = message.split(/\r?\n/);
-    for (let i = 0; i < lines.length; i += 2) {
-      const line = lines[i];
-      const sep = lines[i + 1] ?? "";
-      if (line.length > 0) {
-        stream.write(linePrefix);
-        stream.write(line + "\n");
-      } else if (sep) {
-        stream.write(sep + "\n");
-      }
-    }
+    lines.forEach((line) => {
+      if (line) stream.write(linePrefix + line + "\n");
+    });
 
     return log;
   }
