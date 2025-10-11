@@ -14,16 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Bun ${{ matrix.bun_version }}
+      - name: Run tests with Bun ${{ matrix.bun_version }}
         id: install-bun
         run: |
           bun_version=${{ matrix.bun_version }}
           echo "Installing Bun version: $bun_version"
           curl -fsSL https://bun.com/install | bash -s "bun-v$bun_version"
-
-      - name: Install dependencies
-        id: install-deps
-        run: bun install --frozen-lockfile
-
-      - name: Run tests
-        run: bun test
+          bun install --frozen-lockfile
+          bun test
