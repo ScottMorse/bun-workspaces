@@ -2,6 +2,7 @@ name: Test multiple Bun versions
 
 on:
   workflow_dispatch:
+  workflow_call:
 
 jobs:
   test:
