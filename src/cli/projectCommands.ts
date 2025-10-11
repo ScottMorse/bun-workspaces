@@ -215,6 +215,11 @@ const runScript = ({ program, project }: ProjectCommandsContext) => {
     .description("Run a script in all workspaces")
     .option("--parallel", "Run the scripts in parallel")
     .option("--args <args>", "Args to append to the script command", "")
+    .option(
+      "--noPrefix",
+      "Do not prefix the workspace name to the script output",
+      "",
+    )
     .action(async (script: string, _workspaces: string[], options) => {
       logger.debug(
         `Command: Run script ${JSON.stringify(script)} for ${
@@ -283,7 +288,9 @@ const runScript = ({ program, project }: ProjectCommandsContext) => {
           stderr: isSilent ? "ignore" : "pipe",
         });
 
-        const linePrefix = `[${workspace.name}:${scriptName}] `;
+        const linePrefix = options.noPrefix
+          ? ""
+          : `[${workspace.name}:${scriptName}] `;
 
         if (proc.stdout) {
           for await (const chunk of proc.stdout) {
