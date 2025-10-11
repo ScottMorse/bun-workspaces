@@ -79,6 +79,10 @@ bw script-info my-script --json
 # in their `scripts` field
 bw run my-script
 
+# By default, a prefix is added to the script output with the workspace name
+# This can be disabled with the --noPrefix option
+bw run my-script --noPrefix
+
 # Run a script for a specific workspace by its package.json name or alias from the config
 bw run my-script my-workspace
 
