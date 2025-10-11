@@ -19,6 +19,8 @@ jobs:
         run: |
           bun_version=${{ matrix.bun_version }}
           echo "Installing Bun version: $bun_version"
+          export BUN_INSTALL="$HOME/.bun"
           curl -fsSL https://bun.com/install | bash -s "bun-v$bun_version"
+          export PATH="$BUN_INSTALL/bin:$PATH"
           bun install --frozen-lockfile
           bun test
