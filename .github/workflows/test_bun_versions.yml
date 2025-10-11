@@ -10,7 +10,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        bun_version: ["1.0", "1.1", "1.2", "1.3"]
+        bun_version: ["1.0", "1.1", "1.2", "1.3.0"]
     steps:
       - uses: actions/checkout@v4
 
