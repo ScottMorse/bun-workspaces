@@ -1,6 +1,6 @@
 {
   "name": "bun-workspaces",
-  "version": "1.0.0-alpha.4",
+  "version": "1.0.0-alpha.5",
   "main": "src/index.ts",
   "homepage": "https://github.com/ScottMorse/bun-workspaces#readme",
   "bin": {

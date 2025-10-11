@@ -370,20 +370,16 @@ const runScript = ({ program, project }: ProjectCommandsContext) => {
       let failCount = 0;
       results.forEach(({ success, workspaceName }) => {
         if (!success) failCount++;
-        commandOutputLogger.info(
-          `${success ? "✅" : "❌"} ${workspaceName}: ${script}`,
-        );
+        logger.info(`${success ? "✅" : "❌"} ${workspaceName}: ${script}`);
       });
 
       const s = results.length === 1 ? "" : "s";
       if (failCount) {
         const message = `${failCount} of ${results.length} script${s} failed`;
-        commandOutputLogger.info(message);
+        logger.error(message);
         process.exit(1);
       } else {
-        commandOutputLogger.info(
-          `${results.length} script${s} ran successfully`,
-        );
+        logger.info(`${results.length} script${s} ran successfully`);
       }
     });
 };
