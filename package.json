@@ -1,6 +1,6 @@
 {
   "name": "bun-workspaces",
-  "version": "1.0.0-alpha.3",
+  "version": "1.0.0-alpha.4",
   "main": "src/index.ts",
   "homepage": "https://github.com/ScottMorse/bun-workspaces#readme",
   "bin": {
@@ -8,7 +8,7 @@
   },
   "custom": {
     "bunVersion": {
-      "build": "1.2.22",
+      "build": "1.3.0",
       "libraryConsumer": "^1.1.x"
     }
   },
@@ -21,20 +21,19 @@
     "format-check": "prettier --check ."
   },
   "devDependencies": {
-    "@types/bun": "^1.2.22",
-    "@typescript-eslint/eslint-plugin": "^8.44.1",
-    "@typescript-eslint/parser": "^8.44.1",
-    "bun-workspaces": "file:.",
-    "eslint": "^9.36.0",
+    "@types/bun": "^1.3.0",
+    "@typescript-eslint/eslint-plugin": "^8.46.0",
+    "@typescript-eslint/parser": "^8.46.0",
+    "eslint": "^9.37.0",
     "eslint-plugin-import": "^2.32.0",
     "prettier": "^3.6.2",
-    "typescript-eslint": "^8.44.1"
+    "typescript-eslint": "^8.46.0"
   },
   "dependencies": {
     "commander": "^12.1.0",
     "glob": "^11.0.3"
   },
   "peerDependencies": {
-    "typescript": "^5.9.2"
+    "typescript": "^5.9.3"
   }
 }
