@@ -94,7 +94,7 @@ if (import.meta.main) {
     }
 
     await runScript(["git", "tag", tag]);
-    await runScript(["git", "push", "origin", version]);
+    await runScript(["git", "push"]);
   }
 
   const releaseUrl =
