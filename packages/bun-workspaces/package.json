@@ -1,0 +1,24 @@
+{
+  "name": "bun-workspaces",
+  "version": "1.0.0-alpha.5",
+  "main": "src/index.ts",
+  "homepage": "https://github.com/ScottMorse/bun-workspaces#readme",
+  "custom": {
+    "bunVersion": {
+      "build": "1.3.0",
+      "libraryConsumer": "^1.1.x"
+    }
+  },
+  "bin": {
+    "bun-workspaces": "bin/cli.js"
+  },
+  "scripts": {
+    "cli": "bun --silent run bin/cli.js",
+    "cli:dev": "_BW_RUNTIME_MODE=development bun --silent run bin/cli.js",
+    "build": "rslib build",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format-check": "prettier --check ."
+  }
+}
