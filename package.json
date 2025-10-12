@@ -1,5 +1,6 @@
 {
-  "name": "@bun-workspaces/root",
+  "name": "root",
+  "private": true,
   "scripts": {
     "bw": "bun --silent --cwd=./packages/bun-workspaces",
     "lint": "eslint .",

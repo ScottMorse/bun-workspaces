@@ -1,6 +1,10 @@
 import path from "path";
 import { defineConfig } from "@rslib/core";
 
+const IS_TEST_BUILD = process.env.BUILD_INCLUDE_TESTS === "true";
+
+const DIST_PATH = IS_TEST_BUILD ? "dist.test/src" : "dist/src";
+
 export default defineConfig({
   lib: [
     {
@@ -14,7 +18,7 @@ export default defineConfig({
   ],
   output: {
     distPath: {
-      root: "dist/src",
+      root: DIST_PATH,
     },
     cleanDistPath: true,
     copy: [
@@ -30,6 +34,14 @@ export default defineConfig({
         from: path.resolve(__dirname, "bin"),
         to: "../bin",
       },
+      ...(IS_TEST_BUILD
+        ? [
+            {
+              from: path.resolve(__dirname, "tests"),
+              to: "../tests",
+            },
+          ]
+        : []),
     ],
   },
 });
