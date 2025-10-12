@@ -49,7 +49,7 @@ if (import.meta.main) {
 
     await Bun.write(
       getWorkspacePath("package.json"),
-      JSON.stringify(newPackage, null, 2),
+      JSON.stringify(newPackage, null, 2) + "\n",
     );
   }
 
@@ -67,16 +67,29 @@ if (import.meta.main) {
   if (IS_DRY_RUN) {
     await Bun.write(
       getWorkspacePath("package.json"),
-      JSON.stringify(oldPackage, null, 2),
+      JSON.stringify(oldPackage, null, 2) + "\n",
     );
   } else {
     if (isNewVersion) {
+      console.log("Updating package.json version");
+      await runScript([
+        "git",
+        "config",
+        "user.name",
+        "bun-workspaces[bot.publish-script]",
+      ]);
+      await runScript([
+        "git",
+        "config",
+        "user.email",
+        "bun-workspaces[bot.publish-script]@users.noreply.github.com",
+      ]);
       await runScript(["git", "add", "package.json"]);
       await runScript([
         "git",
         "commit",
         "-m",
-        "[Automated::publish script]: Updated version to " + version,
+        "[Automated::publish-script]: Update version to " + version,
       ]);
     }
 
