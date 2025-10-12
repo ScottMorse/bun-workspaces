@@ -20,5 +20,5 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cSpell.words": ["bunx", "rslib"]
+  "cSpell.words": ["bunx", "rslib", "rspress"]
 }
