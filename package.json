@@ -1,7 +1,11 @@
 {
   "name": "@bun-workspaces/root",
   "scripts": {
-    "bw": "bun --silent --cwd=./packages/bun-workspaces"
+    "bw": "bun --silent --cwd=./packages/bun-workspaces",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write .",
+    "format-check": "prettier --check ."
   },
   "devDependencies": {
     "@rslib/core": "^0.15.0",

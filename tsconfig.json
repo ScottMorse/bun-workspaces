@@ -24,5 +24,6 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
   },
-  "include": ["packages/bun-workspaces/src", "bin"]
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules", "dist/**/*"]
 }
