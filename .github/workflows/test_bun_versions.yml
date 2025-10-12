@@ -33,10 +33,10 @@ jobs:
         id: run-tests
         run: |
           export PATH="$HOME/.bun/bin:$PATH"
-          bun bw bun test
+          bun bw test
 
       - name: Run Tests Against Build
         id: run-tests-against-build
         run: |
           export PATH="$HOME/.bun/bin:$PATH"
-          bun bw bun build:test
+          bun bw build:test
