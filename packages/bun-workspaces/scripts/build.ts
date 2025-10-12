@@ -23,7 +23,7 @@ const createDesiredPackageJson = () => {
   return {
     name,
     version,
-    main,
+    main: main.replace(".ts", ".mjs"),
     homepage,
     bin,
     custom,

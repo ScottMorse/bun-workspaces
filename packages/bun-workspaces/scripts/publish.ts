@@ -90,5 +90,5 @@ if (import.meta.main) {
   console.log("\nPublished " + version + (IS_DRY_RUN ? " (dry run)" : ""));
   console.log("\nCreate a release at " + releaseUrl + "\n");
 
-  await runScript(["brave", releaseUrl]);
+  await runScript(["xdg-open", releaseUrl]);
 }
