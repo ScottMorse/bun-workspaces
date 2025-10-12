@@ -2,7 +2,12 @@
   "name": "bun-workspaces",
   "version": "1.0.0-alpha.5",
   "main": "src/index.ts",
-  "homepage": "https://github.com/ScottMorse/bun-workspaces#readme",
+  "private": true,
+  "homepage": "https://github.com/ScottMorse/bun-workspaces",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ScottMorse/bun-workspaces.git"
+  },
   "bin": {
     "bun-workspaces": "bin/cli.js"
   },
@@ -18,6 +23,8 @@
     "build": "bun run scripts/build.ts",
     "build:test": "BUILD_INCLUDE_TESTS=true bun run scripts/build.ts && bun --cwd=./dist.test test",
     "build:rslib-only": "rslib build",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "publish-build:dry-run": "DRY_RUN=true bun run scripts/publish.ts",
+    "publish-build:npm": "bun run scripts/publish.ts"
   }
 }

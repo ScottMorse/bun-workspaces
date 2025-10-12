@@ -31,11 +31,15 @@ const createDesiredPackageJson = () => {
   };
 };
 
-if (import.meta.main) {
+export const runBuild = async () => {
   await build(rsLibConfig);
 
   writeFileSync(
     PACKAGE_JSON_PATH,
     JSON.stringify(createDesiredPackageJson(), null, 2),
   );
+};
+
+if (import.meta.main) {
+  await runBuild();
 }
