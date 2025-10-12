@@ -1,10 +1,12 @@
 *ignore-me*
+dist.test
 
 # Enforce bun lockfile
 !bun.lockb
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+
 
 # Based on https://raw.githubusercontent.com/github/gitignore/main/Node.gitignore
 

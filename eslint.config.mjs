@@ -1,45 +1,76 @@
 import js from "@eslint/js";
+import { defineConfig, globalIgnores } from "eslint/config";
 import importPlugin from "eslint-plugin-import";
-import typescriptEslint from "typescript-eslint";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
-export default [
-  ...typescriptEslint.config(
-    js.configs.recommended,
-    typescriptEslint.configs.recommended,
-  ),
+const ALLOW_UNUSED_VARNAME_PATTERN = "^_";
+
+export default defineConfig([
+  globalIgnores(["**/*.js", "**/*.d.ts", "**/*.mjs", "**/dist/**/*"]),
   {
-    plugins: {
-      import: importPlugin,
+    name: "rootJs",
+    files: ["**/*.{js,mjs,cjs,ts,mts,cts}"],
+    plugins: { js },
+    extends: ["js/recommended"],
+    languageOptions: { globals: { ...globals.browser, ...globals.node } },
+    linterOptions: {
+      reportUnusedDisableDirectives: false,
+    },
+  },
+  ...tseslint.configs.recommended,
+  importPlugin.flatConfigs.recommended,
+  {
+    name: "baseConfig",
+    languageOptions: {
+      parserOptions: {
+        projectService: true,
+        allowDefaultProject: ["*.js", "*.mjs"],
+        tsconfigRootDir: process.cwd(),
+      },
     },
     rules: {
-      "@typescript-eslint/no-empty-interface": "off",
-      "@typescript-eslint/no-empty-function": "off",
+      "import/no-unresolved": "off",
+      "prefer-const": "error",
+      "@typescript-eslint/no-empty-interface": "warn",
+      "@typescript-eslint/no-empty-function": "warn",
       "no-empty": "warn",
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        { fixStyle: "inline-type-imports" },
+      ],
+      "@typescript-eslint/consistent-type-exports": [
+        "error",
+        { fixMixedExportsWithInlineTypeSpecifier: true },
+      ],
       "@typescript-eslint/no-extra-semi": "off",
-      "@typescript-eslint/no-explicit-any": "off",
-
+      "@typescript-eslint/no-explicit-any": "warn",
       "@typescript-eslint/no-unused-vars": [
         "warn",
         {
-          varsIgnorePattern: "^_",
-          argsIgnorePattern: "^_",
-          destructuredArrayIgnorePattern: "^_",
-          caughtErrorsIgnorePattern: "^_",
+          varsIgnorePattern: ALLOW_UNUSED_VARNAME_PATTERN,
+          argsIgnorePattern: ALLOW_UNUSED_VARNAME_PATTERN,
+          destructuredArrayIgnorePattern: ALLOW_UNUSED_VARNAME_PATTERN,
+          caughtErrorsIgnorePattern: ALLOW_UNUSED_VARNAME_PATTERN,
         },
       ],
-
       eqeqeq: "error",
-      "prefer-const": "error",
+      "no-console": "warn",
 
+      "import/no-dynamic-require": "warn",
       "import/order": [
         "warn",
         {
-          alphabetize: {
-            order: "asc",
-            caseInsensitive: true,
-          },
+          alphabetize: { order: "asc", caseInsensitive: true },
+          pathGroups: [
+            {
+              pattern: "@/**",
+              group: "external",
+              position: "after",
+            },
+          ],
         },
       ],
     },
   },
-];
+]);

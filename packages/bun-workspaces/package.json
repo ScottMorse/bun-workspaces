@@ -1,0 +1,30 @@
+{
+  "name": "bun-workspaces",
+  "version": "1.0.0-alpha.5",
+  "main": "src/index.ts",
+  "private": true,
+  "homepage": "https://github.com/ScottMorse/bun-workspaces",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ScottMorse/bun-workspaces.git"
+  },
+  "bin": {
+    "bun-workspaces": "bin/cli.js"
+  },
+  "custom": {
+    "bunVersion": {
+      "build": "1.3.0",
+      "libraryConsumer": "^1.1.x"
+    }
+  },
+  "scripts": {
+    "cli": "bun --silent run bin/cli.js",
+    "cli:dev": "_BW_RUNTIME_MODE=development bun --silent run bin/cli.js",
+    "build": "bun run scripts/build.ts",
+    "build:test": "BUILD_INCLUDE_TESTS=true bun run scripts/build.ts && bun --cwd=./dist.test test",
+    "build:rslib-only": "rslib build",
+    "type-check": "tsc --noEmit",
+    "publish-build:dry-run": "DRY_RUN=true bun run scripts/publish.ts",
+    "publish-build:npm": "bun run scripts/publish.ts"
+  }
+}

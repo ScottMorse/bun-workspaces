@@ -1,10 +1,10 @@
 import { test as _test, expect, describe, mock, spyOn } from "bun:test";
 import packageJson from "../package.json";
-import { CliProgram, createCliProgram } from "../src/cli/cli";
+import { type CliProgram, createCliProgram } from "../src/cli/cli";
 import { commandOutputLogger } from "../src/cli/projectCommands";
 import { logger } from "../src/internal/logger";
 import { createRawPattern } from "../src/internal/regex";
-import { createProject, Project } from "../src/project";
+import { createProject, type Project } from "../src/project";
 import { getProjectRoot } from "./testProjects";
 
 const createHandleErrorMock = () => mock((_error: Error) => void 0);

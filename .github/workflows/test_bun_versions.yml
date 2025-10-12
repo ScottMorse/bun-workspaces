@@ -14,13 +14,29 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Run tests with Bun ${{ matrix.bun_version }}
-        id: run-tests
+      - name: Install Bun ${{ matrix.bun_version }}
+        id: install-bun
         run: |
           bun_version=${{ matrix.bun_version }}
           echo "Installing Bun version: $bun_version"
           export BUN_INSTALL="$HOME/.bun"
           curl -fsSL https://bun.com/install | bash -s "bun-v$bun_version"
-          export PATH="$BUN_INSTALL/bin:$PATH"
+          export PATH="$HOME/.bun/bin:$PATH"
+
+      - name: Install Dependencies
+        id: install-deps
+        run: |
+          export PATH="$HOME/.bun/bin:$PATH"
           bun install
-          bun test
+
+      - name: Run Tests
+        id: run-tests
+        run: |
+          export PATH="$HOME/.bun/bin:$PATH"
+          bun bw test
+
+      - name: Run Tests Against Build
+        id: run-tests-against-build
+        run: |
+          export PATH="$HOME/.bun/bin:$PATH"
+          bun bw build:test

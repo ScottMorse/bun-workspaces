@@ -38,12 +38,23 @@ jobs:
         id: lint
         run: bun run lint
   test:
-    name: Test All
+    name: Run Tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - name: Setup Project
         uses: ./.github/actions/setup
-      - name: Run All Tests
+      - name: Run Tests
         id: test
-        run: bun test
+        run: bun --cwd=./packages/bun-workspaces test
+
+  test_build:
+    name: Run Tests Against Build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Project
+        uses: ./.github/actions/setup
+      - name: Run Tests
+        id: test
+        run: bun --cwd=./packages/bun-workspaces run build:test

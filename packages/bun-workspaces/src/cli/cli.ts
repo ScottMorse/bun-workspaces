@@ -1,4 +1,4 @@
-import { createCommand, Command } from "commander";
+import { createCommand, type Command } from "commander";
 import packageJson from "../../package.json";
 import {
   getRequiredBunVersion,
