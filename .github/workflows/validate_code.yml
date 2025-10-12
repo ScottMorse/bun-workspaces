@@ -46,7 +46,7 @@ jobs:
         uses: ./.github/actions/setup
       - name: Run Tests
         id: test
-        run: bun bw bun test
+        run: bun bw test
 
   test_build:
     name: Run Tests Against Build
@@ -57,4 +57,4 @@ jobs:
         uses: ./.github/actions/setup
       - name: Run Tests
         id: test
-        run: bun bw bun build:test
+        run: bun bw run build:test
