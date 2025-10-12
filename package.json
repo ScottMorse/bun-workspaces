@@ -12,7 +12,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
-    "format-check": "prettier --check ."
+    "format-check": "prettier --check .",
+    "type-check": "tsc --noEmit"
   },
   "devDependencies": {
     "@rslib/core": "^0.15.0",
