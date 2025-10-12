@@ -1,12 +1,6 @@
 {
   "name": "root",
   "private": true,
-  "custom": {
-    "bunVersion": {
-      "build": "1.3.0",
-      "libraryConsumer": "^1.1.x"
-    }
-  },
   "scripts": {
     "bw": "bun --silent --cwd=./packages/bun-workspaces",
     "lint": "eslint .",
