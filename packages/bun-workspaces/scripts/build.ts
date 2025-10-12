@@ -12,11 +12,11 @@ const PACKAGE_JSON_PATH = path.resolve(
 const ROOT_PACKAGE_JSON_PATH = path.resolve(__dirname, "../../../package.json");
 
 const createDesiredPackageJson = () => {
-  const { name, version, main, homepage, bin } = JSON.parse(
+  const { name, version, main, homepage, bin, custom } = JSON.parse(
     readFileSync(path.resolve(PACKAGE_JSON_PATH)).toString(),
   );
 
-  const { custom, dependencies } = JSON.parse(
+  const { dependencies } = JSON.parse(
     readFileSync(ROOT_PACKAGE_JSON_PATH).toString(),
   );
 
