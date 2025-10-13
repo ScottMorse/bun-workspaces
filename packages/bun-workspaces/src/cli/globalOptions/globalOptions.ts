@@ -1,31 +1,42 @@
 import path from "path";
 import { type Command, Option } from "commander";
-import { loadConfigFile, type BunWorkspacesConfig } from "../config";
-import { LOG_LEVELS, logger, type LogLevelSetting } from "../internal/logger";
-import { createProject } from "../project";
+import { loadConfigFile, type BunWorkspacesConfig } from "../../config";
+import { logger } from "../../internal/logger";
+import { createProject } from "../../project";
+import {
+  CLI_GLOBAL_OPTIONS_CONFIG,
+  type CliGlobalOptionName,
+  type CliGlobalOptions,
+} from "./globalOptionsConfig";
 
-export interface CliGlobalOptions {
-  logLevel: LogLevelSetting;
-  cwd: string;
-  configFile?: string;
-}
-
-export type CliGlobalOptionName = keyof CliGlobalOptions;
+const addGlobalOption = (
+  program: Command,
+  optionName: CliGlobalOptionName,
+  defaultOverride?: string,
+) => {
+  const { shortName, description, param, values, defaultValue } =
+    CLI_GLOBAL_OPTIONS_CONFIG[optionName];
+  const option = new Option(
+    `-${shortName} --${optionName}${param ? ` <${param}>` : ""}`,
+    description,
+  ).default(defaultOverride ?? defaultValue);
+  program.addOption(
+    values?.length ? option.choices(values as string[]) : option,
+  );
+};
 
 const getWorkingDirectory = (
   program: Command,
   args: string[],
   defaultCwd: string,
 ) => {
-  program.addOption(
-    new Option("-d --cwd <path>", "Working directory").default(defaultCwd),
-  );
+  addGlobalOption(program, "cwd", defaultCwd);
   program.parseOptions(args);
   return program.opts().cwd;
 };
 
 const getConfig = (program: Command, args: string[]) => {
-  program.addOption(new Option("-c --configFile <path>", "Config file"));
+  addGlobalOption(program, "configFile");
   program.parseOptions(args);
   return program.opts().configFile;
 };
@@ -41,37 +52,7 @@ const defineGlobalOptions = (
 
   const config = loadConfigFile(configFilePath, cwd);
 
-  const globalOptions: {
-    [K in Exclude<CliGlobalOptionName, "configFile" | "cwd">]: {
-      shortName: string;
-      description: string;
-      defaultValue: CliGlobalOptions[K];
-      values?: readonly CliGlobalOptions[K][];
-      param?: string;
-    };
-  } = {
-    logLevel: {
-      shortName: "l",
-      description: "Log levels",
-      defaultValue:
-        config?.cli?.logLevel ?? (logger.printLevel as LogLevelSetting),
-      values: [...LOG_LEVELS, "silent"],
-      param: "level",
-    },
-  };
-
-  Object.entries(globalOptions).forEach(
-    ([name, { shortName, description, param, values, defaultValue }]) => {
-      const option = new Option(
-        `-${shortName} --${name}${param ? ` <${param}>` : ""}`,
-        description,
-      ).default(defaultValue);
-
-      program.addOption(
-        values?.length ? option.choices(values as string[]) : option,
-      );
-    },
-  );
+  addGlobalOption(program, "logLevel");
 
   return { cwd, config };
 };

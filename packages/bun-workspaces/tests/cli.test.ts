@@ -1,7 +1,7 @@
 import { test as _test, expect, describe, mock, spyOn } from "bun:test";
 import packageJson from "../package.json";
-import { type CliProgram, createCliProgram } from "../src/cli/cli";
-import { commandOutputLogger } from "../src/cli/projectCommandHandlers";
+import { type CliProgram, createCli } from "../src/cli/createCli";
+import { commandOutputLogger } from "../src/cli/projectCommands";
 import { logger } from "../src/internal/logger";
 import { createRawPattern } from "../src/internal/regex";
 import { createProject, type Project } from "../src/project";
@@ -29,7 +29,7 @@ const test = (name: string, fn: (context: TestContext) => void, only = false) =>
   (only ? _test.only : _test)(name, async () => {
     const handleErrorSpy = createHandleErrorMock();
 
-    const cliProgram = createCliProgram({
+    const cliProgram = createCli({
       handleError: handleErrorSpy,
       postInit: (program) => program.exitOverride(),
       defaultCwd: getProjectRoot("default"),

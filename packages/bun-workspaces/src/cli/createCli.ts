@@ -6,7 +6,7 @@ import {
 } from "../internal/bunVersion";
 import { logger } from "../internal/logger";
 import { initializeWithGlobalOptions } from "./globalOptions";
-import { defineProjectCommands } from "./projectCommandHandlers";
+import { defineProjectCommands } from "./projectCommands";
 
 export interface RunCliOptions {
   argv?: string | string[];
@@ -22,7 +22,7 @@ export interface CreateCliProgramOptions {
   defaultCwd?: string;
 }
 
-export const createCliProgram = ({
+export const createCli = ({
   handleError,
   postInit,
   defaultCwd = process.cwd(),

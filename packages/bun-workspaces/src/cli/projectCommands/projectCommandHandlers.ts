@@ -1,8 +1,8 @@
 import { type Command } from "commander";
-import { BunWorkspacesError } from "../internal/error";
-import { logger, createLogger } from "../internal/logger";
-import type { Project } from "../project";
-import type { Workspace } from "../workspaces";
+import { BunWorkspacesError } from "../../internal/error";
+import { logger, createLogger } from "../../internal/logger";
+import type { Project } from "../../project";
+import type { Workspace } from "../../workspaces";
 import {
   PROJECT_COMMANDS_CONFIG,
   type ProjectCommandName,
