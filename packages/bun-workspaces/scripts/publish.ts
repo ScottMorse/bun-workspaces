@@ -72,21 +72,11 @@ if (import.meta.main) {
   } else {
     if (isNewVersion) {
       console.log("Updating package.json version");
-      await runScript([
-        "git",
-        "config",
-        "user.name",
-        "bun-workspaces[bot.publish-script]",
-      ]);
-      await runScript([
-        "git",
-        "config",
-        "user.email",
-        "bun-workspaces[bot.publish-script]@users.noreply.github.com",
-      ]);
       await runScript(["git", "add", "package.json"]);
       await runScript([
         "git",
+        "-c",
+        "user.name='bun-workspaces[bot.publish-script]'",
         "commit",
         "-m",
         "[Automated::publish-script]: Update version to " + version,
