@@ -31,6 +31,10 @@ export default defineConfig({
         to: "../README.md",
       },
       {
+        from: path.resolve(__dirname, "../../LICENSE.md"),
+        to: "../LICENSE.md",
+      },
+      {
         from: path.resolve(__dirname, "bin"),
         to: "../bin",
       },
