@@ -7,7 +7,8 @@ export interface CliGlobalOptions {
 }
 
 export interface CliGlobalOptionConfig {
-  shortName: string;
+  mainOption: string;
+  shortOption: string;
   description: string;
   defaultValue: string;
   values: LogLevelSetting[] | null;
@@ -16,21 +17,24 @@ export interface CliGlobalOptionConfig {
 
 export const CLI_GLOBAL_OPTIONS_CONFIG = {
   logLevel: {
-    shortName: "l",
+    mainOption: "--logLevel",
+    shortOption: "-l",
     description: "Log levels",
     defaultValue: "info",
     values: [...LOG_LEVELS, "silent"],
     param: "level",
   },
   cwd: {
-    shortName: "d",
+    mainOption: "--cwd",
+    shortOption: "-d",
     description: "Working directory",
     defaultValue: ".",
     values: null,
     param: "path",
   },
   configFile: {
-    shortName: "c",
+    mainOption: "--configFile",
+    shortOption: "-c",
     description: "Config file",
     defaultValue: "",
     values: null,

@@ -14,10 +14,10 @@ const addGlobalOption = (
   optionName: CliGlobalOptionName,
   defaultOverride?: string,
 ) => {
-  const { shortName, description, param, values, defaultValue } =
+  const { mainOption, shortOption, description, param, values, defaultValue } =
     CLI_GLOBAL_OPTIONS_CONFIG[optionName];
   const option = new Option(
-    `-${shortName} --${optionName}${param ? ` <${param}>` : ""}`,
+    `${shortOption} ${mainOption}${param ? ` <${param}>` : ""}`,
     description,
   ).default(defaultOverride ?? defaultValue);
   program.addOption(

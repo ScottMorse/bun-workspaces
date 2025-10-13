@@ -4,7 +4,7 @@ import { logger, createLogger } from "../../internal/logger";
 import type { Project } from "../../project";
 import type { Workspace } from "../../workspaces";
 import {
-  PROJECT_COMMANDS_CONFIG,
+  getProjectCommandConfig,
   type ProjectCommandName,
 } from "./projectCommandsConfig";
 
@@ -36,7 +36,7 @@ const handleCommand = <T extends unknown[]>(
   commandName: ProjectCommandName,
   handler: (context: ProjectCommandContext, ...actionArgs: T) => void,
 ) => {
-  const config = PROJECT_COMMANDS_CONFIG[commandName];
+  const config = getProjectCommandConfig(commandName);
   return ({ program, project }: ProjectCommandContext) => {
     program = program
       .command(config.command)

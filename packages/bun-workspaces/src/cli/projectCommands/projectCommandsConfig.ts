@@ -7,7 +7,7 @@ export interface ProjectCommandConfig {
 
 export type ProjectCommandName = keyof typeof PROJECT_COMMANDS_CONFIG;
 
-export const PROJECT_COMMANDS_CONFIG = {
+const PROJECT_COMMANDS_CONFIG = {
   listWorkspaces: {
     command: "list-workspaces [pattern]",
     aliases: ["ls", "list"],
@@ -100,3 +100,6 @@ export const PROJECT_COMMANDS_CONFIG = {
     },
   },
 } as const satisfies Record<string, ProjectCommandConfig>;
+
+export const getProjectCommandConfig = (commandName: ProjectCommandName) =>
+  PROJECT_COMMANDS_CONFIG[commandName];
