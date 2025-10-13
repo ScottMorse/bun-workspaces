@@ -19,6 +19,13 @@
         "typescript-eslint": "^8.46.0",
       },
     },
+    "packages/bun-workspaces": {
+      "name": "bun-workspaces",
+      "version": "1.0.0-alpha.7",
+      "bin": {
+        "bun-workspaces": "bin/cli.js",
+      },
+    },
   },
   "packages": {
     "@ast-grep/napi": ["@ast-grep/napi@0.37.0", "", { "optionalDependencies": { "@ast-grep/napi-darwin-arm64": "0.37.0", "@ast-grep/napi-darwin-x64": "0.37.0", "@ast-grep/napi-linux-arm64-gnu": "0.37.0", "@ast-grep/napi-linux-arm64-musl": "0.37.0", "@ast-grep/napi-linux-x64-gnu": "0.37.0", "@ast-grep/napi-linux-x64-musl": "0.37.0", "@ast-grep/napi-win32-arm64-msvc": "0.37.0", "@ast-grep/napi-win32-ia32-msvc": "0.37.0", "@ast-grep/napi-win32-x64-msvc": "0.37.0" } }, "sha512-Hb4o6h1Pf6yRUAX07DR4JVY7dmQw+RVQMW5/m55GoiAT/VRoKCWBtIUPPOnqDVhbx1Cjfil9b6EDrgJsUAujEQ=="],
@@ -244,6 +251,8 @@
     "bun-types": ["bun-types@1.3.0", "", { "dependencies": { "@types/node": "*" }, "peerDependencies": { "@types/react": "^19" } }, "sha512-u8X0thhx+yJ0KmkxuEo9HAtdfgCBaM/aI9K90VQcQioAmkVp3SG3FkwWGibUFz3WdXAdcsqOcbU40lK7tbHdkQ=="],
 
     "bun-workspaces": ["bun-workspaces@file:packages/bun-workspaces", { "bin": { "bun-workspaces": "bin/cli.js" } }],
+
+    "bun-workspaces": ["bun-workspaces@workspace:packages/bun-workspaces"],
 
     "call-bind": ["call-bind@1.0.8", "", { "dependencies": { "call-bind-apply-helpers": "^1.0.0", "es-define-property": "^1.0.0", "get-intrinsic": "^1.2.4", "set-function-length": "^1.2.2" } }, "sha512-oKlSFMcMwpUg2ednkhQ454wfWiU/ul3CkJe/PEHcTKuiX6RpbehUiFMXu13HalGZxfUwCQzZG747YXBn1im9ww=="],
 
