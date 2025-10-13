@@ -1,7 +1,7 @@
 import { test as _test, expect, describe, mock, spyOn } from "bun:test";
 import packageJson from "../package.json";
 import { type CliProgram, createCliProgram } from "../src/cli/cli";
-import { commandOutputLogger } from "../src/cli/projectCommands";
+import { commandOutputLogger } from "../src/cli/projectCommandHandlers";
 import { logger } from "../src/internal/logger";
 import { createRawPattern } from "../src/internal/regex";
 import { createProject, type Project } from "../src/project";

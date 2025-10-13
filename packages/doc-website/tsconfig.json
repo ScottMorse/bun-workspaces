@@ -15,7 +15,7 @@
     "useDefineForClassFields": true,
     "allowImportingTsExtensions": true
   },
-  "include": ["docs", "theme"],
+  "include": ["src"],
   "mdx": {
     "checkMdx": true
   }
