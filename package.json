@@ -1,6 +1,7 @@
 {
   "name": "root",
   "private": true,
+  "license": "MIT",
   "scripts": {
     "bw": "bun --silent --cwd=./packages/bun-workspaces",
     "lint": "eslint .",

@@ -16,13 +16,14 @@ const createDesiredPackageJson = () => {
     readFileSync(path.resolve(PACKAGE_JSON_PATH)).toString(),
   );
 
-  const { dependencies } = JSON.parse(
+  const { dependencies, license } = JSON.parse(
     readFileSync(ROOT_PACKAGE_JSON_PATH).toString(),
   );
 
   return {
     name,
     version,
+    license,
     main: main.replace(".ts", ".mjs"),
     types: main.replace(".ts", ".d.ts"),
     homepage,
