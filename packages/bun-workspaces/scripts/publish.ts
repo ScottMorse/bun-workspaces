@@ -98,7 +98,19 @@ if (import.meta.main) {
   }
 
   const releaseUrl =
-    packageJson.repository.url.replace(".git", "") + "/releases/new?tag=" + tag;
+    packageJson.repository.url.replace(".git", "") +
+    "/releases/new?tag=" +
+    tag +
+    "&title=" +
+    version +
+    "&body=" +
+    encodeURIComponent(`
+### Added
+
+### Changed
+
+### Removed
+`);
 
   console.log("\nPublished " + version + (IS_DRY_RUN ? " (dry run)" : ""));
   console.log("\nCreate a release at " + releaseUrl + "\n");

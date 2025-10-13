@@ -9,9 +9,7 @@ export default defineConfig({
   lib: [
     {
       format: "esm",
-      dts: {
-        tsgo: true,
-      },
+      dts: true,
       bundle: false,
       source: {
         include: ["src/**/*.ts"],
