@@ -4,9 +4,9 @@ import { loadConfigFile, type BunWorkspacesConfig } from "../../config";
 import { logger } from "../../internal/logger";
 import { createProject } from "../../project";
 import {
-  CLI_GLOBAL_OPTIONS_CONFIG,
   type CliGlobalOptionName,
   type CliGlobalOptions,
+  getCliGlobalOptionConfig,
 } from "./globalOptionsConfig";
 
 const addGlobalOption = (
@@ -15,7 +15,7 @@ const addGlobalOption = (
   defaultOverride?: string,
 ) => {
   const { mainOption, shortOption, description, param, values, defaultValue } =
-    CLI_GLOBAL_OPTIONS_CONFIG[optionName];
+    getCliGlobalOptionConfig(optionName);
   const option = new Option(
     `${shortOption} ${mainOption}${param ? ` <${param}>` : ""}`,
     description,

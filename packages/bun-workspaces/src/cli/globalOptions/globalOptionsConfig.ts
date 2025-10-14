@@ -15,7 +15,7 @@ export interface CliGlobalOptionConfig {
   param: string;
 }
 
-export const CLI_GLOBAL_OPTIONS_CONFIG = {
+const CLI_GLOBAL_OPTIONS_CONFIG = {
   logLevel: {
     mainOption: "--logLevel",
     shortOption: "-l",
@@ -43,3 +43,6 @@ export const CLI_GLOBAL_OPTIONS_CONFIG = {
 } as const satisfies Record<keyof CliGlobalOptions, CliGlobalOptionConfig>;
 
 export type CliGlobalOptionName = keyof CliGlobalOptions;
+
+export const getCliGlobalOptionConfig = (optionName: CliGlobalOptionName) =>
+  CLI_GLOBAL_OPTIONS_CONFIG[optionName];

@@ -2,7 +2,7 @@ export interface ProjectCommandConfig {
   command: string;
   aliases: string[];
   description: string;
-  options: Record<string, { flags: string; description: string }>;
+  options: Record<string, { flag: string; description: string }>;
 }
 
 export type ProjectCommandName = keyof typeof PROJECT_COMMANDS_CONFIG;
@@ -14,15 +14,15 @@ const PROJECT_COMMANDS_CONFIG = {
     description: "List all workspaces",
     options: {
       nameOnly: {
-        flags: "--name-only",
+        flag: "--name-only",
         description: "Only show workspace names",
       },
       json: {
-        flags: "--json",
+        flag: "--json",
         description: "Output as JSON",
       },
       pretty: {
-        flags: "--pretty",
+        flag: "--pretty",
         description: "Pretty print JSON",
       },
     },
@@ -33,15 +33,15 @@ const PROJECT_COMMANDS_CONFIG = {
     description: "List all scripts available with their workspaces",
     options: {
       nameOnly: {
-        flags: "--name-only",
+        flag: "--name-only",
         description: "Only show script names",
       },
       json: {
-        flags: "--json",
+        flag: "--json",
         description: "Output as JSON",
       },
       pretty: {
-        flags: "--pretty",
+        flag: "--pretty",
         description: "Pretty print JSON",
       },
     },
@@ -52,11 +52,11 @@ const PROJECT_COMMANDS_CONFIG = {
     description: "Show information about a workspace",
     options: {
       json: {
-        flags: "--json",
+        flag: "--json",
         description: "Output as JSON",
       },
       pretty: {
-        flags: "--pretty",
+        flag: "--pretty",
         description: "Pretty print JSON",
       },
     },
@@ -67,15 +67,15 @@ const PROJECT_COMMANDS_CONFIG = {
     description: "Show information about a script",
     options: {
       workspacesOnly: {
-        flags: "--workspaces-only",
+        flag: "--workspaces-only",
         description: "Only show script's workspace names",
       },
       json: {
-        flags: "--json",
+        flag: "--json",
         description: "Output as JSON",
       },
       pretty: {
-        flags: "--pretty",
+        flag: "--pretty",
         description: "Pretty print JSON",
       },
     },
@@ -86,15 +86,15 @@ const PROJECT_COMMANDS_CONFIG = {
     description: "Run a script in all workspaces",
     options: {
       parallel: {
-        flags: "--parallel",
+        flag: "--parallel",
         description: "Run the scripts in parallel",
       },
       args: {
-        flags: "--args <args>",
+        flag: "--args <args>",
         description: "Args to append to the script command",
       },
       noPrefix: {
-        flags: "--noPrefix",
+        flag: "--noPrefix",
         description: "Do not prefix the workspace name to the script output",
       },
     },

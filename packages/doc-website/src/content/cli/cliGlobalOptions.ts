@@ -1,67 +1,55 @@
 import {
-  CLI_GLOBAL_OPTIONS_CONFIG,
+  getCliGlobalOptionConfig,
   type CliGlobalOptionConfig,
   type CliGlobalOptionName,
 } from "bun-workspaces/src/cli/globalOptions";
+import type { CliOptionContent } from "./cliOption";
 
-export interface CliExample {
-  bashLines: string[];
-}
+export type CliGlobalOptionContent = CliGlobalOptionConfig & CliOptionContent;
 
-export interface CliGlobalOptionContent {
-  description: string;
-  examples: CliExample[];
-}
-
-const createOptionContent = (
+const defineOptionContent = (
   optionName: CliGlobalOptionName,
-  factory: (optionConfig: CliGlobalOptionConfig) => CliGlobalOptionContent,
-) => ({
-  ...CLI_GLOBAL_OPTIONS_CONFIG[optionName],
-  ...factory(CLI_GLOBAL_OPTIONS_CONFIG[optionName]),
-});
+  factory: (optionConfig: CliGlobalOptionConfig) => CliOptionContent,
+): CliGlobalOptionContent => {
+  const config = getCliGlobalOptionConfig(optionName);
+  return {
+    ...config,
+    ...factory(config),
+  };
+};
 
 const CLI_GLOBAL_OPTIONS_CONTENT = {
-  configFile: createOptionContent(
+  configFile: defineOptionContent(
     "configFile",
     ({ mainOption, shortOption }) => ({
-      description: "Use this option to point to a config file.",
+      title: "Config File (bw.json)",
+      description:
+        "Use this option to point to a config file. Otherwise ./bw.json is used by default.",
       examples: [
-        {
-          bashLines: [
-            `bw ${mainOption}=/path/to/your/config.json list-workspaces`,
-            `bw ${shortOption} /path/to/your/config.json list-workspaces`,
-          ],
-        },
+        `bw ${mainOption}=/path/to/your/config.json list-workspaces`,
+        `bw ${shortOption} /path/to/your/config.json list-workspaces`,
       ],
     }),
   ),
-  cwd: createOptionContent("cwd", ({ mainOption, shortOption }) => ({
-    description: "Use this option to point to a config file.",
+  cwd: defineOptionContent("cwd", ({ mainOption, shortOption }) => ({
+    title: "Working Directory",
+    description:
+      "Get the project root from a specific directory. This should be where the root package.json of your project is located.",
     examples: [
-      {
-        bashLines: [
-          `bw ${mainOption}=/path/to/your/project list-workspaces`,
-          `bw ${shortOption} /path/to/your/project list-workspaces`,
-        ],
-      },
+      `bw ${mainOption}=/path/to/your/project list-workspaces`,
+      `bw ${shortOption} /path/to/your/project list-workspaces`,
     ],
   })),
-  logLevel: createOptionContent("logLevel", ({ mainOption, shortOption }) => ({
-    description: "Use this option to point to a config file.",
+  logLevel: defineOptionContent("logLevel", ({ mainOption, shortOption }) => ({
+    title: "Log Level",
+    description:
+      "Set the logging level. Script output of workspaces is always preserved except when log level is set to silent",
     examples: [
-      {
-        bashLines: [
-          `bw ${mainOption}=silent list-workspaces`,
-          `bw ${shortOption} error list-workspaces`,
-        ],
-      },
+      `bw ${mainOption}=silent list-workspaces`,
+      `bw ${shortOption} error list-workspaces`,
     ],
   })),
-} as const satisfies Record<
-  CliGlobalOptionName,
-  CliGlobalOptionContent & CliGlobalOptionConfig
->;
+} as const satisfies Record<CliGlobalOptionName, CliGlobalOptionContent>;
 
-export const getCliGlobalOptionContent = (optionName: CliGlobalOptionName) =>
+export const getCliOptionContent = (optionName: CliGlobalOptionName) =>
   CLI_GLOBAL_OPTIONS_CONTENT[optionName];
