@@ -83,7 +83,8 @@ const PROJECT_COMMANDS_CONFIG = {
   runScript: {
     command: "run <script> [workspaces...]",
     aliases: [],
-    description: "Run a script in all workspaces",
+    description:
+      'Run a script in all workspaces that have it in their "scripts" field in package.json',
     options: {
       parallel: {
         flag: "--parallel",

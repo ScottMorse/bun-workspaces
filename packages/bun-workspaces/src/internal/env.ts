@@ -1,8 +1,13 @@
+const _process =
+  typeof process === "undefined"
+    ? { env: {} as Record<string, string> }
+    : process;
+
 const RUNTIME_MODE_VALUES = ["development", "production", "test"] as const;
 
 export type RuntimeMode = "development" | "production" | "test";
 
-const _RUNTIME_MODE: RuntimeMode = ((process.env
+const _RUNTIME_MODE: RuntimeMode = ((_process.env
   ._BW_RUNTIME_MODE as RuntimeMode) ||
   (process.env.NODE_ENV?.match(/test(ing)?/)
     ? "test"

@@ -1,0 +1,17 @@
+
+.code-block {
+  padding: 0.5rem;
+  line-height: 1.2;
+  background-color: var(--rp-code-block-bg);
+  border-radius: 0.5rem;
+  margin: 0.25rem 0;
+}
+
+.code-block-prefix {
+  color: #777;
+  user-select: none;
+}
+
+.code-comment {
+  color: #777;
+}

@@ -3,7 +3,7 @@ export interface CliExample {
 }
 
 export interface CliOptionContent {
-  title: string;
-  description: string;
+  title: React.ReactNode;
+  description: React.ReactNode;
   examples: string[];
 }

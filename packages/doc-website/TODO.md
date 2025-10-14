@@ -1,0 +1,20 @@
+- Home page
+  - General package description
+  - Quick examples
+  - Link to CLI
+  - Link to API
+- CLI page
+  - Overview of bw vs bunx
+- API page
+  - Exists once API exports more well-defined/stable
+- Search
+  - Custom rspress search hooks needed for dynamic docs
+- Favicon
+- Test examples
+  - Run actual CLI tests on examples from config?
+- Deployment
+  - GitHub/AWS integration for short-lived credentials per workflow
+  - Dev/production GitHub environments
+  - Include build number in site
+  - Static website CDK script + workflow
+  - Deployment script + workflow

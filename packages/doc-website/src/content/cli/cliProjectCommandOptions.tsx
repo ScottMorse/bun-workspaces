@@ -5,22 +5,34 @@ import {
 } from "bun-workspaces/src/cli/projectCommands/projectCommandsConfig";
 import type { CliOptionContent } from "./cliOption";
 
-export type CliProjectCommandContent = ProjectCommandConfig & CliOptionContent;
+export type CliProjectCommandContent = Omit<
+  ProjectCommandConfig,
+  "description"
+> &
+  CliOptionContent & {
+    optionName: ProjectCommandName;
+  };
 
 const defineOptionContent = (
   optionName: ProjectCommandName,
-  factory: (optionConfig: ProjectCommandConfig) => CliOptionContent,
+  factory: (optionConfig: ProjectCommandConfig) => CliOptionContent
 ): CliProjectCommandContent => {
   const config = getProjectCommandConfig(optionName);
   const content = factory(config);
 
   const exampleLines = content.examples.filter(
-    (example) => example.trim() && !example.match(/^\s*#/),
+    (example) => example.trim() && !example.match(/^\s*#/)
   );
 
+  const getMainFlag = (flag: string) => {
+    return flag.trim().split(" ")[0];
+  };
+
   for (const option of Object.values(config.options)) {
-    if (!exampleLines.find((line) => line.includes(option.flag))) {
-      throw new Error(`Expected an example to include ${option.flag}`);
+    if (!exampleLines.find((line) => line.includes(getMainFlag(option.flag)))) {
+      throw new Error(
+        `Expected an example to include ${getMainFlag(option.flag)}`
+      );
     }
   }
 
@@ -28,7 +40,7 @@ const defineOptionContent = (
     !exampleLines.find((line) => {
       // line that uses no flags
       return Object.values(config.options).every(
-        (option) => !line.includes(option.flag),
+        (option) => !line.includes(getMainFlag(option.flag))
       );
     })
   ) {
@@ -36,6 +48,7 @@ const defineOptionContent = (
   }
 
   return {
+    optionName,
     ...config,
     ...factory(config),
   };
@@ -98,6 +111,9 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
       "# Default output. Shows metadata about a script",
       `bw script-info my-script`,
       "",
+      "# Output only the list of workspaces that have the script",
+      `bw script-info my-script --workspaces-only`,
+      "",
       "# Output as JSON",
       `bw script-info --json`,
       "",
@@ -107,7 +123,13 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
   })),
   runScript: defineOptionContent("runScript", () => ({
     title: "Run Script",
-    description: "Run a script in all workspaces",
+    description: (
+      <>
+        Run a script in all workspaces that have it in their{" "}
+        <code>"scripts"</code> field in their respective{" "}
+        <code>package.json</code>.
+      </>
+    ),
     examples: [
       "# Run a script for all workspaces that have it in their `scripts` field",
       `bw run-script my-script`,
@@ -126,9 +148,18 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
       "",
       "# Run a script for workspaces using wildcard (does not take into account workspace aliases)",
       `bw run-script my-script my-workspace-*"`,
+      "",
+      "# Append args to each script call",
+      `bw run-script my-script --args="--my args"`,
+      "",
+      "# Use the workspace name in args",
+      `bw run-script my-script --args="--my --arg=<workspace>"`,
     ],
   })),
 } as const satisfies Record<ProjectCommandName, CliProjectCommandContent>;
 
 export const getCliProjectCommandContent = (commandName: ProjectCommandName) =>
   CLI_PROJECT_COMMAND_OPTIONS_CONTENT[commandName];
+
+export const getCliProjectCommandsContent = () =>
+  Object.values(CLI_PROJECT_COMMAND_OPTIONS_CONTENT);
