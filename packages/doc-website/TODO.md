@@ -1,7 +1,4 @@
 - Home page
-  - General package description
-  - Quick examples
-  - Link to CLI
   - Link to API
 - meta tags
 - CLI page

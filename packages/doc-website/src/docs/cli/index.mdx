@@ -1,5 +1,5 @@
 ---
-title: CLI | bun-workspaces
+title: CLI | bun-workspaces Documentation
 pageType: doc
 sidebar: false
 footer: false
@@ -11,6 +11,11 @@ import {
 } from "../../content/cli";
 
 # CLI Usage
+
+<div className="note">
+Note: Examples use `bw` instead of `bunx bun-workspaces`, which works assuming you have either run `alias bw="bunx bun-workspaces"` or placed it in your shell configuration file.
+
+</div>
 
 ## Global Options
 
@@ -41,10 +46,6 @@ import {
       <p>{option.description}</p>
       <h5><em>Examples:</em></h5>
       <div className="code-block"  >
-      <div>
-      <code><span className="code-block-prefix">$ </span><span className="code-comment"># alias bw="bunx bun-workspaces"</span></code>
-      </div>
-      <code><span className="code-block-prefix">$ </span></code>
         {option.examples.map((example, i) => (
           <div key={'example-' + 'cli-global-option-' + option.optionName + '-' + i}>
            <code className={example.trim().startsWith("#") ? "code-comment" : ""} key={example}><span className="code-block-prefix">$ </span>{example}</code>
@@ -91,10 +92,6 @@ import {
       )}
       <h5><em>Examples:</em></h5>
       <div className="code-block"  >
-      <div>
-      <code><span className="code-block-prefix">$ </span><span className="code-comment"># alias bw="bunx bun-workspaces"</span></code>
-      </div>
-      <code><span className="code-block-prefix">$ </span></code>
         {command.examples.map((example, i) => (
           <div key={'example-' + 'cli-global-option-' + command.optionName + '-' + i}>
            <code key={example}><span className="code-block-prefix">$ </span><span className={example.trim().startsWith("#") ? "code-comment" : ""}>{example}</span></code>

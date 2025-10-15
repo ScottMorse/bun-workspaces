@@ -1,10 +1,10 @@
 import Theme from "rspress/theme";
 
-const Layout = () => <Theme.Layout beforeNavTitle={<div>TODO</div>} />;
+const Layout = () => <Theme.Layout />;
+
+export * from "rspress/theme";
 
 export default {
   ...Theme,
   Layout,
 };
-
-export * from "rspress/theme";
