@@ -1,4 +1,5 @@
 ---
+title: CLI | bun-workspaces
 pageType: doc
 sidebar: false
 footer: false
@@ -17,7 +18,7 @@ import {
 {getCliGlobalOptionsContent().map((option) => (
 
 <div key={"cli-global-option-" + option.optionName}>
-<h3>{option.title}</h3>
+<h3 id={`global-option-${option.optionName}`}>{option.title}</h3>
 
       <p>
         <code>{option.mainOption}</code> |{" "}

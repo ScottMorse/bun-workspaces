@@ -3,6 +3,7 @@
   - Quick examples
   - Link to CLI
   - Link to API
+- meta tags
 - CLI page
   - Overview of bw vs bunx
 - API page
