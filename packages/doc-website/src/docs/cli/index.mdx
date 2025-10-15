@@ -1,5 +1,5 @@
 ---
-title: CLI | bun-workspaces Documentation
+title: CLI | bun-workspaces
 pageType: doc
 sidebar: false
 footer: false
@@ -9,6 +9,7 @@ import {
   getCliGlobalOptionsContent,
   getCliProjectCommandsContent,
 } from "../../content/cli";
+import { getCommandId, getGlobalOptionId } from "./searchIds";
 
 # CLI Usage
 
@@ -22,8 +23,8 @@ Note: Examples use `bw` instead of `bunx bun-workspaces`, which works assuming y
 <div style={{ marginBottom: "3rem" }}>
 {getCliGlobalOptionsContent().map((option) => (
 
-<div key={"cli-global-option-" + option.optionName}>
-<h3 id={`global-option-${option.optionName}`}>{option.title}</h3>
+<div key={getGlobalOptionId(option)}>
+  <h3 id={getGlobalOptionId(option)}>{option.title}</h3>
 
       <p>
         <code>{option.mainOption}</code> |{" "}
@@ -62,8 +63,8 @@ Note: Examples use `bw` instead of `bunx bun-workspaces`, which works assuming y
 
 {getCliProjectCommandsContent().map((command) => (
 
-<div key={"cli-command-" + command.title}>
-<h3>{command.title}</h3>
+<div key={ getCommandId(command) }>
+ <h3 id={ getCommandId(command) }>{command.title}</h3>
 
       <p>
         <code>{command.command}</code>

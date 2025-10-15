@@ -6,7 +6,7 @@
 - API page
   - Exists once API exports more well-defined/stable
 - Search
-  - Custom rspress search hooks needed for dynamic docs
+  - Improve highlighting and sorting of CLI search results (search.tsx)
 - Favicon
 - Test examples
   - Run actual CLI tests on examples from config?
@@ -16,3 +16,4 @@
   - Include build number in site
   - Static website CDK script + workflow
   - Deployment script + workflow
+    a

@@ -1,17 +1,19 @@
 import path from "path";
 import { defineConfig } from "rspress/config";
-import packageJson from "../bun-workspaces/package.json";
 
 export default defineConfig({
   root: "src/docs",
   themeDir: "src/theme",
-  title: "bun-workspaces Documentation",
+  title: "bun-workspaces",
   globalStyles: path.resolve("src/theme/css/global.css"),
   description:
     "Documentation for bun-workspaces: A CLI to help manage Bun workspaces",
   icon: "/bw-plain.ico",
   logo: "/bw-plain.png",
   logoText: `bun-workspaces`,
+  search: {
+    searchHooks: path.join(__dirname, "src/search/search.tsx"),
+  },
   themeConfig: {
     nav: [
       {

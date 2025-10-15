@@ -75,7 +75,7 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
   listWorkspaces: defineOptionContent("listWorkspaces", () => ({
     title: "List Workspaces",
     description:
-      "List all workspaces found in the project. This uses the `workspaces` field in your root package.json file.",
+      'List all workspaces found in the project. This uses the "workspaces" field in your root package.json file.',
     examples: [
       "# Default output. Shows metadata about workspaces found in all workspaces",
       `bw list-workspaces`,
@@ -123,13 +123,8 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
   })),
   runScript: defineOptionContent("runScript", () => ({
     title: "Run Script",
-    description: (
-      <>
-        Run a script in all workspaces that have it in their{" "}
-        <code>"scripts"</code> field in their respective{" "}
-        <code>package.json</code>.
-      </>
-    ),
+    description:
+      'Run a script in all workspaces that have it in their "scripts" field in their respective package.json.',
     examples: [
       "# Run a script for all workspaces that have it in their `scripts` field",
       `bw run-script my-script`,

@@ -30,12 +30,8 @@ const CLI_GLOBAL_OPTIONS_CONTENT = {
     "configFile",
     ({ mainOption, shortOption }) => ({
       title: "Config File",
-      description: (
-        <>
-          Use this option to point to a config file. Otherwise,{" "}
-          <code>./bw.json</code> is used by default.
-        </>
-      ),
+      description:
+        "Use this option to point to a config file. Otherwise, ./bw.json is used by default.",
       examples: [
         `bw ${mainOption}=/path/to/your/config.json list-workspaces`,
         `bw ${shortOption} /path/to/your/config.json list-workspaces`,
@@ -44,12 +40,8 @@ const CLI_GLOBAL_OPTIONS_CONTENT = {
   ),
   cwd: defineOptionContent("cwd", ({ mainOption, shortOption }) => ({
     title: "Working Directory",
-    description: (
-      <>
-        Get the project root from a specific directory. This should be where the
-        root <code>package.json</code> of your project is located.
-      </>
-    ),
+    description:
+      "Get the project root from a specific directory. This should be where the root package.json of your project is located.",
     examples: [
       `bw ${mainOption}=/path/to/your/project list-workspaces`,
       `bw ${shortOption} /path/to/your/project list-workspaces`,
@@ -57,12 +49,8 @@ const CLI_GLOBAL_OPTIONS_CONTENT = {
   })),
   logLevel: defineOptionContent("logLevel", ({ mainOption, shortOption }) => ({
     title: "Log Level",
-    description: (
-      <>
-        Set the logging level. Script output of workspaces is always preserved
-        except when log level is set to <code>silent</code>.
-      </>
-    ),
+    description:
+      'Set the logging level. Script output of workspaces is always preserved, except when log level is set to "silent".',
     examples: [
       `bw ${mainOption}=silent list-workspaces`,
       `bw ${shortOption} error list-workspaces`,
