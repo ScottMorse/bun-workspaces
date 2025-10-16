@@ -1,5 +1,8 @@
 import path from "path";
 import { defineConfig } from "rspress/config";
+import packageJson from "../bun-workspaces/package.json";
+
+const repoBaseUrl = packageJson.repository.url.replace(".git", "");
 
 export default defineConfig({
   root: "src/docs",
@@ -14,12 +17,25 @@ export default defineConfig({
   search: {
     searchHooks: path.join(__dirname, "src/search/search.tsx"),
   },
+  builderConfig: {
+    output: {
+      cleanDistPath: true,
+    },
+  },
   themeConfig: {
+    socialLinks: [
+      {
+        icon: "github",
+        mode: "link",
+        content: repoBaseUrl,
+      },
+    ],
     nav: [
       {
         text: "CLI Usage",
         link: "/cli/index.html",
         position: "left",
+        activeMatch: "/cli",
         items: [
           {
             text: "Global Options",
@@ -35,10 +51,11 @@ export default defineConfig({
         text: "Configuration",
         link: "/config/index.html",
         position: "left",
+        activeMatch: "/config",
       },
       {
         text: "Changelog",
-        link: "https://github.com/ScottMorse/bun-workspaces/releases",
+        link: `${repoBaseUrl}/releases`,
         position: "left",
       },
     ],
