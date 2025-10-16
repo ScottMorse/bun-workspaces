@@ -22,7 +22,7 @@ export interface CreateCliProgramOptions {
   defaultCwd?: string;
 }
 
-export const createCliProgram = ({
+export const createCli = ({
   handleError,
   postInit,
   defaultCwd = process.cwd(),

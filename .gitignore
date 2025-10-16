@@ -1,5 +1,6 @@
 *ignore-me*
 dist.test
+doc_build
 
 # Enforce bun lockfile
 !bun.lockb

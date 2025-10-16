@@ -4,6 +4,10 @@
   },
   "eslint.codeActionsOnSave.rules": ["import/order"],
   "eslint.validate": ["javascript", "typescript"],
+  "[mdx]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
   "[typescript]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
@@ -20,5 +24,5 @@
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "cSpell.words": ["bunx", "rslib"]
+  "cSpell.words": ["bunx", "rslib", "rspress"]
 }

@@ -1,0 +1,104 @@
+---
+title: CLI | bun-workspaces
+pageType: doc
+sidebar: false
+footer: false
+---
+
+import {
+  getCliGlobalOptionsContent,
+  getCliProjectCommandsContent,
+} from "../../content/cli";
+import { getCommandId, getGlobalOptionId } from "../../content/cli/searchIds";
+
+# CLI Usage
+
+<div className="note">
+Note: Examples use `bw` instead of `bunx bun-workspaces`, which works assuming you have either run `alias bw="bunx bun-workspaces"` or placed it in your shell configuration file.
+
+</div>
+
+## Global Options
+
+<div style={{ marginBottom: "3rem" }}>
+{getCliGlobalOptionsContent().map((option) => (
+
+<div key={getGlobalOptionId(option)}>
+  <h3 id={getGlobalOptionId(option)}>{option.title}</h3>
+
+      <p>
+        <code>{option.mainOption}</code> |{" "}
+        <code>{option.shortOption}</code>{" "}
+      </p>
+      {option.values?.length ? (
+        <p>
+          Values: {option.values.map((value) => <code style={{ marginRight: "0.25rem" }}>{value}</code>)}
+        </p>
+      ) : (
+        ""
+      )}
+      {option.defaultValue ? (
+        <p>
+          Default: <code>{option.defaultValue}</code>
+        </p>
+      ) : (
+        ""
+      )}
+      <p>{option.description}</p>
+      <h5><em>Examples:</em></h5>
+      <div className="code-block"  >
+        {option.examples.map((example, i) => (
+          <div key={'example-' + 'cli-global-option-' + option.optionName + '-' + i}>
+           <code className={example.trim().startsWith("#") ? "code-comment" : ""} key={example}><span className="code-block-prefix">$ </span>{example}</code>
+          </div>
+        ))}
+      </div>
+    </div>
+
+))}
+
+</div>
+
+## Commands
+
+{getCliProjectCommandsContent().map((command) => (
+
+<div key={ getCommandId(command) }>
+ <h3 id={ getCommandId(command) }>{command.title}</h3>
+
+      <p>
+        <code>{command.command}</code>
+      </p>
+      {command.aliases?.length ? (
+        <p>
+          Aliases: {command.aliases.map((value) => <code style={{ marginRight: "0.25rem" }}>{value}</code>)}
+        </p>
+      ) : (
+        ""
+      )}
+      <p style={{ marginBottom: "0" }}>{command.description}</p>
+      {Object.values(command.options)?.length ? (
+        <div style={{ marginTop: "1rem" }}>
+        <h5><em>Options:</em></h5>
+        <div style={{ marginTop: "0.25rem", marginBottom: "0.75rem" }}>
+          {Object.values(command.options).map((option) => (
+           <div key={"cli-command-option-" + command.command + "-" + option.flag}>
+            <p style={{ margin: "0" }}><code>{option.flag}</code> {option.description}</p>
+           </div>
+          ))}
+        </div>
+        </div>
+      ) : (
+        ""
+      )}
+      <h5><em>Examples:</em></h5>
+      <div className="code-block"  >
+        {command.examples.map((example, i) => (
+          <div key={'example-' + 'cli-global-option-' + command.optionName + '-' + i}>
+           <code key={example}><span className="code-block-prefix">$ </span><span className={example.trim().startsWith("#") ? "code-comment" : ""}>{example}</span></code>
+          </div>
+        ))}
+      </div>
+    </div>
+
+))}

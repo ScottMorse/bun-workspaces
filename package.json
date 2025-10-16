@@ -1,17 +1,19 @@
 {
-  "name": "root",
+  "name": "@bw/root",
   "private": true,
   "license": "MIT",
   "workspaces": [
-    "packages/*"
+    "packages/bun-workspaces"
   ],
   "scripts": {
     "bw": "bun --silent --cwd=./packages/bun-workspaces",
+    "docs": "bun --silent --cwd=./packages/doc-website",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format-check": "prettier --check .",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepare": "bun --cwd=./packages/doc-website install --frozen-lockfile # cannot install as normal workspace (rspress/rslib dep conflicts)"
   },
   "devDependencies": {
     "@rslib/core": "^0.15.0",

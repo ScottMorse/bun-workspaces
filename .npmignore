@@ -1,7 +1,0 @@
-.editorconfig
-tests/
-.github/
-*ignore-me*
-.vscode
-*.tgz
-eslint.config.mjs

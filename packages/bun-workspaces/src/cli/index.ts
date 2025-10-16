@@ -1,1 +1,1 @@
-export { createCliProgram as createCli } from "./cli";
+export { createCli } from "./createCli";

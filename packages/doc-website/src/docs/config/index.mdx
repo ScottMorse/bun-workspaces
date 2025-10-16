@@ -1,0 +1,26 @@
+---
+title: Configuration | bun-workspaces
+pageType: doc
+sidebar: false
+outline: false
+footer: false
+---
+
+import { exampleConfig } from "../../content/cli/exampleConfig";
+
+# Config File (bw.json)
+
+You can create a config file at `bw.json` in your project root,
+or you can pass a config file to the CLI with the `--configFile` (or `-c`) [option](/cli#global-option-configFile).
+
+#### Example config
+
+In this config, "app-a" is an alias for package "@my-org/application-a"
+and "app-b" is an alias for package "@my-org/application-b".
+
+The default
+[log level](/cli#global-option-logLevel) can be set for the CLI as well.
+
+<div className="code-block">
+  <pre>{JSON.stringify(exampleConfig, null, 2)}</pre>
+</div>
