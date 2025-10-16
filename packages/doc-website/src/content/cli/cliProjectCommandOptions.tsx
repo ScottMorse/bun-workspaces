@@ -29,9 +29,11 @@ const defineOptionContent = (
   };
 
   for (const option of Object.values(config.options)) {
-    if (!exampleLines.find((line) => line.includes(getMainFlag(option.flag)))) {
+    if (
+      !exampleLines.find((line) => line.includes(getMainFlag(option.flags)))
+    ) {
       throw new Error(
-        `Expected an example to include ${getMainFlag(option.flag)}`,
+        `Expected an example to include ${getMainFlag(option.flags)}`,
       );
     }
   }
@@ -40,7 +42,7 @@ const defineOptionContent = (
     !exampleLines.find((line) => {
       // line that uses no flags
       return Object.values(config.options).every(
-        (option) => !line.includes(getMainFlag(option.flag)),
+        (option) => !line.includes(getMainFlag(option.flags)),
       );
     })
   ) {

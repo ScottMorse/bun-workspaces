@@ -8,7 +8,6 @@
     "deploy-build": "bun run build && aws s3 sync ./doc_build s3:/$BW_DOC_S3_BUCKET_NAME --delete && aws cloudfront create-invalidation --distribution-id $BW_DOC_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'"
   },
   "devDependencies": {
-    "rspress": "^1.45.6",
-    "bun-workspaces": "file:../bun-workspaces"
+    "rspress": "^1.45.6"
   }
 }
