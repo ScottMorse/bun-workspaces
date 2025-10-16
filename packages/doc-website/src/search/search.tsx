@@ -31,7 +31,7 @@ const onSearch: OnSearch = async (query, defaultResult) => {
       matches(command.optionName, query) ||
       Object.values(command.options).some(
         (option) =>
-          matches(option.flag, query) || matches(option.description, query)
+          matches(option.flag, query) || matches(option.description, query),
       )
     ) {
       defaultResult[0].result?.push({

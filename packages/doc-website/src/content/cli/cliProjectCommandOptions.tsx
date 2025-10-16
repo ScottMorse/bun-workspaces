@@ -15,13 +15,13 @@ export type CliProjectCommandContent = Omit<
 
 const defineOptionContent = (
   optionName: ProjectCommandName,
-  factory: (optionConfig: ProjectCommandConfig) => CliOptionContent
+  factory: (optionConfig: ProjectCommandConfig) => CliOptionContent,
 ): CliProjectCommandContent => {
   const config = getProjectCommandConfig(optionName);
   const content = factory(config);
 
   const exampleLines = content.examples.filter(
-    (example) => example.trim() && !example.match(/^\s*#/)
+    (example) => example.trim() && !example.match(/^\s*#/),
   );
 
   const getMainFlag = (flag: string) => {
@@ -31,7 +31,7 @@ const defineOptionContent = (
   for (const option of Object.values(config.options)) {
     if (!exampleLines.find((line) => line.includes(getMainFlag(option.flag)))) {
       throw new Error(
-        `Expected an example to include ${getMainFlag(option.flag)}`
+        `Expected an example to include ${getMainFlag(option.flag)}`,
       );
     }
   }
@@ -40,7 +40,7 @@ const defineOptionContent = (
     !exampleLines.find((line) => {
       // line that uses no flags
       return Object.values(config.options).every(
-        (option) => !line.includes(getMainFlag(option.flag))
+        (option) => !line.includes(getMainFlag(option.flag)),
       );
     })
   ) {
