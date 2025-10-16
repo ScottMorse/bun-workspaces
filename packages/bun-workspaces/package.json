@@ -3,7 +3,7 @@
   "version": "1.0.0-alpha.8",
   "main": "src/index.ts",
   "private": true,
-  "homepage": "https://github.com/ScottMorse/bun-workspaces",
+  "homepage": "https://bunworkspaces.com",
   "repository": {
     "type": "git",
     "url": "https://github.com/ScottMorse/bun-workspaces.git"
