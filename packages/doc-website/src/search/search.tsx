@@ -8,13 +8,13 @@ import {
   getCliGlobalOptionsContent,
   getCliProjectCommandsContent,
 } from "../content/cli";
-import { getCommandId, getGlobalOptionId } from "../docs/cli/searchIds";
+import { getCommandId, getGlobalOptionId } from "../content/cli/searchIds";
 
 const sanitize = (s: string) =>
   s
     .toLowerCase()
     .trim()
-    .replace(/[^\.-_0-9A-Za-z]/g, "");
+    .replace(/[^\.-_0-9A-Za-z\/]/g, "");
 
 const matches = (s: string, query: string) =>
   sanitize(s).includes(sanitize(query)) ||

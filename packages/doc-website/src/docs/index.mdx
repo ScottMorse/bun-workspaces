@@ -80,7 +80,7 @@ bw run lint my-workspace
 bw run lint my-workspace-a my-workspace-b
 
 # Run the lint script for workspaces using wildcard
-bw run lint my-workspace-*
+bw run lint "my-workspace-*"
 
 # Run the lint script in parallel
 bw run lint --parallel
@@ -89,19 +89,19 @@ bw run lint --parallel
 bw run lint --args="--my --appended --args"
 
 # Use the workspace name in args
-bw run lint --args "--my --arg=<workspace>"
+bw run lint --args="--my --arg=<workspace>"
 
 # Help
 bw help
 bw --help
 
 # Pass --cwd to any command
-bw --cwd /path/to/your/project ls
-bw --cwd /path/to/your/project run-script my-script
+bw --cwd=/path/to/your/project ls
+bw --cwd=/path/to/your/project run-script my-script
 
 # Pass --configFile to any command
-bw --configFile /path/to/your/config.json ls
+bw --configFile=/path/to/your/config.json ls
 
 # Pass --logLevel to any command (debug, info, warn, error, or silent)
-bw --logLevel silent run my-script
+bw --logLevel=silent run my-script
 ```

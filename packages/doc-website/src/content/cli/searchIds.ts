@@ -1,7 +1,4 @@
-import type {
-  CliGlobalOptionContent,
-  CliProjectCommandContent,
-} from "../../content/cli";
+import type { CliGlobalOptionContent, CliProjectCommandContent } from ".";
 
 export const getGlobalOptionId = (option: CliGlobalOptionContent) =>
   "cli-global-option-" + option.optionName;
