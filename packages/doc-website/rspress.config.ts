@@ -18,22 +18,22 @@ export default defineConfig({
     nav: [
       {
         text: "CLI Usage",
-        link: "/cli",
+        link: "/cli/index.html",
         position: "left",
         items: [
           {
             text: "Global Options",
-            link: "/cli#global-options",
+            link: "/cli/index.html#global-options",
           },
           {
             text: "Commands",
-            link: "/cli#commands",
+            link: "/cli/index.html#commands",
           },
         ],
       },
       {
         text: "Configuration",
-        link: "/config",
+        link: "/config/index.html",
         position: "left",
       },
       {
