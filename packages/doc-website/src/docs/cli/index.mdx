@@ -14,7 +14,7 @@ import { getCommandId, getGlobalOptionId } from "../../content/cli/searchIds";
 # CLI Usage
 
 <div className="note">
-Note: Examples use `bw` instead of `bunx bun-workspaces`, which works assuming you have either run `alias bw="bunx bun-workspaces"` or placed it in your shell configuration file.
+Note: Examples use `bw` instead of `bunx bun-workspaces`, which works assuming you have either ran `alias bw="bunx bun-workspaces"` or placed it in your shell configuration file.
 
 </div>
 
@@ -82,8 +82,8 @@ Note: Examples use `bw` instead of `bunx bun-workspaces`, which works assuming y
         <h5><em>Options:</em></h5>
         <div style={{ marginTop: "0.25rem", marginBottom: "0.75rem" }}>
           {Object.values(command.options).map((option) => (
-           <div key={"cli-command-option-" + command.command + "-" + option.flag}>
-            <p style={{ margin: "0" }}><code>{option.flag}</code> {option.description}</p>
+           <div key={"cli-command-option-" + command.command + "-" + option.flags}>
+            <p style={{ margin: "0" }}><code>{option.flags}</code> {option.description}</p>
            </div>
           ))}
         </div>
