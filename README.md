@@ -1,8 +1,12 @@
+<img src="./packages/doc-website/src/docs/public/bw-eye.png" alt="bun-workspaces" width="50" />
+
 # bun-workspaces
 
-This is a CLI meant to help manage [Bun workspaces](https://bun.sh/docs/install/workspaces).
+This is a CLI that works on top of native [Bun workspaces](https://bun.sh/docs/install/workspaces) with no additional setup required. Get metadata about your workspaces and scripts, and run scripts across your workspaces.
 
-## Installation
+### **[See Full Documentation Here](https://bunworkspaces.com)**
+
+## Quick Start
 
 You can install the CLI in your project or simply use `bunx bun-workspaces`.
 
@@ -11,107 +15,25 @@ $ bun add --dev bun-workspaces
 $ bunx bun-workspaces --help
 ```
 
-### Config file
-
-You can create a config file at `bw.json` in your project root, or you can pass a config file to the CLI with the `--configFile` (or `-c`) option.
-
-#### Example config
-
-In this config, "app-a" is an alias for package "@my-org/application-a" and "app-b" is an alias for package "@my-org/application-b".
-
-CLI log levels are `debug`, `info`, `warn`, and `error` or `silent`. The default log level is `info`. Commands that are intended to print specific output will still print at `silent`, such as `list-workspaces`, `list-scripts`, `workspace-info`, `script-info`, etc., but other logs will be suppressed.
-
-```json
-{
-  "workspaceAliases": {
-    "app-a": "@my-org/application-a",
-    "app-b": "@my-org/application-b"
-  },
-  "cli": {
-    "logLevel": "warn"
-  }
-}
-```
-
-You can also pass a config file to the CLI with the `-c` or `--configFile` option.
-
-### Examples
-
-You might consider making a shorter alias in your `.bashrc`, `.zshrc`, or similar shell configuration file, such as `alias bw="bunx bun-workspaces"`, for convenience.
-
 ```bash
 alias bw="bunx bun-workspaces"
 
-# List all workspaces
-bw list-workspaces
-bw ls
+# Usage (--help can also be passed to any command)
+bw help
+bw --help
 
-# List workspace names only
-bw list-workspaces --name-only
-
-# Filter list of workspaces with wildcard
-bw list-workspaces "my-*"
-
-# List all workspace scripts
-bw list-scripts
-
-# List script names only
-bw list-scripts --name-only
-
-# Get info about a workspace
-bw workspace-info my-workspace
-bw info my-workspace
-
-# Get info about a script
-bw script-info my-script
-
-# Only print list of workspace names that have the script
-bw script-info my-script --workspaces-only
-
-# Get JSON output
+# Get JSON metadata
 bw list-workspaces --json --pretty # optionally pretty print JSON
 bw list-scripts --json
 bw workspace-info my-workspace --json
 bw script-info my-script --json
 
-# Run a script for all
-# workspaces that have it
-# in their `scripts` field
+# Run scripts across workspaces
 bw run my-script
-
-# By default, a prefix is added to the script output with the workspace name
-# This can be disabled with the --noPrefix option
-bw run my-script --noPrefix
-
-# Run a script for a specific workspace by its package.json name or alias from the config
 bw run my-script my-workspace
-
-# Run a script for multiple workspaces
 bw run my-script workspace-a workspace-b
-
-# Run a script for workspaces using wildcard (does not take into account workspace aliases)
 bw run my-script "my-workspace-*"
-
-# Run script in parallel for all workspaces
 bw run my-script --parallel
-
-# Append args to each script call
 bw run my-script --args "--my --args"
-
-# Use the workspace name in args
 bw run my-script --args "--my --args=<workspace>"
-
-# Help (--help can also be passed to any command)
-bw help
-bw --help
-
-# Pass --cwd to any command
-bw --cwd /path/to/your/project ls
-bw --cwd /path/to/your/project run-script my-script
-
-# Pass --configFile to any command
-bw --configFile /path/to/your/config.json ls
-
-# Pass --logLevel to any command (debug, info, warn, error, or silent)
-bw --logLevel silent run my-script
 ```
