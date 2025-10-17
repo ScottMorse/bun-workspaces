@@ -6,15 +6,9 @@ footer: false
 ---
 
 import packageJson from "../../../bun-workspaces/package.json";
+import { Bwunster } from "../content/Bwunster";
 
-<div className="home-logo-container">
-  <img
-    src="/bw-eye.png"
-    alt="bun-workspaces"
-    className="home-logo"
-    width={100}
-  />
-</div>
+<Bwunster />
 <h1 className="home-title">bun-workspaces</h1>
 <p className="home-version">v{packageJson.version}</p>
 

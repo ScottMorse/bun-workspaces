@@ -57,23 +57,6 @@ const defineOptionContent = (
 };
 
 const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
-  listScripts: defineOptionContent("listScripts", () => ({
-    title: "List Scripts",
-    description: "List all scripts available with their workspaces",
-    examples: [
-      "# Default output. Shows metadata about scripts found in all workspaces",
-      `bw list-scripts`,
-      "",
-      "# Output only the list of script names",
-      `bw list-scripts --name-only`,
-      "",
-      "# Output as JSON",
-      `bw list-scripts --json`,
-      "",
-      "# Output as formatted JSON",
-      `bw list-scripts --json --pretty`,
-    ],
-  })),
   listWorkspaces: defineOptionContent("listWorkspaces", () => ({
     title: "List Workspaces",
     description:
@@ -90,6 +73,23 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
       "",
       "# Output as formatted JSON",
       `bw list-workspaces --json --pretty`,
+    ],
+  })),
+  listScripts: defineOptionContent("listScripts", () => ({
+    title: "List Scripts",
+    description: "List all scripts available with their workspaces",
+    examples: [
+      "# Default output. Shows metadata about scripts found in all workspaces",
+      `bw list-scripts`,
+      "",
+      "# Output only the list of script names",
+      `bw list-scripts --name-only`,
+      "",
+      "# Output as JSON",
+      `bw list-scripts --json`,
+      "",
+      "# Output as formatted JSON",
+      `bw list-scripts --json --pretty`,
     ],
   })),
   workspaceInfo: defineOptionContent("workspaceInfo", () => ({
