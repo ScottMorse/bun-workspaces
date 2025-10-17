@@ -59,7 +59,9 @@ export const createCli = ({
         process.exit(1);
       }
 
-      const args = typeof argv === "string" ? argv.split(" ") : argv;
+      const args = tempFixCamelCaseOptions(
+        typeof argv === "string" ? argv.split(/s+/) : argv,
+      );
 
       const { project } = initializeWithGlobalOptions(
         program,
@@ -85,3 +87,24 @@ export const createCli = ({
     run,
   };
 };
+
+/**
+ * @todo
+ * ! Temp backwards support for deprecated camel case options
+ * ! Added October 2025, drop support in some reasonable future release
+ */
+const tempOptions = {
+  "--nameOnly": "--name-only",
+  "--noPrefix": "--no-prefix",
+  "--configFile": "--config-file",
+  "--logLevel": "--log-level",
+};
+const tempFixCamelCaseOptions = (args: string[]) =>
+  args.map((arg) => {
+    for (const [camel, kebab] of Object.entries(tempOptions)) {
+      if (arg.startsWith(camel)) {
+        return arg.replace(camel, kebab);
+      }
+    }
+    return arg;
+  });

@@ -29,7 +29,7 @@ const PROJECT_COMMANDS_CONFIG = {
   },
   listScripts: {
     command: "list-scripts",
-    aliases: [],
+    aliases: ["ls-scripts"],
     description: "List all scripts available with their workspaces",
     options: {
       nameOnly: {
@@ -81,8 +81,8 @@ const PROJECT_COMMANDS_CONFIG = {
     },
   },
   runScript: {
-    command: "run <script> [workspaces...]",
-    aliases: [],
+    command: "run-script <script> [workspaces...]",
+    aliases: ["run"],
     description:
       'Run a script in all workspaces that have it in their "scripts" field in package.json',
     options: {
@@ -95,7 +95,7 @@ const PROJECT_COMMANDS_CONFIG = {
         description: "Args to append to the script command",
       },
       noPrefix: {
-        flags: "--noPrefix",
+        flags: "--no-prefix",
         description: "Do not prefix the workspace name to the script output",
       },
     },

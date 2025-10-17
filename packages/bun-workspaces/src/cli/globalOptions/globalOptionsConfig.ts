@@ -17,7 +17,7 @@ export interface CliGlobalOptionConfig {
 
 const CLI_GLOBAL_OPTIONS_CONFIG = {
   logLevel: {
-    mainOption: "--logLevel",
+    mainOption: "--log-level",
     shortOption: "-l",
     description: "Log levels",
     defaultValue: "info",
@@ -33,7 +33,7 @@ const CLI_GLOBAL_OPTIONS_CONFIG = {
     param: "path",
   },
   configFile: {
-    mainOption: "--configFile",
+    mainOption: "--config-file",
     shortOption: "-c",
     description: "Config file",
     defaultValue: "",

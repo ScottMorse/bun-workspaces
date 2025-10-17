@@ -135,7 +135,7 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
       `bw run my-script --parallel`,
       "",
       "# By default, a prefix is added to the script output with the workspace name",
-      `bw run my-script --noPrefix`,
+      `bw run my-script --no-prefix`,
       "",
       "# Run a script for a specific workspace",
       `bw run my-script my-workspace`,
