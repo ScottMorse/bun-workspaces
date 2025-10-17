@@ -12,7 +12,7 @@ const PACKAGE_JSON_PATH = path.resolve(
 const ROOT_PACKAGE_JSON_PATH = path.resolve(__dirname, "../../../package.json");
 
 const createDesiredPackageJson = () => {
-  const { name, version, main, homepage, bin, custom } = JSON.parse(
+  const { name, version, main, homepage, repository, bin, custom } = JSON.parse(
     readFileSync(path.resolve(PACKAGE_JSON_PATH)).toString(),
   );
 
@@ -27,6 +27,7 @@ const createDesiredPackageJson = () => {
     main: main.replace(".ts", ".mjs"),
     types: main.replace(".ts", ".d.ts"),
     homepage,
+    repository,
     bin,
     custom,
     dependencies,
