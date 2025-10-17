@@ -16,18 +16,6 @@ export interface FindWorkspacesOptions {
   workspaceAliases?: ProjectConfig["workspaceAliases"];
 }
 
-const validatePattern = (pattern: string) => {
-  if (pattern.startsWith("!")) {
-    logger.warn(
-      `Negation patterns are not supported by Bun workspaces: ${JSON.stringify(
-        pattern,
-      )}`,
-    );
-    return false;
-  }
-  return true;
-};
-
 const validateWorkspace = (workspace: Workspace, workspaces: Workspace[]) => {
   if (workspaces.find((ws) => ws.path === workspace.path)) {
     return false;
@@ -49,12 +37,13 @@ export const findWorkspaces = ({
 }: FindWorkspacesOptions) => {
   rootDir = path.resolve(rootDir);
 
-  const workspaces: Workspace[] = [];
+  const includedWorkspaces: Workspace[] = [];
+  const excludedWorkspacePaths: string[] = [];
 
   for (const pattern of workspaceGlobs) {
-    if (!validatePattern(pattern)) continue;
+    const isExcluded = pattern.startsWith("!");
 
-    for (const item of scanWorkspaceGlob(pattern, rootDir)) {
+    for (const item of scanWorkspaceGlob(pattern.replace(/^!/, ""), rootDir)) {
       const packageJsonPath = resolvePackageJsonPath(item);
       if (packageJsonPath) {
         const packageJsonContent = resolvePackageJsonContent(
@@ -73,12 +62,20 @@ export const findWorkspaces = ({
             .map(([key]) => key),
         };
 
-        if (validateWorkspace(workspace, workspaces)) {
-          workspaces.push(workspace);
+        if (isExcluded) {
+          if (!excludedWorkspacePaths.includes(workspace.path)) {
+            excludedWorkspacePaths.push(workspace.path);
+          }
+        } else if (validateWorkspace(workspace, includedWorkspaces)) {
+          includedWorkspaces.push(workspace);
         }
       }
     }
   }
+
+  const workspaces = includedWorkspaces.filter(
+    (ws) => !excludedWorkspacePaths.includes(ws.path),
+  );
 
   workspaces.sort(
     (a, b) => a.name.localeCompare(b.name) || a.path.localeCompare(b.path),

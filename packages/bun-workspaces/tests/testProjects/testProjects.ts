@@ -5,6 +5,7 @@ const TEST_PROJECTS = {
   fullProject: "fullProject",
   emptyWorkspaces: "emptyWorkspaces",
   oneWorkspace: "oneWorkspace",
+  negationGlobs: "negationGlobs",
   invalidBadJson: "invalid/badJson",
   invalidNoName: "invalid/noName",
   invalidDuplicateName: "invalid/duplicateName",

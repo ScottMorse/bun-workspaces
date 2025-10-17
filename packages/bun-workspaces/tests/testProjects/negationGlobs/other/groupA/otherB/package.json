@@ -1,0 +1,6 @@
+{
+  "name": "group-a-other-b",
+  "scripts": {
+    "all-workspaces": "echo 'script for all workspaces'"
+  }
+}

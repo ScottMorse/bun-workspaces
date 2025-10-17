@@ -182,6 +182,58 @@ describe("Test finding workspaces", () => {
     );
   });
 
+  test("Supports negation globs in workspaces field in package.json", async () => {
+    expect(
+      simplifyExpectedWorkspacesResult(
+        findWorkspacesFromPackage({
+          rootDir: getProjectRoot("negationGlobs"),
+        }),
+      ),
+    ).toEqual(
+      simplifyExpectedWorkspacesResult({
+        name: "test-root",
+        workspaces: [
+          {
+            name: "application-a",
+            matchPattern: "applications/*",
+            path: "applications/applicationA",
+            aliases: [],
+          },
+          {
+            name: "application-b",
+            matchPattern: "applications/*",
+            path: "applications/applicationB",
+            aliases: [],
+          },
+          {
+            name: "group-b-other-a",
+            matchPattern: "other/**/*",
+            path: "other/groupB/otherA",
+            aliases: [],
+          },
+          {
+            name: "group-b-other-b",
+            matchPattern: "other/**/*",
+            path: "other/groupB/otherB",
+            aliases: [],
+          },
+          {
+            name: "library-a",
+            matchPattern: "libraries/**/*",
+            path: "libraries/libraryA",
+            aliases: [],
+          },
+          {
+            name: "library-c",
+            matchPattern: "libraries/**/*",
+            path: "libraries/nested/libraryC",
+            aliases: [],
+          },
+        ],
+      }),
+    );
+  });
+
   test("Invalid workspaces from test projects", async () => {
     expect(() =>
       findWorkspacesFromPackage({
