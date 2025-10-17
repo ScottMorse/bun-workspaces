@@ -3,7 +3,8 @@
   "private": true,
   "license": "MIT",
   "workspaces": [
-    "packages/bun-workspaces"
+    "packages/bun-workspaces",
+    "packages/*"
   ],
   "scripts": {
     "bw": "bun --silent --cwd=./packages/bun-workspaces",
