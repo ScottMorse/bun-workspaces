@@ -37,12 +37,28 @@ export const findWorkspaces = ({
 }: FindWorkspacesOptions) => {
   rootDir = path.resolve(rootDir);
 
-  const includedWorkspaces: Workspace[] = [];
+  const workspaces: Workspace[] = [];
   const excludedWorkspacePaths: string[] = [];
 
-  for (const pattern of workspaceGlobs) {
-    const isExcluded = pattern.startsWith("!");
+  const negativePatterns = workspaceGlobs.filter((pattern) =>
+    pattern.startsWith("!"),
+  );
+  const positivePatterns = workspaceGlobs.filter(
+    (pattern) => !pattern.startsWith("!"),
+  );
 
+  for (const pattern of negativePatterns) {
+    for (const item of scanWorkspaceGlob(pattern.replace(/^!/, ""), rootDir)) {
+      const packageJsonPath = resolvePackageJsonPath(item);
+      if (packageJsonPath) {
+        excludedWorkspacePaths.push(
+          path.relative(rootDir, path.dirname(packageJsonPath)),
+        );
+      }
+    }
+  }
+
+  for (const pattern of positivePatterns) {
     for (const item of scanWorkspaceGlob(pattern.replace(/^!/, ""), rootDir)) {
       const packageJsonPath = resolvePackageJsonPath(item);
       if (packageJsonPath) {
@@ -61,21 +77,15 @@ export const findWorkspaces = ({
             .filter(([_, value]) => value === packageJsonContent.name)
             .map(([key]) => key),
         };
-
-        if (isExcluded) {
-          if (!excludedWorkspacePaths.includes(workspace.path)) {
-            excludedWorkspacePaths.push(workspace.path);
-          }
-        } else if (validateWorkspace(workspace, includedWorkspaces)) {
-          includedWorkspaces.push(workspace);
+        if (
+          validateWorkspace(workspace, workspaces) &&
+          !excludedWorkspacePaths.includes(workspace.path)
+        ) {
+          workspaces.push(workspace);
         }
       }
     }
   }
-
-  const workspaces = includedWorkspaces.filter(
-    (ws) => !excludedWorkspacePaths.includes(ws.path),
-  );
 
   workspaces.sort(
     (a, b) => a.name.localeCompare(b.name) || a.path.localeCompare(b.path),
