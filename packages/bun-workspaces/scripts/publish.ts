@@ -99,6 +99,8 @@ if (import.meta.main) {
 
 ### Changed
 
+### Fixed
+
 ### Removed
 `);
 

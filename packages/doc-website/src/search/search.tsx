@@ -36,7 +36,7 @@ const onSearch: OnSearch = async (query, defaultResult) => {
     ) {
       defaultResult[0].result?.push({
         statement: "CLI Command: " + command.title,
-        link: "/cli/index.html#" + getCommandId(command),
+        link: "/cli#" + getCommandId(command),
         type: "content",
         title: "CLI | Commands",
         header: "",
@@ -63,7 +63,7 @@ const onSearch: OnSearch = async (query, defaultResult) => {
           " | " +
           globalOption.shortOption +
           ")",
-        link: "/cli/index.html#" + getGlobalOptionId(globalOption),
+        link: "/cli#" + getGlobalOptionId(globalOption),
         type: "content",
         title: "CLI | Global Options",
         header: "",
