@@ -1,4 +1,6 @@
 import path from "path";
+import { pluginSitemap } from "@rspress/plugin-sitemap";
+import type { RspressPlugin } from "@rspress/shared";
 import { defineConfig } from "rspress/config";
 import packageJson from "../bun-workspaces/package.json";
 
@@ -17,9 +19,61 @@ export default defineConfig({
   search: {
     searchHooks: path.join(__dirname, "src/search/search.tsx"),
   },
+  plugins: [
+    pluginSitemap({
+      siteUrl: new URL(packageJson.homepage).origin,
+      defaultChangeFreq: "weekly",
+      defaultPriority: "0.8",
+    }) as RspressPlugin,
+  ],
+  route: {
+    cleanUrls: true,
+  },
   builderConfig: {
     output: {
       cleanDistPath: true,
+    },
+    html: {
+      tags: [
+        {
+          tag: "meta",
+          attrs: {
+            name: "description",
+            content:
+              "Documentation for bun-workspaces: A CLI to help manage Bun monorepos",
+          },
+        },
+        {
+          tag: "meta",
+          attrs: {
+            name: "og:title",
+            content:
+              "Documentation for bun-workspaces: A CLI to help manage Bun monorepos",
+          },
+        },
+        {
+          tag: "meta",
+          attrs: {
+            name: "og:description",
+            content:
+              "Get metadata about your project and run scripts across your workspaces, with no additional setup required",
+          },
+        },
+        {
+          tag: "meta",
+          attrs: {
+            name: "og:url",
+            content: "https://bunworkspaces.com/",
+          },
+        },
+        {
+          tag: "meta",
+          attrs: {
+            name: "og:image",
+            content: "https://bunworkspaces.com/bw-plain.png",
+          },
+        },
+      ],
     },
   },
   themeConfig: {
@@ -33,23 +87,23 @@ export default defineConfig({
     nav: [
       {
         text: "CLI Usage",
-        link: "/cli/index.html",
+        link: "/cli",
         position: "left",
         activeMatch: "/cli",
         items: [
           {
             text: "Global Options",
-            link: "/cli/index.html#global-options",
+            link: "/cli#global-options",
           },
           {
             text: "Commands",
-            link: "/cli/index.html#commands",
+            link: "/cli#commands",
           },
         ],
       },
       {
         text: "Configuration",
-        link: "/config/index.html",
+        link: "/config",
         position: "left",
         activeMatch: "/config",
       },
