@@ -35,6 +35,17 @@ export default defineConfig({
     },
     html: {
       tags: [
+        ...(process.env.BW_DOC_ENV === "development"
+          ? [
+              {
+                tag: "meta",
+                attrs: {
+                  name: "robots",
+                  content: "noindex, nofollow",
+                },
+              },
+            ]
+          : []),
         {
           tag: "meta",
           attrs: {
