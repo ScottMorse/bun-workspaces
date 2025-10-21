@@ -20,7 +20,7 @@ const TEST_PROJECTS = {
   invalidAliasNotFound: "invalid/aliasNotFound",
 };
 
-type TestProject = keyof typeof TEST_PROJECTS;
+export type TestProjectName = keyof typeof TEST_PROJECTS;
 
-export const getProjectRoot = (project: TestProject) =>
-  path.join(__dirname, TEST_PROJECTS[project]);
+export const getProjectRoot = (testProjectName: TestProjectName) =>
+  path.join(__dirname, TEST_PROJECTS[testProjectName]);

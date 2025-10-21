@@ -4,7 +4,7 @@ import { type CliProgram, createCli } from "../src/cli/createCli";
 import { commandOutputLogger } from "../src/cli/projectCommands";
 import { logger } from "../src/internal/logger";
 import { createRawPattern } from "../src/internal/regex";
-import { createProject, type Project } from "../src/project";
+import { createFileSystemProject, type Project } from "../src/project";
 import { getProjectRoot } from "./testProjects";
 
 const createHandleErrorMock = () => mock((_error: Error) => void 0);
@@ -57,7 +57,7 @@ const test = (name: string, fn: (context: TestContext) => void, only = false) =>
           ],
         });
       },
-      defaultProject: createProject({
+      defaultProject: createFileSystemProject({
         rootDir: getProjectRoot("default"),
       }),
       handleErrorSpy,

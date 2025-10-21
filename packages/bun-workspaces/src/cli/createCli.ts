@@ -40,7 +40,7 @@ export const createCli = ({
 
     try {
       const program = createCommand("bunx bun-workspaces")
-        .description("CLI for utilities for Bun workspaces")
+        .description("A CLI for managing native Bun workspaces")
         .version(packageJson.version)
         .configureOutput({
           writeOut: (s) => logger.info(s),
