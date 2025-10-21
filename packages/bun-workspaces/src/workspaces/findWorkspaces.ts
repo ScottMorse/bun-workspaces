@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import type { ProjectConfig } from "../config";
-import { logger } from "../internal/logger";
 import { ERRORS } from "./errors";
 import {
   resolvePackageJsonContent,

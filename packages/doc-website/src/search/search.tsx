@@ -1,9 +1,4 @@
-import {
-  CustomMatchResult,
-  RenderType,
-  type MatchResult,
-  type OnSearch,
-} from "rspress/theme";
+import { type OnSearch } from "rspress/theme";
 import {
   getCliGlobalOptionsContent,
   getCliProjectCommandsContent,
@@ -31,7 +26,7 @@ const onSearch: OnSearch = async (query, defaultResult) => {
       matches(command.optionName, query) ||
       Object.values(command.options).some(
         (option) =>
-          matches(option.flags, query) || matches(option.description, query),
+          matches(option.flags, query) || matches(option.description, query)
       )
     ) {
       defaultResult[0].result?.push({
@@ -70,8 +65,6 @@ const onSearch: OnSearch = async (query, defaultResult) => {
         query: "",
         highlightInfoList: [],
       });
-
-      console.log({ defaultResult });
     }
   }
   return [];
