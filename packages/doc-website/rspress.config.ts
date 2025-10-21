@@ -4,6 +4,7 @@ import { pluginSitemap } from "@rspress/plugin-sitemap";
 import type { RspressPlugin } from "@rspress/shared";
 import { defineConfig } from "rspress/config";
 import packageJson from "../bun-workspaces/package.json";
+import { npmSvg } from "./src/content/npmSvg";
 
 const repoBaseUrl = packageJson.repository.url.replace(".git", "");
 
