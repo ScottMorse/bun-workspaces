@@ -1,12 +1,12 @@
 import path from "path";
-import { createWildcardRegex } from "../internal/regex";
-import { findWorkspacesFromPackage, type Workspace } from "../workspaces";
-import { ERRORS } from "./errors";
+import { createWildcardRegex } from "../../internal/regex";
+import { type Workspace } from "../../workspaces";
+import { ERRORS } from "../errors";
 import {
   createScriptCommand,
   type CreateScriptCommandOptions,
   type ScriptCommand,
-} from "./scriptCommand";
+} from "../scriptCommand";
 
 export interface ScriptMetadata {
   name: string;
@@ -41,28 +41,10 @@ export interface Project {
   ): CreateProjectScriptCommandResult;
 }
 
-export interface CreateProjectOptions {
-  rootDir: string;
-  workspaceAliases?: Record<string, string>;
-}
-
-class _Project implements Project {
-  public readonly rootDir: string;
-  public readonly workspaceAliases?: Record<string, string>;
-  public readonly workspaces: Workspace[];
-  public readonly name: string;
-  constructor(private options: CreateProjectOptions) {
-    this.rootDir = options.rootDir;
-    this.workspaceAliases = options.workspaceAliases;
-
-    const { name, workspaces } = findWorkspacesFromPackage({
-      rootDir: options.rootDir,
-      workspaceAliases: options.workspaceAliases,
-    });
-
-    this.name = name;
-    this.workspaces = workspaces;
-  }
+export abstract class ProjectBase implements Project {
+  public abstract readonly name: string;
+  public abstract readonly rootDir: string;
+  public abstract readonly workspaces: Workspace[];
 
   listWorkspacesWithScript(scriptName: string): Workspace[] {
     return this.workspaces.filter(
@@ -150,6 +132,3 @@ class _Project implements Project {
     };
   }
 }
-
-export const createProject = (options: CreateProjectOptions): Project =>
-  new _Project(options);

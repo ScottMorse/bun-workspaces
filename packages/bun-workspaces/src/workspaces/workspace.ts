@@ -1,5 +1,6 @@
 import type { ResolvedPackageJsonContent } from "./packageJson";
 
+/** Metadata about a nested package within a Bun monorepo */
 export interface Workspace {
   /** The name of the workspace from its `package.json` */
   name: string;
