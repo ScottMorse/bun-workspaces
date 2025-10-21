@@ -1,8 +1,8 @@
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { type Command, Option } from "commander";
 import { loadConfigFile, type BunWorkspacesConfig } from "../../config";
-import { IS_TEST } from "../../internal/env";
-import { BunWorkspacesError } from "../../internal/error";
+import { defineErrors } from "../../internal/error";
 import { logger } from "../../internal/logger";
 import { createFileSystemProject } from "../../project";
 import {
@@ -10,6 +10,11 @@ import {
   type CliGlobalOptions,
   getCliGlobalOptionConfig,
 } from "./globalOptionsConfig";
+
+const ERRORS = defineErrors(
+  "WorkingDirectoryNotFound",
+  "WorkingDirectoryNotADirectory",
+);
 
 const addGlobalOption = (
   program: Command,
@@ -49,6 +54,18 @@ const defineGlobalOptions = (
   defaultCwd: string,
 ) => {
   const cwd = getWorkingDirectory(program, args, defaultCwd);
+
+  if (!fs.existsSync(cwd)) {
+    throw new ERRORS.WorkingDirectoryNotFound(
+      `Working directory not found at path "${cwd}"`,
+    );
+  }
+
+  if (!fs.statSync(cwd).isDirectory()) {
+    throw new ERRORS.WorkingDirectoryNotADirectory(
+      `Working directory is not a directory at path "${cwd}"`,
+    );
+  }
 
   const configFilePath = getConfig(program, args);
 

@@ -33,12 +33,14 @@ describe("Test CLI", () => {
   });
 
   test("Global Option --log-level", async () => {
+    acknowledgeGlobalOptionTest("logLevel");
+
     // eslint-disable-next-line no-console
     const debug = console.debug;
     // eslint-disable-next-line no-console
     console.debug = () => void 0;
 
-    const { run } = setupCliTest();
+    const { run, assertLastWrite } = setupCliTest();
 
     await run("--log-level=silent");
     expect(logger.printLevel).toBe("silent");
@@ -55,15 +57,18 @@ describe("Test CLI", () => {
     await run("--log-level=error");
     expect(logger.printLevel).toBe("error");
 
+    await run("--log-level=wrong");
+    assertLastWrite(/option.+--log-level.+wrong.+is invalid/, "error");
+
     logger.printLevel = "silent";
 
     // eslint-disable-next-line no-console
     console.debug = debug;
-
-    acknowledgeGlobalOptionTest("logLevel");
   });
 
   test("Global Option --cwd", async () => {
+    acknowledgeGlobalOptionTest("cwd");
+
     const { run, assertLastWrite } = setupCliTest();
 
     await run(`--cwd=${getProjectRoot("simple1")} ls --name-only`);
@@ -78,12 +83,24 @@ describe("Test CLI", () => {
       "commandOutput",
     );
 
-    acknowledgeGlobalOptionTest("cwd");
+    await run(`--cwd=does-not-exist ls`);
+    assertLastWrite(
+      /Working directory not found at path "does-not-exist"/,
+      "error",
+    );
+
+    const notADirectoryPath = path.resolve(__dirname, "util/not-a-directory");
+    await run(`--cwd=${notADirectoryPath} ls`);
+    assertLastWrite(
+      `Working directory is not a directory at path "${notADirectoryPath}"`,
+      "error",
+    );
   });
 
   test("Global Option --config-file", async () => {
-    const { run, assertLastWrite, writeCommandOutputSpy, writeErrSpy } =
-      setupCliTest();
+    acknowledgeGlobalOptionTest("configFile");
+
+    const { run, assertLastWrite, writeCommandOutputSpy } = setupCliTest();
 
     await run(`--cwd=${getProjectRoot("simple1")} info appB`);
     expect(writeCommandOutputSpy).toBeCalledTimes(1);
@@ -103,20 +120,25 @@ describe("Test CLI", () => {
       "error",
     );
 
-    acknowledgeGlobalOptionTest("configFile");
+    await run(`--cwd=${getProjectRoot("invalidBadJsonConfig")}  ls`);
+    assertLastWrite(
+      `Failed to parse config file at path "${path.resolve(getProjectRoot("invalidBadJsonConfig"), "bw.json")}"`,
+      "error",
+    );
+
+    await run(`--cwd=${getProjectRoot("invalidBadConfigRoot")}  ls`);
+    assertLastWrite(`Config file: must be an object`, "error");
+
+    await run(
+      `--cwd=${getProjectRoot("invalidBadConfigWorkspaceAliases")}  ls`,
+    );
+    assertLastWrite(
+      `Config file: project.workspaceAliases must be an object`,
+      "error",
+    );
   });
 
   test("Confirm all global options are tested", () => {
     validateAllGlobalOptionTests();
-  });
-
-  test.skip("Confirm all project commands are tested", () => {
-    // for (const command of getCliProjectCommandNames()) {
-    //   if (!acknowledgedCommandTests[command]) {
-    //     throw new Error(
-    //       `Test for project command ${command} was not acknowledged`,
-    //     );
-    //   }
-    // }
   });
 });

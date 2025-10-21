@@ -27,7 +27,8 @@
   },
   "include": [
     "**/*.ts",
-    "packages/doc-website/src/content/cli/cliGlobalOptions.tsx"
+    "packages/doc-website/src/content/cli/cliGlobalOptions.tsx",
+    "packages/bun-workspaces/tests/util/not-a-directory"
   ],
   "exclude": ["node_modules", "dist/**/*"]
 }
