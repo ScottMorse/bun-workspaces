@@ -2,9 +2,9 @@
 
 # bun-workspaces
 
-This is a CLI that works on top of native [Bun workspaces](https://bun.sh/docs/install/workspaces) with no additional setup required. Get metadata about your workspaces and scripts, and run scripts across your workspaces.
-
 ### **[See Full Documentation Here](https://bunworkspaces.com)**
+
+This is a CLI that works on top of native [Bun workspaces](https://bun.sh/docs/install/workspaces) with no additional setup required. Get metadata about your workspaces and scripts, and run scripts across your workspaces.
 
 ## Quick Start
 
