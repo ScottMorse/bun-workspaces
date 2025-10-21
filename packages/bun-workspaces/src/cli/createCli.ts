@@ -4,6 +4,8 @@ import {
   getRequiredBunVersion,
   validateCurrentBunVersion,
 } from "../internal/bunVersion";
+import { IS_TEST } from "../internal/env";
+import { BunWorkspacesError } from "../internal/error";
 import { logger } from "../internal/logger";
 import { initializeWithGlobalOptions } from "./globalOptions";
 import { defineProjectCommands } from "./projectCommands";
@@ -42,10 +44,12 @@ export const createCli = ({
       const program = createCommand("bunx bun-workspaces")
         .description("A CLI for managing native Bun workspaces")
         .version(packageJson.version)
+        .showHelpAfterError(true)
         .configureOutput({
-          writeOut: (s) => logger.info(s),
+          writeOut: (s) => s.trim() && logger.info(s.trim()),
           writeErr: (s) =>
-            s.startsWith("Usage") ? logger.info(s) : logger.error(s),
+            s.trim() &&
+            logger[s.startsWith("Usage") ? "info" : "error"](s.trim()),
         });
 
       postInit?.(program);
@@ -77,7 +81,12 @@ export const createCli = ({
 
       await program.parseAsync(args);
     } catch (error) {
-      errorListener(error as Error);
+      if (error instanceof BunWorkspacesError) {
+        logger.error("Error " + error.name + ": " + error.message);
+        if (!IS_TEST) process.exit(1);
+      } else {
+        errorListener(error as Error);
+      }
     } finally {
       process.off("unhandledRejection", errorListener);
     }

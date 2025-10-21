@@ -1,27 +1,27 @@
 import {
   getProjectCommandConfig,
-  type ProjectCommandConfig,
-  type ProjectCommandName,
+  type CliProjectCommandConfig,
+  type CliProjectCommandName,
 } from "bun-workspaces/src/cli/projectCommands/projectCommandsConfig";
 import type { CliOptionContent } from "./cliOption";
 
 export type CliProjectCommandContent = Omit<
-  ProjectCommandConfig,
+  CliProjectCommandConfig,
   "description"
 > &
   CliOptionContent & {
-    optionName: ProjectCommandName;
+    optionName: CliProjectCommandName;
   };
 
 const defineOptionContent = (
-  optionName: ProjectCommandName,
-  factory: (optionConfig: ProjectCommandConfig) => CliOptionContent,
+  optionName: CliProjectCommandName,
+  factory: (optionConfig: CliProjectCommandConfig) => CliOptionContent
 ): CliProjectCommandContent => {
   const config = getProjectCommandConfig(optionName);
   const content = factory(config);
 
   const exampleLines = content.examples.filter(
-    (example) => example.trim() && !example.match(/^\s*#/),
+    (example) => example.trim() && !example.match(/^\s*#/)
   );
 
   const getMainFlag = (flag: string) => {
@@ -33,7 +33,7 @@ const defineOptionContent = (
       !exampleLines.find((line) => line.includes(getMainFlag(option.flags)))
     ) {
       throw new Error(
-        `Expected an example to include ${getMainFlag(option.flags)}`,
+        `Expected an example to include ${getMainFlag(option.flags)}`
       );
     }
   }
@@ -42,7 +42,7 @@ const defineOptionContent = (
     !exampleLines.find((line) => {
       // line that uses no flags
       return Object.values(config.options).every(
-        (option) => !line.includes(getMainFlag(option.flags)),
+        (option) => !line.includes(getMainFlag(option.flags))
       );
     })
   ) {
@@ -153,10 +153,11 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
       `bw run my-script --args="--my --arg=<workspace>"`,
     ],
   })),
-} as const satisfies Record<ProjectCommandName, CliProjectCommandContent>;
+} as const satisfies Record<CliProjectCommandName, CliProjectCommandContent>;
 
-export const getCliProjectCommandContent = (commandName: ProjectCommandName) =>
-  CLI_PROJECT_COMMAND_OPTIONS_CONTENT[commandName];
+export const getCliProjectCommandContent = (
+  commandName: CliProjectCommandName
+) => CLI_PROJECT_COMMAND_OPTIONS_CONTENT[commandName];
 
 export const getCliProjectCommandsContent = () =>
   Object.values(CLI_PROJECT_COMMAND_OPTIONS_CONTENT);

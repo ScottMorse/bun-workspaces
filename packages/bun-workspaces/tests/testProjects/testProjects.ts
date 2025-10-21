@@ -3,6 +3,8 @@ import path from "path";
 const TEST_PROJECTS = {
   default: "fullProject",
   fullProject: "fullProject",
+  simple1: "simple1",
+  simple2: "simple2",
   emptyWorkspaces: "emptyWorkspaces",
   oneWorkspace: "oneWorkspace",
   withNodeModuleWorkspace: "withNodeModuleWorkspace",

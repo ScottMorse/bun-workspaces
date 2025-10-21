@@ -1,6 +1,8 @@
 import path from "path";
 import { type Command, Option } from "commander";
 import { loadConfigFile, type BunWorkspacesConfig } from "../../config";
+import { IS_TEST } from "../../internal/env";
+import { BunWorkspacesError } from "../../internal/error";
 import { logger } from "../../internal/logger";
 import { createFileSystemProject } from "../../project";
 import {

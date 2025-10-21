@@ -5,7 +5,7 @@ import type { Project } from "../../project";
 import type { Workspace } from "../../workspaces";
 import {
   getProjectCommandConfig,
-  type ProjectCommandName,
+  type CliProjectCommandName,
 } from "./projectCommandsConfig";
 
 export interface ProjectCommandContext {
@@ -33,7 +33,7 @@ export const commandOutputLogger = createLogger("");
 commandOutputLogger.printLevel = "info";
 
 const handleCommand = <T extends unknown[]>(
-  commandName: ProjectCommandName,
+  commandName: CliProjectCommandName,
   handler: (context: ProjectCommandContext, ...actionArgs: T) => void,
 ) => {
   const config = getProjectCommandConfig(commandName);
@@ -72,7 +72,9 @@ const listWorkspaces = handleCommand(
     if (options.json) {
       lines.push(
         ...createJsonLines(
-          options.nameOnly ? workspaces.map(({ name }) => name) : workspaces,
+          options.nameOnly
+            ? workspaces.map(({ name }) => name)
+            : workspaces.map(({ packageJson: _packageJson, ...rest }) => rest),
           options,
         ),
       );

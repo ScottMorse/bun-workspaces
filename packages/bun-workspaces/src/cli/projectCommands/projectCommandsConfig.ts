@@ -1,13 +1,13 @@
-export interface ProjectCommandConfig {
+export interface CliProjectCommandConfig {
   command: string;
   aliases: string[];
   description: string;
   options: Record<string, { flags: string; description: string }>;
 }
 
-export type ProjectCommandName = keyof typeof PROJECT_COMMANDS_CONFIG;
+export type CliProjectCommandName = keyof typeof CLI_PROJECT_COMMANDS_CONFIG;
 
-const PROJECT_COMMANDS_CONFIG = {
+const CLI_PROJECT_COMMANDS_CONFIG = {
   listWorkspaces: {
     command: "list-workspaces [pattern]",
     aliases: ["ls", "list"],
@@ -100,7 +100,10 @@ const PROJECT_COMMANDS_CONFIG = {
       },
     },
   },
-} as const satisfies Record<string, ProjectCommandConfig>;
+} as const satisfies Record<string, CliProjectCommandConfig>;
 
-export const getProjectCommandConfig = (commandName: ProjectCommandName) =>
-  PROJECT_COMMANDS_CONFIG[commandName];
+export const getProjectCommandConfig = (commandName: CliProjectCommandName) =>
+  CLI_PROJECT_COMMANDS_CONFIG[commandName];
+
+export const getCliProjectCommandNames = () =>
+  Object.keys(CLI_PROJECT_COMMANDS_CONFIG) as CliProjectCommandName[];
