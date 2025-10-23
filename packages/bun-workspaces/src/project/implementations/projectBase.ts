@@ -47,17 +47,15 @@ export abstract class ProjectBase implements Project {
   public abstract readonly workspaces: Workspace[];
 
   listWorkspacesWithScript(scriptName: string): Workspace[] {
-    return this.workspaces.filter(
-      (workspace) => workspace.packageJson.scripts?.[scriptName],
+    return this.workspaces.filter((workspace) =>
+      workspace.scripts.includes(scriptName),
     );
   }
 
   listScriptsWithWorkspaces(): Record<string, ScriptMetadata> {
     const scripts = new Set<string>();
     this.workspaces.forEach((workspace) => {
-      Object.keys(workspace.packageJson.scripts ?? {}).forEach((script) =>
-        scripts.add(script),
-      );
+      workspace.scripts.forEach((script) => scripts.add(script));
     });
     return Array.from(scripts)
       .sort((a, b) => a.localeCompare(b))
@@ -112,12 +110,12 @@ export abstract class ProjectBase implements Project {
         `Workspace not found: ${JSON.stringify(options.workspaceName)}`,
       );
     }
-    if (!workspace.packageJson.scripts?.[options.scriptName]) {
+    if (!workspace.scripts.includes(options.scriptName)) {
       throw new ERRORS.WorkspaceScriptDoesNotExist(
         `Script not found in workspace ${JSON.stringify(
           workspace.name,
         )}: ${JSON.stringify(options.scriptName)} (available: ${
-          Object.keys(workspace.packageJson.scripts).join(", ") || "none"
+          workspace.scripts.join(", ") || "none"
         }`,
       );
     }

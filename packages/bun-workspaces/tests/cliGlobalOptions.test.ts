@@ -9,9 +9,14 @@ import {
   validateAllGlobalOptionTests,
 } from "./util/cliTestUtils";
 
-describe("Test CLI", () => {
+describe("Test CLI Global Options", () => {
   test("Usage shows", async () => {
-    const { run, assertLastWrite, writeOutSpy, writeErrSpy } = setupCliTest();
+    const {
+      run,
+      assertLastWrite: assertLastWrite,
+      writeOutSpy,
+      writeErrSpy,
+    } = setupCliTest();
 
     await run("--help");
     expect(writeOutSpy).toBeCalledTimes(1);
@@ -40,7 +45,7 @@ describe("Test CLI", () => {
     // eslint-disable-next-line no-console
     console.debug = () => void 0;
 
-    const { run, assertLastWrite } = setupCliTest();
+    const { run, assertLastWrite: assertLastWrite } = setupCliTest();
 
     await run("--log-level=silent");
     expect(logger.printLevel).toBe("silent");
@@ -69,7 +74,7 @@ describe("Test CLI", () => {
   test("Global Option --cwd", async () => {
     acknowledgeGlobalOptionTest("cwd");
 
-    const { run, assertLastWrite } = setupCliTest();
+    const { run, assertLastWrite: assertLastWrite } = setupCliTest();
 
     await run(`--cwd=${getProjectRoot("simple1")} ls --name-only`);
     assertLastWrite(
@@ -100,7 +105,11 @@ describe("Test CLI", () => {
   test("Global Option --config-file", async () => {
     acknowledgeGlobalOptionTest("configFile");
 
-    const { run, assertLastWrite, writeCommandOutputSpy } = setupCliTest();
+    const {
+      run,
+      assertLastWrite: assertLastWrite,
+      writeCommandOutputSpy,
+    } = setupCliTest();
 
     await run(`--cwd=${getProjectRoot("simple1")} info appB`);
     expect(writeCommandOutputSpy).toBeCalledTimes(1);

@@ -18,7 +18,7 @@ const createWorkspaceInfoLines = (workspace: Workspace) => [
   ` - Aliases: ${workspace.aliases.join(", ")}`,
   ` - Path: ${workspace.path}`,
   ` - Glob Match: ${workspace.matchPattern}`,
-  ` - Scripts: ${Object.keys(workspace.packageJson.scripts).sort().join(", ")}`,
+  ` - Scripts: ${workspace.scripts.join(", ")}`,
 ];
 
 const createScriptInfoLines = (script: string, workspaces: Workspace[]) => [
@@ -72,9 +72,7 @@ const listWorkspaces = handleCommand(
     if (options.json) {
       lines.push(
         ...createJsonLines(
-          options.nameOnly
-            ? workspaces.map(({ name }) => name)
-            : workspaces.map(({ packageJson: _packageJson, ...rest }) => rest),
+          options.nameOnly ? workspaces.map(({ name }) => name) : workspaces,
           options,
         ),
       );
@@ -107,6 +105,16 @@ const listScripts = handleCommand(
     const scripts = project.listScriptsWithWorkspaces();
     const lines: string[] = [];
 
+    if (!project.workspaces.length) {
+      logger.info("No workspaces found");
+      return;
+    }
+
+    if (!Object.keys(scripts).length) {
+      logger.info("No scripts found");
+      return;
+    }
+
     if (options.json) {
       lines.push(
         ...createJsonLines(
@@ -129,13 +137,9 @@ const listScripts = handleCommand(
             lines.push(...createScriptInfoLines(name, workspaces));
           }
         });
-
-      if (!lines.length) {
-        logger.info("No scripts found");
-      }
     }
 
-    if (lines.length) commandOutputLogger.info(lines.join("\n"));
+    commandOutputLogger.info(lines.join("\n"));
   },
 );
 
@@ -229,7 +233,7 @@ const runScript = handleCommand(
             if (workspacePattern.includes("*")) {
               return project
                 .findWorkspacesByPattern(workspacePattern)
-                .filter(({ packageJson: { scripts } }) => scripts?.[script])
+                .filter(({ scripts }) => scripts.includes(script))
                 .map(({ name }) => name);
             }
             return [workspacePattern];

@@ -3,7 +3,11 @@ import { createCli } from "../../src/cli";
 import type { CliProgram } from "../../src/cli/createCli";
 import type { CliGlobalOptionName } from "../../src/cli/globalOptions";
 import { getCliGlobalOptionNames } from "../../src/cli/globalOptions/globalOptionsConfig";
-import { commandOutputLogger } from "../../src/cli/projectCommands";
+import {
+  commandOutputLogger,
+  getCliProjectCommandNames,
+  type CliProjectCommandName,
+} from "../../src/cli/projectCommands";
 import { logger } from "../../src/internal/logger";
 import { createRawPattern } from "../../src/internal/regex";
 import { getProjectRoot, type TestProjectName } from "../testProjects";
@@ -21,6 +25,19 @@ export const validateAllGlobalOptionTests = () => {
   for (const option of getCliGlobalOptionNames()) {
     if (!acknowledgedGlobalOptionTests[option]) {
       throw new Error(`Test for global option ${option} was not acknowledged`);
+    }
+  }
+};
+
+const acknowledgedCommandTests: Record<string, boolean> = {};
+export const acknowledgeCommandTest = (command: CliProjectCommandName) => {
+  acknowledgedCommandTests[command] = true;
+};
+
+export const validateAllCommandsTests = () => {
+  for (const command of getCliProjectCommandNames()) {
+    if (!acknowledgedCommandTests[command]) {
+      throw new Error(`Test for command ${command} was not acknowledged`);
     }
   }
 };

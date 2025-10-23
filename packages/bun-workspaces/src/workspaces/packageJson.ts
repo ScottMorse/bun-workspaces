@@ -22,8 +22,8 @@ export type ResolvedPackageJsonContent = {
 
 type UnknownPackageJson = Record<string, unknown>;
 
-export const scanWorkspaceGlob = (pattern: string, rootDir: string) =>
-  new Glob(pattern, { absolute: true, cwd: rootDir }).iterateSync();
+export const scanWorkspaceGlob = (globPattern: string, rootDir: string) =>
+  new Glob(globPattern, { absolute: true, cwd: rootDir }).iterateSync();
 
 const validateJsonRoot = (json: UnknownPackageJson) => {
   if (!json || typeof json !== "object" || Array.isArray(json)) {
