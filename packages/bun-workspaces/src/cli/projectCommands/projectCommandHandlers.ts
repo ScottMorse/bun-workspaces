@@ -8,6 +8,8 @@ import {
   type CliProjectCommandName,
 } from "./projectCommandsConfig";
 
+/** @todo DRY use of output text in cases such as having no workspaces/scripts */
+
 export interface ProjectCommandContext {
   project: Project;
   program: Command;

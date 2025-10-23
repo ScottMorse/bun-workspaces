@@ -420,7 +420,14 @@ library-1b`,
     },
   );
 
-  test.skip("Confirm all commands are tested", () => {
+  test.each(listCommandAndAliases("runScript"))(
+    "Run Script: %s",
+    async (command) => {
+      acknowledgeCommandTest("runScript");
+    },
+  );
+
+  test("Confirm all commands are tested", () => {
     validateAllCommandsTests();
   });
 });
