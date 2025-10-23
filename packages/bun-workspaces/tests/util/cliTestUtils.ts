@@ -82,7 +82,7 @@ export const setupCliTest = (
   const createPattern = (pattern: string | RegExp) =>
     pattern instanceof RegExp
       ? pattern
-      : new RegExp(createRawPattern(pattern), "i");
+      : new RegExp("^" + createRawPattern(pattern.trim()) + "$", "i");
 
   const cliProgram = createCli({
     defaultCwd: testProjectRoot,

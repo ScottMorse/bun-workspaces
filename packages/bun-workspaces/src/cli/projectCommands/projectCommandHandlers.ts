@@ -157,7 +157,7 @@ const workspaceInfo = handleCommand(
     const workspace = project.findWorkspaceByNameOrAlias(workspaceName);
     if (!workspace) {
       logger.error(
-        `Workspace not found: (options: ${JSON.stringify(workspaceName)})`,
+        `Workspace ${JSON.stringify(workspaceName)} not found (use command ${getProjectCommandConfig("listWorkspaces").command.split(/\s+/g)[0]} to list available workspaces)`,
       );
       return;
     }
@@ -188,7 +188,7 @@ const scriptInfo = handleCommand(
       logger.error(
         `Script not found: ${JSON.stringify(
           script,
-        )} (available: ${Object.keys(scripts).join(", ")})`,
+        )} (use command ${getProjectCommandConfig("listScripts").command.split(/\s+/g)[0]} to list available scripts)`,
       );
       return;
     }
