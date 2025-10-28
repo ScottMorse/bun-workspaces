@@ -59,8 +59,6 @@ export const findWorkspaces = ({
     }
   }
 
-  console.log(negativePatterns, excludedWorkspacePaths);
-
   for (const pattern of positivePatterns) {
     for (const item of scanWorkspaceGlob(pattern.replace(/^!/, ""), rootDir)) {
       const packageJsonPath = resolvePackageJsonPath(item);
