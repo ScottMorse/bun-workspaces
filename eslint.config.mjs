@@ -55,8 +55,7 @@ export default defineConfig([
         },
       ],
       eqeqeq: "error",
-      "no-console": "warn",
-
+      "no-console": "error",
       "import/no-dynamic-require": "warn",
       "import/order": [
         "warn",
