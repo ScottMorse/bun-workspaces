@@ -1,5 +1,6 @@
 import { expect, test, describe } from "bun:test";
 import { loadConfigFile, validateBunWorkspacesConfig } from "../src/config";
+import path from "node:path";
 
 describe("Test bun-workspaces config", () => {
   test("Validate config", () => {
@@ -57,12 +58,12 @@ describe("Test bun-workspaces config", () => {
   });
 
   test("Load config file", () => {
-    expect(() => loadConfigFile("tests/testConfigs/invalid1.json")).toThrow();
-    expect(() =>
-      loadConfigFile("tests/testConfigs/does-not-exist.json"),
-    ).toThrow();
-    expect(() => loadConfigFile("tests/testConfigs/valid.json")).not.toThrow();
-    expect(loadConfigFile("tests/testConfigs/valid.json")).toEqual({
+    const getPath = (filePath: string) =>
+      path.resolve(__dirname, "testConfigs", filePath);
+    expect(() => loadConfigFile(getPath("invalid1.json"))).toThrow();
+    expect(() => loadConfigFile(getPath("does-not-exist.json"))).toThrow();
+    expect(() => loadConfigFile(getPath("valid.json"))).not.toThrow();
+    expect(loadConfigFile(getPath("valid.json"))).toEqual({
       cli: { logLevel: "info" },
       project: {
         workspaceAliases: { app: "@test/a", lib: "@test/b" },

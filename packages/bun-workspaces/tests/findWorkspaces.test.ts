@@ -182,6 +182,93 @@ describe("Test finding workspaces", () => {
     );
   });
 
+  test.only("Ignore node_modules workspace", async () => {
+    const defaultProject = findWorkspacesFromPackage({
+      rootDir: getProjectRoot("withNodeModuleWorkspace"),
+    });
+
+    expect(defaultProject).toEqual({
+      name: "test-root",
+      workspaces: [
+        {
+          name: "application-a",
+          matchPattern: "applications/*",
+          path: "applications/applicationA",
+          packageJson: {
+            name: "application-a",
+            workspaces: [],
+            scripts: {
+              "all-workspaces": "echo 'script for all workspaces'",
+              "a-workspaces": "echo 'script for a workspaces'",
+              "application-a": "echo 'script for application-a'",
+            },
+          },
+          aliases: [],
+        },
+        {
+          name: "application-b",
+          matchPattern: "applications/*",
+          path: "applications/applicationB",
+          packageJson: {
+            name: "application-b",
+            workspaces: [],
+            scripts: {
+              "all-workspaces": "echo 'script for all workspaces'",
+              "b-workspaces": "echo 'script for b workspaces'",
+              "application-b": "echo 'script for application-b'",
+            },
+          },
+          aliases: [],
+        },
+        {
+          name: "library-a",
+          matchPattern: "libraries/**/*",
+          path: "libraries/libraryA",
+          packageJson: {
+            name: "library-a",
+            workspaces: [],
+            scripts: {
+              "all-workspaces": "echo 'script for all workspaces'",
+              "a-workspaces": "echo 'script for a workspaces'",
+              "library-a": "echo 'script for library-a'",
+            },
+          },
+          aliases: [],
+        },
+        {
+          name: "library-b",
+          matchPattern: "libraries/**/*",
+          path: "libraries/libraryB",
+          packageJson: {
+            name: "library-b",
+            workspaces: [],
+            scripts: {
+              "all-workspaces": "echo 'script for all workspaces'",
+              "b-workspaces": "echo 'script for b workspaces'",
+              "library-b": "echo 'script for library-b'",
+            },
+          },
+          aliases: [],
+        },
+        {
+          name: "library-c",
+          matchPattern: "libraries/**/*",
+          path: "libraries/nested/libraryC",
+          packageJson: {
+            name: "library-c",
+            workspaces: [],
+            scripts: {
+              "all-workspaces": "echo 'script for all workspaces'",
+              "c-workspaces": "echo 'script for c workspaces'",
+              "library-c": "echo 'script for library-c'",
+            },
+          },
+          aliases: [],
+        },
+      ],
+    });
+  });
+
   test("Supports negation globs in workspaces field in package.json", async () => {
     expect(
       simplifyExpectedWorkspacesResult(
