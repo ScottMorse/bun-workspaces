@@ -1,4 +1,5 @@
-import path from "path";
+import path from "node:path";
+import fs from "node:fs";
 import { pluginSitemap } from "@rspress/plugin-sitemap";
 import type { RspressPlugin } from "@rspress/shared";
 import { defineConfig } from "rspress/config";
@@ -20,11 +21,12 @@ export default defineConfig({
     searchHooks: path.join(__dirname, "src/search/search.tsx"),
   },
   plugins: [
-    pluginSitemap({
-      siteUrl: new URL(packageJson.homepage).origin,
-      defaultChangeFreq: "weekly",
-      defaultPriority: "0.8",
-    }) as RspressPlugin,
+    // TODO: find fix for using this plugin or wait to see if a package update fixes it
+    // pluginSitemap({
+    //   siteUrl: new URL(packageJson.homepage).origin,
+    //   defaultChangeFreq: "weekly",
+    //   defaultPriority: "0.8",
+    // }),
   ],
   route: {
     cleanUrls: true,
@@ -93,6 +95,16 @@ export default defineConfig({
         icon: "github",
         mode: "link",
         content: repoBaseUrl,
+      },
+      {
+        icon: {
+          svg: fs.readFileSync(
+            path.resolve(__dirname, "src/docs/public/npm-logo.svg"),
+            "utf8",
+          ),
+        },
+        mode: "link",
+        content: "https://www.npmjs.com/package/bun-workspaces",
       },
     ],
     nav: [
