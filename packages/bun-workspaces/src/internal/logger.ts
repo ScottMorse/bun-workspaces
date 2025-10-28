@@ -17,7 +17,7 @@ export const validateLogLevel = (level: LogLevelSetting) => {
   }
 };
 
-export type LogMetadata = Record<string, any>;
+export type LogMetadata = Record<string, unknown>;
 
 export interface Log<
   Message extends string | Error = string,
@@ -84,6 +84,7 @@ class _Logger implements Logger {
       if (message instanceof Error) {
         message.message = formattedMessage;
       }
+      // eslint-disable-next-line no-console
       console[level](
         message instanceof Error ? message : formattedMessage,
         ...(metadata ? [{ metadata }] : []),
