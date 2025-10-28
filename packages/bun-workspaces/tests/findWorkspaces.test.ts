@@ -182,7 +182,7 @@ describe("Test finding workspaces", () => {
     );
   });
 
-  test.only("Ignore node_modules workspace", async () => {
+  test("Ignore node_modules workspace", async () => {
     const defaultProject = findWorkspacesFromPackage({
       rootDir: getProjectRoot("withNodeModuleWorkspace"),
     });
