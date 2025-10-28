@@ -40,9 +40,10 @@ export const findWorkspaces = ({
   const workspaces: Workspace[] = [];
   const excludedWorkspacePaths: string[] = [];
 
-  const negativePatterns = workspaceGlobs.filter((pattern) =>
-    pattern.startsWith("!"),
-  );
+  const negativePatterns = workspaceGlobs
+    .filter((pattern) => pattern.startsWith("!"))
+    .concat(["!**/node_modules/**/*"]);
+
   const positivePatterns = workspaceGlobs.filter(
     (pattern) => !pattern.startsWith("!"),
   );
@@ -57,6 +58,8 @@ export const findWorkspaces = ({
       }
     }
   }
+
+  console.log(negativePatterns, excludedWorkspacePaths);
 
   for (const pattern of positivePatterns) {
     for (const item of scanWorkspaceGlob(pattern.replace(/^!/, ""), rootDir)) {
@@ -78,8 +81,8 @@ export const findWorkspaces = ({
             .map(([key]) => key),
         };
         if (
-          validateWorkspace(workspace, workspaces) &&
-          !excludedWorkspacePaths.includes(workspace.path)
+          !excludedWorkspacePaths.includes(workspace.path) &&
+          validateWorkspace(workspace, workspaces)
         ) {
           workspaces.push(workspace);
         }

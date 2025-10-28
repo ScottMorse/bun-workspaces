@@ -1,0 +1,13 @@
+{
+  "project": {
+    "workspaceAliases": {
+      "appA": "application-a",
+      "appB": "application-b",
+      "libA": "library-a",
+      "libB": "library-b",
+      "libC": "library-c",
+      "libraryA": "library-a",
+      "libraryB": "library-b"
+    }
+  }
+}
