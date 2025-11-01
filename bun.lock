@@ -26,6 +26,9 @@
       "bin": {
         "bun-workspaces": "bin/cli.js",
       },
+      "devDependencies": {
+        "bun-workspaces": "workspace:*",
+      },
     },
   },
   "packages": {

@@ -51,7 +51,7 @@ interface SetupCliTestResult {
   writeErrSpy: ReturnType<typeof spyOn>;
   assertLastWrite: (
     pattern: string | RegExp,
-    logType?: "commandOutput" | "error",
+    logType?: "commandOutput" | "scriptOutput" | "error",
   ) => void;
   assertLastErrorThrown: (error: string | RegExp | typeof Error) => void;
 }
@@ -66,10 +66,12 @@ export const setupCliTest = (
   const writeOutSpy = spyOn(logger, "info");
   const writeCommandOutputSpy = spyOn(commandOutputLogger, "info");
   const writeErrSpy = spyOn(logger, "error");
+  const writeScriptOutputSpy = spyOn(commandOutputLogger, "logOutput");
 
   writeOutSpy.mockReset();
   writeCommandOutputSpy.mockReset();
   writeErrSpy.mockReset();
+  writeScriptOutputSpy.mockReset();
 
   const testProjectRoot = getProjectRoot(testProject);
 
@@ -98,14 +100,16 @@ export const setupCliTest = (
     writeErrSpy,
     assertLastWrite: (
       pattern: string | RegExp,
-      logType?: "commandOutput" | "error",
+      logType?: "commandOutput" | "scriptOutput" | "error",
     ) =>
       expect(
         (logType === "error"
           ? writeErrSpy
           : logType === "commandOutput"
             ? writeCommandOutputSpy
-            : writeOutSpy
+            : logType === "scriptOutput"
+              ? writeScriptOutputSpy
+              : writeOutSpy
         ).mock.lastCall?.[0] ?? "",
       ).toMatch(createPattern(pattern)),
     assertLastErrorThrown: (error: string | RegExp | typeof Error) =>
@@ -114,15 +118,14 @@ export const setupCliTest = (
         : expect(handleErrorMock.mock.lastCall?.[0]?.message).toMatch(
             createPattern(error as string),
           ),
-    run: (...argv: string[]) => {
+    run: (...argv: string[]) =>
       cliProgram.run({
         argv: [
           "bunx",
           "bun-workspaces",
           ...(argv.length === 1 ? argv[0].split(/\s+/) : argv).filter(Boolean),
         ],
-      });
-    },
+      }),
   };
 };
 

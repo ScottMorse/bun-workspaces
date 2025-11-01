@@ -12,6 +12,8 @@ import { defineProjectCommands } from "./projectCommands";
 
 export interface RunCliOptions {
   argv?: string | string[];
+  /** Should be `true` if args do not include the binary name (e.g. `bunx bun-workspaces`) */
+  programmatic?: true;
 }
 
 export interface CliProgram {
@@ -29,7 +31,10 @@ export const createCli = ({
   postInit,
   defaultCwd = process.cwd(),
 }: CreateCliProgramOptions = {}): CliProgram => {
-  const run = async ({ argv = process.argv }: RunCliOptions = {}) => {
+  const run = async ({
+    argv = process.argv,
+    programmatic,
+  }: RunCliOptions = {}) => {
     const errorListener =
       handleError ??
       ((error) => {
@@ -79,7 +84,9 @@ export const createCli = ({
         project,
       });
 
-      await program.parseAsync(args);
+      await program.parseAsync(args, {
+        from: programmatic ? "user" : "node",
+      });
     } catch (error) {
       if (error instanceof BunWorkspacesError) {
         logger.error("Error " + error.name + ": " + error.message);

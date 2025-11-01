@@ -271,42 +271,44 @@ const runScript = handleCommand(
       scriptName,
       workspace,
     }: (typeof scriptCommands)[number]) => {
-      const commandLogger = createLogger(`${workspace.name}:${scriptName}`);
-
       const splitCommand = command.command.split(/\s+/g);
 
-      commandLogger.debug(
+      logger.debug(
         `Running script ${scriptName} in workspace ${workspace.name} (cwd: ${
           command.cwd
         }): ${splitCommand.join(" ")}`,
       );
 
-      const isSilent = logger.printLevel === "silent";
-
       const proc = Bun.spawn(command.command.split(/\s+/g), {
         cwd: command.cwd,
         env: { ...process.env, FORCE_COLOR: "1" },
-        stdout: isSilent ? "ignore" : "pipe",
-        stderr: isSilent ? "ignore" : "pipe",
+        stdout: "pipe",
+        stderr: "pipe",
       });
 
       const linePrefix = options.noPrefix
         ? ""
         : `[${workspace.name}:${scriptName}] `;
 
-      if (proc.stdout) {
-        for await (const chunk of proc.stdout) {
-          commandLogger.logOutput(chunk, "info", process.stdout, linePrefix);
+      const pipeOutput = async (streamName: "stdout" | "stderr") => {
+        const stream = proc[streamName];
+        if (stream) {
+          for await (const chunk of stream) {
+            commandOutputLogger.logOutput(
+              chunk,
+              "info",
+              process[streamName],
+              linePrefix,
+            );
+          }
         }
-      }
+      };
 
-      if (proc.stderr) {
-        for await (const chunk of proc.stderr) {
-          commandLogger.logOutput(chunk, "error", process.stderr, linePrefix);
-        }
-      }
-
-      await proc.exited;
+      await Promise.all([
+        pipeOutput("stdout"),
+        pipeOutput("stderr"),
+        proc.exited,
+      ]);
 
       return {
         scriptName,
@@ -349,6 +351,7 @@ const runScript = handleCommand(
         i++;
       }
     } else {
+      // Run in series (default)
       let i = 0;
       for (const command of scriptCommands) {
         try {

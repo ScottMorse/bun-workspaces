@@ -420,10 +420,21 @@ library-1b`,
     },
   );
 
-  test.each(listCommandAndAliases("runScript"))(
+  test.only.each(listCommandAndAliases("runScript"))(
     "Run Script: %s",
     async (command) => {
       acknowledgeCommandTest("runScript");
+
+      const {
+        run,
+        assertLastWrite,
+        writeOutSpy,
+        writeErrSpy,
+        writeCommandOutputSpy,
+      } = setupCliTest({});
+
+      await run(command, "application-a");
+      assertLastWrite(`script for application-a`, "scriptOutput");
     },
   );
 

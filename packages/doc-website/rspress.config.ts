@@ -2,7 +2,6 @@ import fs from "node:fs";
 import path from "node:path";
 import { defineConfig } from "rspress/config";
 import packageJson from "../bun-workspaces/package.json";
-import { npmSvg } from "./src/content/npmSvg";
 
 const repoBaseUrl = packageJson.repository.url.replace(".git", "");
 
