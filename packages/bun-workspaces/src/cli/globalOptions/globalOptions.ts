@@ -23,16 +23,25 @@ const addGlobalOption = (
 ) => {
   const { mainOption, shortOption, description, param, values, defaultValue } =
     getCliGlobalOptionConfig(optionName);
-  const option = new Option(
+
+  let option = new Option(
     `${shortOption} ${mainOption}${param ? ` <${param}>` : ""}`,
     description,
-  ).default(defaultOverride ?? defaultValue);
-  program.addOption(
-    values?.length ? option.choices(values as string[]) : option,
   );
+
+  const effectiveDefaultValue = defaultOverride ?? defaultValue;
+  if (effectiveDefaultValue) {
+    option = option.default(effectiveDefaultValue);
+  }
+
+  if (values?.length) {
+    option = option.choices(values as string[]);
+  }
+
+  program.addOption(option);
 };
 
-const getWorkingDirectory = (
+const getWorkingDirectoryFromArgs = (
   program: Command,
   args: string[],
   defaultCwd: string,
@@ -42,7 +51,7 @@ const getWorkingDirectory = (
   return program.opts().cwd;
 };
 
-const getConfig = (program: Command, args: string[]) => {
+const getConfigFileFromArgs = (program: Command, args: string[]) => {
   addGlobalOption(program, "configFile");
   program.parseOptions(args);
   return program.opts().configFile;
@@ -53,7 +62,7 @@ const defineGlobalOptions = (
   args: string[],
   defaultCwd: string,
 ) => {
-  const cwd = getWorkingDirectory(program, args, defaultCwd);
+  const cwd = getWorkingDirectoryFromArgs(program, args, defaultCwd);
 
   if (!fs.existsSync(cwd)) {
     throw new ERRORS.WorkingDirectoryNotFound(
@@ -67,7 +76,7 @@ const defineGlobalOptions = (
     );
   }
 
-  const configFilePath = getConfig(program, args);
+  const configFilePath = getConfigFileFromArgs(program, args);
 
   const config = loadConfigFile(configFilePath, cwd);
 

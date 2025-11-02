@@ -3,6 +3,7 @@ import { setupTest } from "./util/newUtils";
 
 describe("Sandbox", () => {
   test("should run a command", async () => {
-    const { outputLines, combinedOutput } = await setupTest().run("hello");
+    const { outputLines, stdoutAndErr } = await setupTest().run("hello");
+    console.log(stdoutAndErr.raw);
   });
 });

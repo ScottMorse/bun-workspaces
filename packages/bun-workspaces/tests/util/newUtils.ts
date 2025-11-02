@@ -1,4 +1,5 @@
 import path from "node:path";
+import packageJson from "../../package.json";
 import { getProjectRoot, type TestProjectName } from "../testProjects";
 
 export interface SetupTestOptions {
@@ -10,12 +11,16 @@ export interface OutputText {
   sanitized: string;
 }
 
+export interface RunResult {
+  outputLines: OutputLine[];
+  stdoutAndErr: OutputText;
+  stdout: OutputText;
+  stderr: OutputText;
+  exitCode: number;
+}
+
 export interface SetupTestResult {
-  run: (...argv: string[]) => Promise<{
-    subprocess: Bun.Subprocess<"ignore", "pipe", "pipe">;
-    outputLines: OutputLine[];
-    combinedOutput: OutputText;
-  }>;
+  run: (...argv: string[]) => Promise<RunResult>;
 }
 
 export interface OutputLine {
@@ -34,7 +39,10 @@ export const setupTest = (
 
   const run = async (...argv: string[]) => {
     const subprocess = Bun.spawn(
-      [path.resolve(__dirname, "../../bin/cli.js"), ...argv],
+      [
+        path.resolve(__dirname, "../../", packageJson.bin["bun-workspaces"]),
+        ...argv,
+      ],
       {
         cwd: testProjectRoot,
         env: { ...process.env, FORCE_COLOR: "1" },
@@ -44,6 +52,24 @@ export const setupTest = (
     );
 
     const outputLines: OutputLine[] = [];
+    const stdout: OutputText = {
+      raw: "",
+      sanitized: "",
+    };
+    const stderr: OutputText = {
+      raw: "",
+      sanitized: "",
+    };
+    const stdoutAndErr: OutputText = {
+      raw: "",
+      sanitized: "",
+    };
+
+    const appendOutputLine = (outputText: OutputText, line: string) => {
+      outputText.raw += line + "\n";
+      outputText.sanitized += sanitizeText(line) + "\n";
+    };
+
     const pipeOutput = async (source: "stdout" | "stderr") => {
       const stream = subprocess[source];
       if (stream) {
@@ -52,13 +78,17 @@ export const setupTest = (
             ...new TextDecoder()
               .decode(chunk)
               .split("\n")
-              .map((line) => ({
-                text: {
-                  raw: line,
-                  sanitized: sanitizeText(line),
-                },
-                source,
-              })),
+              .map((line) => {
+                appendOutputLine(source === "stdout" ? stdout : stderr, line);
+                appendOutputLine(stdoutAndErr, line);
+                return {
+                  text: {
+                    raw: line,
+                    sanitized: sanitizeText(line),
+                  },
+                  source,
+                };
+              }),
           );
         }
       }
@@ -71,12 +101,11 @@ export const setupTest = (
     ]);
 
     return {
-      subprocess,
-      outputLines: outputLines.filter((line) => line.text.sanitized.trim()),
-      combinedOutput: {
-        raw: outputLines.map((line) => line.text.raw).join("\n"),
-        sanitized: outputLines.map((line) => line.text.sanitized).join("\n"),
-      },
+      outputLines,
+      stdoutAndErr,
+      stdout,
+      stderr,
+      exitCode: await subprocess.exited,
     };
   };
 
