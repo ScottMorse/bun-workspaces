@@ -23,6 +23,7 @@ export interface SetupTestOptions {
 export interface OutputText {
   raw: string;
   sanitized: string;
+  sanitizedCompactLines: string;
 }
 
 export interface OutputLine {
@@ -49,6 +50,12 @@ export const assertOutputMatches = (output: string, pattern: string | RegExp) =>
       : new RegExp("^" + createRawPattern(pattern.trim()) + "$", "i"),
   );
 
+const blankOutputText: OutputText = {
+  raw: "",
+  sanitized: "",
+  sanitizedCompactLines: "",
+};
+
 export const setupCliTest = (
   { testProject = "default" }: SetupTestOptions = { testProject: "default" },
 ): SetupTestResult => {
@@ -73,18 +80,9 @@ export const setupCliTest = (
     );
 
     const outputLines: OutputLine[] = [];
-    const stdout: OutputText = {
-      raw: "",
-      sanitized: "",
-    };
-    const stderr: OutputText = {
-      raw: "",
-      sanitized: "",
-    };
-    const stdoutAndErr: OutputText = {
-      raw: "",
-      sanitized: "",
-    };
+    const stdout: OutputText = { ...blankOutputText };
+    const stderr: OutputText = { ...blankOutputText };
+    const stdoutAndErr: OutputText = { ...blankOutputText };
 
     const appendOutputLine = (outputText: OutputText, line: string) => {
       outputText.raw += line + "\n";
@@ -106,6 +104,7 @@ export const setupCliTest = (
                   text: {
                     raw: line,
                     sanitized: sanitizeText(line),
+                    sanitizedCompactLines: sanitizeText(line),
                   },
                   source,
                 };
@@ -117,11 +116,19 @@ export const setupCliTest = (
 
     await Promise.all([pipeOutput("stdout"), pipeOutput("stderr")]);
 
+    const sanitizeCompact = (outputText: OutputText) => {
+      outputText.sanitizedCompactLines = outputText.sanitized.replace(
+        /(\n+)/gm,
+        "\n",
+      );
+      return outputText;
+    };
+
     return {
       outputLines,
-      stdoutAndErr,
-      stdout,
-      stderr,
+      stdoutAndErr: sanitizeCompact(stdoutAndErr),
+      stdout: sanitizeCompact(stdout),
+      stderr: sanitizeCompact(stderr),
       exitCode: await subprocess.exited,
     };
   };

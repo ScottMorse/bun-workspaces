@@ -3,11 +3,7 @@ import {
   getProjectCommandConfig,
   type CliProjectCommandName,
 } from "../src/cli/projectCommands";
-import {
-  setupCliTest,
-  assertOutputMatches,
-  USAGE_OUTPUT_PATTERN,
-} from "./util/cliTestUtils";
+import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
 
 const listCommandAndAliases = (commandName: CliProjectCommandName) => {
   const config = getProjectCommandConfig(commandName);
@@ -391,7 +387,7 @@ Script: library-b
       expect(doesNotExistResult.exitCode).toBe(1);
       assertOutputMatches(
         doesNotExistResult.stderr.sanitized,
-        'Workspace "does-not-exist" not found (use command list-workspaces to list available workspaces)',
+        'Workspace "does-not-exist" not found',
       );
     },
   );
@@ -470,24 +466,81 @@ Script: library-b
       expect(doesNotExistResult.exitCode).toBe(1);
       assertOutputMatches(
         doesNotExistResult.stderr.sanitized,
-        'Script not found: "does-not-exist" (use command list-scripts to list available scripts)',
+        'Script not found: "does-not-exist"',
       );
     },
   );
 
-  //   test.only.each(listCommandAndAliases("runScript"))(
-  //     "Run Script: %s",
-  //     async (command) => {
-  //       const {
-  //         run,
-  //         assertOutputMatches,
-  //         writeOutSpy,
-  //         writeErrSpy,
-  //         writeCommandOutputSpy,
-  //       } = setupCliTest({});
+  test.each(listCommandAndAliases("runScript"))(
+    "Run Script (basic): %s",
+    async (command) => {
+      const { run } = setupCliTest({});
 
-  //       await run(command, "application-a");
-  //       assertOutputMatches(`script for application-a`, "scriptOutput");
-  //     },
-  //   );
+      const appAResult = await run(command, "application-a");
+      expect(appAResult.exitCode).toBe(0);
+      assertOutputMatches(
+        appAResult.stdout.sanitizedCompactLines,
+        `[application-a:application-a] script for application-a
+✅ application-a: application-a
+1 script ran successfully`,
+      );
+
+      const aWorkspacesResult = await run(command, "a-workspaces");
+      expect(aWorkspacesResult.exitCode).toBe(0);
+      assertOutputMatches(
+        aWorkspacesResult.stdout.sanitizedCompactLines,
+        `[application-a:a-workspaces] script for a workspaces
+[library-a:a-workspaces] script for a workspaces
+✅ application-a: a-workspaces
+✅ library-a: a-workspaces
+2 scripts ran successfully`,
+      );
+
+      const aWorkspacesLibraryResult = await run(
+        command,
+        "a-workspaces",
+        "library-a",
+      );
+      expect(aWorkspacesLibraryResult.exitCode).toBe(0);
+      assertOutputMatches(
+        aWorkspacesLibraryResult.stdout.sanitizedCompactLines,
+        `[library-a:a-workspaces] script for a workspaces
+✅ library-a: a-workspaces
+1 script ran successfully`,
+      );
+
+      const allWorkspacesResult = await run(command, "all-workspaces");
+      expect(allWorkspacesResult.exitCode).toBe(0);
+      assertOutputMatches(
+        allWorkspacesResult.stdout.sanitizedCompactLines,
+        `[application-a:all-workspaces] script for all workspaces
+[application-b:all-workspaces] script for all workspaces
+[library-a:all-workspaces] script for all workspaces
+[library-b:all-workspaces] script for all workspaces
+[library-c:all-workspaces] script for all workspaces
+✅ application-a: all-workspaces
+✅ application-b: all-workspaces
+✅ library-a: all-workspaces
+✅ library-b: all-workspaces
+✅ library-c: all-workspaces
+5 scripts ran successfully`,
+      );
+
+      const noScriptResult = await run(command, "no-script");
+      assertOutputMatches(
+        noScriptResult.stderr.sanitizedCompactLines,
+        `No workspaces found with script "no-script"`,
+      );
+
+      const noWorkspacesResult = await run(
+        command,
+        "application-a",
+        "does-not-exist",
+      );
+      assertOutputMatches(
+        noWorkspacesResult.stderr.sanitizedCompactLines,
+        `Workspace not found: "does-not-exist"`,
+      );
+    },
+  );
 });
