@@ -9,7 +9,8 @@
     "url": "https://github.com/ScottMorse/bun-workspaces.git"
   },
   "bin": {
-    "bun-workspaces": "bin/cli.js"
+    "bun-workspaces": "bin/cli.js",
+    "bw": "bun-workspaces"
   },
   "custom": {
     "bunVersion": {
