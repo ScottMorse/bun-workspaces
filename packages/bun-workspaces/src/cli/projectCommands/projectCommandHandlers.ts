@@ -88,7 +88,7 @@ const listWorkspaces = handleCommand(
       });
     }
 
-    if (!lines.length) {
+    if (!lines.length && !options.nameOnly) {
       logger.info("No workspaces found");
     }
 
@@ -107,12 +107,12 @@ const listScripts = handleCommand(
     const scripts = project.listScriptsWithWorkspaces();
     const lines: string[] = [];
 
-    if (!project.workspaces.length) {
+    if (!project.workspaces.length && !options.nameOnly) {
       logger.info("No workspaces found");
       return;
     }
 
-    if (!Object.keys(scripts).length) {
+    if (!Object.keys(scripts).length && !options.nameOnly) {
       logger.info("No scripts found");
       return;
     }
@@ -141,7 +141,7 @@ const listScripts = handleCommand(
         });
     }
 
-    commandOutputLogger.info(lines.join("\n"));
+    if (lines.length) commandOutputLogger.info(lines.join("\n"));
   },
 );
 
@@ -161,7 +161,7 @@ const workspaceInfo = handleCommand(
       logger.error(
         `Workspace ${JSON.stringify(workspaceName)} not found (use command ${getProjectCommandConfig("listWorkspaces").command.split(/\s+/g)[0]} to list available workspaces)`,
       );
-      return;
+      process.exit(1);
     }
 
     commandOutputLogger.info(
@@ -192,7 +192,7 @@ const scriptInfo = handleCommand(
           script,
         )} (use command ${getProjectCommandConfig("listScripts").command.split(/\s+/g)[0]} to list available scripts)`,
       );
-      return;
+      process.exit(1);
     }
     commandOutputLogger.info(
       (options.json

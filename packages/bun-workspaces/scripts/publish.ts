@@ -53,6 +53,8 @@ if (import.meta.main) {
     );
   }
 
+  await runScript(["bun", "run", "lint"]);
+
   await runScript(["bun", "run", "build:test"]);
 
   await runBuild();

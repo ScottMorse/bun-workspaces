@@ -21,6 +21,7 @@
   "scripts": {
     "cli": "bun --silent run bin/cli.js",
     "cli:dev": "_BW_RUNTIME_MODE=development bun --silent run bin/cli.js",
+    "lint": "eslint src",
     "build": "bun run scripts/build.ts",
     "build:test": "BUILD_INCLUDE_TESTS=true bun run scripts/build.ts && bun --cwd=./dist.test test && rm -rf dist.test",
     "build:rslib-only": "rslib build",

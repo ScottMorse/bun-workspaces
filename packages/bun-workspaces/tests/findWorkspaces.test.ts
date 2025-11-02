@@ -4,23 +4,7 @@ import {
   findWorkspaces,
   findWorkspacesFromPackage,
 } from "../src/workspaces/findWorkspaces";
-import type { Workspace } from "../src/workspaces/workspace";
 import { getProjectRoot } from "./testProjects";
-
-const simplifyExpectedWorkspacesResult = <
-  T extends {
-    workspaces: Partial<Workspace>[];
-  },
->({
-  workspaces,
-  ...rest
-}: T) => ({
-  ...rest,
-  workspaces: workspaces.map((ws) => ({
-    ...ws,
-    packageJson: {},
-  })) as Workspace[],
-});
 
 describe("Test finding workspaces", () => {
   test("Find workspaces basic behavior", async () => {
@@ -35,75 +19,35 @@ describe("Test finding workspaces", () => {
           name: "application-a",
           matchPattern: "applications/*",
           path: "applications/applicationA",
-          packageJson: {
-            name: "application-a",
-            workspaces: [],
-            scripts: {
-              "all-workspaces": "echo 'script for all workspaces'",
-              "a-workspaces": "echo 'script for a workspaces'",
-              "application-a": "echo 'script for application-a'",
-            },
-          },
+          scripts: ["a-workspaces", "all-workspaces", "application-a"],
           aliases: [],
         },
         {
           name: "application-b",
           matchPattern: "applications/*",
           path: "applications/applicationB",
-          packageJson: {
-            name: "application-b",
-            workspaces: [],
-            scripts: {
-              "all-workspaces": "echo 'script for all workspaces'",
-              "b-workspaces": "echo 'script for b workspaces'",
-              "application-b": "echo 'script for application-b'",
-            },
-          },
+          scripts: ["all-workspaces", "application-b", "b-workspaces"],
           aliases: [],
         },
         {
           name: "library-a",
           matchPattern: "libraries/**/*",
           path: "libraries/libraryA",
-          packageJson: {
-            name: "library-a",
-            workspaces: [],
-            scripts: {
-              "all-workspaces": "echo 'script for all workspaces'",
-              "a-workspaces": "echo 'script for a workspaces'",
-              "library-a": "echo 'script for library-a'",
-            },
-          },
+          scripts: ["a-workspaces", "all-workspaces", "library-a"],
           aliases: [],
         },
         {
           name: "library-b",
           matchPattern: "libraries/**/*",
           path: "libraries/libraryB",
-          packageJson: {
-            name: "library-b",
-            workspaces: [],
-            scripts: {
-              "all-workspaces": "echo 'script for all workspaces'",
-              "b-workspaces": "echo 'script for b workspaces'",
-              "library-b": "echo 'script for library-b'",
-            },
-          },
+          scripts: ["all-workspaces", "b-workspaces", "library-b"],
           aliases: [],
         },
         {
           name: "library-c",
           matchPattern: "libraries/**/*",
           path: "libraries/nested/libraryC",
-          packageJson: {
-            name: "library-c",
-            workspaces: [],
-            scripts: {
-              "all-workspaces": "echo 'script for all workspaces'",
-              "c-workspaces": "echo 'script for c workspaces'",
-              "library-c": "echo 'script for library-c'",
-            },
-          },
+          scripts: ["all-workspaces", "c-workspaces", "library-c"],
           aliases: [],
         },
       ],
@@ -118,68 +62,66 @@ describe("Test finding workspaces", () => {
     });
 
     expect(
-      simplifyExpectedWorkspacesResult(
-        findWorkspaces({
-          rootDir: getProjectRoot("default"),
-          workspaceGlobs: ["applications/*", "libraries/*"],
-        }),
-      ),
-    ).toEqual(
-      simplifyExpectedWorkspacesResult({
-        workspaces: [
-          {
-            name: "application-a",
-            matchPattern: "applications/*",
-            path: "applications/applicationA",
-            aliases: [],
-          },
-          {
-            name: "application-b",
-            matchPattern: "applications/*",
-            path: "applications/applicationB",
-            aliases: [],
-          },
-          {
-            name: "library-a",
-            matchPattern: "libraries/*",
-            path: "libraries/libraryA",
-            aliases: [],
-          },
-          {
-            name: "library-b",
-            matchPattern: "libraries/*",
-            path: "libraries/libraryB",
-            aliases: [],
-          },
-        ],
+      findWorkspaces({
+        rootDir: getProjectRoot("default"),
+        workspaceGlobs: ["applications/*", "libraries/*"],
       }),
-    );
+    ).toEqual({
+      workspaces: [
+        {
+          name: "application-a",
+          matchPattern: "applications/*",
+          path: "applications/applicationA",
+          scripts: ["a-workspaces", "all-workspaces", "application-a"],
+          aliases: [],
+        },
+        {
+          name: "application-b",
+          matchPattern: "applications/*",
+          path: "applications/applicationB",
+          scripts: ["all-workspaces", "application-b", "b-workspaces"],
+          aliases: [],
+        },
+        {
+          name: "library-a",
+          matchPattern: "libraries/*",
+          path: "libraries/libraryA",
+          scripts: ["a-workspaces", "all-workspaces", "library-a"],
+          aliases: [],
+        },
+        {
+          name: "library-b",
+          matchPattern: "libraries/*",
+          path: "libraries/libraryB",
+          scripts: ["all-workspaces", "b-workspaces", "library-b"],
+          aliases: [],
+        },
+      ],
+    });
 
     expect(
-      simplifyExpectedWorkspacesResult(
-        findWorkspaces({
-          rootDir: getProjectRoot("default"),
-          workspaceGlobs: ["applications/*"],
-        }),
-      ),
-    ).toEqual(
-      simplifyExpectedWorkspacesResult({
-        workspaces: [
-          {
-            name: "application-a",
-            matchPattern: "applications/*",
-            path: "applications/applicationA",
-            aliases: [],
-          },
-          {
-            name: "application-b",
-            matchPattern: "applications/*",
-            path: "applications/applicationB",
-            aliases: [],
-          },
-        ],
+      findWorkspaces({
+        rootDir: getProjectRoot("default"),
+        workspaceGlobs: ["applications/*"],
       }),
-    );
+    ).toEqual({
+      workspaces: [
+        {
+          name: "application-a",
+          matchPattern: "applications/*",
+          path: "applications/applicationA",
+          scripts: ["a-workspaces", "all-workspaces", "application-a"],
+          aliases: [],
+        },
+        {
+          name: "application-b",
+          matchPattern: "applications/*",
+          path: "applications/applicationB",
+          scripts: ["all-workspaces", "application-b", "b-workspaces"],
+          aliases: [],
+        },
+      ],
+    });
   });
 
   test("Ignore node_modules workspace", async () => {
@@ -194,75 +136,35 @@ describe("Test finding workspaces", () => {
           name: "application-a",
           matchPattern: "applications/*",
           path: "applications/applicationA",
-          packageJson: {
-            name: "application-a",
-            workspaces: [],
-            scripts: {
-              "all-workspaces": "echo 'script for all workspaces'",
-              "a-workspaces": "echo 'script for a workspaces'",
-              "application-a": "echo 'script for application-a'",
-            },
-          },
+          scripts: ["a-workspaces", "all-workspaces", "application-a"],
           aliases: [],
         },
         {
           name: "application-b",
           matchPattern: "applications/*",
           path: "applications/applicationB",
-          packageJson: {
-            name: "application-b",
-            workspaces: [],
-            scripts: {
-              "all-workspaces": "echo 'script for all workspaces'",
-              "b-workspaces": "echo 'script for b workspaces'",
-              "application-b": "echo 'script for application-b'",
-            },
-          },
+          scripts: ["all-workspaces", "application-b", "b-workspaces"],
           aliases: [],
         },
         {
           name: "library-a",
           matchPattern: "libraries/**/*",
           path: "libraries/libraryA",
-          packageJson: {
-            name: "library-a",
-            workspaces: [],
-            scripts: {
-              "all-workspaces": "echo 'script for all workspaces'",
-              "a-workspaces": "echo 'script for a workspaces'",
-              "library-a": "echo 'script for library-a'",
-            },
-          },
+          scripts: ["a-workspaces", "all-workspaces", "library-a"],
           aliases: [],
         },
         {
           name: "library-b",
           matchPattern: "libraries/**/*",
           path: "libraries/libraryB",
-          packageJson: {
-            name: "library-b",
-            workspaces: [],
-            scripts: {
-              "all-workspaces": "echo 'script for all workspaces'",
-              "b-workspaces": "echo 'script for b workspaces'",
-              "library-b": "echo 'script for library-b'",
-            },
-          },
+          scripts: ["all-workspaces", "b-workspaces", "library-b"],
           aliases: [],
         },
         {
           name: "library-c",
           matchPattern: "libraries/**/*",
           path: "libraries/nested/libraryC",
-          packageJson: {
-            name: "library-c",
-            workspaces: [],
-            scripts: {
-              "all-workspaces": "echo 'script for all workspaces'",
-              "c-workspaces": "echo 'script for c workspaces'",
-              "library-c": "echo 'script for library-c'",
-            },
-          },
+          scripts: ["all-workspaces", "c-workspaces", "library-c"],
           aliases: [],
         },
       ],
@@ -271,54 +173,56 @@ describe("Test finding workspaces", () => {
 
   test("Supports negation globs in workspaces field in package.json", async () => {
     expect(
-      simplifyExpectedWorkspacesResult(
-        findWorkspacesFromPackage({
-          rootDir: getProjectRoot("negationGlobs"),
-        }),
-      ),
-    ).toEqual(
-      simplifyExpectedWorkspacesResult({
-        name: "test-root",
-        workspaces: [
-          {
-            name: "application-a",
-            matchPattern: "applications/*",
-            path: "applications/applicationA",
-            aliases: [],
-          },
-          {
-            name: "application-b",
-            matchPattern: "applications/*",
-            path: "applications/applicationB",
-            aliases: [],
-          },
-          {
-            name: "group-b-other-a",
-            matchPattern: "other/**/*",
-            path: "other/groupB/otherA",
-            aliases: [],
-          },
-          {
-            name: "group-b-other-b",
-            matchPattern: "other/**/*",
-            path: "other/groupB/otherB",
-            aliases: [],
-          },
-          {
-            name: "library-a",
-            matchPattern: "libraries/**/*",
-            path: "libraries/libraryA",
-            aliases: [],
-          },
-          {
-            name: "library-c",
-            matchPattern: "libraries/**/*",
-            path: "libraries/nested/libraryC",
-            aliases: [],
-          },
-        ],
+      findWorkspacesFromPackage({
+        rootDir: getProjectRoot("negationGlobs"),
       }),
-    );
+    ).toEqual({
+      name: "test-root",
+      workspaces: [
+        {
+          name: "application-a",
+          matchPattern: "applications/*",
+          path: "applications/applicationA",
+          scripts: ["a-workspaces", "all-workspaces", "application-a"],
+          aliases: [],
+        },
+        {
+          name: "application-b",
+          matchPattern: "applications/*",
+          path: "applications/applicationB",
+          scripts: ["all-workspaces", "application-b", "b-workspaces"],
+          aliases: [],
+        },
+        {
+          name: "group-b-other-a",
+          matchPattern: "other/**/*",
+          path: "other/groupB/otherA",
+          scripts: ["all-workspaces"],
+          aliases: [],
+        },
+        {
+          name: "group-b-other-b",
+          matchPattern: "other/**/*",
+          path: "other/groupB/otherB",
+          scripts: ["all-workspaces"],
+          aliases: [],
+        },
+        {
+          name: "library-a",
+          matchPattern: "libraries/**/*",
+          path: "libraries/libraryA",
+          scripts: ["a-workspaces", "all-workspaces", "library-a"],
+          aliases: [],
+        },
+        {
+          name: "library-c",
+          matchPattern: "libraries/**/*",
+          path: "libraries/nested/libraryC",
+          scripts: ["all-workspaces", "c-workspaces", "library-c"],
+          aliases: [],
+        },
+      ],
+    });
   });
 
   test("Invalid workspaces from test projects", async () => {

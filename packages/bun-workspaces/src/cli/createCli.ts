@@ -4,9 +4,9 @@ import {
   getRequiredBunVersion,
   validateCurrentBunVersion,
 } from "../internal/bunVersion";
-import { IS_TEST } from "../internal/env";
 import { BunWorkspacesError } from "../internal/error";
 import { logger } from "../internal/logger";
+import { fatalErrorLogger } from "./fatalErrorLogger";
 import { initializeWithGlobalOptions } from "./globalOptions";
 import { defineProjectCommands } from "./projectCommands";
 
@@ -38,8 +38,7 @@ export const createCli = ({
     const errorListener =
       handleError ??
       ((error) => {
-        logger.error(error);
-        logger.error("Unhandled rejection");
+        fatalErrorLogger.error(error);
         process.exit(1);
       });
 
@@ -49,18 +48,12 @@ export const createCli = ({
       const program = createCommand("bunx bun-workspaces")
         .description("A CLI on top of native Bun workspaces")
         .version(packageJson.version)
-        .showHelpAfterError(true)
-        .configureOutput({
-          writeOut: (s) => s.trim() && logger.info(s.trim()),
-          writeErr: (s) =>
-            s.trim() &&
-            logger[s.startsWith("Usage") ? "info" : "error"](s.trim()),
-        });
+        .showHelpAfterError(true);
 
       postInit?.(program);
 
       if (!validateCurrentBunVersion()) {
-        logger.error(
+        fatalErrorLogger.error(
           `Bun version mismatch. Required: ${getRequiredBunVersion()}, Found: ${
             Bun.version
           }`,
@@ -89,8 +82,9 @@ export const createCli = ({
       });
     } catch (error) {
       if (error instanceof BunWorkspacesError) {
-        logger.error("Error " + error.name + ": " + error.message);
-        if (!IS_TEST) process.exit(1);
+        logger.debug("BunWorkspacesError type " + error.name);
+        fatalErrorLogger.error(error.message);
+        process.exit(1);
       } else {
         errorListener(error as Error);
       }

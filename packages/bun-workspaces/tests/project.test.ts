@@ -1,9 +1,12 @@
 import path from "path";
 import { expect, test as _test, describe } from "bun:test";
 import type { Workspace } from "../src";
-import { createProject, type Project } from "../src/project";
+import {
+  createFileSystemProject as createProject,
+  type Project,
+  type ScriptMetadata,
+} from "../src/project";
 import { ERRORS } from "../src/project/errors";
-import type { ScriptMetadata } from "../src/project/project";
 import { getProjectRoot } from "./testProjects";
 
 const test = (name: string, callback: (project: Project) => void) =>
@@ -13,11 +16,6 @@ const test = (name: string, callback: (project: Project) => void) =>
     });
     return callback(project);
   });
-
-const stripPackageJson = (workspace: Workspace) => {
-  const { packageJson: _, ...rest } = workspace;
-  return rest;
-};
 
 const stripToName = (workspace: Workspace) => workspace.name;
 
@@ -30,75 +28,35 @@ describe("Test Project utilities", () => {
         name: "application-a",
         matchPattern: "applications/*",
         path: "applications/applicationA",
-        packageJson: {
-          name: "application-a",
-          workspaces: [],
-          scripts: {
-            "all-workspaces": "echo 'script for all workspaces'",
-            "a-workspaces": "echo 'script for a workspaces'",
-            "application-a": "echo 'script for application-a'",
-          },
-        },
+        scripts: ["a-workspaces", "all-workspaces", "application-a"],
         aliases: [],
       },
       {
         name: "application-b",
         matchPattern: "applications/*",
         path: "applications/applicationB",
-        packageJson: {
-          name: "application-b",
-          workspaces: [],
-          scripts: {
-            "all-workspaces": "echo 'script for all workspaces'",
-            "b-workspaces": "echo 'script for b workspaces'",
-            "application-b": "echo 'script for application-b'",
-          },
-        },
+        scripts: ["all-workspaces", "application-b", "b-workspaces"],
         aliases: [],
       },
       {
         name: "library-a",
         matchPattern: "libraries/**/*",
         path: "libraries/libraryA",
-        packageJson: {
-          name: "library-a",
-          workspaces: [],
-          scripts: {
-            "all-workspaces": "echo 'script for all workspaces'",
-            "a-workspaces": "echo 'script for a workspaces'",
-            "library-a": "echo 'script for library-a'",
-          },
-        },
+        scripts: ["a-workspaces", "all-workspaces", "library-a"],
         aliases: [],
       },
       {
         name: "library-b",
         matchPattern: "libraries/**/*",
         path: "libraries/libraryB",
-        packageJson: {
-          name: "library-b",
-          workspaces: [],
-          scripts: {
-            "all-workspaces": "echo 'script for all workspaces'",
-            "b-workspaces": "echo 'script for b workspaces'",
-            "library-b": "echo 'script for library-b'",
-          },
-        },
+        scripts: ["all-workspaces", "b-workspaces", "library-b"],
         aliases: [],
       },
       {
         name: "library-c",
         matchPattern: "libraries/**/*",
         path: "libraries/nested/libraryC",
-        packageJson: {
-          name: "library-c",
-          workspaces: [],
-          scripts: {
-            "all-workspaces": "echo 'script for all workspaces'",
-            "c-workspaces": "echo 'script for c workspaces'",
-            "library-c": "echo 'script for library-c'",
-          },
-        },
+        scripts: ["all-workspaces", "c-workspaces", "library-c"],
         aliases: [],
       },
     ]);
@@ -110,13 +68,21 @@ describe("Test Project utilities", () => {
     const appA = project.findWorkspaceByName("application-a");
     expect(appA?.name).toEqual("application-a");
     expect(appA?.path).toEqual("applications/applicationA");
-    expect(appA?.packageJson.name).toEqual("application-a");
+    expect(appA?.scripts).toEqual([
+      "a-workspaces",
+      "all-workspaces",
+      "application-a",
+    ]);
     expect(appA?.matchPattern).toEqual("applications/*");
 
     const libC = project.findWorkspaceByName("library-c");
     expect(libC?.name).toEqual("library-c");
     expect(libC?.path).toEqual("libraries/nested/libraryC");
-    expect(libC?.packageJson.name).toEqual("library-c");
+    expect(libC?.scripts).toEqual([
+      "all-workspaces",
+      "c-workspaces",
+      "library-c",
+    ]);
     expect(libC?.matchPattern).toEqual("libraries/**/*");
   });
 
@@ -168,37 +134,40 @@ describe("Test Project utilities", () => {
   });
 
   test("Project.prototype.listWorkspacesWithScript", async (project) => {
-    expect(
-      project.listWorkspacesWithScript("all-workspaces").map(stripPackageJson),
-    ).toEqual([
+    expect(project.listWorkspacesWithScript("all-workspaces")).toEqual([
       {
         name: "application-a",
         matchPattern: "applications/*",
         path: "applications/applicationA",
+        scripts: ["a-workspaces", "all-workspaces", "application-a"],
         aliases: [],
       },
       {
         name: "application-b",
         matchPattern: "applications/*",
         path: "applications/applicationB",
+        scripts: ["all-workspaces", "application-b", "b-workspaces"],
         aliases: [],
       },
       {
         name: "library-a",
         matchPattern: "libraries/**/*",
         path: "libraries/libraryA",
+        scripts: ["a-workspaces", "all-workspaces", "library-a"],
         aliases: [],
       },
       {
         name: "library-b",
         matchPattern: "libraries/**/*",
         path: "libraries/libraryB",
+        scripts: ["all-workspaces", "b-workspaces", "library-b"],
         aliases: [],
       },
       {
         name: "library-c",
         matchPattern: "libraries/**/*",
         path: "libraries/nested/libraryC",
+        scripts: ["all-workspaces", "c-workspaces", "library-c"],
         aliases: [],
       },
     ]);
@@ -319,7 +288,7 @@ describe("Test Project utilities", () => {
         name: "application-a",
         matchPattern: "applications/*",
         path: "applications/applicationA",
-        packageJson: expect.any(Object),
+        scripts: ["a-workspaces", "all-workspaces", "application-a"],
         aliases: [],
       },
     });
@@ -341,7 +310,7 @@ describe("Test Project utilities", () => {
         name: "application-a",
         matchPattern: "applications/*",
         path: "applications/applicationA",
-        packageJson: expect.any(Object),
+        scripts: ["a-workspaces", "all-workspaces", "application-a"],
         aliases: [],
       },
     });
@@ -363,7 +332,7 @@ describe("Test Project utilities", () => {
         name: "application-a",
         matchPattern: "applications/*",
         path: "applications/applicationA",
-        packageJson: expect.any(Object),
+        scripts: ["a-workspaces", "all-workspaces", "application-a"],
         aliases: [],
       },
     });
@@ -385,7 +354,7 @@ describe("Test Project utilities", () => {
         name: "application-a",
         matchPattern: "applications/*",
         path: "applications/applicationA",
-        packageJson: expect.any(Object),
+        scripts: ["a-workspaces", "all-workspaces", "application-a"],
         aliases: [],
       },
     });
@@ -407,7 +376,7 @@ describe("Test Project utilities", () => {
         name: "library-b",
         matchPattern: "libraries/**/*",
         path: "libraries/libraryB",
-        packageJson: expect.any(Object),
+        scripts: ["all-workspaces", "b-workspaces", "library-b"],
         aliases: [],
       },
     });
@@ -429,7 +398,7 @@ describe("Test Project utilities", () => {
         name: "library-b",
         matchPattern: "libraries/**/*",
         path: "libraries/libraryB",
-        packageJson: expect.any(Object),
+        scripts: ["all-workspaces", "b-workspaces", "library-b"],
         aliases: [],
       },
     });

@@ -3,151 +3,201 @@ import { test, expect, describe } from "bun:test";
 import { logger } from "../src/internal/logger";
 import { getProjectRoot } from "./testProjects";
 import {
-  acknowledgeGlobalOptionTest,
   setupCliTest,
+  assertOutputMatches,
   USAGE_OUTPUT_PATTERN,
-  validateAllGlobalOptionTests,
 } from "./util/cliTestUtils";
 
 describe("Test CLI Global Options", () => {
   test("Usage shows", async () => {
-    const {
-      run,
-      assertLastWrite: assertLastWrite,
-      writeOutSpy,
-      writeErrSpy,
-    } = setupCliTest();
+    const { run } = setupCliTest();
 
-    await run("--help");
-    expect(writeOutSpy).toBeCalledTimes(1);
-    assertLastWrite(USAGE_OUTPUT_PATTERN);
+    const helpResult = await run("--help");
+    expect(helpResult.stderr.raw).toBeEmpty();
+    expect(helpResult.exitCode).toBe(0);
+    assertOutputMatches(helpResult.stdout.raw, USAGE_OUTPUT_PATTERN);
 
-    await run("help");
-    expect(writeOutSpy).toBeCalledTimes(2);
-    assertLastWrite(USAGE_OUTPUT_PATTERN);
+    const helpResult2 = await run("help");
+    expect(helpResult2.stderr.raw).toBeEmpty();
+    expect(helpResult2.exitCode).toBe(0);
+    assertOutputMatches(helpResult2.stdout.raw, USAGE_OUTPUT_PATTERN);
 
-    await run("");
-    expect(writeOutSpy).toBeCalledTimes(3);
-    assertLastWrite(USAGE_OUTPUT_PATTERN);
+    const helpResult3 = await run("");
+    assertOutputMatches(
+      helpResult3.stderr.sanitized,
+      /^error: unknown command ''/,
+    );
+    expect(helpResult3.exitCode).toBe(1);
+    assertOutputMatches(helpResult3.stderr.sanitized, USAGE_OUTPUT_PATTERN);
 
-    await run("something-very-wrong");
-    expect(writeErrSpy).toBeCalledTimes(1);
-    expect(writeOutSpy).toBeCalledTimes(4);
-    assertLastWrite(/unknown command 'something-very-wrong'/, "error");
-    assertLastWrite(USAGE_OUTPUT_PATTERN);
+    const helpResult4 = await run("something-very-wrong");
+    assertOutputMatches(
+      helpResult4.stderr.sanitized,
+      /^error: unknown command 'something-very-wrong'/,
+    );
+    expect(helpResult4.exitCode).toBe(1);
+    assertOutputMatches(helpResult4.stderr.sanitized, USAGE_OUTPUT_PATTERN);
   });
 
   test("Global Option --log-level", async () => {
-    acknowledgeGlobalOptionTest("logLevel");
+    const { run } = setupCliTest();
 
-    // eslint-disable-next-line no-console
-    const debug = console.debug;
-    // eslint-disable-next-line no-console
-    console.debug = () => void 0;
+    const silentLogLevelResult = await run("--log-level=silent", "ls");
+    expect(silentLogLevelResult.stderr.raw).toBeEmpty();
+    expect(silentLogLevelResult.exitCode).toBe(0);
 
-    const { run, assertLastWrite: assertLastWrite } = setupCliTest();
+    const debugLogLevelResult = await run("--log-level=debug", "ls");
+    expect(debugLogLevelResult.stderr.raw).toBeEmpty();
+    expect(debugLogLevelResult.exitCode).toBe(0);
 
-    await run("--log-level=silent");
-    expect(logger.printLevel).toBe("silent");
+    const infoLogLevelResult = await run("--log-level=info", "ls");
+    expect(infoLogLevelResult.stderr.raw).toBeEmpty();
+    expect(infoLogLevelResult.exitCode).toBe(0);
 
-    await run("--log-level=debug");
-    expect(logger.printLevel).toBe("debug");
+    const warnLogLevelResult = await run("--log-level=warn", "ls");
+    expect(warnLogLevelResult.stderr.raw).toBeEmpty();
+    expect(warnLogLevelResult.exitCode).toBe(0);
 
-    await run("--log-level=info");
-    expect(logger.printLevel).toBe("info");
+    const errorLogLevelResult = await run("--log-level=error", "ls");
+    expect(errorLogLevelResult.stderr.raw).toBeEmpty();
+    expect(errorLogLevelResult.exitCode).toBe(0);
 
-    await run("--log-level=warn");
-    expect(logger.printLevel).toBe("warn");
-
-    await run("--log-level=error");
-    expect(logger.printLevel).toBe("error");
-
-    await run("--log-level=wrong");
-    assertLastWrite(/option.+--log-level.+wrong.+is invalid/, "error");
-
-    logger.printLevel = "silent";
-
-    // eslint-disable-next-line no-console
-    console.debug = debug;
+    const wrongLogLevelResult = await run("--log-level=wrong", "ls");
+    expect(wrongLogLevelResult.exitCode).toBe(1);
+    assertOutputMatches(
+      wrongLogLevelResult.stderr.sanitized,
+      /option.+--log-level.+wrong.+is invalid/,
+    );
   });
 
   test("Global Option --cwd", async () => {
-    acknowledgeGlobalOptionTest("cwd");
+    const { run } = setupCliTest();
 
-    const { run, assertLastWrite: assertLastWrite } = setupCliTest();
-
-    await run(`--cwd=${getProjectRoot("simple1")} ls --name-only`);
-    assertLastWrite(
+    const result = await run(
+      `--cwd=${getProjectRoot("simple1")}`,
+      "ls",
+      "--name-only",
+    );
+    expect(result.stderr.raw).toBeEmpty();
+    expect(result.exitCode).toBe(0);
+    assertOutputMatches(
+      result.stdout.raw,
       /application-1a\napplication-1b\nlibrary-1a\nlibrary-1b$/m,
-      "commandOutput",
     );
 
-    await run(`--cwd=${getProjectRoot("simple2")} ls --name-only`);
-    assertLastWrite(
+    const result2 = await run(
+      `--cwd=${getProjectRoot("simple2")}`,
+      "ls",
+      "--name-only",
+    );
+    expect(result2.stderr.raw).toBeEmpty();
+    expect(result2.exitCode).toBe(0);
+    assertOutputMatches(
+      result2.stdout.raw,
       /application-2a\napplication-2b\nlibrary-2a\nlibrary-2b$/m,
-      "commandOutput",
     );
 
-    await run(`--cwd=does-not-exist ls`);
-    assertLastWrite(
+    const result3 = await run("--cwd=does-not-exist", "ls");
+    expect(result3.stdout.raw).toBeEmpty();
+    expect(result3.exitCode).toBe(1);
+    assertOutputMatches(
+      result3.stderr.sanitized,
       /Working directory not found at path "does-not-exist"/,
-      "error",
     );
 
     const notADirectoryPath = path.resolve(__dirname, "util/not-a-directory");
-    await run(`--cwd=${notADirectoryPath} ls`);
-    assertLastWrite(
+    const result4 = await run(`--cwd=${notADirectoryPath}`, "ls");
+    expect(result4.stdout.raw).toBeEmpty();
+    expect(result4.exitCode).toBe(1);
+    assertOutputMatches(
+      result4.stderr.sanitized,
       `Working directory is not a directory at path "${notADirectoryPath}"`,
-      "error",
     );
   });
 
   test("Global Option --config-file", async () => {
-    acknowledgeGlobalOptionTest("configFile");
+    const { run } = setupCliTest({ testProject: "simple1" });
 
-    const {
-      run,
-      assertLastWrite: assertLastWrite,
-      writeCommandOutputSpy,
-    } = setupCliTest();
-
-    await run(`--cwd=${getProjectRoot("simple1")} info appB`);
-    expect(writeCommandOutputSpy).toBeCalledTimes(1);
-    assertLastWrite(/^Workspace: application-1b/, "commandOutput");
-
-    await run(
-      `--cwd=${getProjectRoot("simple1")} --config-file=bw.alt.json info appB-alt`,
+    const result = await run(
+      `--config-file=${path.resolve(getProjectRoot("simple1"), "bw.json")}`,
+      "info",
+      "appA",
     );
-    expect(writeCommandOutputSpy).toBeCalledTimes(2);
-    assertLastWrite(/^Workspace: application-1b/, "commandOutput");
+    expect(result.stderr.raw).toBeEmpty();
+    expect(result.exitCode).toBe(0);
+    assertOutputMatches(result.stdout.raw, /Workspace: application-1a/);
 
-    await run(
-      `--cwd=${getProjectRoot("simple1")} --config-file=does-not-exist.json ls`,
+    const result2 = await run(
+      `--config-file=${path.resolve(getProjectRoot("simple1"), "bw.alt.json")}`,
+      "info",
+      "appB-alt",
     );
-    assertLastWrite(
+    expect(result2.stderr.raw).toBeEmpty();
+    expect(result2.exitCode).toBe(0);
+    assertOutputMatches(result2.stdout.raw, /Workspace: application-1b/);
+
+    const result3 = await run(
+      `--cwd=${getProjectRoot("simple1")}`,
+      "info",
+      "appB",
+    );
+    expect(result3.stderr.raw).toBeEmpty();
+    expect(result3.exitCode).toBe(0);
+    assertOutputMatches(result3.stdout.raw, /Workspace: application-1b/);
+
+    const result4 = await run(
+      `--cwd=${getProjectRoot("simple1")}`,
+      "--config-file=bw.alt.json",
+      "info",
+      "appB-alt",
+    );
+    expect(result4.stderr.raw).toBeEmpty();
+    expect(result4.exitCode).toBe(0);
+    assertOutputMatches(result4.stdout.raw, /Workspace: application-1b/);
+
+    const result5 = await run(
+      `--cwd=${getProjectRoot("simple1")}`,
+      "--config-file=does-not-exist.json",
+      "ls",
+    );
+    expect(result5.stdout.raw).toBeEmpty();
+    expect(result5.exitCode).toBe(1);
+    assertOutputMatches(
+      result5.stderr.sanitized,
       `Config file not found at path "${path.resolve(getProjectRoot("simple1"), "does-not-exist.json")}"`,
-      "error",
     );
 
-    await run(`--cwd=${getProjectRoot("invalidBadJsonConfig")}  ls`);
-    assertLastWrite(
-      `Failed to parse config file at path "${path.resolve(getProjectRoot("invalidBadJsonConfig"), "bw.json")}"`,
-      "error",
+    const result6 = await run(
+      `--cwd=${getProjectRoot("invalidBadJsonConfig")}`,
+      "ls",
+    );
+    expect(result6.stdout.raw).toBeEmpty();
+    expect(result6.exitCode).toBe(1);
+    assertOutputMatches(
+      result6.stderr.sanitized,
+      `Failed to parse config file at path "${path.resolve(getProjectRoot("invalidBadJsonConfig"), "bw.json")}": JSON Parse error: Property name must be a string literal`,
     );
 
-    await run(`--cwd=${getProjectRoot("invalidBadConfigRoot")}  ls`);
-    assertLastWrite(`Config file: must be an object`, "error");
-
-    await run(
-      `--cwd=${getProjectRoot("invalidBadConfigWorkspaceAliases")}  ls`,
+    const result7 = await run(
+      `--cwd=${getProjectRoot("invalidBadConfigRoot")}`,
+      "ls",
     );
-    assertLastWrite(
+    expect(result7.stdout.raw).toBeEmpty();
+    expect(result7.exitCode).toBe(1);
+    assertOutputMatches(
+      result7.stderr.sanitized,
+      `Config file: must be an object`,
+    );
+
+    const result8 = await run(
+      `--cwd=${getProjectRoot("invalidBadConfigWorkspaceAliases")}`,
+      "ls",
+    );
+    expect(result8.stdout.raw).toBeEmpty();
+    expect(result8.exitCode).toBe(1);
+    assertOutputMatches(
+      result8.stderr.sanitized,
       `Config file: project.workspaceAliases must be an object`,
-      "error",
     );
-  });
-
-  test("Confirm all global options are tested", () => {
-    validateAllGlobalOptionTests();
   });
 });

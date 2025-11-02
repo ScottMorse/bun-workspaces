@@ -1,6 +1,7 @@
 export {
   type Project,
   type CreateProjectScriptCommandOptions,
+  type ScriptMetadata,
 } from "./implementations/projectBase";
 
 export {
