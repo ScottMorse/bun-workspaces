@@ -47,7 +47,7 @@ jobs:
       - name: Run Tests
         id: test
         run: |
-          bun --cwd=./packages/bun-workspaces test --reporter=junit --reporter-output=../../junit.xml
+          bun --cwd=./packages/bun-workspaces test --reporter=junit --reporter-outfile=../../junit.xml
           if grep -q "<skipped" junit.xml; then
             echo "❌ Skipped tests found. Exiting with error."
             exit 1
