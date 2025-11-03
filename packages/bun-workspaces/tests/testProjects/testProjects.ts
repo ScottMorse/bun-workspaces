@@ -24,6 +24,9 @@ const TEST_PROJECTS = {
   invalidBadWorkspaceGlobOutsideRoot: "invalid/badWorkspaceGlobOutsideRoot",
   invalidAliasConflict: "invalid/aliasConflict",
   invalidAliasNotFound: "invalid/aliasNotFound",
+  runScriptWithDelays: "forRunScript/withDelays",
+  runScriptWithFailures: "forRunScript/withFailures",
+  runScriptWithMixedOutput: "forRunScript/withMixedOutput",
 };
 
 export type TestProjectName = keyof typeof TEST_PROJECTS;

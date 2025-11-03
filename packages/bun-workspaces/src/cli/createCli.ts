@@ -82,7 +82,7 @@ export const createCli = ({
       });
     } catch (error) {
       if (error instanceof BunWorkspacesError) {
-        logger.debug("BunWorkspacesError type " + error.name);
+        logger.debug(error);
         fatalErrorLogger.error(error.message);
         process.exit(1);
       } else {

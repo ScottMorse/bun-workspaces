@@ -1,0 +1,6 @@
+{
+  "name": "fifth",
+  "scripts": {
+    "test-delay": "sleep 1 && echo fifth"
+  }
+}

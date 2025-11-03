@@ -224,8 +224,8 @@ const runScript = handleCommand(
       } (parallel: ${!!options.parallel}, args: ${JSON.stringify(options.args)})`,
     );
 
-    const workspaces = _workspaces.length
-      ? _workspaces
+    const workspaces: Workspace[] = _workspaces.length
+      ? (_workspaces
           .flatMap((workspacePattern) => {
             if (workspacePattern.includes("*")) {
               return project
@@ -235,14 +235,13 @@ const runScript = handleCommand(
             }
             return [workspacePattern];
           })
-          .filter((workspace) =>
-            project.workspaces.some(({ name }) => name === workspace),
+          .map((workspaceName) =>
+            project.findWorkspaceByNameOrAlias(workspaceName),
           )
-      : project.listWorkspacesWithScript(script).map(({ name }) => name);
+          .filter(Boolean) as Workspace[])
+      : project.listWorkspacesWithScript(script);
 
     if (!workspaces.length) {
-      const listScriptsCommand =
-        getProjectCommandConfig("listScripts").command.split(/\s+/g)[0];
       if (_workspaces.length === 1 && !_workspaces[0].includes("*")) {
         logger.error(`Workspace not found: ${JSON.stringify(_workspaces[0])}`);
       } else {
@@ -253,12 +252,12 @@ const runScript = handleCommand(
       process.exit(1);
     }
 
-    const scriptCommands = workspaces.map((workspaceName) =>
+    const scriptCommands = workspaces.map((workspace) =>
       project.createScriptCommand({
         scriptName: script,
-        workspaceName,
+        workspaceName: workspace.name,
         method: "cd",
-        args: options.args?.replace(/<workspace>/g, workspaceName) ?? "",
+        args: options.args?.replace(/<workspace>/g, workspace.name) ?? "",
       }),
     );
 
@@ -336,14 +335,14 @@ const runScript = handleCommand(
         if (result.status === "rejected") {
           results.push({
             success: false,
-            workspaceName: workspaces[i],
+            workspaceName: workspaces[i].name,
             error: result.reason,
             exitCode: null,
           });
         } else {
           results.push({
             success: result.value.success,
-            workspaceName: workspaces[i],
+            workspaceName: workspaces[i].name,
             error: result.value.error,
             exitCode: result.value.exitCode,
           });
@@ -359,14 +358,14 @@ const runScript = handleCommand(
           const result = await runCommand(command);
           results.push({
             success: result.success,
-            workspaceName: workspaces[i],
+            workspaceName: workspaces[i].name,
             error: result.error,
             exitCode: result.exitCode,
           });
         } catch (error) {
           results.push({
             success: false,
-            workspaceName: workspaces[i],
+            workspaceName: workspaces[i].name,
             error: error as Error,
             exitCode: null,
           });
@@ -392,7 +391,7 @@ const runScript = handleCommand(
     const s = results.length === 1 ? "" : "s";
     if (failCount) {
       const message = `${failCount} of ${results.length} script${s} failed`;
-      logger.error(message);
+      logger.info(message);
       process.exit(1);
     } else {
       logger.info(`${results.length} script${s} ran successfully`);
