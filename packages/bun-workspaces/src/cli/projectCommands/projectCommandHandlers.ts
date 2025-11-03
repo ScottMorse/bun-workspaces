@@ -1,5 +1,5 @@
 import { type Command } from "commander";
-import { BunWorkspacesError, defineErrors } from "../../internal/error";
+import { BunWorkspacesError } from "../../internal/error";
 import { logger, createLogger } from "../../internal/logger";
 import type { Project } from "../../project";
 import type { Workspace } from "../../workspaces";
@@ -287,7 +287,7 @@ const runScript = handleCommand(
 
       const pipeOutput = async (streamName: "stdout" | "stderr") => {
         const stream = proc[streamName];
-        if (stream) {
+        if (stream && logger.printLevel !== "silent") {
           for await (const chunk of stream) {
             commandOutputLogger.logOutput(
               chunk,

@@ -1,8 +1,4 @@
 import { test, expect, describe } from "bun:test";
-import {
-  getProjectCommandConfig,
-  type CliProjectCommandName,
-} from "../src/cli/projectCommands";
 import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
 
 describe("CLI Run Script", () => {
@@ -121,7 +117,7 @@ describe("CLI Run Script", () => {
     { repeats: 5 },
   );
 
-  test.only("Run for specific workspaces", async () => {
+  test("Run for specific workspaces", async () => {
     const { run } = setupCliTest({
       testProject: "simple1",
     });
