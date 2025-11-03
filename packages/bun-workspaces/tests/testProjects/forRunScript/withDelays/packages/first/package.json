@@ -1,0 +1,6 @@
+{
+  "name": "first",
+  "scripts": {
+    "test-delay": "echo first"
+  }
+}

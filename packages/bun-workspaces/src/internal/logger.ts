@@ -1,4 +1,5 @@
 import { IS_PRODUCTION, IS_TEST } from "./env";
+import { defineErrors } from "./error";
 
 export const LOG_LEVELS = ["debug", "info", "warn", "error"] as const;
 
@@ -8,10 +9,12 @@ export type LogLevel = (typeof LOG_LEVELS)[number];
 
 export type LogLevelSetting = LogLevel | "silent";
 
+const ERRORS = defineErrors("InvalidLogLevel");
+
 export const validateLogLevel = (level: LogLevelSetting) => {
   if (level === "silent") return;
   if (!LOG_LEVELS.includes(level)) {
-    throw new Error(
+    throw new ERRORS.InvalidLogLevel(
       `Invalid log level: "${level}". Accepted values: ${LOG_LEVELS.join(", ")}`,
     );
   }

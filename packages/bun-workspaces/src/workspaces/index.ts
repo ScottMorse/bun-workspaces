@@ -4,4 +4,9 @@ export {
   type FindWorkspacesOptions,
 } from "./findWorkspaces";
 export { type Workspace } from "./workspace";
-export type { ResolvedPackageJsonContent } from "./packageJson";
+export type {
+  resolvePackageJsonContent,
+  resolvePackageJsonPath,
+  scanWorkspaceGlob,
+  ResolvedPackageJsonContent,
+} from "./packageJson";

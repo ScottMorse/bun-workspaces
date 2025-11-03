@@ -3,10 +3,16 @@ import path from "path";
 const TEST_PROJECTS = {
   default: "fullProject",
   fullProject: "fullProject",
+  simple1: "simple1",
+  simple2: "simple2",
   emptyWorkspaces: "emptyWorkspaces",
+  emptyScripts: "emptyScripts",
   oneWorkspace: "oneWorkspace",
   withNodeModuleWorkspace: "withNodeModuleWorkspace",
   negationGlobs: "negationGlobs",
+  invalidBadJsonConfig: "invalid/badJsonConfig",
+  invalidBadConfigRoot: "invalid/badConfigRoot",
+  invalidBadConfigWorkspaceAliases: "invalid/badConfigWorkspaceAliases",
   invalidBadJson: "invalid/badJson",
   invalidNoName: "invalid/noName",
   invalidDuplicateName: "invalid/duplicateName",
@@ -18,9 +24,12 @@ const TEST_PROJECTS = {
   invalidBadWorkspaceGlobOutsideRoot: "invalid/badWorkspaceGlobOutsideRoot",
   invalidAliasConflict: "invalid/aliasConflict",
   invalidAliasNotFound: "invalid/aliasNotFound",
+  runScriptWithDelays: "forRunScript/withDelays",
+  runScriptWithFailures: "forRunScript/withFailures",
+  runScriptWithMixedOutput: "forRunScript/withMixedOutput",
 };
 
-type TestProject = keyof typeof TEST_PROJECTS;
+export type TestProjectName = keyof typeof TEST_PROJECTS;
 
-export const getProjectRoot = (project: TestProject) =>
-  path.join(__dirname, TEST_PROJECTS[project]);
+export const getProjectRoot = (testProjectName: TestProjectName) =>
+  path.join(__dirname, TEST_PROJECTS[testProjectName]);

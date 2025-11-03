@@ -55,7 +55,7 @@ export default defineConfig([
         },
       ],
       eqeqeq: "error",
-      "no-console": "error",
+      "no-console": "warn",
       "import/no-dynamic-require": "warn",
       "import/order": [
         "warn",
@@ -70,6 +70,23 @@ export default defineConfig([
           ],
         },
       ],
+    },
+  },
+  {
+    name: "bunWorkspacesPackageConfig",
+    files: ["packages/bun-workspaces/**/*.{js,mjs,cjs,ts,mts,cts}"],
+    rules: {
+      "no-console": "error",
+    },
+  },
+  {
+    name: "testConfig",
+    files: [
+      "**/tests/**/*.{js,mjs,cjs,ts,mts,cts}",
+      "**/*.test.{js,mjs,cjs,ts,mts,cts}",
+    ],
+    rules: {
+      "no-console": "warn",
     },
   },
 ]);

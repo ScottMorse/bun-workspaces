@@ -1,0 +1,556 @@
+import { test, expect, describe } from "bun:test";
+import {
+  getProjectCommandConfig,
+  type CliProjectCommandName,
+} from "../src/cli/projectCommands";
+import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
+
+const listCommandAndAliases = (commandName: CliProjectCommandName) => {
+  const config = getProjectCommandConfig(commandName);
+  return [config.command.split(/\s+/)[0], ...config.aliases];
+};
+
+describe("Test CLI commands", () => {
+  test.each(listCommandAndAliases("listWorkspaces"))(
+    "List Workspaces: %s",
+    async (command) => {
+      const { run } = setupCliTest({
+        testProject: "simple1",
+      });
+
+      const plainResult = await run(command);
+      expect(plainResult.stderr.raw).toBeEmpty();
+      expect(plainResult.exitCode).toBe(0);
+      assertOutputMatches(
+        plainResult.stdout.raw,
+        `Workspace: application-1a
+ - Aliases: appA
+ - Path: applications/applicationA
+ - Glob Match: applications/*
+ - Scripts: a-workspaces, all-workspaces, application-a
+Workspace: application-1b
+ - Aliases: appB
+ - Path: applications/applicationB
+ - Glob Match: applications/*
+ - Scripts: all-workspaces, application-b, b-workspaces
+Workspace: library-1a
+ - Aliases: libA
+ - Path: libraries/libraryA
+ - Glob Match: libraries/*
+ - Scripts: a-workspaces, all-workspaces, library-a
+Workspace: library-1b
+ - Aliases: libB
+ - Path: libraries/libraryB
+ - Glob Match: libraries/*
+ - Scripts: all-workspaces, b-workspaces, library-b`,
+      );
+
+      const nameOnlyResult = await run(command, "--name-only");
+      expect(nameOnlyResult.stderr.raw).toBeEmpty();
+      expect(nameOnlyResult.exitCode).toBe(0);
+      assertOutputMatches(
+        nameOnlyResult.stdout.raw,
+        `application-1a
+application-1b
+library-1a
+library-1b`,
+      );
+
+      const expectedJson = [
+        {
+          name: "application-1a",
+          matchPattern: "applications/*",
+          path: "applications/applicationA",
+          scripts: ["a-workspaces", "all-workspaces", "application-a"],
+          aliases: ["appA"],
+        },
+        {
+          name: "application-1b",
+          matchPattern: "applications/*",
+          path: "applications/applicationB",
+          scripts: ["all-workspaces", "application-b", "b-workspaces"],
+          aliases: ["appB"],
+        },
+        {
+          name: "library-1a",
+          matchPattern: "libraries/*",
+          path: "libraries/libraryA",
+          scripts: ["a-workspaces", "all-workspaces", "library-a"],
+          aliases: ["libA"],
+        },
+        {
+          name: "library-1b",
+          matchPattern: "libraries/*",
+          path: "libraries/libraryB",
+          scripts: ["all-workspaces", "b-workspaces", "library-b"],
+          aliases: ["libB"],
+        },
+      ];
+
+      const jsonResult = await run(command, "--json");
+      expect(jsonResult.stderr.raw).toBeEmpty();
+      expect(jsonResult.exitCode).toBe(0);
+      assertOutputMatches(jsonResult.stdout.raw, JSON.stringify(expectedJson));
+
+      const jsonPrettyResult = await run(command, "--json", "--pretty");
+      expect(jsonPrettyResult.stderr.raw).toBeEmpty();
+      expect(jsonPrettyResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonPrettyResult.stdout.raw,
+        JSON.stringify(expectedJson, null, 2),
+      );
+
+      const jsonNameOnlyResult = await run(command, "--name-only", "--json");
+      expect(jsonNameOnlyResult.stderr.raw).toBeEmpty();
+      expect(jsonNameOnlyResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonNameOnlyResult.stdout.raw,
+        JSON.stringify(expectedJson.map(({ name }) => name)),
+      );
+
+      const jsonNameOnlyPrettyResult = await run(
+        command,
+        "--name-only",
+        "--json",
+        "--pretty",
+      );
+      expect(jsonNameOnlyPrettyResult.stderr.raw).toBeEmpty();
+      expect(jsonNameOnlyPrettyResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonNameOnlyPrettyResult.stdout.raw,
+        JSON.stringify(
+          expectedJson.map(({ name }) => name),
+          null,
+          2,
+        ),
+      );
+
+      const emptyWorkspacesResult = await setupCliTest({
+        testProject: "emptyWorkspaces",
+      }).run(command);
+      expect(emptyWorkspacesResult.stderr.raw).toBeEmpty();
+      expect(emptyWorkspacesResult.exitCode).toBe(0);
+      assertOutputMatches(
+        emptyWorkspacesResult.stdout.raw,
+        "No workspaces found",
+      );
+
+      const emptyWorkspacesJsonResult = await setupCliTest({
+        testProject: "emptyWorkspaces",
+      }).run(command, "--json");
+      expect(emptyWorkspacesJsonResult.stderr.raw).toBeEmpty();
+      expect(emptyWorkspacesJsonResult.exitCode).toBe(0);
+      assertOutputMatches(
+        emptyWorkspacesJsonResult.stdout.raw,
+        JSON.stringify([]),
+      );
+
+      const emptyWorkspacesJsonPrettyResult = await setupCliTest({
+        testProject: "emptyWorkspaces",
+      }).run(command, "--json", "--pretty");
+      expect(emptyWorkspacesJsonPrettyResult.stderr.raw).toBeEmpty();
+      expect(emptyWorkspacesJsonPrettyResult.exitCode).toBe(0);
+      assertOutputMatches(
+        emptyWorkspacesJsonPrettyResult.stdout.raw,
+        JSON.stringify([], null, 2),
+      );
+
+      const emptyWorkspacesNameOnlyResult = await setupCliTest({
+        testProject: "emptyWorkspaces",
+      }).run(command, "--name-only");
+      expect(emptyWorkspacesNameOnlyResult.stderr.raw).toBeEmpty();
+      expect(emptyWorkspacesNameOnlyResult.exitCode).toBe(0);
+      assertOutputMatches(emptyWorkspacesNameOnlyResult.stdout.raw, "");
+
+      const emptyWorkspacesNameOnlyJsonResult = await setupCliTest({
+        testProject: "emptyWorkspaces",
+      }).run(command, "--name-only", "--json");
+      expect(emptyWorkspacesNameOnlyJsonResult.stderr.raw).toBeEmpty();
+      expect(emptyWorkspacesNameOnlyJsonResult.exitCode).toBe(0);
+      assertOutputMatches(
+        emptyWorkspacesNameOnlyJsonResult.stdout.raw,
+        JSON.stringify([]),
+      );
+    },
+  );
+
+  test.each(listCommandAndAliases("listScripts"))(
+    "List Scripts: %s",
+    async (command) => {
+      const { run } = setupCliTest({
+        testProject: "simple1",
+      });
+
+      const plainResult = await run(command);
+      assertOutputMatches(
+        plainResult.stdout.raw,
+        `Script: a-workspaces
+ - application-1a
+ - library-1a
+Script: all-workspaces
+ - application-1a
+ - application-1b
+ - library-1a
+ - library-1b
+Script: application-a
+ - application-1a
+Script: application-b
+ - application-1b
+Script: b-workspaces
+ - application-1b
+ - library-1b
+Script: library-a
+ - library-1a
+Script: library-b
+ - library-1b`,
+      );
+      expect(plainResult.stderr.raw).toBeEmpty();
+
+      const expectedJson = [
+        {
+          name: "a-workspaces",
+          workspaces: ["application-1a", "library-1a"],
+        },
+        {
+          name: "all-workspaces",
+          workspaces: [
+            "application-1a",
+            "application-1b",
+            "library-1a",
+            "library-1b",
+          ],
+        },
+        {
+          name: "application-a",
+          workspaces: ["application-1a"],
+        },
+        {
+          name: "application-b",
+          workspaces: ["application-1b"],
+        },
+        {
+          name: "b-workspaces",
+          workspaces: ["application-1b", "library-1b"],
+        },
+        {
+          name: "library-a",
+          workspaces: ["library-1a"],
+        },
+        {
+          name: "library-b",
+          workspaces: ["library-1b"],
+        },
+      ];
+
+      const jsonResult = await run(command, "--json");
+      expect(jsonResult.stderr.raw).toBeEmpty();
+      expect(jsonResult.exitCode).toBe(0);
+      assertOutputMatches(jsonResult.stdout.raw, JSON.stringify(expectedJson));
+
+      const jsonPrettyResult = await run(command, "--json", "--pretty");
+      expect(jsonPrettyResult.stderr.raw).toBeEmpty();
+      expect(jsonPrettyResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonPrettyResult.stdout.raw,
+        JSON.stringify(expectedJson, null, 2),
+      );
+
+      const jsonNameOnlyResult = await run(command, "--name-only", "--json");
+      expect(jsonNameOnlyResult.stderr.raw).toBeEmpty();
+      expect(jsonNameOnlyResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonNameOnlyResult.stdout.raw,
+        JSON.stringify(expectedJson.map(({ name }) => name)),
+      );
+
+      const jsonNameOnlyPrettyResult = await run(
+        command,
+        "--name-only",
+        "--json",
+        "--pretty",
+      );
+      expect(jsonNameOnlyPrettyResult.stderr.raw).toBeEmpty();
+      expect(jsonNameOnlyPrettyResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonNameOnlyPrettyResult.stdout.raw,
+        JSON.stringify(
+          expectedJson.map(({ name }) => name),
+          null,
+          2,
+        ),
+      );
+
+      const emptyWorkspacesResult = await setupCliTest({
+        testProject: "emptyWorkspaces",
+      }).run(command);
+      expect(emptyWorkspacesResult.stderr.raw).toBeEmpty();
+      expect(emptyWorkspacesResult.exitCode).toBe(0);
+      assertOutputMatches(
+        emptyWorkspacesResult.stdout.raw,
+        "No workspaces found",
+      );
+
+      const emptyScriptsResult = await setupCliTest({
+        testProject: "emptyScripts",
+      }).run(command);
+      expect(emptyScriptsResult.stderr.raw).toBeEmpty();
+      expect(emptyScriptsResult.exitCode).toBe(0);
+      assertOutputMatches(emptyScriptsResult.stdout.raw, "No scripts found");
+
+      const emptyWorkspacesNameOnlyResult = await setupCliTest({
+        testProject: "emptyWorkspaces",
+      }).run(command, "--name-only");
+      expect(emptyWorkspacesNameOnlyResult.stderr.raw).toBeEmpty();
+      expect(emptyWorkspacesNameOnlyResult.exitCode).toBe(0);
+      assertOutputMatches(emptyWorkspacesNameOnlyResult.stdout.raw, "");
+
+      const emptyWorkspacesNameOnlyJsonResult = await setupCliTest({
+        testProject: "emptyWorkspaces",
+      }).run(command, "--name-only", "--json");
+      expect(emptyWorkspacesNameOnlyJsonResult.stderr.raw).toBeEmpty();
+      expect(emptyWorkspacesNameOnlyJsonResult.exitCode).toBe(0);
+      assertOutputMatches(
+        emptyWorkspacesNameOnlyJsonResult.stdout.raw,
+        JSON.stringify([]),
+      );
+
+      const emptyWorkspacesNameOnlyPrettyResult = await setupCliTest({
+        testProject: "emptyWorkspaces",
+      }).run(command, "--name-only", "--json", "--pretty");
+      expect(emptyWorkspacesNameOnlyPrettyResult.stderr.raw).toBeEmpty();
+      expect(emptyWorkspacesNameOnlyPrettyResult.exitCode).toBe(0);
+      assertOutputMatches(
+        emptyWorkspacesNameOnlyPrettyResult.stdout.raw,
+        JSON.stringify([], null, 2),
+      );
+    },
+  );
+
+  test.each(listCommandAndAliases("workspaceInfo"))(
+    "Workspace Info: %s",
+    async (command) => {
+      const { run } = setupCliTest({
+        testProject: "simple1",
+      });
+
+      const plainResult = await run(command, "application-1a");
+      expect(plainResult.stderr.raw).toBeEmpty();
+      expect(plainResult.exitCode).toBe(0);
+      assertOutputMatches(
+        plainResult.stdout.raw,
+        `Workspace: application-1a
+ - Aliases: appA
+ - Path: applications/applicationA
+ - Glob Match: applications/*
+ - Scripts: a-workspaces, all-workspaces, application-a`,
+      );
+
+      const jsonResult = await run(command, "application-1a", "--json");
+      expect(jsonResult.stderr.raw).toBeEmpty();
+      expect(jsonResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonResult.stdout.raw,
+        JSON.stringify({
+          name: "application-1a",
+          matchPattern: "applications/*",
+          path: "applications/applicationA",
+          scripts: ["a-workspaces", "all-workspaces", "application-a"],
+          aliases: ["appA"],
+        }),
+      );
+
+      const jsonPrettyResult = await run(
+        command,
+        "application-1a",
+        "--json",
+        "--pretty",
+      );
+      expect(jsonPrettyResult.stderr.raw).toBeEmpty();
+      expect(jsonPrettyResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonPrettyResult.stdout.raw,
+        JSON.stringify(
+          {
+            name: "application-1a",
+            matchPattern: "applications/*",
+            path: "applications/applicationA",
+            scripts: ["a-workspaces", "all-workspaces", "application-a"],
+            aliases: ["appA"],
+          },
+          null,
+          2,
+        ),
+      );
+
+      const doesNotExistResult = await run(command, "does-not-exist");
+      expect(doesNotExistResult.stdout.raw).toBeEmpty();
+      expect(doesNotExistResult.exitCode).toBe(1);
+      assertOutputMatches(
+        doesNotExistResult.stderr.sanitized,
+        'Workspace "does-not-exist" not found',
+      );
+    },
+  );
+
+  test.each(listCommandAndAliases("scriptInfo"))(
+    "Script Info: %s",
+    async (command) => {
+      const { run } = setupCliTest({
+        testProject: "simple1",
+      });
+
+      const multipleWorkspacesResult = await run(command, "all-workspaces");
+      expect(multipleWorkspacesResult.stderr.raw).toBeEmpty();
+      expect(multipleWorkspacesResult.exitCode).toBe(0);
+      assertOutputMatches(
+        multipleWorkspacesResult.stdout.raw,
+        `Script: all-workspaces
+ - application-1a
+ - application-1b
+ - library-1a
+ - library-1b`,
+      );
+
+      const singleWorkspaceResult = await run(command, "application-a");
+      expect(singleWorkspaceResult.stderr.raw).toBeEmpty();
+      expect(singleWorkspaceResult.exitCode).toBe(0);
+      assertOutputMatches(
+        singleWorkspaceResult.stdout.raw,
+        `Script: application-a
+ - application-1a`,
+      );
+
+      const jsonResult = await run(command, "all-workspaces", "--json");
+      expect(jsonResult.stderr.raw).toBeEmpty();
+      expect(jsonResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonResult.stdout.raw,
+        JSON.stringify({
+          name: "all-workspaces",
+          workspaces: [
+            "application-1a",
+            "application-1b",
+            "library-1a",
+            "library-1b",
+          ],
+        }),
+      );
+
+      const jsonPrettyResult = await run(
+        command,
+        "all-workspaces",
+        "--json",
+        "--pretty",
+      );
+      expect(jsonPrettyResult.stderr.raw).toBeEmpty();
+      expect(jsonPrettyResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonPrettyResult.stdout.raw,
+        JSON.stringify(
+          {
+            name: "all-workspaces",
+            workspaces: [
+              "application-1a",
+              "application-1b",
+              "library-1a",
+              "library-1b",
+            ],
+          },
+          null,
+          2,
+        ),
+      );
+
+      const doesNotExistResult = await run(command, "does-not-exist");
+      expect(doesNotExistResult.stdout.raw).toBeEmpty();
+      expect(doesNotExistResult.exitCode).toBe(1);
+      assertOutputMatches(
+        doesNotExistResult.stderr.sanitized,
+        'Script not found: "does-not-exist"',
+      );
+    },
+  );
+
+  test.each(listCommandAndAliases("runScript"))(
+    "Run Script (basic): %s",
+    async (command) => {
+      const { run } = setupCliTest({});
+
+      const appAResult = await run(command, "application-a");
+      expect(appAResult.exitCode).toBe(0);
+      assertOutputMatches(
+        appAResult.stdout.sanitizedCompactLines,
+        `[application-a:application-a] script for application-a
+✅ application-a: application-a
+1 script ran successfully`,
+      );
+
+      const aWorkspacesResult = await run(command, "a-workspaces");
+      expect(aWorkspacesResult.exitCode).toBe(0);
+      assertOutputMatches(
+        aWorkspacesResult.stdout.sanitizedCompactLines,
+        `[application-a:a-workspaces] script for a workspaces
+[library-a:a-workspaces] script for a workspaces
+✅ application-a: a-workspaces
+✅ library-a: a-workspaces
+2 scripts ran successfully`,
+      );
+
+      const aWorkspacesLibraryResult = await run(
+        command,
+        "a-workspaces",
+        "library-a",
+      );
+      expect(aWorkspacesLibraryResult.exitCode).toBe(0);
+      assertOutputMatches(
+        aWorkspacesLibraryResult.stdout.sanitizedCompactLines,
+        `[library-a:a-workspaces] script for a workspaces
+✅ library-a: a-workspaces
+1 script ran successfully`,
+      );
+
+      const allWorkspacesResult = await run(command, "all-workspaces");
+      expect(allWorkspacesResult.exitCode).toBe(0);
+      assertOutputMatches(
+        allWorkspacesResult.stdout.sanitizedCompactLines,
+        `[application-a:all-workspaces] script for all workspaces
+[application-b:all-workspaces] script for all workspaces
+[library-a:all-workspaces] script for all workspaces
+[library-b:all-workspaces] script for all workspaces
+[library-c:all-workspaces] script for all workspaces
+✅ application-a: all-workspaces
+✅ application-b: all-workspaces
+✅ library-a: all-workspaces
+✅ library-b: all-workspaces
+✅ library-c: all-workspaces
+5 scripts ran successfully`,
+      );
+
+      const noScriptResult = await run(command, "no-script");
+      assertOutputMatches(
+        noScriptResult.stderr.sanitizedCompactLines,
+        `No workspaces found with script "no-script"`,
+      );
+
+      const noWorkspacesResult = await run(
+        command,
+        "application-a",
+        "does-not-exist",
+      );
+      assertOutputMatches(
+        noWorkspacesResult.stderr.sanitizedCompactLines,
+        `Workspace not found: "does-not-exist"`,
+      );
+
+      const noWorkspaceScriptResult = await run(
+        command,
+        "does-not-exist",
+        "application-a",
+      );
+      assertOutputMatches(
+        noWorkspaceScriptResult.stderr.sanitizedCompactLines,
+        `Script not found in workspace "application-a": "does-not-exist" (available: a-workspaces, all-workspaces, application-a)`,
+      );
+    },
+  );
+});

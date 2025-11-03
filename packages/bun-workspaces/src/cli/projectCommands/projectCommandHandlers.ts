@@ -5,8 +5,10 @@ import type { Project } from "../../project";
 import type { Workspace } from "../../workspaces";
 import {
   getProjectCommandConfig,
-  type ProjectCommandName,
+  type CliProjectCommandName,
 } from "./projectCommandsConfig";
+
+/** @todo DRY use of output text in cases such as having no workspaces/scripts */
 
 export interface ProjectCommandContext {
   project: Project;
@@ -18,7 +20,7 @@ const createWorkspaceInfoLines = (workspace: Workspace) => [
   ` - Aliases: ${workspace.aliases.join(", ")}`,
   ` - Path: ${workspace.path}`,
   ` - Glob Match: ${workspace.matchPattern}`,
-  ` - Scripts: ${Object.keys(workspace.packageJson.scripts).sort().join(", ")}`,
+  ` - Scripts: ${workspace.scripts.join(", ")}`,
 ];
 
 const createScriptInfoLines = (script: string, workspaces: Workspace[]) => [
@@ -33,7 +35,7 @@ export const commandOutputLogger = createLogger("");
 commandOutputLogger.printLevel = "info";
 
 const handleCommand = <T extends unknown[]>(
-  commandName: ProjectCommandName,
+  commandName: CliProjectCommandName,
   handler: (context: ProjectCommandContext, ...actionArgs: T) => void,
 ) => {
   const config = getProjectCommandConfig(commandName);
@@ -86,7 +88,7 @@ const listWorkspaces = handleCommand(
       });
     }
 
-    if (!lines.length) {
+    if (!lines.length && !options.nameOnly) {
       logger.info("No workspaces found");
     }
 
@@ -104,6 +106,16 @@ const listScripts = handleCommand(
 
     const scripts = project.listScriptsWithWorkspaces();
     const lines: string[] = [];
+
+    if (!project.workspaces.length && !options.nameOnly) {
+      logger.info("No workspaces found");
+      return;
+    }
+
+    if (!Object.keys(scripts).length && !options.nameOnly) {
+      logger.info("No scripts found");
+      return;
+    }
 
     if (options.json) {
       lines.push(
@@ -127,10 +139,6 @@ const listScripts = handleCommand(
             lines.push(...createScriptInfoLines(name, workspaces));
           }
         });
-
-      if (!lines.length) {
-        logger.info("No scripts found");
-      }
     }
 
     if (lines.length) commandOutputLogger.info(lines.join("\n"));
@@ -150,10 +158,8 @@ const workspaceInfo = handleCommand(
 
     const workspace = project.findWorkspaceByNameOrAlias(workspaceName);
     if (!workspace) {
-      logger.error(
-        `Workspace not found: (options: ${JSON.stringify(workspaceName)})`,
-      );
-      return;
+      logger.error(`Workspace ${JSON.stringify(workspaceName)} not found`);
+      process.exit(1);
     }
 
     commandOutputLogger.info(
@@ -179,13 +185,10 @@ const scriptInfo = handleCommand(
     const scripts = project.listScriptsWithWorkspaces();
     const scriptMetadata = scripts[script];
     if (!scriptMetadata) {
-      logger.error(
-        `Script not found: ${JSON.stringify(
-          script,
-        )} (available: ${Object.keys(scripts).join(", ")})`,
-      );
-      return;
+      logger.error(`Script not found: ${JSON.stringify(script)}`);
+      process.exit(1);
     }
+
     commandOutputLogger.info(
       (options.json
         ? createJsonLines(
@@ -221,40 +224,40 @@ const runScript = handleCommand(
       } (parallel: ${!!options.parallel}, args: ${JSON.stringify(options.args)})`,
     );
 
-    const workspaces = _workspaces.length
-      ? _workspaces
+    const workspaces: Workspace[] = _workspaces.length
+      ? (_workspaces
           .flatMap((workspacePattern) => {
             if (workspacePattern.includes("*")) {
               return project
                 .findWorkspacesByPattern(workspacePattern)
-                .filter(({ packageJson: { scripts } }) => scripts?.[script])
+                .filter(({ scripts }) => scripts.includes(script))
                 .map(({ name }) => name);
             }
             return [workspacePattern];
           })
-          .filter((workspace) =>
-            project.workspaces.some(({ name }) => name === workspace),
+          .map((workspaceName) =>
+            project.findWorkspaceByNameOrAlias(workspaceName),
           )
-      : project.listWorkspacesWithScript(script).map(({ name }) => name);
+          .filter(Boolean) as Workspace[])
+      : project.listWorkspacesWithScript(script);
 
     if (!workspaces.length) {
       if (_workspaces.length === 1 && !_workspaces[0].includes("*")) {
-        const message = `Workspace not found: ${JSON.stringify(_workspaces[0])}`;
-        logger.error(message);
-        throw new Error(message);
+        logger.error(`Workspace not found: ${JSON.stringify(_workspaces[0])}`);
+      } else {
+        logger.error(
+          `No ${_workspaces.length ? "matching " : ""}workspaces found with script ${JSON.stringify(script)}`,
+        );
       }
-
-      const message = `No ${_workspaces.length ? "matching " : ""}workspaces found for script ${JSON.stringify(script)}`;
-      logger.error(message);
-      throw new Error(message);
+      process.exit(1);
     }
 
-    const scriptCommands = workspaces.map((workspaceName) =>
+    const scriptCommands = workspaces.map((workspace) =>
       project.createScriptCommand({
         scriptName: script,
-        workspaceName,
+        workspaceName: workspace.name,
         method: "cd",
-        args: options.args?.replace(/<workspace>/g, workspaceName) ?? "",
+        args: options.args?.replace(/<workspace>/g, workspace.name) ?? "",
       }),
     );
 
@@ -263,48 +266,51 @@ const runScript = handleCommand(
       scriptName,
       workspace,
     }: (typeof scriptCommands)[number]) => {
-      const commandLogger = createLogger(`${workspace.name}:${scriptName}`);
-
       const splitCommand = command.command.split(/\s+/g);
 
-      commandLogger.debug(
+      logger.debug(
         `Running script ${scriptName} in workspace ${workspace.name} (cwd: ${
           command.cwd
         }): ${splitCommand.join(" ")}`,
       );
 
-      const isSilent = logger.printLevel === "silent";
-
       const proc = Bun.spawn(command.command.split(/\s+/g), {
         cwd: command.cwd,
         env: { ...process.env, FORCE_COLOR: "1" },
-        stdout: isSilent ? "ignore" : "pipe",
-        stderr: isSilent ? "ignore" : "pipe",
+        stdout: "pipe",
+        stderr: "pipe",
       });
 
       const linePrefix = options.noPrefix
         ? ""
         : `[${workspace.name}:${scriptName}] `;
 
-      if (proc.stdout) {
-        for await (const chunk of proc.stdout) {
-          commandLogger.logOutput(chunk, "info", process.stdout, linePrefix);
+      const pipeOutput = async (streamName: "stdout" | "stderr") => {
+        const stream = proc[streamName];
+        if (stream && logger.printLevel !== "silent") {
+          for await (const chunk of stream) {
+            commandOutputLogger.logOutput(
+              chunk,
+              "info",
+              process[streamName],
+              linePrefix,
+            );
+          }
         }
-      }
+      };
 
-      if (proc.stderr) {
-        for await (const chunk of proc.stderr) {
-          commandLogger.logOutput(chunk, "error", process.stderr, linePrefix);
-        }
-      }
-
-      await proc.exited;
+      await Promise.all([
+        pipeOutput("stdout"),
+        pipeOutput("stderr"),
+        proc.exited,
+      ]);
 
       return {
         scriptName,
         workspace,
         command,
         success: proc.exitCode === 0,
+        exitCode: proc.exitCode,
         error:
           proc.exitCode === 0
             ? null
@@ -318,9 +324,10 @@ const runScript = handleCommand(
       success: boolean;
       workspaceName: string;
       error: Error | null;
+      exitCode: number | null;
     }[];
 
-    if (options.parallel) {
+    const runParallel = async () => {
       let i = 0;
       for await (const result of await Promise.allSettled(
         scriptCommands.map(runCommand),
@@ -328,49 +335,63 @@ const runScript = handleCommand(
         if (result.status === "rejected") {
           results.push({
             success: false,
-            workspaceName: workspaces[i],
+            workspaceName: workspaces[i].name,
             error: result.reason,
+            exitCode: null,
           });
         } else {
           results.push({
             success: result.value.success,
-            workspaceName: workspaces[i],
+            workspaceName: workspaces[i].name,
             error: result.value.error,
+            exitCode: result.value.exitCode,
           });
         }
         i++;
       }
-    } else {
+    };
+
+    const runSeries = async () => {
       let i = 0;
       for (const command of scriptCommands) {
         try {
           const result = await runCommand(command);
           results.push({
             success: result.success,
-            workspaceName: workspaces[i],
+            workspaceName: workspaces[i].name,
             error: result.error,
+            exitCode: result.exitCode,
           });
         } catch (error) {
           results.push({
             success: false,
-            workspaceName: workspaces[i],
+            workspaceName: workspaces[i].name,
             error: error as Error,
+            exitCode: null,
           });
         }
         i++;
       }
+    };
+
+    if (options.parallel) {
+      await runParallel();
+    } else {
+      await runSeries();
     }
 
     let failCount = 0;
-    results.forEach(({ success, workspaceName }) => {
+    results.forEach(({ success, workspaceName, exitCode }) => {
       if (!success) failCount++;
-      logger.info(`${success ? "✅" : "❌"} ${workspaceName}: ${script}`);
+      logger.info(
+        `${success ? "✅" : "❌"} ${workspaceName}: ${script}${exitCode ? ` (exited with code ${exitCode})` : ""}`,
+      );
     });
 
     const s = results.length === 1 ? "" : "s";
     if (failCount) {
       const message = `${failCount} of ${results.length} script${s} failed`;
-      logger.error(message);
+      logger.info(message);
       process.exit(1);
     } else {
       logger.info(`${results.length} script${s} ran successfully`);

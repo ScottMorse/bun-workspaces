@@ -72,7 +72,7 @@ export const findWorkspaces = ({
           name: packageJsonContent.name ?? "",
           matchPattern: pattern,
           path: path.relative(rootDir, path.dirname(packageJsonPath)),
-          packageJson: packageJsonContent,
+          scripts: Object.keys(packageJsonContent.scripts ?? {}).sort(),
           aliases: Object.entries(workspaceAliases ?? {})
             .filter(([_, value]) => value === packageJsonContent.name)
             .map(([key]) => key),

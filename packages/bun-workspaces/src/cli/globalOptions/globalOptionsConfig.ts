@@ -46,3 +46,6 @@ export type CliGlobalOptionName = keyof CliGlobalOptions;
 
 export const getCliGlobalOptionConfig = (optionName: CliGlobalOptionName) =>
   CLI_GLOBAL_OPTIONS_CONFIG[optionName];
+
+export const getCliGlobalOptionNames = () =>
+  Object.keys(CLI_GLOBAL_OPTIONS_CONFIG) as CliGlobalOptionName[];

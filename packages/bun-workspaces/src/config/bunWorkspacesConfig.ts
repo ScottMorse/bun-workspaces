@@ -1,4 +1,5 @@
 import { validateLogLevel, type LogLevelSetting } from "../internal/logger";
+import { ERRORS } from "./errors";
 
 export interface CliConfig {
   logLevel?: LogLevelSetting;
@@ -14,9 +15,13 @@ export interface BunWorkspacesConfig {
   project?: ProjectConfig;
 }
 
+const isJsonObject = (value: unknown) => {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+};
+
 const validateCliConfig = (cliConfig: CliConfig) => {
-  if (typeof cliConfig !== "object" || Array.isArray(cliConfig)) {
-    throw new Error(`Config file: "cli" must be an object`);
+  if (!isJsonObject(cliConfig)) {
+    throw new ERRORS.InvalidConfigFile(`Config file: "cli" must be an object`);
   }
 
   if (cliConfig?.logLevel) {
@@ -25,22 +30,21 @@ const validateCliConfig = (cliConfig: CliConfig) => {
 };
 
 const validateProjectConfig = (projectConfig: ProjectConfig) => {
-  if (typeof projectConfig !== "object" || Array.isArray(projectConfig)) {
-    throw new Error(`Config file: "project" must be an object`);
+  if (!isJsonObject(projectConfig)) {
+    throw new ERRORS.InvalidConfigFile(
+      `Config file: "project" must be an object`,
+    );
   }
 
-  if (projectConfig?.workspaceAliases) {
-    if (
-      typeof projectConfig.workspaceAliases !== "object" ||
-      Array.isArray(projectConfig.workspaceAliases)
-    ) {
-      throw new Error(
+  if (projectConfig?.workspaceAliases !== undefined) {
+    if (!isJsonObject(projectConfig.workspaceAliases)) {
+      throw new ERRORS.InvalidConfigFile(
         `Config file: project.workspaceAliases must be an object`,
       );
     }
     for (const alias of Object.values(projectConfig.workspaceAliases)) {
       if (typeof alias !== "string") {
-        throw new Error(
+        throw new ERRORS.InvalidConfigFile(
           `Config file: project.workspaceAliases must be an object with string keys and values`,
         );
       }
@@ -49,8 +53,8 @@ const validateProjectConfig = (projectConfig: ProjectConfig) => {
 };
 
 export const validateBunWorkspacesConfig = (config: BunWorkspacesConfig) => {
-  if (typeof config !== "object" || Array.isArray(config)) {
-    throw new Error(`Config file: must be an object`);
+  if (!isJsonObject(config)) {
+    throw new ERRORS.InvalidConfigFile(`Config file: must be an object`);
   }
 
   if (typeof config.cli !== "undefined") {

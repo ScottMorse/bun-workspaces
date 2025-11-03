@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 const _process =
   typeof process === "undefined"
     ? { env: {} as Record<string, string> }

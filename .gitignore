@@ -1,6 +1,11 @@
+# generic personal ignored files
 *ignore-me*
+# package build used for testing only
 dist.test
+# doc-website build
 doc_build
+# test output
+junit.xml 
 
 # Enforce bun lockfile
 !bun.lockb

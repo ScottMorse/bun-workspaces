@@ -20,6 +20,7 @@
     "@/*": ["./src/*"]
   },
   "include": ["src"],
+  "exclude": ["node_modules", "dist/**/*", "doc_build/**/*"],
   "mdx": {
     "checkMdx": true
   }

@@ -25,9 +25,6 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false
   },
-  "include": [
-    "**/*.ts",
-    "packages/doc-website/src/content/cli/cliGlobalOptions.tsx"
-  ],
+  "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist/**/*"]
 }

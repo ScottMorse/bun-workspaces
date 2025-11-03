@@ -4,12 +4,16 @@ import {
   getRequiredBunVersion,
   validateCurrentBunVersion,
 } from "../internal/bunVersion";
+import { BunWorkspacesError } from "../internal/error";
 import { logger } from "../internal/logger";
+import { fatalErrorLogger } from "./fatalErrorLogger";
 import { initializeWithGlobalOptions } from "./globalOptions";
 import { defineProjectCommands } from "./projectCommands";
 
 export interface RunCliOptions {
   argv?: string | string[];
+  /** Should be `true` if args do not include the binary name (e.g. `bunx bun-workspaces`) */
+  programmatic?: true;
 }
 
 export interface CliProgram {
@@ -27,12 +31,14 @@ export const createCli = ({
   postInit,
   defaultCwd = process.cwd(),
 }: CreateCliProgramOptions = {}): CliProgram => {
-  const run = async ({ argv = process.argv }: RunCliOptions = {}) => {
+  const run = async ({
+    argv = process.argv,
+    programmatic,
+  }: RunCliOptions = {}) => {
     const errorListener =
       handleError ??
       ((error) => {
-        logger.error(error);
-        logger.error("Unhandled rejection");
+        fatalErrorLogger.error(error);
         process.exit(1);
       });
 
@@ -40,18 +46,14 @@ export const createCli = ({
 
     try {
       const program = createCommand("bunx bun-workspaces")
-        .description("CLI for utilities for Bun workspaces")
+        .description("A CLI on top of native Bun workspaces")
         .version(packageJson.version)
-        .configureOutput({
-          writeOut: (s) => logger.info(s),
-          writeErr: (s) =>
-            s.startsWith("Usage") ? logger.info(s) : logger.error(s),
-        });
+        .showHelpAfterError(true);
 
       postInit?.(program);
 
       if (!validateCurrentBunVersion()) {
-        logger.error(
+        fatalErrorLogger.error(
           `Bun version mismatch. Required: ${getRequiredBunVersion()}, Found: ${
             Bun.version
           }`,
@@ -75,9 +77,17 @@ export const createCli = ({
         project,
       });
 
-      await program.parseAsync(args);
+      await program.parseAsync(args, {
+        from: programmatic ? "user" : "node",
+      });
     } catch (error) {
-      errorListener(error as Error);
+      if (error instanceof BunWorkspacesError) {
+        logger.debug(error);
+        fatalErrorLogger.error(error.message);
+        process.exit(1);
+      } else {
+        errorListener(error as Error);
+      }
     } finally {
       process.off("unhandledRejection", errorListener);
     }

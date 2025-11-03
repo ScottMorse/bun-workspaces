@@ -1,13 +1,20 @@
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import { type Command, Option } from "commander";
 import { loadConfigFile, type BunWorkspacesConfig } from "../../config";
+import { defineErrors } from "../../internal/error";
 import { logger } from "../../internal/logger";
-import { createProject } from "../../project";
+import { createFileSystemProject } from "../../project";
 import {
   type CliGlobalOptionName,
   type CliGlobalOptions,
   getCliGlobalOptionConfig,
 } from "./globalOptionsConfig";
+
+const ERRORS = defineErrors(
+  "WorkingDirectoryNotFound",
+  "WorkingDirectoryNotADirectory",
+);
 
 const addGlobalOption = (
   program: Command,
@@ -16,16 +23,25 @@ const addGlobalOption = (
 ) => {
   const { mainOption, shortOption, description, param, values, defaultValue } =
     getCliGlobalOptionConfig(optionName);
-  const option = new Option(
+
+  let option = new Option(
     `${shortOption} ${mainOption}${param ? ` <${param}>` : ""}`,
     description,
-  ).default(defaultOverride ?? defaultValue);
-  program.addOption(
-    values?.length ? option.choices(values as string[]) : option,
   );
+
+  const effectiveDefaultValue = defaultOverride ?? defaultValue;
+  if (effectiveDefaultValue) {
+    option = option.default(effectiveDefaultValue);
+  }
+
+  if (values?.length) {
+    option = option.choices(values as string[]);
+  }
+
+  program.addOption(option);
 };
 
-const getWorkingDirectory = (
+const getWorkingDirectoryFromArgs = (
   program: Command,
   args: string[],
   defaultCwd: string,
@@ -35,7 +51,7 @@ const getWorkingDirectory = (
   return program.opts().cwd;
 };
 
-const getConfig = (program: Command, args: string[]) => {
+const getConfigFileFromArgs = (program: Command, args: string[]) => {
   addGlobalOption(program, "configFile");
   program.parseOptions(args);
   return program.opts().configFile;
@@ -46,9 +62,21 @@ const defineGlobalOptions = (
   args: string[],
   defaultCwd: string,
 ) => {
-  const cwd = getWorkingDirectory(program, args, defaultCwd);
+  const cwd = getWorkingDirectoryFromArgs(program, args, defaultCwd);
 
-  const configFilePath = getConfig(program, args);
+  if (!fs.existsSync(cwd)) {
+    throw new ERRORS.WorkingDirectoryNotFound(
+      `Working directory not found at path "${cwd}"`,
+    );
+  }
+
+  if (!fs.statSync(cwd).isDirectory()) {
+    throw new ERRORS.WorkingDirectoryNotADirectory(
+      `Working directory is not a directory at path "${cwd}"`,
+    );
+  }
+
+  const configFilePath = getConfigFileFromArgs(program, args);
 
   const config = loadConfigFile(configFilePath, cwd);
 
@@ -64,7 +92,7 @@ const applyGlobalOptions = (
   logger.printLevel = options.logLevel;
   logger.debug("Log level: " + options.logLevel);
 
-  const project = createProject({
+  const project = createFileSystemProject({
     rootDir: options.cwd,
     workspaceAliases: config?.project?.workspaceAliases ?? {},
   });

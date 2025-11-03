@@ -1,6 +1,10 @@
 export {
   type Project,
-  type CreateProjectOptions,
   type CreateProjectScriptCommandOptions,
-  createProject,
-} from "./project";
+  type ScriptMetadata,
+} from "./implementations/projectBase";
+
+export {
+  createFileSystemProject as createFileSystemProject,
+  type CreateFileSystemProjectOptions,
+} from "./implementations/fileSystemProject";
