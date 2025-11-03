@@ -541,6 +541,16 @@ Script: library-b
         noWorkspacesResult.stderr.sanitizedCompactLines,
         `Workspace not found: "does-not-exist"`,
       );
+
+      const noWorkspaceScriptResult = await run(
+        command,
+        "does-not-exist",
+        "application-a",
+      );
+      assertOutputMatches(
+        noWorkspaceScriptResult.stderr.sanitizedCompactLines,
+        `Script not found in workspace "application-a": "does-not-exist" (available: a-workspaces, all-workspaces, application-a)`,
+      );
     },
   );
 });

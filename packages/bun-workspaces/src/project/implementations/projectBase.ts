@@ -116,7 +116,7 @@ export abstract class ProjectBase implements Project {
           workspace.name,
         )}: ${JSON.stringify(options.scriptName)} (available: ${
           workspace.scripts.join(", ") || "none"
-        }`,
+        })`,
       );
     }
     return {
