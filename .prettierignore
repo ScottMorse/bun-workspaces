@@ -1,1 +1,4 @@
 **/tests/**/*.json
+
+# MDX formatting is very buggy
+**/*.mdx 
