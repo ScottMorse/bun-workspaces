@@ -4,14 +4,14 @@ titleSuffix: " | bun-workspaces"
 description: "CLI usage documentation for bun-workspaces, including global options and all commands | Documentation for bun-workspaces: A CLI to help manage Bun monorepos"
 pageType: doc
 sidebar: false
+outline: true
 footer: false
 ---
 
-import {
-  getCliGlobalOptionsContent,
-  getCliProjectCommandsContent,
-} from "../../content/cli";
-import { getCommandId, getGlobalOptionId } from "../../content/cli/searchIds";
+import { CliCommandDoc } from "../../content/cli/CliCommandDoc";
+import { CliGlobalOptionDoc } from "../../content/cli/CliGlobalOptionDoc";
+import { RUN_SCRIPT_EXAMPLE_JSON_OUTPUT } from "../../content/runScriptJson";
+import { SyntaxHighlighter } from "../../content/highlight";
 
 # CLI Usage
 
@@ -20,89 +20,44 @@ Note: Examples use `bw` instead of `bunx bun-workspaces`, which works assuming y
 
 </div>
 
-## Global Options
+## Global Options:
 
 Global options should come before any commands.
 
-<div style={{ marginBottom: "3rem" }}>
-{getCliGlobalOptionsContent().map((option) => (
+### Config File
 
-<div key={getGlobalOptionId(option)}>
-  <h3 id={getGlobalOptionId(option)}>{option.title}</h3>
+<CliGlobalOptionDoc option={"configFile"} />
+<hr />
+### Working Directory
+<CliGlobalOptionDoc option={"cwd"} />
+<hr />
+### Log Level
+<CliGlobalOptionDoc option={"logLevel"} />
+## Commands:
 
-      <p>
-        <code>{option.mainOption}</code> |{" "}
-        <code>{option.shortOption}</code>{" "}
-      </p>
-      {option.values?.length ? (
-        <p>
-          Values: {option.values.map((value) => <code style={{ marginRight: "0.25rem" }}>{value}</code>)}
-        </p>
-      ) : (
-        ""
-      )}
-      {option.defaultValue ? (
-        <p>
-          Default: <code>{option.defaultValue}</code>
-        </p>
-      ) : (
-        ""
-      )}
-      <p>{option.description}</p>
-      <h5><em>Examples:</em></h5>
-      <div className="code-block"  >
-        {option.examples.map((example, i) => (
-          <div key={'example-' + 'cli-global-option-' + option.optionName + '-' + i}>
-           <code className={example.trim().startsWith("#") ? "code-comment" : ""} key={example}><span className="code-block-prefix">$ </span>{example}</code>
-          </div>
-        ))}
-      </div>
-    </div>
+### List Workspaces
 
-))}
+<CliCommandDoc command={"listWorkspaces"} />
+<hr />
+### Workspace Info
+<CliCommandDoc command={"workspaceInfo"} />
+<hr />
+### List Scripts
+<CliCommandDoc command={"listScripts"} />
+<hr />
+### Script Info
+<CliCommandDoc command={"scriptInfo"} />
+<hr />
+### Run Script
+<CliCommandDoc command={"runScript"} />
 
-</div>
+#### JSON Output
 
-## Commands
+Using the `--json-outfile=path/to/results.json` option will output the results of all script runs to a JSON file.
+The file will be written relative to the project root, so it is affected by the [`--cwd` global option](/cli#working-directory).
 
-{getCliProjectCommandsContent().map((command) => (
+##### Example Output:
 
-<div key={ getCommandId(command) }>
- <h3 id={ getCommandId(command) }>{command.title}</h3>
-
-      <p>
-        <code>{command.command}</code>
-      </p>
-      {command.aliases?.length ? (
-        <p>
-          Aliases: {command.aliases.map((value) => <code style={{ marginRight: "0.25rem" }}>{value}</code>)}
-        </p>
-      ) : (
-        ""
-      )}
-      <p style={{ marginBottom: "0" }}>{command.description}</p>
-      {Object.values(command.options)?.length ? (
-        <div style={{ marginTop: "1rem" }}>
-        <h5><em>Options:</em></h5>
-        <div style={{ marginTop: "0.25rem", marginBottom: "0.75rem" }}>
-          {Object.values(command.options).map((option) => (
-           <div key={"cli-command-option-" + command.command + "-" + option.flags}>
-            <p style={{ margin: "0" }}><code>{option.flags}</code> {option.description}</p>
-           </div>
-          ))}
-        </div>
-        </div>
-      ) : (
-        ""
-      )}
-      <h5><em>Examples:</em></h5>
-      <div className="code-block"  >
-        {command.examples.map((example, i) => (
-          <div key={'example-' + 'cli-global-option-' + command.optionName + '-' + i}>
-           <code key={example}><span className="code-block-prefix">$ </span><span className={example.trim().startsWith("#") ? "code-comment" : ""}>{example}</span></code>
-          </div>
-        ))}
-      </div>
-    </div>
-
-))}
+<SyntaxHighlighter language="json">
+  {JSON.stringify(RUN_SCRIPT_EXAMPLE_JSON_OUTPUT, null, 2)}
+</SyntaxHighlighter>

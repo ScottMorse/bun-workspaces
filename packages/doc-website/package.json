@@ -9,7 +9,8 @@
     "deploy-build": "BW_DOC_ENV=production bun run build && aws s3 sync ./doc_build s3:/$BW_DOC_S3_BUCKET_NAME --delete && aws cloudfront create-invalidation --distribution-id $BW_DOC_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'"
   },
   "devDependencies": {
-    "bun-workspaces": "file:../bun-workspaces",
+    "@types/react-syntax-highlighter": "^15.5.13",
+    "react-syntax-highlighter": "^16.1.0",
     "rspress": "^1.45.8"
   }
 }

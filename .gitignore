@@ -6,6 +6,7 @@ dist.test
 doc_build
 # test output
 junit.xml 
+test-output
 
 # Enforce bun lockfile
 !bun.lockb

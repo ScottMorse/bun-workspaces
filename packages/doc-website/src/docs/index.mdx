@@ -8,6 +8,7 @@ footer: false
 import packageJson from "../../../bun-workspaces/package.json";
 import { Bwunster } from "../content/Bwunster";
 import { NormalizeIndex } from "../content/NormalizeIndex";
+import { SyntaxHighlighter } from "../content/highlight";
 
 <Bwunster />
 
@@ -28,24 +29,33 @@ import { NormalizeIndex } from "../content/NormalizeIndex";
   </ul>
 </div>
 
+## <span className="whats-new-title">What's New</span>
+
+<h2 className="whats-new-subtitle">Notable recent updates 📦</h2>* Added
+`--json-outfile` option to `run-script` to output results ([more
+info](/cli#json-output))
+
 ## Installation
 
 You can install the [CLI](/cli) in your project or simply use `bunx bun-workspaces`.
 
-```bash
-# Install to lock the version used in your project
+<SyntaxHighlighter language="bash">
+{`# Install to lock the version used in your project
 bun add --dev bun-workspaces
 
 # Start using the CLI with or without the installation step
-bunx bun-workspaces --help
-```
+
+bunx bun-workspaces --help`}
+
+</SyntaxHighlighter>
 
 If you use the CLI frequently, you might consider using a shell alias.
 
-```bash
-# Add this to .bashrc, .zshrc, or similar to make it available by default in your shell
-alias bw="bunx bun-workspaces"
-```
+<SyntaxHighlighter language="bash">
+  {`# Add this to .bashrc, .zshrc, or similar 
+# to make it available by default in your shell
+alias bw="bunx bun-workspaces"`}
+</SyntaxHighlighter>
 
 Examples in these docs will use the alias `bw` for `bunx bun-workspaces` for brevity.
 
@@ -58,49 +68,64 @@ configure aliases for workspaces.
 
 [See the full CLI documentation](/cli) or continue for some quick examples.
 
-```bash
-# List all workspaces in your project
-# based on the `workspaces` field in
+<SyntaxHighlighter language="bash">
+{`# List all workspaces in your project
+# based on the "workspaces" field in
 # your root package.json file
 bw list-workspaces
 
 # ls is an alias for list-workspaces
+
 # This prints formatted JSON
+
 bw ls --json --pretty
 
 # Run the lint script for all workspaces
-# that have it in their `scripts` field
+
+# that have it in their "scripts" field
+
 bw run lint
 
 # Run the lint script for a specific workspace
+
 bw run lint my-workspace
 
 # Run the lint script for multiple workspaces
+
 bw run lint my-workspace-a my-workspace-b
 
 # Run the lint script for workspaces using wildcard
-bw run lint "my-workspace-*"
+
+bw run lint "my-workspace-\*"
 
 # Run the lint script in parallel
+
 bw run lint --parallel
 
 # Append args to each script call
+
 bw run lint --args="--my --appended --args"
 
 # Use the workspace name in args
+
 bw run lint --args="--my --arg=<workspace>"
 
 # Help
+
 bw help
 bw --help
 
 # Pass --cwd to any command
+
 bw --cwd=/path/to/your/project ls
 bw --cwd=/path/to/your/project run my-script
 
 # Pass --config-file to any command
+
 bw --config-file=/path/to/your/config.json ls
 
 # Pass --log-level to any command (debug, info, warn, error, or silent)
-bw --log-level=silent run my-script
-```
+
+bw --log-level=silent run my-script`}
+
+</SyntaxHighlighter>

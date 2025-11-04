@@ -1,2 +1,2 @@
-export * from "./projectCommandHandlers";
+export * from "./projectCommands";
 export * from "./projectCommandsConfig";

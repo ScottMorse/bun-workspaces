@@ -27,6 +27,7 @@ const TEST_PROJECTS = {
   runScriptWithDelays: "forRunScript/withDelays",
   runScriptWithFailures: "forRunScript/withFailures",
   runScriptWithMixedOutput: "forRunScript/withMixedOutput",
+  runScriptWithEchoArgs: "forRunScript/withEchoArgs",
 };
 
 export type TestProjectName = keyof typeof TEST_PROJECTS;

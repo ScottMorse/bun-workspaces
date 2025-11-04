@@ -98,6 +98,10 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
         flags: "--no-prefix",
         description: "Do not prefix the workspace name to the script output",
       },
+      jsonOutfile: {
+        flags: "--json-outfile <file>",
+        description: "Output results in a JSON file",
+      },
     },
   },
 } as const satisfies Record<string, CliProjectCommandConfig>;
