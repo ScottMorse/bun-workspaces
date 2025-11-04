@@ -5,7 +5,7 @@ import type { Workspace } from "../../workspaces";
 import { commandOutputLogger, handleCommand } from "./commandHandlerUtils";
 
 export interface RunScriptJsonOutputWorkspace {
-  workspace: Workspace;
+  workspace: Pick<Workspace, "name" | "path" | "aliases">;
   exitCode: number;
   success: boolean;
   startTimeISO: string;
@@ -36,7 +36,7 @@ export const runScript = handleCommand(
     options: {
       parallel: boolean;
       args: string;
-      noPrefix: boolean;
+      prefix: boolean;
       jsonOutfile: string | undefined;
     },
   ) => {
@@ -107,9 +107,9 @@ export const runScript = handleCommand(
         stderr: "pipe",
       });
 
-      const linePrefix = options.noPrefix
-        ? ""
-        : `[${workspace.name}:${scriptName}] `;
+      const linePrefix = options.prefix
+        ? `[${workspace.name}:${scriptName}] `
+        : "";
 
       const pipeOutput = async (streamName: "stdout" | "stderr") => {
         const stream = proc[streamName];
@@ -157,9 +157,10 @@ export const runScript = handleCommand(
             `Error running script ${script} in workspace ${workspaces[i].name}: ${result.reason}`,
           );
         } else {
+          const { name, path, aliases } = workspaces[i];
           results.push({
+            workspace: { name, path, aliases },
             success: result.value.success,
-            workspace: workspaces[i],
             exitCode: result.value.exitCode,
             startTimeISO: result.value.startTime.toISOString(),
             endTimeISO: result.value.endTime.toISOString(),
@@ -175,9 +176,10 @@ export const runScript = handleCommand(
       for (const command of scriptCommands) {
         try {
           const result = await runCommand(command);
+          const { name, path, aliases } = workspaces[i];
           results.push({
+            workspace: { name, path, aliases },
             success: result.success,
-            workspace: workspaces[i],
             exitCode: result.exitCode,
             startTimeISO: result.startTime.toISOString(),
             endTimeISO: result.endTime.toISOString(),
@@ -214,7 +216,6 @@ export const runScript = handleCommand(
     if (failureCount) {
       const message = `${failureCount} of ${results.length} script${s} failed`;
       logger.info(message);
-      process.exit(1);
     } else {
       logger.info(`${results.length} script${s} ran successfully`);
     }
@@ -222,8 +223,8 @@ export const runScript = handleCommand(
     if (options.jsonOutfile) {
       const jsonOutput: RunScriptJsonOutputFile = {
         script,
-        args: options.args,
-        parallel: options.parallel,
+        args: options.args || "",
+        parallel: !!options.parallel,
         totalCount: results.length,
         successCount,
         failureCount,
@@ -234,9 +235,7 @@ export const runScript = handleCommand(
         workspaces: results,
       };
 
-      const fullOutputPath = path.resolve(options.jsonOutfile);
-
-      console.log({ fullOutputPath });
+      const fullOutputPath = path.resolve(project.rootDir, options.jsonOutfile);
 
       // Check if can make directory
       const jsonOutputDir = path.dirname(fullOutputPath);
@@ -259,7 +258,7 @@ export const runScript = handleCommand(
       // Check if can make file
       if (
         fs.existsSync(fullOutputPath) &&
-        fs.statSync(options.jsonOutfile).isDirectory()
+        fs.statSync(fullOutputPath).isDirectory()
       ) {
         logger.error(
           `Given JSON output file path "${fullOutputPath}" is an existing directory`,
@@ -268,17 +267,18 @@ export const runScript = handleCommand(
       }
 
       try {
-        fs.writeFileSync(
-          options.jsonOutfile,
-          JSON.stringify(jsonOutput, null, 2),
-        );
+        fs.writeFileSync(fullOutputPath, JSON.stringify(jsonOutput, null, 2));
       } catch (error) {
         logger.error(
-          `Failed to write JSON output file "${options.jsonOutfile}": ${error}`,
+          `Failed to write JSON output file "${fullOutputPath}": ${error}`,
         );
         process.exit(1);
       }
-      logger.info(`JSON output written to ${options.jsonOutfile}`);
+      logger.info(`JSON output written to ${fullOutputPath}`);
+    }
+
+    if (failureCount) {
+      process.exit(1);
     }
   },
 );

@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import { test, expect, describe, beforeAll } from "bun:test";
 import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
+import { getProjectRoot, type TestProjectName } from "./testProjects";
 
 const TEST_OUTPUT_DIR = path.resolve(__dirname, "test-output");
 
@@ -219,7 +220,44 @@ describe("CLI Run Script", () => {
     );
   });
 
-  test.only("JSON output - errors with output path", async () => {
+  test("Using --no-prefix", async () => {
+    const result = await setupCliTest({
+      testProject: "simple1",
+    }).run("run-script", "all-workspaces", "--no-prefix");
+    expect(result.exitCode).toBe(0);
+    assertOutputMatches(
+      result.stdoutAndErr.sanitizedCompactLines,
+      `script for all workspaces
+script for all workspaces
+script for all workspaces
+script for all workspaces
+✅ application-1a: all-workspaces
+✅ application-1b: all-workspaces
+✅ library-1a: all-workspaces
+✅ library-1b: all-workspaces
+4 scripts ran successfully`,
+    );
+
+    const resultFailures = await setupCliTest({
+      testProject: "runScriptWithFailures",
+    }).run("run-script", "test-exit", "--no-prefix");
+
+    expect(resultFailures.exitCode).toBe(1);
+    assertOutputMatches(
+      resultFailures.stdoutAndErr.sanitizedCompactLines,
+      `fail1
+fail2
+success1
+success2
+❌ fail1: test-exit (exited with code 1)
+❌ fail2: test-exit (exited with code 2)
+✅ success1: test-exit
+✅ success2: test-exit
+2 of 4 scripts failed`,
+    );
+  });
+
+  test("JSON output - errors with output path", async () => {
     const { run } = setupCliTest({
       testProject: "simple1",
     });
@@ -229,10 +267,8 @@ describe("CLI Run Script", () => {
     const result = await run(
       "run-script",
       "all-workspaces",
-      "--json-outfile",
-      TEST_OUTPUT_DIR,
+      `--json-outfile=${TEST_OUTPUT_DIR}`,
     );
-    console.log(result.stdout);
     expect(result.exitCode).toBe(1);
     assertOutputMatches(
       result.stderr.sanitizedCompactLines,
@@ -265,13 +301,338 @@ describe("CLI Run Script", () => {
     );
   });
 
-  test("JSON output file - all success", async () => {
-    const { run } = setupCliTest({});
-
-    const runAndGetOutput = async (outputPath: string, ...args: string[]) => {
-      const fullOutputPath = path.resolve(TEST_OUTPUT_DIR, outputPath);
-      await run("run-script", ...args, "--json-outfile", fullOutputPath);
-      return JSON.parse(fs.readFileSync(fullOutputPath, "utf8"));
+  const runAndGetJsonOutput = async (
+    testProject: TestProjectName,
+    outputPath: string,
+    ...args: string[]
+  ) => {
+    const { run } = setupCliTest({ testProject });
+    const fullOutputPath = path.resolve(TEST_OUTPUT_DIR, outputPath);
+    const result = await run(
+      "run-script",
+      ...args,
+      "--json-outfile",
+      fullOutputPath,
+    );
+    return {
+      result,
+      json: JSON.parse(fs.readFileSync(fullOutputPath, "utf8")),
     };
+  };
+
+  test("JSON output file - all success", async () => {
+    const { json: jsonOutput1 } = await runAndGetJsonOutput(
+      "simple1",
+      "test-simple1.json",
+      "all-workspaces",
+      '--args="test args"',
+    );
+    expect(jsonOutput1).toEqual({
+      script: "all-workspaces",
+      args: '"test args"',
+      totalCount: 4,
+      parallel: false,
+      successCount: 4,
+      failureCount: 0,
+      allSuccess: true,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      workspaces: [
+        {
+          workspace: {
+            name: "application-1a",
+            path: "applications/applicationA",
+            aliases: ["appA"],
+          },
+          success: true,
+          exitCode: 0,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+        },
+        {
+          workspace: {
+            name: "application-1b",
+            path: "applications/applicationB",
+            aliases: ["appB"],
+          },
+          success: true,
+          exitCode: 0,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+        },
+        {
+          workspace: {
+            name: "library-1a",
+            path: "libraries/libraryA",
+            aliases: ["libA"],
+          },
+          success: true,
+          exitCode: 0,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+        },
+        {
+          workspace: {
+            name: "library-1b",
+            path: "libraries/libraryB",
+            aliases: ["libB"],
+          },
+          success: true,
+          exitCode: 0,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+        },
+      ],
+    });
+    for (const { startTimeISO, endTimeISO, durationMs } of [
+      jsonOutput1,
+      ...jsonOutput1.workspaces,
+    ]) {
+      expect(startTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
+      expect(endTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
+      expect(durationMs).toBe(
+        new Date(endTimeISO).getTime() - new Date(startTimeISO).getTime(),
+      );
+    }
+
+    const { json: jsonOutput2 } = await runAndGetJsonOutput(
+      "simple1",
+      "test-simple2.json",
+      "a-workspaces",
+      "--args=my-args",
+    );
+    expect(jsonOutput2).toEqual({
+      script: "a-workspaces",
+      args: "my-args",
+      parallel: false,
+      totalCount: 2,
+      successCount: 2,
+      failureCount: 0,
+      allSuccess: true,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      workspaces: [
+        {
+          workspace: {
+            name: "application-1a",
+            path: "applications/applicationA",
+            aliases: ["appA"],
+          },
+          success: true,
+          exitCode: 0,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+        },
+        {
+          workspace: {
+            name: "library-1a",
+            path: "libraries/libraryA",
+            aliases: ["libA"],
+          },
+          success: true,
+          exitCode: 0,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+        },
+      ],
+    });
+
+    for (const { startTimeISO, endTimeISO, durationMs } of [
+      jsonOutput2,
+      ...jsonOutput2.workspaces,
+    ]) {
+      expect(startTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
+      expect(endTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
+      expect(durationMs).toBe(
+        new Date(endTimeISO).getTime() - new Date(startTimeISO).getTime(),
+      );
+    }
+
+    const { json: jsonOutput3 } = await runAndGetJsonOutput(
+      "simple1",
+      "test-simple3.json",
+      "b-workspaces",
+      "--parallel",
+      "library*",
+    );
+    expect(jsonOutput3).toEqual({
+      script: "b-workspaces",
+      args: "",
+      parallel: true,
+      totalCount: 1,
+      successCount: 1,
+      failureCount: 0,
+      allSuccess: true,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      workspaces: [
+        {
+          workspace: {
+            name: "library-1b",
+            path: "libraries/libraryB",
+            aliases: ["libB"],
+          },
+          success: true,
+          exitCode: 0,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+        },
+      ],
+    });
+
+    for (const { startTimeISO, endTimeISO, durationMs } of [
+      jsonOutput3,
+      ...jsonOutput3.workspaces,
+    ]) {
+      expect(startTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
+      expect(endTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
+      expect(durationMs).toBe(
+        new Date(endTimeISO).getTime() - new Date(startTimeISO).getTime(),
+      );
+    }
+  });
+
+  test("JSON output file - mixed results", async () => {
+    const { json } = await runAndGetJsonOutput(
+      "runScriptWithFailures",
+      "test-mixed-results.json",
+      "test-exit",
+
+      "--parallel",
+    );
+
+    expect(json).toEqual({
+      script: "test-exit",
+      args: "",
+      parallel: true,
+      totalCount: 4,
+      successCount: 2,
+      failureCount: 2,
+      allSuccess: false,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      workspaces: [
+        {
+          workspace: {
+            name: "fail1",
+            path: "packages/fail1",
+            aliases: [],
+          },
+          success: false,
+          exitCode: 1,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+        },
+        {
+          workspace: {
+            name: "fail2",
+            path: "packages/fail2",
+            aliases: [],
+          },
+          success: false,
+          exitCode: 2,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+        },
+        {
+          workspace: {
+            name: "success1",
+            path: "packages/success1",
+            aliases: [],
+          },
+          success: true,
+          exitCode: 0,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+        },
+        {
+          workspace: {
+            name: "success2",
+            path: "packages/success2",
+            aliases: [],
+          },
+          success: true,
+          exitCode: 0,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+        },
+      ],
+    });
+
+    for (const { startTimeISO, endTimeISO, durationMs } of [
+      json,
+      ...json.workspaces,
+    ]) {
+      expect(startTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
+      expect(endTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
+      expect(durationMs).toBe(
+        new Date(endTimeISO).getTime() - new Date(startTimeISO).getTime(),
+      );
+    }
+  });
+
+  test("JSON output file - relative path with --cwd global option", async () => {
+    const { run } = setupCliTest({
+      testProject: "simple1",
+    });
+
+    const result = await run(
+      "--cwd",
+      getProjectRoot("simple1"),
+      "run-script",
+      "application-a",
+      "--json-outfile",
+      "test-output/results.json", // for gitignore
+    );
+
+    expect(result.exitCode).toBe(0);
+    expect(
+      JSON.parse(
+        fs.readFileSync(
+          path.resolve(getProjectRoot("simple1"), "test-output/results.json"),
+          "utf8",
+        ),
+      ),
+    ).toEqual({
+      script: "application-a",
+      args: "",
+      parallel: false,
+      totalCount: 1,
+      successCount: 1,
+      failureCount: 0,
+      allSuccess: true,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      workspaces: [
+        {
+          workspace: {
+            name: "application-1a",
+            path: "applications/applicationA",
+            aliases: ["appA"],
+          },
+          success: true,
+          exitCode: 0,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+        },
+      ],
+    });
   });
 });

@@ -1,7 +1,7 @@
 import type { ProjectCommandContext } from "./commandHandlerUtils";
+import { runScript } from "./handleRunScript";
 import {
   listScripts,
-  runScript,
   workspaceInfo,
   scriptInfo,
   listWorkspaces,
