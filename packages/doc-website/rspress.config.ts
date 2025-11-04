@@ -5,13 +5,16 @@ import packageJson from "../bun-workspaces/package.json";
 
 const repoBaseUrl = packageJson.repository.url.replace(".git", "");
 
+const TITLE = "bun-workspaces: Documentation";
+const DESCRIPTION =
+  "Documentation for bun-workspaces: A CLI to help manage Bun workspaces. Get metadata about your project and run scripts across your workspaces, with no additional setup required. Includes an API for JavaScript or TypeScript.";
+
 export default defineConfig({
   root: "src/docs",
   themeDir: "src/theme",
-  title: "bun-workspaces",
+  title: TITLE,
   globalStyles: path.resolve("src/theme/css/global.css"),
-  description:
-    "Documentation for bun-workspaces: A CLI to help manage Bun workspaces",
+  description: DESCRIPTION,
   icon: "/bw-plain.ico",
   logo: "/bw-plain.png",
   logoText: `bun-workspaces`,
@@ -19,7 +22,8 @@ export default defineConfig({
     searchHooks: path.join(__dirname, "src/search/search.tsx"),
   },
   plugins: [
-    // TODO: find fix for using this plugin or wait to see if a package update fixes it
+    // TODO: This worked briefly with mismatched versions. This will likely not work again until rspress v2 is out of beta.
+    // * In the meantime, manage src/docs/public/sitemap.xml manually.
     // pluginSitemap({
     //   siteUrl: new URL(packageJson.homepage).origin,
     //   defaultChangeFreq: "weekly",
@@ -49,25 +53,22 @@ export default defineConfig({
         {
           tag: "meta",
           attrs: {
-            name: "description",
-            content:
-              "Documentation for bun-workspaces: A CLI to help manage Bun monorepos",
+            name: "og:title",
+            content: TITLE,
           },
         },
         {
           tag: "meta",
           attrs: {
-            name: "og:title",
-            content:
-              "Documentation for bun-workspaces: A CLI to help manage Bun monorepos",
+            name: "og:type",
+            content: "website",
           },
         },
         {
           tag: "meta",
           attrs: {
             name: "og:description",
-            content:
-              "Get metadata about your project and run scripts across your workspaces, with no additional setup required",
+            content: DESCRIPTION,
           },
         },
         {

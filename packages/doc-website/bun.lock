@@ -4,7 +4,6 @@
     "": {
       "name": "@bw/doc-website",
       "devDependencies": {
-        "@rspress/plugin-sitemap": "^2.0.0-beta.23",
         "bun-workspaces": "file:../bun-workspaces",
         "rspress": "^1.45.8",
       },
@@ -146,8 +145,6 @@
     "@rspress/plugin-last-updated": ["@rspress/plugin-last-updated@1.45.8", "", { "dependencies": { "@rspress/shared": "1.45.8" } }, "sha512-xKPyOzGkLiYXKq6pCAy+p6XKrv1crA0z4kGny5VS6mAlJY3QT0d4hcfGQxp1fT/q7QHY1R82LYwrblg2qiQ6ig=="],
 
     "@rspress/plugin-medium-zoom": ["@rspress/plugin-medium-zoom@1.45.8", "", { "dependencies": { "medium-zoom": "1.1.0" }, "peerDependencies": { "@rspress/runtime": "^1.45.8" } }, "sha512-TK58MUWqCwBfYCZrExCMVzDOc87EXlJvdM2YoivgbBRzT8eo0pN19V6zht5FoK+JEg4SFcYoUv/WtYIBf1UPYA=="],
-
-    "@rspress/plugin-sitemap": ["@rspress/plugin-sitemap@2.0.0-beta.23", "", { "peerDependencies": { "@rspress/core": "^2.0.0-beta.23" } }, "sha512-2mn8QTigaKCVjfRmI0o9uaJZ7fhDnOJ8cOhuX4cwMgRBHbT5aVcYJcCfvZ612S79l/55ONOSOoG8D1b36qcdlQ=="],
 
     "@rspress/runtime": ["@rspress/runtime@1.45.8", "", { "dependencies": { "@rspress/shared": "1.45.8", "react": "^18.3.1", "react-dom": "^18.3.1", "react-helmet-async": "^1.3.0", "react-router-dom": "^6.29.0" } }, "sha512-uvi0BLP/I7Yzpcwox5erd509RNv9AUI6czSKcqeGwNmlRN9lLD2qMJ/reuoYrrLn/deZxKwxlo3104HIVtVogA=="],
 
