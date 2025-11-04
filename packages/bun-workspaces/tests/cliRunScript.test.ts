@@ -1,7 +1,17 @@
-import { test, expect, describe } from "bun:test";
+import fs from "fs";
+import path from "path";
+import { test, expect, describe, beforeAll } from "bun:test";
 import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
 
+const TEST_OUTPUT_DIR = path.resolve(__dirname, "test-output");
+
 describe("CLI Run Script", () => {
+  beforeAll(() => {
+    if (fs.existsSync(TEST_OUTPUT_DIR)) {
+      fs.rmdirSync(TEST_OUTPUT_DIR, { recursive: true });
+    }
+  });
+
   test("Running with failures", async () => {
     const { run } = setupCliTest({
       testProject: "runScriptWithFailures",
@@ -207,5 +217,61 @@ describe("CLI Run Script", () => {
 ✅ library-1a: all-workspaces
 2 scripts ran successfully`,
     );
+  });
+
+  test.only("JSON output - errors with output path", async () => {
+    const { run } = setupCliTest({
+      testProject: "simple1",
+    });
+
+    fs.mkdirSync(TEST_OUTPUT_DIR, { recursive: true });
+
+    const result = await run(
+      "run-script",
+      "all-workspaces",
+      "--json-outfile",
+      TEST_OUTPUT_DIR,
+    );
+    console.log(result.stdout);
+    expect(result.exitCode).toBe(1);
+    assertOutputMatches(
+      result.stderr.sanitizedCompactLines,
+      `Given JSON output file path "${TEST_OUTPUT_DIR}" is an existing directory`,
+    );
+
+    fs.writeFileSync(TEST_OUTPUT_DIR + "/test-file.txt", "test file");
+    const result2 = await run(
+      "run-script",
+      "all-workspaces",
+      "--json-outfile",
+      TEST_OUTPUT_DIR + "/test-file.txt/test-file.json",
+    );
+    expect(result2.exitCode).toBe(1);
+    assertOutputMatches(
+      result2.stderr.sanitizedCompactLines,
+      `Given JSON output file directory "${TEST_OUTPUT_DIR}/test-file.txt" is an existing file`,
+    );
+
+    const result3 = await run(
+      "run-script",
+      "all-workspaces",
+      "--json-outfile",
+      TEST_OUTPUT_DIR + "/test-file.txt/something/else.json",
+    );
+    expect(result3.exitCode).toBe(1);
+    assertOutputMatches(
+      result3.stderr.sanitizedCompactLines,
+      `Failed to create JSON output file directory "${TEST_OUTPUT_DIR}/test-file.txt/something": Error: ENOTDIR: not a directory, mkdir '${TEST_OUTPUT_DIR}/test-file.txt/something'`,
+    );
+  });
+
+  test("JSON output file - all success", async () => {
+    const { run } = setupCliTest({});
+
+    const runAndGetOutput = async (outputPath: string, ...args: string[]) => {
+      const fullOutputPath = path.resolve(TEST_OUTPUT_DIR, outputPath);
+      await run("run-script", ...args, "--json-outfile", fullOutputPath);
+      return JSON.parse(fs.readFileSync(fullOutputPath, "utf8"));
+    };
   });
 });

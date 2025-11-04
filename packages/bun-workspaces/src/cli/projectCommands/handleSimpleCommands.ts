@@ -1,38 +1,17 @@
-import { type Command } from "commander";
 import { BunWorkspacesError } from "../../internal/error";
-import { logger, createLogger } from "../../internal/logger";
-import type { Project } from "../../project";
+import { logger } from "../../internal/logger";
 import type { Workspace } from "../../workspaces";
+import {
+  createJsonLines,
+  commandOutputLogger,
+  createScriptInfoLines,
+  createWorkspaceInfoLines,
+  type ProjectCommandContext,
+} from "./commandHandlerUtils";
 import {
   getProjectCommandConfig,
   type CliProjectCommandName,
 } from "./projectCommandsConfig";
-
-/** @todo DRY use of output text in cases such as having no workspaces/scripts */
-
-export interface ProjectCommandContext {
-  project: Project;
-  program: Command;
-}
-
-const createWorkspaceInfoLines = (workspace: Workspace) => [
-  `Workspace: ${workspace.name}`,
-  ` - Aliases: ${workspace.aliases.join(", ")}`,
-  ` - Path: ${workspace.path}`,
-  ` - Glob Match: ${workspace.matchPattern}`,
-  ` - Scripts: ${workspace.scripts.join(", ")}`,
-];
-
-const createScriptInfoLines = (script: string, workspaces: Workspace[]) => [
-  `Script: ${script}`,
-  ...workspaces.map((workspace) => ` - ${workspace.name}`),
-];
-
-const createJsonLines = (data: unknown, options: { pretty: boolean }) =>
-  JSON.stringify(data, null, options.pretty ? 2 : undefined).split("\n");
-
-export const commandOutputLogger = createLogger("");
-commandOutputLogger.printLevel = "info";
 
 const handleCommand = <T extends unknown[]>(
   commandName: CliProjectCommandName,
@@ -54,7 +33,7 @@ const handleCommand = <T extends unknown[]>(
   };
 };
 
-const listWorkspaces = handleCommand(
+export const listWorkspaces = handleCommand(
   "listWorkspaces",
   (
     { project },
@@ -96,7 +75,7 @@ const listWorkspaces = handleCommand(
   },
 );
 
-const listScripts = handleCommand(
+export const listScripts = handleCommand(
   "listScripts",
   (
     { project },
@@ -145,7 +124,7 @@ const listScripts = handleCommand(
   },
 );
 
-const workspaceInfo = handleCommand(
+export const workspaceInfo = handleCommand(
   "workspaceInfo",
   (
     { project },
@@ -171,7 +150,7 @@ const workspaceInfo = handleCommand(
   },
 );
 
-const scriptInfo = handleCommand(
+export const scriptInfo = handleCommand(
   "scriptInfo",
   (
     { project },
@@ -208,7 +187,7 @@ const scriptInfo = handleCommand(
   },
 );
 
-const runScript = handleCommand(
+export const runScript = handleCommand(
   "runScript",
   async (
     { project },
@@ -398,11 +377,3 @@ const runScript = handleCommand(
     }
   },
 );
-
-export const defineProjectCommands = (context: ProjectCommandContext) => {
-  listWorkspaces(context);
-  listScripts(context);
-  workspaceInfo(context);
-  scriptInfo(context);
-  runScript(context);
-};
