@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { test, expect, describe, beforeAll } from "bun:test";
-import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
 import { getProjectRoot, type TestProjectName } from "./testProjects";
+import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
 
 const TEST_OUTPUT_DIR = path.resolve(__dirname, "test-output");
 
@@ -292,6 +292,46 @@ describe("CLI Run Script", () => {
 ✅ application-1a: test-echo
 ✅ library-1b: test-echo
 2 scripts ran successfully`,
+    );
+
+    const result5 = await run(
+      "run-script",
+      "test-echo",
+      "--no-prefix",
+      "--args=test-args",
+    );
+    expect(result5.exitCode).toBe(0);
+    assertOutputMatches(
+      result5.stdoutAndErr.sanitizedCompactLines,
+      `passed args: test-args
+passed args: test-args
+passed args: test-args
+passed args: test-args
+✅ application-1a: test-echo
+✅ application-1b: test-echo
+✅ library-1a: test-echo
+✅ library-1b: test-echo
+4 scripts ran successfully`,
+    );
+
+    const result6 = await run(
+      "run-script",
+      "test-echo",
+      "--no-prefix",
+      "--args=<workspace>",
+    );
+    expect(result6.exitCode).toBe(0);
+    assertOutputMatches(
+      result6.stdoutAndErr.sanitizedCompactLines,
+      `passed args: application-1a
+passed args: application-1b
+passed args: library-1a
+passed args: library-1b
+✅ application-1a: test-echo
+✅ application-1b: test-echo
+✅ library-1a: test-echo
+✅ library-1b: test-echo
+4 scripts ran successfully`,
     );
   });
 
