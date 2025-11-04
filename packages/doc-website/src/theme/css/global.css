@@ -55,6 +55,8 @@
   background-color: var(--rp-code-block-bg);
   border-radius: 0.5rem;
   margin: 0.25rem 0;
+  white-space: nowrap;
+  overflow-x: auto
 }
 
 .code-block-prefix {
@@ -73,4 +75,61 @@
 
 .rspress-nav-menu-item {
   gap: 0.25rem;
+}
+
+.home-anchors {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1.5rem;
+  margin-bottom: -1.5rem;
+  gap: 1rem;
+}
+
+.home-anchors a {
+  color: var(--rp-c-link);
+}
+
+.whats-new-title {
+  text-align: center;
+  width: 100%;
+  font-size: 1.5rem;
+  display: block;
+  margin-bottom: 0rem;
+  /* margin-top: -1rem; */
+}
+
+.whats-new-subtitle {
+  text-align: center;
+  width: 100%;
+  display: block;
+  margin-top: -1.75rem;
+  opacity: 0.75;
+}
+
+.cli-command-doc, .cli-global-option-doc {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.cli-command-doc h3, .cli-global-option-doc h3 {
+  font-size: 1.35rem;
+  text-decoration: underline;
+}
+
+hr {
+  border-color: var(--rp-c-divider-light);
+}
+
+.cli-docs-container h3 {
+  text-decoration: underline;
+}
+
+.cli-doc-section-anchor {
+  position: absolute;
+  top: -2.25rem;
+  pointer-events: none;
 }

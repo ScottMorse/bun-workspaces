@@ -9,6 +9,7 @@ footer: false
 ---
 
 import { exampleConfig } from "../../content/cli/exampleConfig";
+import { SyntaxHighlighter } from "../../content/highlight";
 
 # Config File (bw.json)
 
@@ -23,6 +24,6 @@ and "app-b" is an alias for package "@my-org/application-b".
 The default
 [log level](/cli#cli-global-option-logLevel) can be set for the CLI as well.
 
-<div className="code-block">
-  <pre>{JSON.stringify(exampleConfig, null, 2)}</pre>
-</div>
+<SyntaxHighlighter language="json">
+  {JSON.stringify(exampleConfig, null, 2)}
+</SyntaxHighlighter>
