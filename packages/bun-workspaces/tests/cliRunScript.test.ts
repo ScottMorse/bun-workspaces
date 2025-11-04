@@ -220,6 +220,81 @@ describe("CLI Run Script", () => {
     );
   });
 
+  test("Using --args", async () => {
+    const { run } = setupCliTest({
+      testProject: "runScriptWithEchoArgs",
+    });
+    const result = await run("run-script", "test-echo", "--args=test-args");
+    expect(result.exitCode).toBe(0);
+    assertOutputMatches(
+      result.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:test-echo] passed args: test-args
+[application-1b:test-echo] passed args: test-args
+[library-1a:test-echo] passed args: test-args
+[library-1b:test-echo] passed args: test-args
+✅ application-1a: test-echo
+✅ application-1b: test-echo
+✅ library-1a: test-echo
+✅ library-1b: test-echo
+4 scripts ran successfully`,
+    );
+
+    const result2 = await run(
+      "run-script",
+      "test-echo",
+      "--args=hello there <workspace>",
+    );
+    expect(result2.exitCode).toBe(0);
+    assertOutputMatches(
+      result2.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:test-echo] passed args: hello there application-1a
+[application-1b:test-echo] passed args: hello there application-1b
+[library-1a:test-echo] passed args: hello there library-1a
+[library-1b:test-echo] passed args: hello there library-1b
+✅ application-1a: test-echo
+✅ application-1b: test-echo
+✅ library-1a: test-echo
+✅ library-1b: test-echo
+4 scripts ran successfully`,
+    );
+
+    const result3 = await run(
+      "run-script",
+      "test-echo",
+      "--args=<workspace> and <workspace> and <workspace>",
+    );
+    expect(result3.exitCode).toBe(0);
+    assertOutputMatches(
+      result3.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:test-echo] passed args: application-1a and application-1a and application-1a
+[application-1b:test-echo] passed args: application-1b and application-1b and application-1b
+[library-1a:test-echo] passed args: library-1a and library-1a and library-1a
+[library-1b:test-echo] passed args: library-1b and library-1b and library-1b
+✅ application-1a: test-echo
+✅ application-1b: test-echo
+✅ library-1a: test-echo
+✅ library-1b: test-echo
+4 scripts ran successfully`,
+    );
+
+    const result4 = await run(
+      "run-script",
+      "test-echo",
+      "appA",
+      "libB",
+      "--args=for workspace <workspace>",
+    );
+    expect(result4.exitCode).toBe(0);
+    assertOutputMatches(
+      result4.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:test-echo] passed args: for workspace application-1a
+[library-1b:test-echo] passed args: for workspace library-1b
+✅ application-1a: test-echo
+✅ library-1b: test-echo
+2 scripts ran successfully`,
+    );
+  });
+
   test("Using --no-prefix", async () => {
     const result = await setupCliTest({
       testProject: "simple1",
@@ -507,7 +582,6 @@ success2
       "runScriptWithFailures",
       "test-mixed-results.json",
       "test-exit",
-
       "--parallel",
     );
 
@@ -596,6 +670,7 @@ success2
       getProjectRoot("simple1"),
       "run-script",
       "application-a",
+      "--args=test-args",
       "--json-outfile",
       "test-output/results.json", // for gitignore
     );
@@ -610,7 +685,7 @@ success2
       ),
     ).toEqual({
       script: "application-a",
-      args: "",
+      args: "test-args",
       parallel: false,
       totalCount: 1,
       successCount: 1,
