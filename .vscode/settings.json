@@ -5,7 +5,7 @@
   "eslint.codeActionsOnSave.rules": ["import/order"],
   "eslint.validate": ["javascript", "typescript"],
   "[mdx]": {
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": false,
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[typescript]": {

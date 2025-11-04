@@ -79,57 +79,43 @@ configure aliases for workspaces.
 bw list-workspaces
 
 # ls is an alias for list-workspaces
-
 # This prints formatted JSON
-
 bw ls --json --pretty
 
 # Run the lint script for all workspaces
-
 # that have it in their "scripts" field
-
 bw run lint
 
 # Run the lint script for a specific workspace
-
 bw run lint my-workspace
 
 # Run the lint script for multiple workspaces
-
 bw run lint my-workspace-a my-workspace-b
 
 # Run the lint script for workspaces using wildcard
-
 bw run lint "my-workspace-\*"
 
 # Run the lint script in parallel
-
 bw run lint --parallel
 
 # Append args to each script call
-
 bw run lint --args="--my --appended --args"
 
 # Use the workspace name in args
-
 bw run lint --args="--my --arg=<workspace>"
 
 # Help
-
 bw help
 bw --help
 
 # Pass --cwd to any command
-
 bw --cwd=/path/to/your/project ls
 bw --cwd=/path/to/your/project run my-script
 
 # Pass --config-file to any command
-
 bw --config-file=/path/to/your/config.json ls
 
 # Pass --log-level to any command (debug, info, warn, error, or silent)
-
 bw --log-level=silent run my-script`}
 
 </SyntaxHighlighter>
