@@ -7,9 +7,10 @@ sidebar: false
 outline: true
 footer: false
 ---
+
 import { CliCommandDoc } from "../../content/cli/CliCommandDoc";
 import { CliGlobalOptionDoc } from "../../content/cli/CliGlobalOptionDoc";
-import { RUN_SCRIPT_EXAMPLE_JSON_OUTPUT } from '../../content/runScriptJson';
+import { RUN_SCRIPT_EXAMPLE_JSON_OUTPUT } from "../../content/runScriptJson";
 import { SyntaxHighlighter } from "../../content/highlight";
 
 # CLI Usage
@@ -22,17 +23,20 @@ Note: Examples use `bw` instead of `bunx bun-workspaces`, which works assuming y
 ## Global Options:
 
 Global options should come before any commands.
+
 ### Config File
-<CliGlobalOptionDoc option={("configFile")} />
+
+<CliGlobalOptionDoc option={"configFile"} />
 <hr />
 ### Working Directory
-<CliGlobalOptionDoc option={("cwd")} />
+<CliGlobalOptionDoc option={"cwd"} />
 <hr />
 ### Log Level
-<CliGlobalOptionDoc option={("logLevel")} />
+<CliGlobalOptionDoc option={"logLevel"} />
 ## Commands:
 
 ### List Workspaces
+
 <CliCommandDoc command={"listWorkspaces"} />
 <hr />
 ### Workspace Info
