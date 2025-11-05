@@ -24,6 +24,9 @@ export default defineConfig({
   plugins: [
     // TODO: This worked briefly with mismatched versions. This will likely not work again until rspress v2 is out of beta.
     // * In the meantime, manage src/docs/public/sitemap.xml manually.
+    // * And however, be mindful that trailing slashes vs. non-trailing slashes
+    // * are important to the Google Search Console. This site works best with non-trailing links
+    // * and sitemap.xml references.
     // pluginSitemap({
     //   siteUrl: new URL(packageJson.homepage).origin,
     //   defaultChangeFreq: "weekly",
@@ -82,7 +85,7 @@ export default defineConfig({
           tag: "meta",
           attrs: {
             name: "og:image",
-            content: "https://bunworkspaces.com/bw-plain.png",
+            content: "https://bunworkspaces.com/bw-eye-og.png",
           },
         },
       ],
