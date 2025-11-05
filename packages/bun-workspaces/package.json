@@ -10,7 +10,7 @@
   },
   "bin": {
     "bun-workspaces": "bin/cli.js",
-    "bw": "bun-workspaces"
+    "bw": "bin/cli.js"
   },
   "custom": {
     "bunVersion": {
