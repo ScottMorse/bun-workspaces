@@ -37,3 +37,5 @@ bw run my-script --parallel
 bw run my-script --args "--my --args"
 bw run my-script --args "--my --args=<workspace>"
 ```
+
+_`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Oven. This project aims to enhance enhance the experience of Bun for its users._
