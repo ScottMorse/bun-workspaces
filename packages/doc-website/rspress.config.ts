@@ -15,8 +15,8 @@ export default defineConfig({
   title: TITLE,
   globalStyles: path.resolve("src/theme/css/global.css"),
   description: DESCRIPTION,
-  icon: "/bw-plain.ico",
-  logo: "/bw-plain.png",
+  icon: "/bw-eye-circle-bg-dark.ico",
+  logo: "/bw-eye-square.png",
   logoText: `bun-workspaces`,
   search: {
     searchHooks: path.join(__dirname, "src/search/search.tsx"),
