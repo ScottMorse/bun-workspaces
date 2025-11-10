@@ -28,8 +28,5 @@
     "type-check": "tsc --noEmit",
     "publish-build:dry-run": "DRY_RUN=true bun run scripts/publish.ts",
     "publish-build:npm": "bun run scripts/publish.ts"
-  },
-  "devDependencies": {
-    "bun-workspaces": "workspace:*"
   }
 }

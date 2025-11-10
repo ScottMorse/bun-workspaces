@@ -5,6 +5,7 @@
       "name": "@bw/doc-website",
       "devDependencies": {
         "@types/react-syntax-highlighter": "^15.5.13",
+        "bun-workspaces": "file:../bun-workspaces",
         "react-syntax-highlighter": "^16.1.0",
         "rspress": "^1.45.8",
       },
@@ -260,6 +261,8 @@
     "buffer-builder": ["buffer-builder@0.2.0", "", {}, "sha512-7VPMEPuYznPSoR21NE1zvd2Xna6c/CloiZCfcMXR1Jny6PjX0N4Nsa38zcBFo/FMK+BlA+FLKbJCQ0i2yxp+Xg=="],
 
     "buffer-from": ["buffer-from@1.1.2", "", {}, "sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ=="],
+
+    "bun-workspaces": ["bun-workspaces@file:../bun-workspaces", { "bin": { "bun-workspaces": "bin/cli.js", "bw": "bin/cli.js" } }],
 
     "cac": ["cac@6.7.14", "", {}, "sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ=="],
 
