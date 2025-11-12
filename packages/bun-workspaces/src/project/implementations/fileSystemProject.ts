@@ -1,8 +1,12 @@
-import { findWorkspacesFromPackage, type Workspace } from "../../workspaces";
+import fs from "fs";
+import path from "path";
+import { findWorkspaces, type Workspace } from "../../workspaces";
 import { ProjectBase, type Project } from "./projectBase";
 
 export interface CreateFileSystemProjectOptions {
   rootDir: string;
+  name?: string;
+  /** @deprecated  */
   workspaceAliases?: Record<string, string>;
 }
 
@@ -15,13 +19,21 @@ class FileSystemProject extends ProjectBase {
 
     this.rootDir = options.rootDir;
 
-    const { name, workspaces } = findWorkspacesFromPackage({
+    const { workspaces } = findWorkspaces({
       rootDir: options.rootDir,
       workspaceAliases: options.workspaceAliases,
     });
 
-    this.name = name;
     this.workspaces = workspaces;
+
+    if (!options.name) {
+      const packageJson = JSON.parse(
+        fs.readFileSync(path.join(this.rootDir, "package.json"), "utf8"),
+      );
+      this.name = packageJson.name ?? "";
+    } else {
+      this.name = "";
+    }
   }
 }
 

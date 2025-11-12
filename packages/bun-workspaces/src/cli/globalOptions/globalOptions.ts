@@ -80,6 +80,13 @@ const defineGlobalOptions = (
 
   const config = loadConfigFile(configFilePath, cwd);
 
+  if (config) {
+    logger.warn(
+      // TODO link to docs
+      `WARNING: Using the config file at ${configFilePath} is deprecated. Please use the new workspace config instead.`,
+    );
+  }
+
   addGlobalOption(program, "logLevel");
 
   return { cwd, config };

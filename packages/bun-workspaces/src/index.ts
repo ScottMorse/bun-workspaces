@@ -1,6 +1,5 @@
 export {
   findWorkspaces,
-  findWorkspacesFromPackage,
   type FindWorkspacesOptions,
   type Workspace,
   type resolvePackageJsonContent,

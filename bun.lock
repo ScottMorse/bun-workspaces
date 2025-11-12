@@ -1,5 +1,6 @@
 {
   "lockfileVersion": 1,
+  "configVersion": 0,
   "workspaces": {
     "": {
       "name": "@bw/root",
@@ -26,6 +27,9 @@
       "bin": {
         "bun-workspaces": "bin/cli.js",
         "bw": "bin/cli.js",
+      },
+      "devDependencies": {
+        "bun-workspaces": "file:.",
       },
     },
   },

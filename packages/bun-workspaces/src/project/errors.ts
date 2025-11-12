@@ -1,6 +1,6 @@
 import { defineErrors } from "../internal/error";
 
-export const PROJECT_ERRORS = defineErrors(
+export const ERRORS = defineErrors(
   "ProjectWorkspaceNotFound",
   "WorkspaceScriptDoesNotExist",
 );

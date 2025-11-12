@@ -1,7 +1,7 @@
 import path from "path";
 import { createWildcardRegex } from "../../internal/regex";
 import { type Workspace } from "../../workspaces";
-import { PROJECT_ERRORS } from "../errors";
+import { ERRORS } from "../errors";
 import {
   createScriptCommand,
   type CreateScriptCommandOptions,
@@ -106,12 +106,12 @@ export abstract class ProjectBase implements Project {
     const workspace = this.findWorkspaceByNameOrAlias(options.workspaceName);
 
     if (!workspace) {
-      throw new PROJECT_ERRORS.ProjectWorkspaceNotFound(
+      throw new ERRORS.ProjectWorkspaceNotFound(
         `Workspace not found: ${JSON.stringify(options.workspaceName)}`,
       );
     }
     if (!workspace.scripts.includes(options.scriptName)) {
-      throw new PROJECT_ERRORS.WorkspaceScriptDoesNotExist(
+      throw new ERRORS.WorkspaceScriptDoesNotExist(
         `Script not found in workspace ${JSON.stringify(
           workspace.name,
         )}: ${JSON.stringify(options.scriptName)} (available: ${

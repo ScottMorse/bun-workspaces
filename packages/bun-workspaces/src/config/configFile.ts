@@ -8,6 +8,7 @@ import { ERRORS } from "./errors";
 
 export const DEFAULT_CONFIG_FILE_PATH = "bw.json";
 
+/** @deprecated */
 export const loadConfigFile = (filePath?: string, rootDir = ".") => {
   if (!filePath) {
     const defaultFilePath = path.resolve(rootDir, DEFAULT_CONFIG_FILE_PATH);

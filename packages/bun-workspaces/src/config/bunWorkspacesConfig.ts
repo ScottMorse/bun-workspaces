@@ -6,10 +6,11 @@ export interface CliConfig {
 }
 
 export interface ProjectConfig {
-  /** A map of aliases to a workspace name */
+  /** @deprecated A map of aliases to a workspace name */
   workspaceAliases?: Record<string, string>;
 }
 
+/** @deprecated */
 export interface BunWorkspacesConfig {
   cli?: CliConfig;
   project?: ProjectConfig;
@@ -52,6 +53,7 @@ const validateProjectConfig = (projectConfig: ProjectConfig) => {
   }
 };
 
+/** @deprecated */
 export const validateBunWorkspacesConfig = (config: BunWorkspacesConfig) => {
   if (!isJsonObject(config)) {
     throw new ERRORS.InvalidConfigFile(`Config file: must be an object`);

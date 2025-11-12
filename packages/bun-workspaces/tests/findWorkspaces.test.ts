@@ -1,19 +1,15 @@
 import { expect, test, describe } from "bun:test";
-import { ERRORS } from "../src/workspaces/errors";
-import {
-  findWorkspaces,
-  findWorkspacesFromPackage,
-} from "../src/workspaces/findWorkspaces";
+import { WORKSPACE_ERRORS } from "../src/workspaces/errors";
+import { findWorkspaces } from "../src/workspaces/findWorkspaces";
 import { getProjectRoot } from "./testProjects";
 
 describe("Test finding workspaces", () => {
   test("Find workspaces basic behavior", async () => {
-    const defaultProject = findWorkspacesFromPackage({
+    const defaultProject = findWorkspaces({
       rootDir: getProjectRoot("default"),
     });
 
     expect(defaultProject).toEqual({
-      name: "test-root",
       workspaces: [
         {
           name: "application-a",
@@ -54,7 +50,6 @@ describe("Test finding workspaces", () => {
     });
 
     expect(defaultProject).toEqual({
-      name: "test-root",
       ...findWorkspaces({
         rootDir: getProjectRoot("default"),
         workspaceGlobs: ["applications/*", "libraries/**/*"],
@@ -125,12 +120,11 @@ describe("Test finding workspaces", () => {
   });
 
   test("Ignore node_modules workspace", async () => {
-    const defaultProject = findWorkspacesFromPackage({
+    const defaultProject = findWorkspaces({
       rootDir: getProjectRoot("withNodeModuleWorkspace"),
     });
 
     expect(defaultProject).toEqual({
-      name: "test-root",
       workspaces: [
         {
           name: "application-a",
@@ -173,11 +167,10 @@ describe("Test finding workspaces", () => {
 
   test("Supports negation globs in workspaces field in package.json", async () => {
     expect(
-      findWorkspacesFromPackage({
+      findWorkspaces({
         rootDir: getProjectRoot("negationGlobs"),
       }),
     ).toEqual({
-      name: "test-root",
       workspaces: [
         {
           name: "application-a",
@@ -227,77 +220,77 @@ describe("Test finding workspaces", () => {
 
   test("Invalid workspaces from test projects", async () => {
     expect(() =>
-      findWorkspacesFromPackage({
+      findWorkspaces({
         rootDir: getProjectRoot("invalidBadJson"),
       }),
-    ).toThrow(ERRORS.InvalidPackageJson);
+    ).toThrow(WORKSPACE_ERRORS.InvalidPackageJson);
 
     expect(() =>
-      findWorkspacesFromPackage({
+      findWorkspaces({
         rootDir: getProjectRoot("invalidNoName"),
       }),
-    ).toThrow(ERRORS.NoWorkspaceName);
+    ).toThrow(WORKSPACE_ERRORS.NoWorkspaceName);
 
     expect(() =>
-      findWorkspacesFromPackage({
+      findWorkspaces({
         rootDir: getProjectRoot("invalidDuplicateName"),
       }),
-    ).toThrow(ERRORS.DuplicateWorkspaceName);
+    ).toThrow(WORKSPACE_ERRORS.DuplicateWorkspaceName);
 
     expect(() =>
-      findWorkspacesFromPackage({
+      findWorkspaces({
         rootDir: getProjectRoot("badWorkspaceInvalidName"),
       }),
-    ).toThrow(ERRORS.InvalidWorkspaceName);
+    ).toThrow(WORKSPACE_ERRORS.InvalidWorkspaceName);
 
     expect(() =>
-      findWorkspacesFromPackage({
+      findWorkspaces({
         rootDir: getProjectRoot("invalidBadTypeWorkspaces"),
       }),
-    ).toThrow(ERRORS.InvalidWorkspaces);
+    ).toThrow(WORKSPACE_ERRORS.InvalidWorkspaces);
 
     expect(() =>
-      findWorkspacesFromPackage({
+      findWorkspaces({
         rootDir: getProjectRoot("invalidBadTypeScripts"),
       }),
-    ).toThrow(ERRORS.InvalidScripts);
+    ).toThrow(WORKSPACE_ERRORS.InvalidScripts);
 
     expect(() =>
-      findWorkspacesFromPackage({
+      findWorkspaces({
         rootDir: getProjectRoot("invalidNoPackageJson"),
       }),
-    ).toThrow(ERRORS.PackageNotFound);
+    ).toThrow(WORKSPACE_ERRORS.PackageNotFound);
 
     expect(() =>
-      findWorkspacesFromPackage({
+      findWorkspaces({
         rootDir: getProjectRoot("invalidBadWorkspaceGlobType"),
       }),
-    ).toThrow(ERRORS.InvalidWorkspacePattern);
+    ).toThrow(WORKSPACE_ERRORS.InvalidWorkspacePattern);
 
     expect(() =>
-      findWorkspacesFromPackage({
+      findWorkspaces({
         rootDir: getProjectRoot("invalidBadWorkspaceGlobOutsideRoot"),
       }),
-    ).toThrow(ERRORS.InvalidWorkspacePattern);
+    ).toThrow(WORKSPACE_ERRORS.InvalidWorkspacePattern);
 
     expect(() =>
-      findWorkspacesFromPackage({
+      findWorkspaces({
         rootDir: getProjectRoot("invalidAliasConflict"),
         workspaceAliases: {
           appA: "application-a",
           "application-b": "library-a",
         },
       }),
-    ).toThrow(ERRORS.AliasConflict);
+    ).toThrow(WORKSPACE_ERRORS.AliasConflict);
 
     expect(() =>
-      findWorkspacesFromPackage({
+      findWorkspaces({
         rootDir: getProjectRoot("invalidAliasNotFound"),
         workspaceAliases: {
           appA: "application-a",
           appD: "application-d",
         },
       }),
-    ).toThrow(ERRORS.AliasedWorkspaceNotFound);
+    ).toThrow(WORKSPACE_ERRORS.AliasedWorkspaceNotFound);
   });
 });
