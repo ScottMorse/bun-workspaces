@@ -16,11 +16,11 @@ export interface RunCliOptions {
   programmatic?: true;
 }
 
-export interface CliProgram {
+export interface CLI {
   run: (options?: RunCliOptions) => Promise<void>;
 }
 
-export interface CreateCliProgramOptions {
+export interface CreateCliOptions {
   handleError?: (error: Error) => void;
   postInit?: (program: Command) => unknown;
   defaultCwd?: string;
@@ -30,7 +30,7 @@ export const createCli = ({
   handleError,
   postInit,
   defaultCwd = process.cwd(),
-}: CreateCliProgramOptions = {}): CliProgram => {
+}: CreateCliOptions = {}): CLI => {
   const run = async ({
     argv = process.argv,
     programmatic,

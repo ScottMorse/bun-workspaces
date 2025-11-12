@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { Glob } from "glob";
 import { logger } from "../internal/logger";
-import { ERRORS } from "./errors";
+import { WORKSPACE_ERRORS } from "./errors";
 
 export const resolvePackageJsonPath = (directoryItem: string) => {
   if (path.basename(directoryItem) === "package.json") {
@@ -27,7 +27,7 @@ export const scanWorkspaceGlob = (globPattern: string, rootDir: string) =>
 
 const validateJsonRoot = (json: UnknownPackageJson) => {
   if (!json || typeof json !== "object" || Array.isArray(json)) {
-    throw new ERRORS.InvalidPackageJson(
+    throw new WORKSPACE_ERRORS.InvalidPackageJson(
       `Expected package.json to be an object, got ${typeof json}`,
     );
   }
@@ -35,7 +35,7 @@ const validateJsonRoot = (json: UnknownPackageJson) => {
 
 const validateName = (json: UnknownPackageJson) => {
   if (typeof json.name !== "string") {
-    throw new ERRORS.NoWorkspaceName(
+    throw new WORKSPACE_ERRORS.NoWorkspaceName(
       `Expected package.json to have a string "name" field${
         json.name !== undefined ? ` (Received ${json.name})` : ""
       }`,
@@ -43,13 +43,13 @@ const validateName = (json: UnknownPackageJson) => {
   }
 
   if (!json.name.trim()) {
-    throw new ERRORS.NoWorkspaceName(
+    throw new WORKSPACE_ERRORS.NoWorkspaceName(
       `Expected package.json to have a non-empty "name" field`,
     );
   }
 
   if (json.name.includes("*")) {
-    throw new ERRORS.InvalidWorkspaceName(
+    throw new WORKSPACE_ERRORS.InvalidWorkspaceName(
       `Package name cannot contain the character '*' (workspace: "${json.name}")`,
     );
   }
@@ -62,7 +62,7 @@ const validateWorkspacePattern = (
   rootDir: string,
 ) => {
   if (typeof workspacePattern !== "string") {
-    throw new ERRORS.InvalidWorkspacePattern(
+    throw new WORKSPACE_ERRORS.InvalidWorkspacePattern(
       `Expected workspace pattern to be a string, got ${typeof workspacePattern}`,
     );
   }
@@ -73,7 +73,7 @@ const validateWorkspacePattern = (
 
   const absolutePattern = path.resolve(rootDir, workspacePattern);
   if (!absolutePattern.startsWith(rootDir)) {
-    throw new ERRORS.InvalidWorkspacePattern(
+    throw new WORKSPACE_ERRORS.InvalidWorkspacePattern(
       `Cannot resolve workspace pattern outside of root directory ${rootDir}: ${absolutePattern}`,
     );
   }
@@ -88,7 +88,7 @@ const validateWorkspacePatterns = (
   const workspaces: string[] = [];
   if (json.workspaces) {
     if (!Array.isArray(json.workspaces)) {
-      throw new ERRORS.InvalidWorkspaces(
+      throw new WORKSPACE_ERRORS.InvalidWorkspaces(
         `Expected package.json to have an array "workspaces" field`,
       );
     }
@@ -108,7 +108,7 @@ const validateScripts = (json: UnknownPackageJson) => {
     json.scripts &&
     (typeof json.scripts !== "object" || Array.isArray(json.scripts))
   ) {
-    throw new ERRORS.InvalidScripts(
+    throw new WORKSPACE_ERRORS.InvalidScripts(
       `Expected package.json to have an object "scripts" field`,
     );
   }
@@ -116,7 +116,7 @@ const validateScripts = (json: UnknownPackageJson) => {
   if (json.scripts) {
     for (const value of Object.values(json.scripts)) {
       if (typeof value !== "string") {
-        throw new ERRORS.InvalidScripts(
+        throw new WORKSPACE_ERRORS.InvalidScripts(
           `Expected workspace "${json.name}" script "${
             json.scripts
           }" to be a string, got ${typeof value}`,
@@ -142,7 +142,7 @@ export const resolvePackageJsonContent = (
     json = JSON.parse(fs.readFileSync(packageJsonPath, "utf8"));
   } catch (error) {
     logger.error(error as Error);
-    throw new ERRORS.InvalidPackageJson(
+    throw new WORKSPACE_ERRORS.InvalidPackageJson(
       `Failed to read and parse package.json at ${packageJsonPath}: ${
         (error as Error).message
       }`,

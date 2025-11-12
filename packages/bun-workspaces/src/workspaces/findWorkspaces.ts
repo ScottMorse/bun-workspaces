@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import type { ProjectConfig } from "../config";
-import { ERRORS } from "./errors";
+import { WORKSPACE_ERRORS } from "./errors";
 import {
   resolvePackageJsonContent,
   resolvePackageJsonPath,
@@ -21,7 +21,7 @@ const validateWorkspace = (workspace: Workspace, workspaces: Workspace[]) => {
   }
 
   if (workspaces.find((ws) => ws.name === workspace.name)) {
-    throw new ERRORS.DuplicateWorkspaceName(
+    throw new WORKSPACE_ERRORS.DuplicateWorkspaceName(
       `Duplicate workspace name found: ${JSON.stringify(workspace.name)}`,
     );
   }
@@ -100,12 +100,12 @@ export const validateWorkspaceAliases = (
 ) => {
   for (const [alias, name] of Object.entries(workspaceAliases ?? {})) {
     if (workspaces.find((ws) => ws.name === alias)) {
-      throw new ERRORS.AliasConflict(
+      throw new WORKSPACE_ERRORS.AliasConflict(
         `Alias ${JSON.stringify(alias)} conflicts with workspace name ${JSON.stringify(name)}`,
       );
     }
     if (!workspaces.find((ws) => ws.name === name)) {
-      throw new ERRORS.AliasedWorkspaceNotFound(
+      throw new WORKSPACE_ERRORS.AliasedWorkspaceNotFound(
         `Workspace ${JSON.stringify(name)} was aliased by ${JSON.stringify(
           alias,
         )} but was not found`,
@@ -120,7 +120,7 @@ export const findWorkspacesFromPackage = ({
 }: ProjectConfig & { rootDir: string }) => {
   const packageJsonPath = path.join(rootDir, "package.json");
   if (!fs.existsSync(packageJsonPath)) {
-    throw new ERRORS.PackageNotFound(
+    throw new WORKSPACE_ERRORS.PackageNotFound(
       `No package.json found at ${packageJsonPath}`,
     );
   }
