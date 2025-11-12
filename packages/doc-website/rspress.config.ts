@@ -3,11 +3,57 @@ import path from "node:path";
 import { defineConfig } from "rspress/config";
 import packageJson from "../bun-workspaces/package.json";
 
-const repoBaseUrl = packageJson.repository.url.replace(".git", "");
+const DOMAIN = "https://bunworkspaces.com";
+const GITHUB_REPO_URL = packageJson.repository.url.replace(".git", "");
+const CHANGELOG_URL = `${GITHUB_REPO_URL}/releases`;
+const LICENSE_URL = GITHUB_REPO_URL + "/blob/main/LICENSE.md";
+const NPM_PACKAGE_URL = "https://www.npmjs.com/package/bun-workspaces";
 
-const TITLE = "bun-workspaces: Documentation";
+const TITLE = "bun-workspaces — Bun Workspaces CLI | Documentation";
 const DESCRIPTION =
-  "Documentation for bun-workspaces: A CLI to help manage Bun workspaces. Get metadata about your project and run scripts across your workspaces, with no additional setup required. Includes an API for JavaScript or TypeScript.";
+  "Documentation for bun-workspaces: A CLI for developers using the Bun runtime to manage monorepos. Lists workspaces and runs workspace scripts in parallel, with an API for JavaScript or TypeScript.";
+
+const LD_JSON = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "bun-workspaces",
+  alternateName: "bw",
+  applicationCategory: "DeveloperApplication",
+  applicationSubCategory: "CLI",
+  operatingSystem: "Cross-platform",
+  url: DOMAIN,
+  releaseNotes: CHANGELOG_URL,
+  description: DESCRIPTION,
+  abstract: DESCRIPTION,
+  sameAs: [GITHUB_REPO_URL, NPM_PACKAGE_URL],
+  downloadUrl: NPM_PACKAGE_URL,
+  license: LICENSE_URL,
+  thumbnailUrl: `${DOMAIN}/bw-eye-og.png`,
+  accessMode: "textual",
+  author: {
+    "@type": "Person",
+    name: "Scott Morse",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "bun-workspaces",
+    url: DOMAIN,
+  },
+  audience: {
+    "@type": "Audience",
+    audienceType: "Software developers",
+    description:
+      "Developers using the Bun runtime for TypeScript or JavaScript and its workspace feature for monorepo development.",
+  },
+  about: {
+    "@type": "Thing",
+    name: "Bun workspaces",
+    sameAs: "https://bun.sh/docs/pm/workspaces",
+    description:
+      "Native workspace feature in the Bun JavaScript runtime used for managing multi-package monorepos.",
+  },
+  softwareVersion: packageJson.version,
+};
 
 export default defineConfig({
   root: "src/docs",
@@ -15,8 +61,8 @@ export default defineConfig({
   title: TITLE,
   globalStyles: path.resolve("src/theme/css/global.css"),
   description: DESCRIPTION,
-  icon: "/bw-plain.ico",
-  logo: "/bw-plain.png",
+  icon: "/bw-eye-circle-bg-dark.ico",
+  logo: "/bw-eye-square.png",
   logoText: `bun-workspaces`,
   search: {
     searchHooks: path.join(__dirname, "src/search/search.tsx"),
@@ -54,6 +100,17 @@ export default defineConfig({
             ]
           : []),
         {
+          tag: "script",
+          attrs: {
+            type: "application/ld+json",
+          },
+          children: JSON.stringify(
+            LD_JSON,
+            null,
+            process.env.BW_DOC_ENV === "development" ? 2 : 0,
+          ),
+        },
+        {
           tag: "meta",
           attrs: {
             name: "og:title",
@@ -78,14 +135,14 @@ export default defineConfig({
           tag: "meta",
           attrs: {
             name: "og:url",
-            content: "https://bunworkspaces.com/",
+            content: DOMAIN,
           },
         },
         {
           tag: "meta",
           attrs: {
             name: "og:image",
-            content: "https://bunworkspaces.com/bw-eye-og.png",
+            content: `${DOMAIN}/bw-eye-og.png`,
           },
         },
       ],
@@ -96,7 +153,7 @@ export default defineConfig({
       {
         icon: "github",
         mode: "link",
-        content: repoBaseUrl,
+        content: GITHUB_REPO_URL,
       },
       {
         icon: {
@@ -134,7 +191,7 @@ export default defineConfig({
       },
       {
         text: "Changelog",
-        link: `${repoBaseUrl}/releases`,
+        link: CHANGELOG_URL,
         position: "left",
       },
     ],

@@ -14,18 +14,16 @@ import { SyntaxHighlighter } from "../content/highlight";
 
 <NormalizeIndex />
 
-<h1 className="home-title">bun-workspaces</h1>
+<h1 className="home-title">bun-workspaces<br/><span className="home-subtitle">
+  A CLI on top of native [Bun
+  workspaces](https://bun.sh/docs/install/workspaces)</span></h1>
 <p className="home-version">v{packageJson.version}</p>
 
-<div className="home-subtitle">
-  A CLI on top of native [Bun
-  workspaces](https://bun.sh/docs/install/workspaces)
-</div>
 <div className="home-list-container">
   <ul className="home-list">
     <li>Get metadata about your project 🤖</li>
-    <li>Run scripts across your workspaces 🧾</li>
-    <li>Works right away, with no other setup required 🍔🍴</li>
+    <li>Run scripts across your workspaces flexibly 🧾</li>
+    <li>Works right away, with no boilerplate required 🍔🍴</li>
   </ul>
 </div>
 
@@ -118,3 +116,7 @@ bw --config-file=/path/to/your/config.json ls
 bw --log-level=silent run my-script`}
 
 </SyntaxHighlighter>
+
+
+<br/>
+_`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Oven. This project aims to enhance enhance the experience of Bun for its users._

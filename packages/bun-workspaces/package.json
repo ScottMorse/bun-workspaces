@@ -30,6 +30,6 @@
     "publish-build:npm": "bun run scripts/publish.ts"
   },
   "devDependencies": {
-    "bun-workspaces": "workspace:*"
+    "bun-workspaces": "file:."
   }
 }
