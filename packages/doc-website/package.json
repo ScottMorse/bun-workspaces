@@ -2,7 +2,7 @@
   "name": "@bw/doc-website",
   "private": true,
   "scripts": {
-    "dev": "rspress dev",
+    "dev": "BW_DOC_ENV=development rspress dev",
     "build": "BW_DOC_ENV=production bun run scripts/build.ts",
     "build:dev": "BW_DOC_ENV=development bun run scripts/build.ts",
     "preview": "rspress preview",

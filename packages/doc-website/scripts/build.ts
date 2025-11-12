@@ -1,6 +1,7 @@
-import { writeFileSync, rmSync } from "node:fs";
+import { writeFileSync, rmSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { $ } from "bun";
+import { globSync } from "glob";
 
 export const runBuild = async () => {
   const outputPath = path.resolve("__dirname", "..", "doc_build");
@@ -16,6 +17,12 @@ export const runBuild = async () => {
       path.resolve(outputPath, "robots.txt"),
       "User-agent: *\nDisallow: /\n",
     );
+  }
+
+  const outputHtmlFiles = globSync(path.resolve(outputPath, "**/*.html"));
+  for (const htmlFile of outputHtmlFiles) {
+    const html = readFileSync(htmlFile, "utf8");
+    writeFileSync(htmlFile, html.replace(/href=['"]\/?index['"]/g, 'href="/"'));
   }
 };
 
