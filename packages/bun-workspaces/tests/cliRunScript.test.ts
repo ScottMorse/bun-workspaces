@@ -206,8 +206,8 @@ describe("CLI Run Script", () => {
     const resultAliases = await run(
       "run-script",
       "all-workspaces",
-      "appB",
-      "libA",
+      "deprecated_appB",
+      "deprecated_libA",
     );
     expect(resultAliases.exitCode).toBe(0);
     assertOutputMatches(
@@ -280,8 +280,8 @@ describe("CLI Run Script", () => {
     const result4 = await run(
       "run-script",
       "test-echo",
-      "appA",
-      "libB",
+      "deprecated_appA",
+      "deprecated_libB",
       "--args=for workspace <workspace>",
     );
     expect(result4.exitCode).toBe(0);
@@ -458,7 +458,7 @@ success2
           workspace: {
             name: "application-1a",
             path: "applications/applicationA",
-            aliases: ["appA"],
+            aliases: ["deprecated_appA"],
           },
           success: true,
           exitCode: 0,
@@ -470,7 +470,7 @@ success2
           workspace: {
             name: "application-1b",
             path: "applications/applicationB",
-            aliases: ["appB"],
+            aliases: ["deprecated_appB"],
           },
           success: true,
           exitCode: 0,
@@ -482,7 +482,7 @@ success2
           workspace: {
             name: "library-1a",
             path: "libraries/libraryA",
-            aliases: ["libA"],
+            aliases: ["deprecated_libA"],
           },
           success: true,
           exitCode: 0,
@@ -494,7 +494,7 @@ success2
           workspace: {
             name: "library-1b",
             path: "libraries/libraryB",
-            aliases: ["libB"],
+            aliases: ["deprecated_libB"],
           },
           success: true,
           exitCode: 0,
@@ -537,7 +537,7 @@ success2
           workspace: {
             name: "application-1a",
             path: "applications/applicationA",
-            aliases: ["appA"],
+            aliases: ["deprecated_appA"],
           },
           success: true,
           exitCode: 0,
@@ -549,7 +549,7 @@ success2
           workspace: {
             name: "library-1a",
             path: "libraries/libraryA",
-            aliases: ["libA"],
+            aliases: ["deprecated_libA"],
           },
           success: true,
           exitCode: 0,
@@ -594,7 +594,7 @@ success2
           workspace: {
             name: "library-1b",
             path: "libraries/libraryB",
-            aliases: ["libB"],
+            aliases: ["deprecated_libB"],
           },
           success: true,
           exitCode: 0,
@@ -739,7 +739,7 @@ success2
           workspace: {
             name: "application-1a",
             path: "applications/applicationA",
-            aliases: ["appA"],
+            aliases: ["deprecated_appA"],
           },
           success: true,
           exitCode: 0,

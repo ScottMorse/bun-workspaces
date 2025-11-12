@@ -79,7 +79,7 @@ export const runScript = handleCommand(
     const scriptCommands = workspaces.map((workspace) =>
       project.createScriptCommand({
         scriptName: script,
-        workspaceName: workspace.name,
+        workspaceNameOrAlias: workspace.name,
         method: "cd",
         args: options.args?.replace(/<workspace>/g, workspace.name) ?? "",
       }),

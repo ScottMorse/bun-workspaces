@@ -24,22 +24,22 @@ describe("Test CLI commands", () => {
       assertOutputMatches(
         plainResult.stdout.raw,
         `Workspace: application-1a
- - Aliases: appA
+ - Aliases: deprecated_appA
  - Path: applications/applicationA
  - Glob Match: applications/*
  - Scripts: a-workspaces, all-workspaces, application-a
 Workspace: application-1b
- - Aliases: appB
+ - Aliases: deprecated_appB
  - Path: applications/applicationB
  - Glob Match: applications/*
  - Scripts: all-workspaces, application-b, b-workspaces
 Workspace: library-1a
- - Aliases: libA
+ - Aliases: deprecated_libA
  - Path: libraries/libraryA
  - Glob Match: libraries/*
  - Scripts: a-workspaces, all-workspaces, library-a
 Workspace: library-1b
- - Aliases: libB
+ - Aliases: deprecated_libB
  - Path: libraries/libraryB
  - Glob Match: libraries/*
  - Scripts: all-workspaces, b-workspaces, library-b`,
@@ -62,28 +62,28 @@ library-1b`,
           matchPattern: "applications/*",
           path: "applications/applicationA",
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
-          aliases: ["appA"],
+          aliases: ["deprecated_appA"],
         },
         {
           name: "application-1b",
           matchPattern: "applications/*",
           path: "applications/applicationB",
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
-          aliases: ["appB"],
+          aliases: ["deprecated_appB"],
         },
         {
           name: "library-1a",
           matchPattern: "libraries/*",
           path: "libraries/libraryA",
           scripts: ["a-workspaces", "all-workspaces", "library-a"],
-          aliases: ["libA"],
+          aliases: ["deprecated_libA"],
         },
         {
           name: "library-1b",
           matchPattern: "libraries/*",
           path: "libraries/libraryB",
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
-          aliases: ["libB"],
+          aliases: ["deprecated_libB"],
         },
       ];
 
@@ -339,7 +339,7 @@ Script: library-b
       assertOutputMatches(
         plainResult.stdout.raw,
         `Workspace: application-1a
- - Aliases: appA
+ - Aliases: deprecated_appA
  - Path: applications/applicationA
  - Glob Match: applications/*
  - Scripts: a-workspaces, all-workspaces, application-a`,
@@ -355,7 +355,7 @@ Script: library-b
           matchPattern: "applications/*",
           path: "applications/applicationA",
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
-          aliases: ["appA"],
+          aliases: ["deprecated_appA"],
         }),
       );
 
@@ -375,7 +375,7 @@ Script: library-b
             matchPattern: "applications/*",
             path: "applications/applicationA",
             scripts: ["a-workspaces", "all-workspaces", "application-a"],
-            aliases: ["appA"],
+            aliases: ["deprecated_appA"],
           },
           null,
           2,
@@ -476,10 +476,10 @@ Script: library-b
     async (command) => {
       const { run } = setupCliTest({});
 
-      const appAResult = await run(command, "application-a");
-      expect(appAResult.exitCode).toBe(0);
+      const deprecated_appAResult = await run(command, "application-a");
+      expect(deprecated_appAResult.exitCode).toBe(0);
       assertOutputMatches(
-        appAResult.stdout.sanitizedCompactLines,
+        deprecated_appAResult.stdout.sanitizedCompactLines,
         `[application-a:application-a] script for application-a
 ✅ application-a: application-a
 1 script ran successfully`,

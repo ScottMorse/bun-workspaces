@@ -121,7 +121,7 @@ describe("Test CLI Global Options", () => {
     const result = await run(
       `--config-file=${path.resolve(getProjectRoot("simple1"), "bw.json")}`,
       "info",
-      "appA",
+      "deprecated_appA",
     );
     expect(result.stderr.raw).toBeEmpty();
     expect(result.exitCode).toBe(0);
@@ -130,7 +130,7 @@ describe("Test CLI Global Options", () => {
     const result2 = await run(
       `--config-file=${path.resolve(getProjectRoot("simple1"), "bw.alt.json")}`,
       "info",
-      "appB-alt",
+      "deprecated_appB-alt",
     );
     expect(result2.stderr.raw).toBeEmpty();
     expect(result2.exitCode).toBe(0);
@@ -139,7 +139,7 @@ describe("Test CLI Global Options", () => {
     const result3 = await run(
       `--cwd=${getProjectRoot("simple1")}`,
       "info",
-      "appB",
+      "deprecated_appB",
     );
     expect(result3.stderr.raw).toBeEmpty();
     expect(result3.exitCode).toBe(0);
@@ -149,7 +149,7 @@ describe("Test CLI Global Options", () => {
       `--cwd=${getProjectRoot("simple1")}`,
       "--config-file=bw.alt.json",
       "info",
-      "appB-alt",
+      "deprecated_appB-alt",
     );
     expect(result4.stderr.raw).toBeEmpty();
     expect(result4.exitCode).toBe(0);

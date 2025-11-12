@@ -277,7 +277,7 @@ describe("Test finding workspaces", () => {
       findWorkspaces({
         rootDir: getProjectRoot("invalidAliasConflict"),
         workspaceAliases: {
-          appA: "application-a",
+          deprecated_appA: "application-a",
           "application-b": "library-a",
         },
       }),
@@ -287,7 +287,7 @@ describe("Test finding workspaces", () => {
       findWorkspaces({
         rootDir: getProjectRoot("invalidAliasNotFound"),
         workspaceAliases: {
-          appA: "application-a",
+          deprecated_appA: "application-a",
           appD: "application-d",
         },
       }),

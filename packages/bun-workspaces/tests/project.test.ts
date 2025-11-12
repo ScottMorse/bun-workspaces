@@ -65,25 +65,25 @@ describe("Test Project utilities", () => {
   test("Project.prototype.findWorkspaceByName", async (project) => {
     expect(project.findWorkspaceByName("not-a-workspace")).toBeNull();
 
-    const appA = project.findWorkspaceByName("application-a");
-    expect(appA?.name).toEqual("application-a");
-    expect(appA?.path).toEqual("applications/applicationA");
-    expect(appA?.scripts).toEqual([
+    const deprecated_appA = project.findWorkspaceByName("application-a");
+    expect(deprecated_appA?.name).toEqual("application-a");
+    expect(deprecated_appA?.path).toEqual("applications/applicationA");
+    expect(deprecated_appA?.scripts).toEqual([
       "a-workspaces",
       "all-workspaces",
       "application-a",
     ]);
-    expect(appA?.matchPattern).toEqual("applications/*");
+    expect(deprecated_appA?.matchPattern).toEqual("applications/*");
 
-    const libC = project.findWorkspaceByName("library-c");
-    expect(libC?.name).toEqual("library-c");
-    expect(libC?.path).toEqual("libraries/nested/libraryC");
-    expect(libC?.scripts).toEqual([
+    const deprecated_libC = project.findWorkspaceByName("library-c");
+    expect(deprecated_libC?.name).toEqual("library-c");
+    expect(deprecated_libC?.path).toEqual("libraries/nested/libraryC");
+    expect(deprecated_libC?.scripts).toEqual([
       "all-workspaces",
       "c-workspaces",
       "library-c",
     ]);
-    expect(libC?.matchPattern).toEqual("libraries/**/*");
+    expect(deprecated_libC?.matchPattern).toEqual("libraries/**/*");
   });
 
   test("Project.prototype.findWorkspacesByPattern", async (project) => {

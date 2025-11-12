@@ -15,9 +15,9 @@ export interface ScriptMetadata {
 
 export type CreateProjectScriptCommandOptions = Omit<
   CreateScriptCommandOptions,
-  "workspace" | "rootDir"
+  "workspace" | "rootDir" | "method"
 > & {
-  workspaceName: string;
+  workspaceNameOrAlias: string;
 };
 
 export interface CreateProjectScriptCommandResult {
@@ -103,11 +103,13 @@ export abstract class ProjectBase implements Project {
   createScriptCommand(
     options: CreateProjectScriptCommandOptions,
   ): CreateProjectScriptCommandResult {
-    const workspace = this.findWorkspaceByNameOrAlias(options.workspaceName);
+    const workspace = this.findWorkspaceByNameOrAlias(
+      options.workspaceNameOrAlias,
+    );
 
     if (!workspace) {
       throw new ERRORS.ProjectWorkspaceNotFound(
-        `Workspace not found: ${JSON.stringify(options.workspaceName)}`,
+        `Workspace not found: ${JSON.stringify(options.workspaceNameOrAlias)}`,
       );
     }
     if (!workspace.scripts.includes(options.scriptName)) {
@@ -126,6 +128,7 @@ export abstract class ProjectBase implements Project {
         ...options,
         workspace,
         rootDir: path.resolve(this.rootDir),
+        method: "cd",
       }),
     };
   }

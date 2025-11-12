@@ -1,6 +1,6 @@
 {
   "workspaceAliases": {
-    "appA": "application-a",
+    "deprecated_appA": "application-a",
     "appD": "application-d"
   }
 }
