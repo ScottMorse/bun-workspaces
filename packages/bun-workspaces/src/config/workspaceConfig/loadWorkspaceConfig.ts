@@ -42,6 +42,8 @@ export const loadWorkspaceConfig = (workspacePath: string) => {
     );
   }
 
+  if (!rawConfig) return null;
+
   const errors = validateWorkspaceConfig(rawConfig);
   if (errors) {
     errors.forEach((error) => logger.error(error.message));

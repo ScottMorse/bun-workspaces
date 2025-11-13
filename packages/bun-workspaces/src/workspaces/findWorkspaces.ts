@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import type { ProjectConfig } from "../config";
+import { loadWorkspaceConfig, type ProjectConfig } from "../config";
 import { WORKSPACE_ERRORS } from "./errors";
 import {
   resolvePackageJsonContent,
@@ -88,14 +88,23 @@ export const findWorkspaces = ({
           ["name", "scripts"],
         );
 
+        const workspaceConfig = loadWorkspaceConfig(
+          path.dirname(packageJsonPath),
+        );
+
         const workspace: Workspace = {
           name: packageJsonContent.name ?? "",
           matchPattern: pattern,
           path: path.relative(rootDir, path.dirname(packageJsonPath)),
           scripts: Object.keys(packageJsonContent.scripts ?? {}).sort(),
-          aliases: Object.entries(workspaceAliases ?? {})
-            .filter(([_, value]) => value === packageJsonContent.name)
-            .map(([key]) => key),
+          aliases: [
+            ...new Set(
+              Object.entries(workspaceAliases ?? {})
+                .filter(([_, value]) => value === packageJsonContent.name)
+                .map(([key]) => key)
+                .concat(workspaceConfig?.aliases ?? []),
+            ),
+          ],
         };
         if (
           !excludedWorkspacePaths.includes(workspace.path) &&

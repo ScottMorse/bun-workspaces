@@ -276,7 +276,7 @@ describe("Test Project utilities", () => {
         args: "",
         method: "cd",
         scriptName: "all-workspaces",
-        workspaceName: "application-a",
+        workspaceNameOrAlias: "application-a",
       }),
     ).toEqual({
       command: {
@@ -298,7 +298,7 @@ describe("Test Project utilities", () => {
         args: "--watch",
         method: "cd",
         scriptName: "all-workspaces",
-        workspaceName: "application-a",
+        workspaceNameOrAlias: "application-a",
       }),
     ).toEqual({
       command: {
@@ -320,7 +320,7 @@ describe("Test Project utilities", () => {
         args: "--watch",
         method: "filter",
         scriptName: "all-workspaces",
-        workspaceName: "application-a",
+        workspaceNameOrAlias: "application-a",
       }),
     ).toEqual({
       command: {
@@ -342,7 +342,7 @@ describe("Test Project utilities", () => {
         args: " --stuff --hello=there123",
         method: "filter",
         scriptName: "all-workspaces",
-        workspaceName: "application-a",
+        workspaceNameOrAlias: "application-a",
       }),
     ).toEqual({
       command: {
@@ -364,7 +364,7 @@ describe("Test Project utilities", () => {
         args: "",
         method: "cd",
         scriptName: "b-workspaces",
-        workspaceName: "library-b",
+        workspaceNameOrAlias: "library-b",
       }),
     ).toEqual({
       command: {
@@ -386,7 +386,7 @@ describe("Test Project utilities", () => {
         args: "",
         method: "filter",
         scriptName: "b-workspaces",
-        workspaceName: "library-b",
+        workspaceNameOrAlias: "library-b",
       }),
     ).toEqual({
       command: {
@@ -408,7 +408,7 @@ describe("Test Project utilities", () => {
         args: "",
         method: "cd",
         scriptName: "not-a-script",
-        workspaceName: "library-b",
+        workspaceNameOrAlias: "library-b",
       }),
     ).toThrow(ERRORS.WorkspaceScriptDoesNotExist);
 
@@ -417,7 +417,7 @@ describe("Test Project utilities", () => {
         args: "",
         method: "cd",
         scriptName: "all-workspaces",
-        workspaceName: "not-a-workspace",
+        workspaceNameOrAlias: "not-a-workspace",
       }),
     ).toThrow(ERRORS.ProjectWorkspaceNotFound);
   });

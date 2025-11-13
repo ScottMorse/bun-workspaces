@@ -4,7 +4,10 @@ import { type Command, Option } from "commander";
 import { loadConfigFile, type BunWorkspacesConfig } from "../../config";
 import { defineErrors } from "../../internal/error";
 import { logger } from "../../internal/logger";
-import { createFileSystemProject } from "../../project";
+import {
+  _internalCreateFileSystemProject,
+  createFileSystemProject,
+} from "../../project";
 import {
   type CliGlobalOptionName,
   type CliGlobalOptions,
@@ -99,7 +102,7 @@ const applyGlobalOptions = (
   logger.printLevel = options.logLevel;
   logger.debug("Log level: " + options.logLevel);
 
-  const project = createFileSystemProject({
+  const project = _internalCreateFileSystemProject({
     rootDir: options.cwd,
     workspaceAliases: config?.project?.workspaceAliases ?? {},
   });

@@ -182,3 +182,7 @@ class _Logger implements Logger {
 }
 
 export const logger = createLogger("bun-workspaces");
+
+export const setLogLevel = (level: LogLevelSetting) => {
+  logger.printLevel = level;
+};

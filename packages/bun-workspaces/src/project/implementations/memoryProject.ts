@@ -2,9 +2,9 @@ import { type Workspace } from "../../workspaces";
 import { ProjectBase, type Project } from "./projectBase";
 
 export interface CreateMemoryProjectOptions {
-  name: string;
   workspaces: Workspace[];
-  rootDir: string;
+  name?: string;
+  rootDir?: string;
 }
 
 class MemoryProject extends ProjectBase {
@@ -13,8 +13,8 @@ class MemoryProject extends ProjectBase {
   public readonly name: string;
   constructor(options: CreateMemoryProjectOptions) {
     super();
-    this.rootDir = options.rootDir;
-    this.name = options.name;
+    this.name = options.name ?? "";
+    this.rootDir = options.rootDir ?? "";
     this.workspaces = options.workspaces;
   }
 }

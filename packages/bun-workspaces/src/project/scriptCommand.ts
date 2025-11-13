@@ -6,6 +6,7 @@ export const SCRIPT_COMMAND_METHODS = ["cd", "filter"] as const;
 export type ScriptCommandMethod = (typeof SCRIPT_COMMAND_METHODS)[number];
 
 export interface CreateScriptCommandOptions {
+  /** The method to use to run the script. Either run in the workspace directory or use bun's --filter option*/
   method: ScriptCommandMethod;
   scriptName: string;
   args: string;

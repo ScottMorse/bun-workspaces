@@ -15,7 +15,7 @@ export interface ScriptMetadata {
 
 export type CreateProjectScriptCommandOptions = Omit<
   CreateScriptCommandOptions,
-  "workspace" | "rootDir" | "method"
+  "workspace" | "rootDir"
 > & {
   workspaceNameOrAlias: string;
 };
@@ -128,7 +128,7 @@ export abstract class ProjectBase implements Project {
         ...options,
         workspace,
         rootDir: path.resolve(this.rootDir),
-        method: "cd",
+        method: options.method,
       }),
     };
   }
