@@ -1,7 +1,11 @@
 import fs from "node:fs";
 import path from "node:path";
 import { type Command, Option } from "commander";
-import { loadConfigFile, type BunWorkspacesConfig } from "../../config";
+import {
+  DEFAULT_CONFIG_FILE_PATH,
+  loadConfigFile,
+  type BunWorkspacesConfig,
+} from "../../config";
 import { defineErrors } from "../../internal/error";
 import { logger } from "../../internal/logger";
 import { _internalCreateFileSystemProject } from "../../project";
@@ -54,7 +58,7 @@ const getWorkingDirectoryFromArgs = (
 const getConfigFileFromArgs = (program: Command, args: string[]) => {
   addGlobalOption(program, "configFile");
   program.parseOptions(args);
-  return program.opts().configFile;
+  return program.opts().configFile as string | undefined;
 };
 
 const defineGlobalOptions = (
@@ -83,7 +87,7 @@ const defineGlobalOptions = (
   if (config) {
     logger.warn(
       // TODO link to docs
-      `WARNING: Using the config file at ${configFilePath} is deprecated. Please use the new workspace config instead.`,
+      `WARNING: Using the config file at ${configFilePath || DEFAULT_CONFIG_FILE_PATH} is deprecated. Migrate to the new workspace config file.`,
     );
   }
 

@@ -1,6 +1,4 @@
 import { type Workspace } from "../../workspaces";
-// below disabled for tsdoc @link
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { Project } from "../project";
 import { ProjectBase } from "./projectBase";
 
@@ -14,7 +12,7 @@ export type CreateMemoryProjectOptions = {
   rootDirectory?: string;
 };
 
-class _MemoryProject extends ProjectBase {
+class _MemoryProject extends ProjectBase implements Project {
   public readonly rootDirectory: string;
   public readonly workspaces: Workspace[];
   public readonly name: string;

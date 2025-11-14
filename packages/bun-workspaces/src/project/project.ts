@@ -1,11 +1,5 @@
 import type { Workspace } from "../workspaces";
-import type {
-  ScriptCommand,
-  ScriptCommandMethod,
-  // below disabled for tsdoc @link
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  createScriptCommand,
-} from "./scriptCommand";
+import type { ScriptCommand, ScriptCommandMethod } from "./scriptCommand";
 
 /** Metadata about a {@link Project}'s script, including the workspaces that have it in their package.json */
 export type ScriptMetadata = {
@@ -28,7 +22,7 @@ export type CreateProjectScriptCommandOptions = {
   workspaceNameOrAlias: string;
 };
 
-/** Result of {@link createScriptCommand}. Includes a command string that will run a workspace's script. */
+/** Result of {@link Project.createScriptCommand}. Includes a command string that will run a workspace's script. */
 export type CreateProjectScriptCommandResult = {
   /** A command string using the `bun` CLI that will run a workspace's script. */
   command: ScriptCommand;

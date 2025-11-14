@@ -6,6 +6,7 @@ import {
 } from "./bunWorkspacesConfig";
 import { ERRORS } from "./errors";
 
+/** @deprecated The default path for the config file */
 export const DEFAULT_CONFIG_FILE_PATH = "bw.json";
 
 /** @deprecated */

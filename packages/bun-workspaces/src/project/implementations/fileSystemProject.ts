@@ -1,8 +1,6 @@
 import fs from "fs";
 import path from "path";
 import { findWorkspaces, type Workspace } from "../../workspaces";
-// below disabled for tsdoc @link
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import type { Project } from "../project";
 import { ProjectBase } from "./projectBase";
 
@@ -14,7 +12,7 @@ export type CreateFileSystemProjectOptions = {
   name?: string;
 };
 
-class _FileSystemProject extends ProjectBase {
+class _FileSystemProject extends ProjectBase implements Project {
   public readonly rootDirectory: string;
   public readonly workspaces: Workspace[];
   public readonly name: string;
