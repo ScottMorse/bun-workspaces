@@ -1,4 +1,4 @@
-import { IS_PRODUCTION, IS_TEST } from "./env";
+import { IS_TEST } from "./env";
 import { defineErrors } from "./error";
 
 export const LOG_LEVELS = ["debug", "info", "warn", "error"] as const;

@@ -1,7 +1,4 @@
-import fs from "fs";
-import path from "path";
-import { test, expect, describe, beforeAll } from "bun:test";
-import { getProjectRoot, type TestProjectName } from "./testProjects";
+import { test, expect, describe } from "bun:test";
 import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
 
 describe("CLI Workspace Aliases", () => {
@@ -83,7 +80,7 @@ describe("CLI Workspace Aliases", () => {
     );
   });
 
-  test.only("Aliases in run-script", async () => {
+  test("Aliases in run-script", async () => {
     const { run } = setupCliTest({
       testProject: "workspaceConfigPackageFileMix",
     });

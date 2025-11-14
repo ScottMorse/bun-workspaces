@@ -4,10 +4,7 @@ import { type Command, Option } from "commander";
 import { loadConfigFile, type BunWorkspacesConfig } from "../../config";
 import { defineErrors } from "../../internal/error";
 import { logger } from "../../internal/logger";
-import {
-  _internalCreateFileSystemProject,
-  createFileSystemProject,
-} from "../../project";
+import { _internalCreateFileSystemProject } from "../../project";
 import {
   type CliGlobalOptionName,
   type CliGlobalOptions,
