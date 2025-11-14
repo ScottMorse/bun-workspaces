@@ -28,6 +28,11 @@ const TEST_PROJECTS = {
   runScriptWithFailures: "forRunScript/withFailures",
   runScriptWithMixedOutput: "forRunScript/withMixedOutput",
   runScriptWithEchoArgs: "forRunScript/withEchoArgs",
+  workspaceConfigPackageOnly: "workspaceConfig/packageOnly",
+  workspaceConfigPackageFileMix: "workspaceConfig/packageFileMix",
+  workspaceConfigFileOnly: "workspaceConfig/fileOnly",
+  workspaceConfigInvalidConfig: "workspaceConfig/invalidConfig",
+  workspaceConfigInvalidJson: "workspaceConfig/invalidJson",
 };
 
 export type TestProjectName = keyof typeof TEST_PROJECTS;

@@ -17,6 +17,11 @@ export default defineConfig({
     },
   ],
   output: {
+    minify: {
+      jsOptions: {
+        extractComments: true,
+      },
+    },
     distPath: {
       root: DIST_PATH,
     },

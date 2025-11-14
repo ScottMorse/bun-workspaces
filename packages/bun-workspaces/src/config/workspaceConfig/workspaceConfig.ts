@@ -16,11 +16,21 @@ export interface ResolvedWorkspaceConfig {
 
 const VALIDATIONS = {
   alias: (value: unknown) => {
-    return Array.isArray(value)
-      ? null
-      : new WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig(
-          `Workspace config alias must be an array`,
-        );
+    if (Array.isArray(value)) {
+      for (const item of value) {
+        if (typeof item !== "string") {
+          return new WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig(
+            `Workspace config alias must be a a string or array of strings`,
+          );
+        }
+      }
+      return null;
+    } else if (typeof value !== "string") {
+      return new WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig(
+        `Workspace config alias must be a string or array of strings`,
+      );
+    }
+    return null;
   },
 } as const satisfies Record<
   keyof WorkspaceConfig,

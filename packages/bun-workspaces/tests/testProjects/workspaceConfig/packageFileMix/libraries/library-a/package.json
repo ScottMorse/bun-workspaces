@@ -1,8 +1,11 @@
 {
-  "name": "application-a",
+  "name": "library-1a",
+  "bw": {
+    "alias": ["libA", "libA2"]
+  },
   "scripts": {
     "all-workspaces": "echo 'script for all workspaces'",
     "a-workspaces": "echo 'script for a workspaces'",
-    "application-a": "echo 'script for application-a'"
+    "library-a": "echo 'script for library-a'"
   }
 }
