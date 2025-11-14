@@ -169,11 +169,7 @@ class _Logger implements Logger {
       : content;
   }
 
-  private _printLevel: LogLevelSetting = IS_PRODUCTION
-    ? "info"
-    : IS_TEST
-      ? "silent"
-      : "debug";
+  private _printLevel: LogLevelSetting = IS_TEST ? "silent" : "info";
 
   private shouldPrint(level: LogLevel): boolean {
     if (this.printLevel === "silent") return false;
@@ -183,7 +179,7 @@ class _Logger implements Logger {
 
 export const logger = createLogger("bun-workspaces");
 
-/** Set the global logging level */
+/** Set the global logging level. Defaults to "info" or "silent" when `NODE_ENV` is "test" */
 export const setLogLevel = (level: LogLevelSetting) => {
   logger.printLevel = level;
 };
