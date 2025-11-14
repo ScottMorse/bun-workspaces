@@ -103,7 +103,7 @@ const applyGlobalOptions = (
   logger.debug("Log level: " + options.logLevel);
 
   const project = _internalCreateFileSystemProject({
-    rootDir: options.cwd,
+    rootDirectory: options.cwd,
     workspaceAliases: config?.project?.workspaceAliases ?? {},
   });
 
@@ -112,7 +112,7 @@ const applyGlobalOptions = (
       project.workspaces.length
     } workspace${project.workspaces.length === 1 ? "" : "s"})`,
   );
-  logger.debug("Project root: " + path.resolve(project.rootDir));
+  logger.debug("Project root: " + path.resolve(project.rootDirectory));
 
   return { project };
 };

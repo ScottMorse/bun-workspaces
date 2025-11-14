@@ -2,17 +2,18 @@ import path from "path";
 import { expect, test as _test, describe } from "bun:test";
 import type { Workspace } from "../src";
 import {
-  createFileSystemProject as createProject,
-  type Project,
+  createFileSystemProject,
+  createMemoryProject,
+  type FileSystemProject,
   type ScriptMetadata,
 } from "../src/project";
 import { ERRORS } from "../src/project/errors";
 import { getProjectRoot } from "./testProjects";
 
-const test = (name: string, callback: (project: Project) => void) =>
+const test = (name: string, callback: (project: FileSystemProject) => void) =>
   _test(name, async () => {
-    const project = createProject({
-      rootDir: getProjectRoot("fullProject"),
+    const project = createFileSystemProject({
+      rootDirectory: getProjectRoot("fullProject"),
     });
     return callback(project);
   });
@@ -21,8 +22,8 @@ const stripToName = (workspace: Workspace) => workspace.name;
 
 describe("Test Project utilities", () => {
   test("Project properties", async (project) => {
-    expect(project.name).toEqual("test-root");
-    expect(project.rootDir).toEqual(getProjectRoot("fullProject"));
+    expect(project.rootDirectory).toEqual(getProjectRoot("fullProject"));
+    expect(project.sourceType).toEqual("fileSystem");
     expect(project.workspaces).toEqual([
       {
         name: "application-a",
@@ -280,7 +281,7 @@ describe("Test Project utilities", () => {
       }),
     ).toEqual({
       command: {
-        cwd: path.resolve(project.rootDir, "applications/applicationA"),
+        cwd: path.resolve(project.rootDirectory, "applications/applicationA"),
         command: `bun --silent run all-workspaces`,
       },
       scriptName: "all-workspaces",
@@ -302,7 +303,7 @@ describe("Test Project utilities", () => {
       }),
     ).toEqual({
       command: {
-        cwd: path.resolve(project.rootDir, "applications/applicationA"),
+        cwd: path.resolve(project.rootDirectory, "applications/applicationA"),
         command: `bun --silent run all-workspaces --watch`,
       },
       scriptName: "all-workspaces",
@@ -324,7 +325,7 @@ describe("Test Project utilities", () => {
       }),
     ).toEqual({
       command: {
-        cwd: project.rootDir,
+        cwd: project.rootDirectory,
         command: `bun --silent run --filter="application-a" all-workspaces --watch`,
       },
       scriptName: "all-workspaces",
@@ -346,7 +347,7 @@ describe("Test Project utilities", () => {
       }),
     ).toEqual({
       command: {
-        cwd: project.rootDir,
+        cwd: project.rootDirectory,
         command: `bun --silent run --filter="application-a" all-workspaces --stuff --hello=there123`,
       },
       scriptName: "all-workspaces",
@@ -368,7 +369,7 @@ describe("Test Project utilities", () => {
       }),
     ).toEqual({
       command: {
-        cwd: path.resolve(project.rootDir, "libraries/libraryB"),
+        cwd: path.resolve(project.rootDirectory, "libraries/libraryB"),
         command: `bun --silent run b-workspaces`,
       },
       scriptName: "b-workspaces",
@@ -390,7 +391,7 @@ describe("Test Project utilities", () => {
       }),
     ).toEqual({
       command: {
-        cwd: project.rootDir,
+        cwd: project.rootDirectory,
         command: `bun --silent run --filter="library-b" b-workspaces`,
       },
       scriptName: "b-workspaces",
@@ -420,5 +421,106 @@ describe("Test Project utilities", () => {
         workspaceNameOrAlias: "not-a-workspace",
       }),
     ).toThrow(ERRORS.ProjectWorkspaceNotFound);
+  });
+
+  test("MemoryProject", async () => {
+    // Mainly a sanity test, as almost all functionality comes from ProjectBase and constructor logic is dead simple.
+
+    const plainProject = createMemoryProject({
+      workspaces: [],
+    });
+
+    expect(plainProject.sourceType).toEqual("memory");
+    expect(plainProject.rootDirectory).toEqual("");
+    expect(plainProject.workspaces).toEqual([]);
+    expect(plainProject.name).toEqual("");
+
+    const testWs1 = {
+      name: "test-1",
+      matchPattern: "test/*",
+      scripts: ["test-script"],
+      aliases: [],
+      path: "test/test-1",
+    };
+    const testWs2 = {
+      name: "test-2",
+      matchPattern: "test/*",
+      scripts: ["test-script"],
+      aliases: ["test-2-alias"],
+      path: "test/test-2",
+    };
+    const projectWithData = createMemoryProject({
+      name: "test-project",
+      rootDirectory: "test-project-directory",
+      workspaces: [testWs1, testWs2],
+    });
+
+    expect(projectWithData.sourceType).toEqual("memory");
+    expect(projectWithData.rootDirectory).toEqual("test-project-directory");
+    expect(projectWithData.workspaces).toEqual([testWs1, testWs2]);
+    expect(projectWithData.name).toEqual("test-project");
+
+    expect(
+      projectWithData.createScriptCommand({
+        args: "",
+        method: "cd",
+        scriptName: "test-script",
+        workspaceNameOrAlias: "test-1",
+      }),
+    ).toEqual({
+      command: {
+        cwd: path.resolve(projectWithData.rootDirectory, "test/test-1"),
+        command: `bun --silent run test-script`,
+      },
+      scriptName: "test-script",
+      workspace: testWs1,
+    });
+
+    expect(projectWithData.listScriptsWithWorkspaces()).toEqual({
+      "test-script": {
+        name: "test-script",
+        workspaces: [testWs1, testWs2],
+      },
+    });
+
+    expect(projectWithData.findWorkspaceByName("test-1")).toEqual(testWs1);
+    expect(projectWithData.findWorkspaceByName("test-2")).toEqual(testWs2);
+    expect(projectWithData.findWorkspaceByName("not-a-workspace")).toBeNull();
+
+    expect(projectWithData.findWorkspaceByAlias("test-1-alias")).toBeNull();
+    expect(projectWithData.findWorkspaceByAlias("test-2-alias")).toEqual(
+      testWs2,
+    );
+    expect(projectWithData.findWorkspaceByAlias("not-a-alias")).toBeNull();
+
+    expect(projectWithData.findWorkspaceByNameOrAlias("test-1")).toEqual(
+      testWs1,
+    );
+    expect(projectWithData.findWorkspaceByNameOrAlias("test-2")).toEqual(
+      testWs2,
+    );
+    expect(
+      projectWithData.findWorkspaceByNameOrAlias("not-a-workspace"),
+    ).toBeNull();
+
+    expect(
+      projectWithData.findWorkspaceByNameOrAlias("test-1-alias"),
+    ).toBeNull();
+    expect(projectWithData.findWorkspaceByNameOrAlias("test-2-alias")).toEqual(
+      testWs2,
+    );
+    expect(
+      projectWithData.findWorkspaceByNameOrAlias("not-a-alias"),
+    ).toBeNull();
+
+    expect(projectWithData.findWorkspacesByPattern("test-*")).toEqual([
+      testWs1,
+      testWs2,
+    ]);
+
+    expect(projectWithData.findWorkspacesByPattern("*-2")).toEqual([testWs2]);
+    expect(projectWithData.findWorkspacesByPattern("not-a-pattern")).toEqual(
+      [],
+    );
   });
 });

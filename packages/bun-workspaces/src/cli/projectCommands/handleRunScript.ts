@@ -244,7 +244,10 @@ export const runScript = handleCommand(
         workspaces: results,
       };
 
-      const fullOutputPath = path.resolve(project.rootDir, options.jsonOutfile);
+      const fullOutputPath = path.resolve(
+        project.rootDirectory,
+        options.jsonOutfile,
+      );
 
       // Check if can make directory
       const jsonOutputDir = path.dirname(fullOutputPath);

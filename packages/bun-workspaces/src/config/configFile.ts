@@ -9,9 +9,12 @@ import { ERRORS } from "./errors";
 export const DEFAULT_CONFIG_FILE_PATH = "bw.json";
 
 /** @deprecated */
-export const loadConfigFile = (filePath?: string, rootDir = ".") => {
+export const loadConfigFile = (filePath?: string, rootDirectory = ".") => {
   if (!filePath) {
-    const defaultFilePath = path.resolve(rootDir, DEFAULT_CONFIG_FILE_PATH);
+    const defaultFilePath = path.resolve(
+      rootDirectory,
+      DEFAULT_CONFIG_FILE_PATH,
+    );
     if (fs.existsSync(defaultFilePath)) {
       filePath = defaultFilePath;
     } else {
@@ -19,7 +22,7 @@ export const loadConfigFile = (filePath?: string, rootDir = ".") => {
     }
   }
 
-  filePath = path.resolve(rootDir, filePath);
+  filePath = path.resolve(rootDirectory, filePath);
 
   if (!fs.existsSync(filePath)) {
     throw new ERRORS.ConfigFileNotFound(

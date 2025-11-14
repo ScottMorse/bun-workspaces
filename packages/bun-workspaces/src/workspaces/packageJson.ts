@@ -22,8 +22,8 @@ export type ResolvedPackageJsonContent = {
 
 type UnknownPackageJson = Record<string, unknown>;
 
-export const scanWorkspaceGlob = (globPattern: string, rootDir: string) =>
-  new Glob(globPattern, { absolute: true, cwd: rootDir }).iterateSync();
+export const scanWorkspaceGlob = (globPattern: string, rootDirectory: string) =>
+  new Glob(globPattern, { absolute: true, cwd: rootDirectory }).iterateSync();
 
 const validateJsonRoot = (json: UnknownPackageJson) => {
   if (!json || typeof json !== "object" || Array.isArray(json)) {
@@ -59,7 +59,7 @@ const validateName = (json: UnknownPackageJson) => {
 
 const validateWorkspacePattern = (
   workspacePattern: string,
-  rootDir: string,
+  rootDirectory: string,
 ) => {
   if (typeof workspacePattern !== "string") {
     throw new WORKSPACE_ERRORS.InvalidWorkspacePattern(
@@ -71,10 +71,10 @@ const validateWorkspacePattern = (
     return false;
   }
 
-  const absolutePattern = path.resolve(rootDir, workspacePattern);
-  if (!absolutePattern.startsWith(rootDir)) {
+  const absolutePattern = path.resolve(rootDirectory, workspacePattern);
+  if (!absolutePattern.startsWith(rootDirectory)) {
     throw new WORKSPACE_ERRORS.InvalidWorkspacePattern(
-      `Cannot resolve workspace pattern outside of root directory ${rootDir}: ${absolutePattern}`,
+      `Cannot resolve workspace pattern outside of root directory ${rootDirectory}: ${absolutePattern}`,
     );
   }
 
@@ -83,7 +83,7 @@ const validateWorkspacePattern = (
 
 const validateWorkspacePatterns = (
   json: UnknownPackageJson,
-  rootDir: string,
+  rootDirectory: string,
 ) => {
   const workspaces: string[] = [];
   if (json.workspaces) {
@@ -94,7 +94,7 @@ const validateWorkspacePatterns = (
     }
 
     for (const workspacePattern of json.workspaces) {
-      if (validateWorkspacePattern(workspacePattern, rootDir)) {
+      if (validateWorkspacePattern(workspacePattern, rootDirectory)) {
         workspaces.push(workspacePattern);
       }
     }
@@ -132,10 +132,10 @@ const validateScripts = (json: UnknownPackageJson) => {
 
 export const resolvePackageJsonContent = (
   packageJsonPath: string,
-  rootDir: string,
+  rootDirectory: string,
   validations: ("workspaces" | "name" | "scripts")[],
 ): ResolvedPackageJsonContent => {
-  rootDir = path.resolve(rootDir);
+  rootDirectory = path.resolve(rootDirectory);
 
   let json: UnknownPackageJson = {};
   try {
@@ -157,7 +157,7 @@ export const resolvePackageJsonContent = (
       ? validateName(json)
       : ((json.name as string) ?? ""),
     workspaces: validations.includes("workspaces")
-      ? validateWorkspacePatterns(json, rootDir)
+      ? validateWorkspacePatterns(json, rootDirectory)
       : ((json?.workspaces ?? []) as string[]),
     scripts: validations.includes("scripts")
       ? validateScripts(json)

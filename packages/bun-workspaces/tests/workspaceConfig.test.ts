@@ -1,6 +1,5 @@
 import path from "path";
 import { expect, test, describe } from "bun:test";
-import { createFileSystemProject } from "../src";
 import { loadConfigFile } from "../src/config";
 import {
   getFileConfig,
@@ -176,7 +175,7 @@ describe("Test workspace config", () => {
   test("findWorkspaces results with workspace configs", () => {
     expect(
       findWorkspaces({
-        rootDir: getProjectRoot("workspaceConfigFileOnly"),
+        rootDirectory: getProjectRoot("workspaceConfigFileOnly"),
       }),
     ).toEqual({
       workspaces: [
@@ -213,7 +212,7 @@ describe("Test workspace config", () => {
 
     expect(
       findWorkspaces({
-        rootDir: getProjectRoot("workspaceConfigPackageOnly"),
+        rootDirectory: getProjectRoot("workspaceConfigPackageOnly"),
       }),
     ).toEqual({
       workspaces: [
@@ -250,7 +249,7 @@ describe("Test workspace config", () => {
 
     expect(
       findWorkspaces({
-        rootDir: getProjectRoot("workspaceConfigPackageFileMix"),
+        rootDirectory: getProjectRoot("workspaceConfigPackageFileMix"),
       }),
     ).toEqual({
       workspaces: [
@@ -302,7 +301,7 @@ describe("Test workspace config", () => {
 
   test("Project with mix of deprecated and new config", () => {
     const project = _internalCreateFileSystemProject({
-      rootDir: getProjectRoot("workspaceConfigDeprecatedConfigMix"),
+      rootDirectory: getProjectRoot("workspaceConfigDeprecatedConfigMix"),
       workspaceAliases:
         loadConfigFile(
           path.join(

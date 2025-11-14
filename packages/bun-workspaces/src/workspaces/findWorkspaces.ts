@@ -10,24 +10,30 @@ import {
 import type { Workspace } from "./workspace";
 
 export interface FindWorkspacesOptions {
-  rootDir: string;
+  rootDirectory: string;
   /** If provided, will override the workspaces found in the package.json */
   workspaceGlobs?: string[];
   /** @deprecated due to config file changes */
   workspaceAliases?: ProjectConfig["workspaceAliases"];
 }
 
-const getWorkspaceGlobsFromRoot = ({ rootDir }: { rootDir: string }) => {
-  const packageJsonPath = path.join(rootDir, "package.json");
+const getWorkspaceGlobsFromRoot = ({
+  rootDirectory,
+}: {
+  rootDirectory: string;
+}) => {
+  const packageJsonPath = path.join(rootDirectory, "package.json");
   if (!fs.existsSync(packageJsonPath)) {
     throw new WORKSPACE_ERRORS.PackageNotFound(
       `No package.json found at ${packageJsonPath}`,
     );
   }
 
-  const packageJson = resolvePackageJsonContent(packageJsonPath, rootDir, [
-    "workspaces",
-  ]);
+  const packageJson = resolvePackageJsonContent(
+    packageJsonPath,
+    rootDirectory,
+    ["workspaces"],
+  );
 
   return packageJson.workspaces ?? [];
 };
@@ -47,17 +53,17 @@ const validateWorkspace = (workspace: Workspace, workspaces: Workspace[]) => {
 };
 
 export const findWorkspaces = ({
-  rootDir,
+  rootDirectory,
   workspaceGlobs: _workspaceGlobs,
   workspaceAliases,
 }: FindWorkspacesOptions) => {
-  rootDir = path.resolve(rootDir);
+  rootDirectory = path.resolve(rootDirectory);
 
   const workspaces: Workspace[] = [];
   const excludedWorkspacePaths: string[] = [];
 
   const workspaceGlobs =
-    _workspaceGlobs ?? getWorkspaceGlobsFromRoot({ rootDir });
+    _workspaceGlobs ?? getWorkspaceGlobsFromRoot({ rootDirectory });
 
   const negativePatterns = workspaceGlobs
     .filter((pattern) => pattern.startsWith("!"))
@@ -68,23 +74,29 @@ export const findWorkspaces = ({
   );
 
   for (const pattern of negativePatterns) {
-    for (const item of scanWorkspaceGlob(pattern.replace(/^!/, ""), rootDir)) {
+    for (const item of scanWorkspaceGlob(
+      pattern.replace(/^!/, ""),
+      rootDirectory,
+    )) {
       const packageJsonPath = resolvePackageJsonPath(item);
       if (packageJsonPath) {
         excludedWorkspacePaths.push(
-          path.relative(rootDir, path.dirname(packageJsonPath)),
+          path.relative(rootDirectory, path.dirname(packageJsonPath)),
         );
       }
     }
   }
 
   for (const pattern of positivePatterns) {
-    for (const item of scanWorkspaceGlob(pattern.replace(/^!/, ""), rootDir)) {
+    for (const item of scanWorkspaceGlob(
+      pattern.replace(/^!/, ""),
+      rootDirectory,
+    )) {
       const packageJsonPath = resolvePackageJsonPath(item);
       if (packageJsonPath) {
         const packageJsonContent = resolvePackageJsonContent(
           packageJsonPath,
-          rootDir,
+          rootDirectory,
           ["name", "scripts"],
         );
 
@@ -95,7 +107,7 @@ export const findWorkspaces = ({
         const workspace: Workspace = {
           name: packageJsonContent.name ?? "",
           matchPattern: pattern,
-          path: path.relative(rootDir, path.dirname(packageJsonPath)),
+          path: path.relative(rootDirectory, path.dirname(packageJsonPath)),
           scripts: Object.keys(packageJsonContent.scripts ?? {}).sort(),
           aliases: [
             ...new Set(

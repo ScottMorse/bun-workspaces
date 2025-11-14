@@ -1,18 +1,24 @@
 import fs from "fs";
 import path from "path";
 import { findWorkspaces, type Workspace } from "../../workspaces";
-import { ProjectBase, type Project } from "./projectBase";
+// below disabled for tsdoc @link
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import type { Project } from "../project";
+import { ProjectBase } from "./projectBase";
 
-export interface CreateFileSystemProjectOptions {
-  rootDir: string;
+/** Arguments for {@link createFileSystemProject} */
+export type CreateFileSystemProjectOptions = {
+  /** The directory containing the root package.json. Often the same root as a git repository. */
+  rootDirectory: string;
   /** The name of the project. By default will use the root package.json name */
   name?: string;
-}
+};
 
-class FileSystemProject extends ProjectBase {
-  public readonly rootDir: string;
+class _FileSystemProject extends ProjectBase {
+  public readonly rootDirectory: string;
   public readonly workspaces: Workspace[];
   public readonly name: string;
+  public readonly sourceType = "fileSystem";
   constructor(
     options: CreateFileSystemProjectOptions & {
       /** @deprecated  */
@@ -21,10 +27,10 @@ class FileSystemProject extends ProjectBase {
   ) {
     super();
 
-    this.rootDir = options.rootDir;
+    this.rootDirectory = options.rootDirectory;
 
     const { workspaces } = findWorkspaces({
-      rootDir: options.rootDir,
+      rootDirectory: options.rootDirectory,
       workspaceAliases: options.workspaceAliases,
     });
 
@@ -32,7 +38,7 @@ class FileSystemProject extends ProjectBase {
 
     if (!options.name) {
       const packageJson = JSON.parse(
-        fs.readFileSync(path.join(this.rootDir, "package.json"), "utf8"),
+        fs.readFileSync(path.join(this.rootDirectory, "package.json"), "utf8"),
       );
       this.name = packageJson.name ?? "";
     } else {
@@ -41,9 +47,17 @@ class FileSystemProject extends ProjectBase {
   }
 }
 
+/** An implementation of {@link Project} that is created from a root directory in the file system. */
+export type FileSystemProject = Required<_FileSystemProject>;
+
+/**
+ * Create a {@link Project} based on a given root directory.
+ * Automatically finds workspaces based on the root package.json "workspaces" field
+ * and detects and utilizes any provided configuration.
+ */
 export const createFileSystemProject = (
   options: CreateFileSystemProjectOptions,
-): Project => new FileSystemProject(options);
+): FileSystemProject => new _FileSystemProject(options);
 
 /** @deprecated temporarily supports workspaceAliases from deprecated config file */
 export const _internalCreateFileSystemProject = (
@@ -51,4 +65,4 @@ export const _internalCreateFileSystemProject = (
     /** @deprecated  */
     workspaceAliases?: Record<string, string>;
   },
-): Project => new FileSystemProject(options);
+): FileSystemProject => new _FileSystemProject(options);

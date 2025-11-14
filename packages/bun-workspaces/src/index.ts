@@ -4,7 +4,10 @@ export {
   type CreateFileSystemProjectOptions,
   type CreateMemoryProjectOptions,
   type Project,
+  type FileSystemProject,
+  type MemoryProject,
   type CreateProjectScriptCommandOptions,
+  type CreateProjectScriptCommandResult,
   type ScriptMetadata,
 } from "./project";
 export { type Workspace } from "./workspaces";
