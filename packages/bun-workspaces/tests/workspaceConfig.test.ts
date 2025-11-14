@@ -1,5 +1,7 @@
 import path from "path";
 import { expect, test, describe } from "bun:test";
+import { createFileSystemProject } from "../src";
+import { loadConfigFile } from "../src/config";
 import {
   getFileConfig,
   getPackageJsonConfig,
@@ -7,6 +9,7 @@ import {
   validateWorkspaceConfig,
   WORKSPACE_CONFIG_ERRORS,
 } from "../src/config/workspaceConfig";
+import { _internalCreateFileSystemProject } from "../src/project";
 import { WORKSPACE_ERRORS, findWorkspaces } from "../src/workspaces";
 import { getProjectRoot } from "./testProjects";
 
@@ -295,5 +298,63 @@ describe("Test workspace config", () => {
         },
       ],
     });
+  });
+
+  test("Project with mix of deprecated and new config", () => {
+    const project = _internalCreateFileSystemProject({
+      rootDir: getProjectRoot("workspaceConfigDeprecatedConfigMix"),
+      workspaceAliases:
+        loadConfigFile(
+          path.join(
+            getProjectRoot("workspaceConfigDeprecatedConfigMix"),
+            "bw.json",
+          ),
+        )?.project?.workspaceAliases ?? undefined,
+    });
+
+    expect(project.workspaces).toEqual([
+      {
+        aliases: ["deprecated_appA", "appA"],
+        matchPattern: "applications/*",
+        name: "application-1a",
+        path: "applications/application-a",
+        scripts: ["a-workspaces", "all-workspaces", "application-a"],
+      },
+      {
+        aliases: ["deprecated_appB", "appB_file"],
+        matchPattern: "applications/*",
+        name: "application-1b",
+        path: "applications/application-b",
+        scripts: ["all-workspaces", "application-b", "b-workspaces"],
+      },
+      {
+        aliases: [],
+        matchPattern: "applications/*",
+        name: "application-1c",
+        path: "applications/application-c",
+        scripts: ["all-workspaces", "application-c", "c-workspaces"],
+      },
+      {
+        aliases: ["deprecated_libA", "libA_file"],
+        matchPattern: "libraries/*",
+        name: "library-1a",
+        path: "libraries/library-a",
+        scripts: ["a-workspaces", "all-workspaces", "library-a"],
+      },
+      {
+        aliases: ["deprecated_libB", "libB", "libB2"],
+        matchPattern: "libraries/*",
+        name: "library-1b",
+        path: "libraries/library-b",
+        scripts: ["all-workspaces", "b-workspaces", "library-b"],
+      },
+      {
+        aliases: [],
+        matchPattern: "libraries/*",
+        name: "library-1c",
+        path: "libraries/library-c",
+        scripts: ["all-workspaces", "c-workspaces", "library-c"],
+      },
+    ]);
   });
 });

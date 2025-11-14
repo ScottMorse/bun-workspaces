@@ -33,6 +33,7 @@ const TEST_PROJECTS = {
   workspaceConfigFileOnly: "workspaceConfig/fileOnly",
   workspaceConfigInvalidConfig: "workspaceConfig/invalidConfig",
   workspaceConfigInvalidJson: "workspaceConfig/invalidJson",
+  workspaceConfigDeprecatedConfigMix: "workspaceConfig/deprecatedConfigMix",
 };
 
 export type TestProjectName = keyof typeof TEST_PROJECTS;

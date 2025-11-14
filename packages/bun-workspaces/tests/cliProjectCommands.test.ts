@@ -539,7 +539,7 @@ Script: library-b
       );
       assertOutputMatches(
         noWorkspacesResult.stderr.sanitizedCompactLines,
-        `Workspace not found: "does-not-exist"`,
+        `Workspace name or alias not found: "does-not-exist"`,
       );
 
       const noWorkspaceScriptResult = await run(
