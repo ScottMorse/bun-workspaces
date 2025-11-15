@@ -99,6 +99,7 @@ export abstract class ProjectBase implements Project {
         workspace,
         rootDirectory: path.resolve(this.rootDirectory),
         method: options.method,
+        args: options.args ?? "",
       }),
     };
   }

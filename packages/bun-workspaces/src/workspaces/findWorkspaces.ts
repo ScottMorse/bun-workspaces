@@ -55,7 +55,7 @@ const validateWorkspace = (workspace: Workspace, workspaces: Workspace[]) => {
 export const findWorkspaces = ({
   rootDirectory,
   workspaceGlobs: _workspaceGlobs,
-  workspaceAliases,
+  workspaceAliases = {},
 }: FindWorkspacesOptions) => {
   rootDirectory = path.resolve(rootDirectory);
 
@@ -104,6 +104,12 @@ export const findWorkspaces = ({
           path.dirname(packageJsonPath),
         );
 
+        if (workspaceConfig) {
+          for (const alias of workspaceConfig.aliases) {
+            workspaceAliases[alias] = packageJsonContent.name;
+          }
+        }
+
         const workspace: Workspace = {
           name: packageJsonContent.name ?? "",
           matchPattern: pattern,
@@ -145,6 +151,14 @@ export const validateWorkspaceAliases = (
     if (workspaces.find((ws) => ws.name === alias)) {
       throw new WORKSPACE_ERRORS.AliasConflict(
         `Alias ${JSON.stringify(alias)} conflicts with workspace name ${JSON.stringify(name)}`,
+      );
+    }
+    const workspaceWithDuplicateAlias = workspaces.find(
+      (ws) => ws.name !== name && ws.aliases.includes(alias),
+    );
+    if (workspaceWithDuplicateAlias) {
+      throw new WORKSPACE_ERRORS.AliasConflict(
+        `Workspaces ${JSON.stringify(name)} and ${JSON.stringify(workspaceWithDuplicateAlias.name)} have the same alias ${JSON.stringify(alias)}`,
       );
     }
     if (!workspaces.find((ws) => ws.name === name)) {

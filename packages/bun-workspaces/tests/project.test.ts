@@ -8,6 +8,7 @@ import {
   type ScriptMetadata,
 } from "../src/project";
 import { ERRORS } from "../src/project/errors";
+import { WORKSPACE_ERRORS } from "../src/workspaces";
 import { getProjectRoot } from "./testProjects";
 
 const test = (name: string, callback: (project: FileSystemProject) => void) =>
@@ -534,5 +535,49 @@ describe("Test Project utilities", () => {
     expect(projectWithData.findWorkspacesByPattern("not-a-pattern")).toEqual(
       [],
     );
+  });
+
+  test("MemoryProject validates workspace names and aliases", () => {
+    expect(() =>
+      createMemoryProject({
+        workspaces: [
+          {
+            name: "test-1",
+            matchPattern: "test/*",
+            scripts: ["test-script"],
+            aliases: [],
+            path: "test/test-1",
+          },
+          {
+            name: "test-1",
+            matchPattern: "test/*",
+            scripts: ["test-script"],
+            aliases: [],
+            path: "test/test-1",
+          },
+        ],
+      }),
+    ).toThrow(WORKSPACE_ERRORS.DuplicateWorkspaceName);
+
+    expect(() =>
+      createMemoryProject({
+        workspaces: [
+          {
+            name: "test-1",
+            matchPattern: "test/*",
+            scripts: ["test-script"],
+            aliases: ["test-1-alias"],
+            path: "test/test-1",
+          },
+          {
+            name: "test-2",
+            matchPattern: "test/*",
+            scripts: ["test-script"],
+            aliases: ["test-1-alias"],
+            path: "test/test-2",
+          },
+        ],
+      }),
+    ).toThrow(WORKSPACE_ERRORS.AliasConflict);
   });
 });

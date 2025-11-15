@@ -9,17 +9,18 @@ export type ScriptMetadata = {
 
 /** Arguments for {@link Project.createScriptCommand} */
 export type CreateProjectScriptCommandOptions = {
+  /** The workspace to run the script in */
+  workspaceNameOrAlias: string;
+  /** The name of the script to run */
+  scriptName: string;
   /**
    * The method to use to run the script.
    * Either run in the workspace directory or use bun's --filter option.
    * Defaults to "cd".
    */
   method?: ScriptCommandMethod;
-  /** The name of the script to run */
-  scriptName: string;
   /** The arguments to append to the command */
-  args: string;
-  workspaceNameOrAlias: string;
+  args?: string;
 };
 
 /** Result of {@link Project.createScriptCommand}. Includes a command string that will run a workspace's script. */

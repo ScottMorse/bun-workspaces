@@ -16,6 +16,7 @@ const TEST_PROJECTS = {
   invalidBadJson: "invalid/badJson",
   invalidNoName: "invalid/noName",
   invalidDuplicateName: "invalid/duplicateName",
+  invalidDuplicateAlias: "invalid/duplicateAlias",
   invalidBadTypeWorkspaces: "invalid/badTypeWorkspaces",
   badWorkspaceInvalidName: "invalid/badWorkspaceInvalidName",
   invalidBadTypeScripts: "invalid/badTypeScripts",

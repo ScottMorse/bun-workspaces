@@ -239,6 +239,12 @@ describe("Test finding workspaces", () => {
 
     expect(() =>
       findWorkspaces({
+        rootDirectory: getProjectRoot("invalidDuplicateAlias"),
+      }),
+    ).toThrow(WORKSPACE_ERRORS.AliasConflict);
+
+    expect(() =>
+      findWorkspaces({
         rootDirectory: getProjectRoot("badWorkspaceInvalidName"),
       }),
     ).toThrow(WORKSPACE_ERRORS.InvalidWorkspaceName);

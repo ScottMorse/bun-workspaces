@@ -1,4 +1,8 @@
-import { type Workspace } from "../../workspaces";
+import {
+  validateWorkspaceAliases,
+  WORKSPACE_ERRORS,
+  type Workspace,
+} from "../../workspaces";
 import type { Project } from "../project";
 import { ProjectBase } from "./projectBase";
 
@@ -22,6 +26,31 @@ class _MemoryProject extends ProjectBase implements Project {
     this.name = options.name ?? "";
     this.rootDirectory = options.rootDirectory ?? "";
     this.workspaces = options.workspaces;
+
+    for (const workspace of this.workspaces) {
+      if (
+        this.workspaces.find(
+          (ws) => ws !== workspace && ws.name === workspace.name,
+        )
+      ) {
+        throw new WORKSPACE_ERRORS.DuplicateWorkspaceName(
+          `Duplicate workspace name found: ${JSON.stringify(workspace.name)}`,
+        );
+      }
+    }
+
+    validateWorkspaceAliases(
+      this.workspaces,
+      this.workspaces.reduce(
+        (acc, workspace) => {
+          for (const alias of workspace.aliases) {
+            acc[alias] = workspace.name;
+          }
+          return acc;
+        },
+        {} as Record<string, string>,
+      ),
+    );
   }
 }
 
