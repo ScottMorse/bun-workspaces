@@ -4,14 +4,50 @@ titleSuffix: " | bun-workspaces"
 description: "Configuration documentation for bun-workspaces, such as the bw.json config file | Documentation for bun-workspaces: A CLI to help manage Bun monorepos"
 pageType: doc
 sidebar: false
-outline: false
+outline: true
 footer: false
 ---
 
-import { exampleConfig } from "../../content/cli/exampleConfig";
+import { exampleDeprecatedConfig, exampleWorkspaceConfigArray, exampleWorkspaceConfigSimple, createPackageJsonExample } from "../../content/cli/exampleConfig";
 import { SyntaxHighlighter } from "../../content/highlight";
+import { WORKSPACE_CONFIG_FILE_PATH, WORKSPACE_CONFIG_PACKAGE_JSON_KEY} from 'bun-workspaces/src/config/workspaceConfig/workspaceConfigLocation'
 
-# Config File (bw.json)
+# Configuration
+## Workspace Configuration
+
+You can add optional configuration to a workspace in its `package.json` file in  <code>"{WORKSPACE_CONFIG_PACKAGE_JSON_KEY}"</code> or in a separate <code>"{WORKSPACE_CONFIG_FILE_PATH}"</code> file.
+
+### Examples:
+
+#### Separate Config File
+<p className="workspace-config-path"><code>path/to/your/workspace/{WORKSPACE_CONFIG_FILE_PATH}</code></p>
+
+You can configure an alias for the workspace that can be referenced instead of the full name in commands such as <a href="/cli#run-script">`run-script`</a>.
+In the below example, "myApp" may make a simpler reference to a workspace named `"@my-organization/my-application"`.
+<SyntaxHighlighter language="json">
+  {JSON.stringify(exampleWorkspaceConfigSimple, null, 2)}
+</SyntaxHighlighter>
+A workspace can have multiple aliases.
+<SyntaxHighlighter language="json">
+  {JSON.stringify(exampleWorkspaceConfigArray, null, 2)}
+</SyntaxHighlighter>
+
+#### Package.json Configuration
+<p className="workspace-config-path"><code>path/to/your/workspace/package.json</code></p>
+
+The same configuration can be added to the workspace's `package.json` file in <code>"{WORKSPACE_CONFIG_PACKAGE_JSON_KEY}"</code>.
+<SyntaxHighlighter language="json">
+  {JSON.stringify(createPackageJsonExample(exampleWorkspaceConfigSimple), null, 2)}
+</SyntaxHighlighter>
+
+## Config File (bw.json)
+
+<div className="config-deprecation-text">
+DEPRECATED: Use the new workspace configuration above instead to configure workspace aliases. 
+
+For the meantime, this
+configuration file will still take effect and merge aliases with the new configuration if present.
+</div>
 
 You can create a config file at `bw.json` in your project root,
 or you can pass a config file to the CLI with the `--config-file` (or `-c`) [option](/cli#cli-global-option-configFile).
@@ -25,5 +61,5 @@ The default
 [log level](/cli#cli-global-option-logLevel) can be set for the CLI as well.
 
 <SyntaxHighlighter language="json">
-  {JSON.stringify(exampleConfig, null, 2)}
+  {JSON.stringify(exampleDeprecatedConfig, null, 2)}
 </SyntaxHighlighter>

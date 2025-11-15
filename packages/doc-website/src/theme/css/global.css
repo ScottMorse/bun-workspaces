@@ -137,3 +137,23 @@ hr {
   top: -2.25rem;
   pointer-events: none;
 }
+
+.config-deprecation-text {
+  color: #ff6057;
+  font-weight: bold;
+  font-size: 1.25rem;
+  line-height: 1.1;
+  margin-top: -1rem;
+}
+
+.cli-global-option-doc-deprecation-text {
+  color: #ff6057;
+  font-weight: bold;
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+
+.workspace-config-path {
+  margin-top: 0.5rem;
+}

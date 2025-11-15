@@ -24,15 +24,18 @@ Note: Examples use `bw` instead of `bunx bun-workspaces`, which works assuming y
 
 Global options should come before any commands.
 
-### Config File
-
-<CliGlobalOptionDoc option={"configFile"} />
-<hr />
 ### Working Directory
 <CliGlobalOptionDoc option={"cwd"} />
 <hr />
 ### Log Level
 <CliGlobalOptionDoc option={"logLevel"} />
+<hr />
+### Config File
+<CliGlobalOptionDoc 
+  option={"configFile"} 
+  deprecationText="Use the new workspace configuration instead to configure workspace aliases."
+/>
+
 ## Commands:
 
 ### List Workspaces

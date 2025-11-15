@@ -2,17 +2,19 @@ import { type ComponentProps } from "react";
 import { Light as SyntaxHighlighterLight } from "react-syntax-highlighter";
 import bash from "react-syntax-highlighter/dist/esm/languages/hljs/bash";
 import json from "react-syntax-highlighter/dist/esm/languages/hljs/json";
+import typescript from "react-syntax-highlighter/dist/esm/languages/hljs/typescript";
 import { stackoverflowDark as dark } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 SyntaxHighlighterLight.registerLanguage("bash", bash);
 SyntaxHighlighterLight.registerLanguage("json", json);
+SyntaxHighlighterLight.registerLanguage("typescript", typescript);
 
 /**
  * @todo This is a workaround for non-markdown code blocks. Maybe it will be possible
  * to use a core rspress API instead in the future
  */
 export const SyntaxHighlighter = (
-  props: ComponentProps<typeof SyntaxHighlighterLight>,
+  props: ComponentProps<typeof SyntaxHighlighterLight>
 ) => {
   return (
     <SyntaxHighlighterLight

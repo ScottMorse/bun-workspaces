@@ -190,6 +190,12 @@ export default defineConfig({
         activeMatch: "/config",
       },
       {
+        text: "API",
+        link: "/api",
+        position: "left",
+        activeMatch: "/api",
+      },
+      {
         text: "Changelog",
         link: CHANGELOG_URL,
         position: "left",

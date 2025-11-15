@@ -1,0 +1,41 @@
+---
+title: API Usage
+titleSuffix: " | bun-workspaces"
+description: "API documentation for bun-workspaces | Documentation for bun-workspaces: A CLI to help manage Bun monorepos"
+pageType: doc
+sidebar: false
+outline: true
+footer: false
+---
+
+import { SyntaxHighlighter } from "../../content/highlight";
+import { CREATE_FS_PROJECT_EXAMPLE } from '../../content/api/apiExamples';
+import { CREATE_MEMORY_PROJECT_EXAMPLE } from '../../content/api/apiExamples';
+
+# API
+
+Reminder: While the CLI can be used simply with `bunx bun-workspaces`, using the API will require you to install the package via `bun add --dev bun-workspaces`.
+
+## `createFileSystemProject`
+
+Create a `Project`, the core of `bun-workspaces`'s functionality, based on a given root directory.
+This finds workspaces based on the `"workspaces"` field in the root package.json.
+It will also detect and utilize any [workspace configuration](/config#workspace-configuration) found.
+
+<SyntaxHighlighter language="typescript">
+{CREATE_FS_PROJECT_EXAMPLE}
+</SyntaxHighlighter>
+
+## `Project`
+
+###
+
+## `createMemoryProject`
+
+Create a `Project` from a given array of workspaces. Usually used 
+only for testing purposes without the need for a real project
+in the file system.
+
+<SyntaxHighlighter language="typescript">
+{CREATE_MEMORY_PROJECT_EXAMPLE}
+</SyntaxHighlighter>
