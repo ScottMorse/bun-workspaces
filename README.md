@@ -4,6 +4,8 @@
 
 ### [**See Full Documentation Here:** _https://bunworkspaces.com_](https://bunworkspaces.com)
 
+**_New: [An API is now officially released!](https://bunworkspaces.com/api)_**
+
 This is a CLI that works on top of native [Bun workspaces](https://bun.sh/docs/install/workspaces) with no additional setup required. Get metadata about your workspaces and scripts, and run scripts across your workspaces.
 
 ## Quick Start

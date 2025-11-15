@@ -7,7 +7,7 @@ const BRAGS = [
   "Run workspace scripts in series or parallel",
   "Set aliases for workspaces",
   "Output script results to a JSON file",
-  "Programmatic API available",
+  "JS API available",
   "TypeScript friendly",
   "Intellisense Support",
   "New features always on the way",
