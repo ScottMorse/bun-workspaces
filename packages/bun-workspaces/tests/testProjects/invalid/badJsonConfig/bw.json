@@ -1,6 +1,6 @@
 {
   "project": {
     "workspaceAliases": {
-      "appA": "application-1a",
-      "appB": "application-1b",
-      "libA": "library-1a",
+      "deprecated_appA": "application-1a",
+      "deprecated_appB": "application-1b",
+      "deprecated_libA": "library-1a",

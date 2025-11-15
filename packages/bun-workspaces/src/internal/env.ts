@@ -11,7 +11,7 @@ export type RuntimeMode = "development" | "production" | "test";
 
 const _RUNTIME_MODE: RuntimeMode = ((_process.env
   ._BW_RUNTIME_MODE as RuntimeMode) ||
-  (process.env.NODE_ENV?.match(/test(ing)?/)
+  (process.env.NODE_ENV?.match(/test(ing | s)?/)
     ? "test"
     : process.env.NODE_ENV === "development"
       ? "development"

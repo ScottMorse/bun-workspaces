@@ -2,49 +2,19 @@ import path from "path";
 import { createWildcardRegex } from "../../internal/regex";
 import { type Workspace } from "../../workspaces";
 import { ERRORS } from "../errors";
-import {
-  createScriptCommand,
-  type CreateScriptCommandOptions,
-  type ScriptCommand,
-} from "../scriptCommand";
-
-export interface ScriptMetadata {
-  name: string;
-  workspaces: Workspace[];
-}
-
-export type CreateProjectScriptCommandOptions = Omit<
-  CreateScriptCommandOptions,
-  "workspace" | "rootDir"
-> & {
-  workspaceName: string;
-};
-
-export interface CreateProjectScriptCommandResult {
-  command: ScriptCommand;
-  scriptName: string;
-  workspace: Workspace;
-}
-
-export interface Project {
-  name: string;
-  rootDir: string;
-  workspaces: Workspace[];
-  listWorkspacesWithScript(scriptName: string): Workspace[];
-  listScriptsWithWorkspaces(): Record<string, ScriptMetadata>;
-  findWorkspaceByName(workspaceName: string): Workspace | null;
-  findWorkspaceByAlias(alias: string): Workspace | null;
-  findWorkspaceByNameOrAlias(nameOrAlias: string): Workspace | null;
-  findWorkspacesByPattern(workspaceName: string): Workspace[];
-  createScriptCommand(
-    options: CreateProjectScriptCommandOptions,
-  ): CreateProjectScriptCommandResult;
-}
+import type {
+  CreateProjectScriptCommandOptions,
+  CreateProjectScriptCommandResult,
+  Project,
+  ScriptMetadata,
+} from "../project";
+import { createScriptCommand } from "../scriptCommand";
 
 export abstract class ProjectBase implements Project {
   public abstract readonly name: string;
-  public abstract readonly rootDir: string;
+  public abstract readonly rootDirectory: string;
   public abstract readonly workspaces: Workspace[];
+  public abstract readonly sourceType: "fileSystem" | "memory";
 
   listWorkspacesWithScript(scriptName: string): Workspace[] {
     return this.workspaces.filter((workspace) =>
@@ -52,7 +22,7 @@ export abstract class ProjectBase implements Project {
     );
   }
 
-  listScriptsWithWorkspaces(): Record<string, ScriptMetadata> {
+  mapScriptsToWorkspaces(): Record<string, ScriptMetadata> {
     const scripts = new Set<string>();
     this.workspaces.forEach((workspace) => {
       workspace.scripts.forEach((script) => scripts.add(script));
@@ -103,11 +73,13 @@ export abstract class ProjectBase implements Project {
   createScriptCommand(
     options: CreateProjectScriptCommandOptions,
   ): CreateProjectScriptCommandResult {
-    const workspace = this.findWorkspaceByNameOrAlias(options.workspaceName);
+    const workspace = this.findWorkspaceByNameOrAlias(
+      options.workspaceNameOrAlias,
+    );
 
     if (!workspace) {
       throw new ERRORS.ProjectWorkspaceNotFound(
-        `Workspace not found: ${JSON.stringify(options.workspaceName)}`,
+        `Workspace not found: ${JSON.stringify(options.workspaceNameOrAlias)}`,
       );
     }
     if (!workspace.scripts.includes(options.scriptName)) {
@@ -122,10 +94,12 @@ export abstract class ProjectBase implements Project {
     return {
       workspace,
       scriptName: options.scriptName,
-      command: createScriptCommand({
+      commandDetails: createScriptCommand({
         ...options,
         workspace,
-        rootDir: path.resolve(this.rootDir),
+        rootDirectory: path.resolve(this.rootDirectory),
+        method: options.method,
+        args: options.args ?? "",
       }),
     };
   }

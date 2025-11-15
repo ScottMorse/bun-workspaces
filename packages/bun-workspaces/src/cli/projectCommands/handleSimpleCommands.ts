@@ -4,32 +4,8 @@ import {
   commandOutputLogger,
   createScriptInfoLines,
   createWorkspaceInfoLines,
-  type ProjectCommandContext,
+  handleCommand,
 } from "./commandHandlerUtils";
-import {
-  getProjectCommandConfig,
-  type CliProjectCommandName,
-} from "./projectCommandsConfig";
-
-const handleCommand = <T extends unknown[]>(
-  commandName: CliProjectCommandName,
-  handler: (context: ProjectCommandContext, ...actionArgs: T) => void,
-) => {
-  const config = getProjectCommandConfig(commandName);
-  return ({ program, project }: ProjectCommandContext) => {
-    program = program
-      .command(config.command)
-      .aliases(config.aliases)
-      .description(config.description);
-    for (const option of Object.values(config.options)) {
-      program.option(option.flags, option.description);
-    }
-    program = program.action((...actionArgs) =>
-      handler({ program, project }, ...(actionArgs as T)),
-    );
-    return program;
-  };
-};
 
 export const listWorkspaces = handleCommand(
   "listWorkspaces",
@@ -81,7 +57,7 @@ export const listScripts = handleCommand(
   ) => {
     logger.debug(`Command: List scripts (options: ${JSON.stringify(options)})`);
 
-    const scripts = project.listScriptsWithWorkspaces();
+    const scripts = project.mapScriptsToWorkspaces();
     const lines: string[] = [];
 
     if (!project.workspaces.length && !options.nameOnly) {
@@ -159,7 +135,7 @@ export const scriptInfo = handleCommand(
       `Command: Script info for ${script} (options: ${JSON.stringify(options)})`,
     );
 
-    const scripts = project.listScriptsWithWorkspaces();
+    const scripts = project.mapScriptsToWorkspaces();
     const scriptMetadata = scripts[script];
     if (!scriptMetadata) {
       logger.error(`Script not found: ${JSON.stringify(script)}`);

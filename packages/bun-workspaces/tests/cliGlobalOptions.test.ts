@@ -1,6 +1,5 @@
 import path from "node:path";
 import { test, expect, describe } from "bun:test";
-import { logger } from "../src/internal/logger";
 import { getProjectRoot } from "./testProjects";
 import {
   setupCliTest,
@@ -37,6 +36,15 @@ describe("Test CLI Global Options", () => {
     );
     expect(helpResult4.exitCode).toBe(1);
     assertOutputMatches(helpResult4.stderr.sanitized, USAGE_OUTPUT_PATTERN);
+  });
+
+  test("Usage shows for help command in invalid project", async () => {
+    const { run } = setupCliTest({ testProject: "invalidDuplicateName" });
+
+    const helpResult = await run("help");
+    expect(helpResult.stderr.raw).toBeEmpty();
+    expect(helpResult.exitCode).toBe(0);
+    assertOutputMatches(helpResult.stdout.raw, USAGE_OUTPUT_PATTERN);
   });
 
   test("Global Option --log-level", async () => {
@@ -121,7 +129,7 @@ describe("Test CLI Global Options", () => {
     const result = await run(
       `--config-file=${path.resolve(getProjectRoot("simple1"), "bw.json")}`,
       "info",
-      "appA",
+      "deprecated_appA",
     );
     expect(result.stderr.raw).toBeEmpty();
     expect(result.exitCode).toBe(0);
@@ -130,7 +138,7 @@ describe("Test CLI Global Options", () => {
     const result2 = await run(
       `--config-file=${path.resolve(getProjectRoot("simple1"), "bw.alt.json")}`,
       "info",
-      "appB-alt",
+      "deprecated_appB-alt",
     );
     expect(result2.stderr.raw).toBeEmpty();
     expect(result2.exitCode).toBe(0);
@@ -139,7 +147,7 @@ describe("Test CLI Global Options", () => {
     const result3 = await run(
       `--cwd=${getProjectRoot("simple1")}`,
       "info",
-      "appB",
+      "deprecated_appB",
     );
     expect(result3.stderr.raw).toBeEmpty();
     expect(result3.exitCode).toBe(0);
@@ -149,7 +157,7 @@ describe("Test CLI Global Options", () => {
       `--cwd=${getProjectRoot("simple1")}`,
       "--config-file=bw.alt.json",
       "info",
-      "appB-alt",
+      "deprecated_appB-alt",
     );
     expect(result4.stderr.raw).toBeEmpty();
     expect(result4.exitCode).toBe(0);

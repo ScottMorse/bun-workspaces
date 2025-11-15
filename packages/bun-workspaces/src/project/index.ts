@@ -1,10 +1,5 @@
-export {
-  type Project,
-  type CreateProjectScriptCommandOptions,
-  type ScriptMetadata,
-} from "./implementations/projectBase";
-
-export {
-  createFileSystemProject as createFileSystemProject,
-  type CreateFileSystemProjectOptions,
-} from "./implementations/fileSystemProject";
+export * from "./errors";
+export type * from "./project";
+export * from "./implementations/projectBase";
+export * from "./implementations/fileSystemProject";
+export * from "./implementations/memoryProject";

@@ -16,6 +16,7 @@ const TEST_PROJECTS = {
   invalidBadJson: "invalid/badJson",
   invalidNoName: "invalid/noName",
   invalidDuplicateName: "invalid/duplicateName",
+  invalidDuplicateAlias: "invalid/duplicateAlias",
   invalidBadTypeWorkspaces: "invalid/badTypeWorkspaces",
   badWorkspaceInvalidName: "invalid/badWorkspaceInvalidName",
   invalidBadTypeScripts: "invalid/badTypeScripts",
@@ -28,6 +29,12 @@ const TEST_PROJECTS = {
   runScriptWithFailures: "forRunScript/withFailures",
   runScriptWithMixedOutput: "forRunScript/withMixedOutput",
   runScriptWithEchoArgs: "forRunScript/withEchoArgs",
+  workspaceConfigPackageOnly: "workspaceConfig/packageOnly",
+  workspaceConfigPackageFileMix: "workspaceConfig/packageFileMix",
+  workspaceConfigFileOnly: "workspaceConfig/fileOnly",
+  workspaceConfigInvalidConfig: "workspaceConfig/invalidConfig",
+  workspaceConfigInvalidJson: "workspaceConfig/invalidJson",
+  workspaceConfigDeprecatedConfigMix: "workspaceConfig/deprecatedConfigMix",
 };
 
 export type TestProjectName = keyof typeof TEST_PROJECTS;

@@ -1,5 +1,5 @@
 /** Metadata about a nested package within a Bun monorepo */
-export interface Workspace {
+export type Workspace = {
   /** The name of the workspace from its `package.json` */
   name: string;
   /** The relative path to the workspace from the root `package.json` */
@@ -10,4 +10,4 @@ export interface Workspace {
   scripts: string[];
   /** Aliases assigned to the workspace via the `"workspaceAliases"` field in the config */
   aliases: string[];
-}
+};

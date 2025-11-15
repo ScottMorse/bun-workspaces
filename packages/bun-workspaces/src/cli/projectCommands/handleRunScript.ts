@@ -59,11 +59,20 @@ export const runScript = handleCommand(
             }
             return [workspacePattern];
           })
-          .map((workspaceName) =>
-            project.findWorkspaceByNameOrAlias(workspaceName),
-          )
+          .map((workspaceName) => {
+            const workspace = project.findWorkspaceByNameOrAlias(workspaceName);
+            if (!workspace) {
+              logger.error(
+                `Workspace name or alias not found: ${JSON.stringify(workspaceName)}`,
+              );
+              process.exit(1);
+            }
+            return workspace;
+          })
           .filter(Boolean) as Workspace[])
       : project.listWorkspacesWithScript(script);
+
+    workspaces.sort((a, b) => a.path.localeCompare(b.path));
 
     if (!workspaces.length) {
       if (_workspaces.length === 1 && !_workspaces[0].includes("*")) {
@@ -79,14 +88,14 @@ export const runScript = handleCommand(
     const scriptCommands = workspaces.map((workspace) =>
       project.createScriptCommand({
         scriptName: script,
-        workspaceName: workspace.name,
+        workspaceNameOrAlias: workspace.name,
         method: "cd",
         args: options.args?.replace(/<workspace>/g, workspace.name) ?? "",
       }),
     );
 
     const runCommand = async ({
-      command,
+      commandDetails: command,
       scriptName,
       workspace,
     }: (typeof scriptCommands)[number]) => {
@@ -94,14 +103,14 @@ export const runScript = handleCommand(
 
       logger.debug(
         `Running script ${scriptName} in workspace ${workspace.name} (cwd: ${
-          command.cwd
+          command.workingDirectory
         }): ${splitCommand.join(" ")}`,
       );
 
       const startTime = new Date();
 
       const proc = Bun.spawn(command.command.split(/\s+/g), {
-        cwd: command.cwd,
+        cwd: command.workingDirectory,
         env: { ...process.env, FORCE_COLOR: "1" },
         stdout: "pipe",
         stderr: "pipe",
@@ -235,7 +244,10 @@ export const runScript = handleCommand(
         workspaces: results,
       };
 
-      const fullOutputPath = path.resolve(project.rootDir, options.jsonOutfile);
+      const fullOutputPath = path.resolve(
+        project.rootDirectory,
+        options.jsonOutfile,
+      );
 
       // Check if can make directory
       const jsonOutputDir = path.dirname(fullOutputPath);

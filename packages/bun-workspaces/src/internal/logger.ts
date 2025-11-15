@@ -1,4 +1,4 @@
-import { IS_PRODUCTION, IS_TEST } from "./env";
+import { IS_TEST } from "./env";
 import { defineErrors } from "./error";
 
 export const LOG_LEVELS = ["debug", "info", "warn", "error"] as const;
@@ -169,11 +169,7 @@ class _Logger implements Logger {
       : content;
   }
 
-  private _printLevel: LogLevelSetting = IS_PRODUCTION
-    ? "info"
-    : IS_TEST
-      ? "silent"
-      : "debug";
+  private _printLevel: LogLevelSetting = IS_TEST ? "error" : "info";
 
   private shouldPrint(level: LogLevel): boolean {
     if (this.printLevel === "silent") return false;
@@ -182,3 +178,8 @@ class _Logger implements Logger {
 }
 
 export const logger = createLogger("bun-workspaces");
+
+/** Set the global logging level. Defaults to "info" or "error" when `NODE_ENV` is "test" */
+export const setLogLevel = (level: LogLevelSetting) => {
+  logger.printLevel = level;
+};

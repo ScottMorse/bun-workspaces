@@ -1,6 +1,6 @@
 import { defineErrors } from "../internal/error";
 
-export const ERRORS = defineErrors(
+export const WORKSPACE_ERRORS = defineErrors(
   "PackageNotFound",
   "InvalidPackageJson",
   "DuplicateWorkspaceName",

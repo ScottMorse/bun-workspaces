@@ -1,10 +1,18 @@
 import fs from "node:fs";
 import path from "node:path";
 import { type Command, Option } from "commander";
-import { loadConfigFile, type BunWorkspacesConfig } from "../../config";
+import {
+  DEFAULT_CONFIG_FILE_PATH,
+  loadConfigFile,
+  type BunWorkspacesConfig,
+} from "../../config";
 import { defineErrors } from "../../internal/error";
 import { logger } from "../../internal/logger";
-import { createFileSystemProject } from "../../project";
+import {
+  _internalCreateFileSystemProject,
+  createMemoryProject,
+  type Project,
+} from "../../project";
 import {
   type CliGlobalOptionName,
   type CliGlobalOptions,
@@ -54,7 +62,7 @@ const getWorkingDirectoryFromArgs = (
 const getConfigFileFromArgs = (program: Command, args: string[]) => {
   addGlobalOption(program, "configFile");
   program.parseOptions(args);
-  return program.opts().configFile;
+  return program.opts().configFile as string | undefined;
 };
 
 const defineGlobalOptions = (
@@ -80,6 +88,13 @@ const defineGlobalOptions = (
 
   const config = loadConfigFile(configFilePath, cwd);
 
+  if (config) {
+    logger.warn(
+      // TODO link to docs
+      `Using the config file at ${configFilePath || DEFAULT_CONFIG_FILE_PATH} is deprecated. Migrate to the new workspace config file.`,
+    );
+  }
+
   addGlobalOption(program, "logLevel");
 
   return { cwd, config };
@@ -92,19 +107,26 @@ const applyGlobalOptions = (
   logger.printLevel = options.logLevel;
   logger.debug("Log level: " + options.logLevel);
 
-  const project = createFileSystemProject({
-    rootDir: options.cwd,
-    workspaceAliases: config?.project?.workspaceAliases ?? {},
-  });
+  let project: Project;
+  let error: Error | null = null;
+  try {
+    project = _internalCreateFileSystemProject({
+      rootDirectory: options.cwd,
+      workspaceAliases: config?.project?.workspaceAliases ?? {},
+    });
 
-  logger.debug(
-    `Project: ${JSON.stringify(project.name)} (${
-      project.workspaces.length
-    } workspace${project.workspaces.length === 1 ? "" : "s"})`,
-  );
-  logger.debug("Project root: " + path.resolve(project.rootDir));
+    logger.debug(
+      `Project: ${JSON.stringify(project.name)} (${
+        project.workspaces.length
+      } workspace${project.workspaces.length === 1 ? "" : "s"})`,
+    );
+    logger.debug("Project root: " + path.resolve(project.rootDirectory));
+  } catch (_error) {
+    error = _error as Error;
+    project = createMemoryProject({ workspaces: [] });
+  }
 
-  return { project };
+  return { project, error };
 };
 
 export const initializeWithGlobalOptions = (

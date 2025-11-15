@@ -6,14 +6,21 @@ import { getGlobalOptionId } from "./searchIds";
 
 export const CliGlobalOptionDoc = ({
   option,
+  deprecationText,
 }: {
   option: CliGlobalOptionName;
+  deprecationText?: React.ReactNode;
 }) => {
   const content = getCliOptionContent(option);
   const id = useId();
   return (
     <div className="cli-global-option-doc">
       <div id={getGlobalOptionId(content)} className="cli-doc-section-anchor" />
+      {deprecationText ? (
+        <div className="cli-global-option-doc-deprecation-text">
+          DEPRECATED: {deprecationText}
+        </div>
+      ) : null}
       <p>
         Usage: <code>{content.mainOption}</code> |{" "}
         <code>{content.shortOption}</code>{" "}
