@@ -101,34 +101,39 @@ export const WORKSPACE_EXAMPLE = `
 export const MULTI_METHOD_SCRIPTS_EXAMPLE = `
 import { createFileSystemProject } from "bun-workspaces";
 
-const myProject = createFileSystemProject({
-  rootDirectory: "."
+const project = createFileSystemProject({
+  rootDirectory: ".",
 });
 
-const targetWorkspaces = myProject.findWorkspacesByPattern("my-workspace-*");
+const targetWorkspaces = project.findWorkspacesByPattern("my-workspace-*");
 
 const scriptCommands = targetWorkspaces.map((workspace) =>
   project.createScriptCommand({
     workspaceNameOrAlias: workspace.name,
     scriptName: "my-script",
-  }),
+  })
 );
 
 // Run all scripts in series
-for (const { command, workingDirectory } of scriptCommands) {
-  const subprocess = Bun.spawn(command.split(/\\s+/g), {
+for (const {
+  commandDetails: { command, workingDirectory },
+} of scriptCommands) {
+  const subprocess = Bun.spawn(command.split(/\\s+/), {
     cwd: workingDirectory,
   });
 
   await subprocess.exited;
-};
+}
 
 // Run all scripts in parallel
-await Promise.allSettled(scriptCommands.map(({ command, workingDirectory }) =>
-  Bun.spawn(command.split(/\\s+/g), {
-    cwd: workingDirectory,
-  }).exited,
-));
+await Promise.allSettled(
+  scriptCommands.map(
+    ({ commandDetails: { command, workingDirectory } }) =>
+      Bun.spawn(command.split(/\\s+/), {
+        cwd: workingDirectory,
+      }).exited
+  )
+);
 `.trim();
 
 export const SET_LOG_LEVEL_EXAMPLE = `
