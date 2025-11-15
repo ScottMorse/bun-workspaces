@@ -65,7 +65,7 @@ export const loadWorkspaceConfig = (workspacePath: string) => {
 
   if (fileConfig && packageJsonConfig) {
     logger.warn(
-      `WARNING: Found config for workspace at path "${workspacePath}" in both package.json and ${WORKSPACE_CONFIG_FILE_PATH}. The config in ${WORKSPACE_CONFIG_FILE_PATH} will be used.`,
+      `Found config for workspace at path "${workspacePath}" in both package.json and ${WORKSPACE_CONFIG_FILE_PATH}. The config in ${WORKSPACE_CONFIG_FILE_PATH} will be used.`,
     );
   }
 

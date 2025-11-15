@@ -1,5 +1,5 @@
 ---
-title: API
+title: Library API
 titleSuffix: " | bun-workspaces"
 description: "API documentation for bun-workspaces | Documentation for bun-workspaces: A CLI to help manage Bun monorepos"
 pageType: doc
@@ -12,7 +12,7 @@ import { SyntaxHighlighter } from "../../content/highlight";
 import { CREATE_FS_PROJECT_EXAMPLE, CREATE_SCRIPT_COMMAND_EXAMPLE, FIND_WORKSPACE_BY_ALIAS_EXAMPLE, FIND_WORKSPACE_BY_NAME_EXAMPLE, FIND_WORKSPACE_BY_NAME_OR_ALIAS_EXAMPLE, FIND_WORKSPACES_BY_PATTERN_EXAMPLE, LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE, MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE, MULTI_METHOD_SCRIPTS_EXAMPLE, SET_LOG_LEVEL_EXAMPLE, WORKSPACE_EXAMPLE } from '../../content/api/apiExamples';
 import { CREATE_MEMORY_PROJECT_EXAMPLE } from '../../content/api/apiExamples';
 
-# API
+# Library API
 
 Reminder: While the CLI can be used simply with `bunx bun-workspaces`, using the API will require you to install the package via `bun add --dev bun-workspaces`.
 
@@ -83,7 +83,7 @@ Get a mapping of all project script names to the [Workspace](/api#workspace)s th
 ### `.createScriptCommand`
 `createScriptCommand(options: CreateProjectScriptCommandOptions): CreateProjectScriptCommandResult`
 
-Create a metadata that can be used to run a workspace's script.
+Create a metadata that can be used to run a [Workspace](/api#workspace)'s script.
 
 The `"method"` option changes what kind of `bun` command is implemented to run the script.
 `"cd"` is generally recommended over `"filter"` in order to get full stdout/stderr output from the script.

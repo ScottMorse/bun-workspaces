@@ -87,7 +87,7 @@ const defineGlobalOptions = (
   if (config) {
     logger.warn(
       // TODO link to docs
-      `WARNING: Using the config file at ${configFilePath || DEFAULT_CONFIG_FILE_PATH} is deprecated. Migrate to the new workspace config file.`,
+      `Using the config file at ${configFilePath || DEFAULT_CONFIG_FILE_PATH} is deprecated. Migrate to the new workspace config file.`,
     );
   }
 

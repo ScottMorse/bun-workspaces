@@ -280,8 +280,11 @@ describe("Test Project utilities", () => {
         workspaceNameOrAlias: "application-a",
       }),
     ).toEqual({
-      command: {
-        cwd: path.resolve(project.rootDirectory, "applications/applicationA"),
+      commandDetails: {
+        workingDirectory: path.resolve(
+          project.rootDirectory,
+          "applications/applicationA",
+        ),
         command: `bun --silent run all-workspaces`,
       },
       scriptName: "all-workspaces",
@@ -302,8 +305,11 @@ describe("Test Project utilities", () => {
         workspaceNameOrAlias: "application-a",
       }),
     ).toEqual({
-      command: {
-        cwd: path.resolve(project.rootDirectory, "applications/applicationA"),
+      commandDetails: {
+        workingDirectory: path.resolve(
+          project.rootDirectory,
+          "applications/applicationA",
+        ),
         command: `bun --silent run all-workspaces --watch`,
       },
       scriptName: "all-workspaces",
@@ -324,8 +330,8 @@ describe("Test Project utilities", () => {
         workspaceNameOrAlias: "application-a",
       }),
     ).toEqual({
-      command: {
-        cwd: project.rootDirectory,
+      commandDetails: {
+        workingDirectory: project.rootDirectory,
         command: `bun --silent run --filter="application-a" all-workspaces --watch`,
       },
       scriptName: "all-workspaces",
@@ -346,8 +352,8 @@ describe("Test Project utilities", () => {
         workspaceNameOrAlias: "application-a",
       }),
     ).toEqual({
-      command: {
-        cwd: project.rootDirectory,
+      commandDetails: {
+        workingDirectory: project.rootDirectory,
         command: `bun --silent run --filter="application-a" all-workspaces --stuff --hello=there123`,
       },
       scriptName: "all-workspaces",
@@ -368,8 +374,11 @@ describe("Test Project utilities", () => {
         workspaceNameOrAlias: "library-b",
       }),
     ).toEqual({
-      command: {
-        cwd: path.resolve(project.rootDirectory, "libraries/libraryB"),
+      commandDetails: {
+        workingDirectory: path.resolve(
+          project.rootDirectory,
+          "libraries/libraryB",
+        ),
         command: `bun --silent run b-workspaces`,
       },
       scriptName: "b-workspaces",
@@ -390,8 +399,8 @@ describe("Test Project utilities", () => {
         workspaceNameOrAlias: "library-b",
       }),
     ).toEqual({
-      command: {
-        cwd: project.rootDirectory,
+      commandDetails: {
+        workingDirectory: project.rootDirectory,
         command: `bun --silent run --filter="library-b" b-workspaces`,
       },
       scriptName: "b-workspaces",
@@ -468,8 +477,11 @@ describe("Test Project utilities", () => {
         workspaceNameOrAlias: "test-1",
       }),
     ).toEqual({
-      command: {
-        cwd: path.resolve(projectWithData.rootDirectory, "test/test-1"),
+      commandDetails: {
+        workingDirectory: path.resolve(
+          projectWithData.rootDirectory,
+          "test/test-1",
+        ),
         command: `bun --silent run test-script`,
       },
       scriptName: "test-script",

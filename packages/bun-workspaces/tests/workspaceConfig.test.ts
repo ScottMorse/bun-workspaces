@@ -1,5 +1,5 @@
 import path from "path";
-import { expect, test, describe } from "bun:test";
+import { expect, test, describe, spyOn } from "bun:test";
 import { loadConfigFile } from "../src/config";
 import {
   getFileConfig,
@@ -8,6 +8,7 @@ import {
   validateWorkspaceConfig,
   WORKSPACE_CONFIG_ERRORS,
 } from "../src/config/workspaceConfig";
+import { logger } from "../src/internal/logger";
 import { _internalCreateFileSystemProject } from "../src/project";
 import { WORKSPACE_ERRORS, findWorkspaces } from "../src/workspaces";
 import { getProjectRoot } from "./testProjects";
@@ -300,6 +301,8 @@ describe("Test workspace config", () => {
   });
 
   test("Project with mix of deprecated and new config", () => {
+    const warnSpy = spyOn(logger, "warn");
+
     const project = _internalCreateFileSystemProject({
       rootDirectory: getProjectRoot("workspaceConfigDeprecatedConfigMix"),
       workspaceAliases:
@@ -310,6 +313,10 @@ describe("Test workspace config", () => {
           ),
         )?.project?.workspaceAliases ?? undefined,
     });
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      `Found config for workspace at path "/home/scott/dev/projects/bun-workspaces/packages/bun-workspaces/tests/testProjects/workspaceConfig/deprecatedConfigMix/libraries/library-a" in both package.json and bw.workspace.json. The config in bw.workspace.json will be used.`,
+    );
 
     expect(project.workspaces).toEqual([
       {
