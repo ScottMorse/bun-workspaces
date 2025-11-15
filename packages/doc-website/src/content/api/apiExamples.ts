@@ -1,4 +1,5 @@
-export const CREATE_FS_PROJECT_EXAMPLE = `import { createFileSystemProject } from "bun-workspaces";
+export const CREATE_FS_PROJECT_EXAMPLE = `
+import { createFileSystemProject } from "bun-workspaces";
 
 const project = createFileSystemProject({
   rootDirectory: "./path/to/project/root"
@@ -6,9 +7,10 @@ const project = createFileSystemProject({
 
 console.log(project.name); // The name from the root package.json
 console.log(project.workspaces); // An array of workspaces found in the project
-`;
+`.trim();
 
-export const CREATE_MEMORY_PROJECT_EXAMPLE = `import { createMemoryProject } from "bun-workspaces";
+export const CREATE_MEMORY_PROJECT_EXAMPLE = `
+import { createMemoryProject } from "bun-workspaces";
 
 const testProject = createMemoryProject({
   rootDirectory: "test-project-directory", // optional
@@ -23,7 +25,7 @@ const testProject = createMemoryProject({
     }
   ]
 });
-`;
+`.trim();
 
 export const FIND_WORKSPACE_BY_NAME_EXAMPLE = `
 // Find a workspace by its package.json name (or returns null)
@@ -127,4 +129,14 @@ await Promise.allSettled(scriptCommands.map(({ command, workingDirectory }) =>
     cwd: workingDirectory,
   }).exited,
 ));
+`.trim();
+
+export const SET_LOG_LEVEL_EXAMPLE = `
+import { setLogLevel } from "bun-workspaces";
+
+setLogLevel("debug");
+setLogLevel("info"); // default
+setLogLevel("warn");
+setLogLevel("error"); // default when NODE_ENV is "test"
+setLogLevel("silent");
 `.trim();

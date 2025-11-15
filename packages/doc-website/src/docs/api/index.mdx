@@ -9,7 +9,7 @@ footer: false
 ---
 
 import { SyntaxHighlighter } from "../../content/highlight";
-import { CREATE_FS_PROJECT_EXAMPLE, CREATE_SCRIPT_COMMAND_EXAMPLE, FIND_WORKSPACE_BY_ALIAS_EXAMPLE, FIND_WORKSPACE_BY_NAME_EXAMPLE, FIND_WORKSPACE_BY_NAME_OR_ALIAS_EXAMPLE, FIND_WORKSPACES_BY_PATTERN_EXAMPLE, LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE, MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE, MULTI_METHOD_SCRIPTS_EXAMPLE, WORKSPACE_EXAMPLE } from '../../content/api/apiExamples';
+import { CREATE_FS_PROJECT_EXAMPLE, CREATE_SCRIPT_COMMAND_EXAMPLE, FIND_WORKSPACE_BY_ALIAS_EXAMPLE, FIND_WORKSPACE_BY_NAME_EXAMPLE, FIND_WORKSPACE_BY_NAME_OR_ALIAS_EXAMPLE, FIND_WORKSPACES_BY_PATTERN_EXAMPLE, LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE, MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE, MULTI_METHOD_SCRIPTS_EXAMPLE, SET_LOG_LEVEL_EXAMPLE, WORKSPACE_EXAMPLE } from '../../content/api/apiExamples';
 import { CREATE_MEMORY_PROJECT_EXAMPLE } from '../../content/api/apiExamples';
 
 # API
@@ -108,6 +108,7 @@ An object representing a workspace in a [Project](/api#project).
 </SyntaxHighlighter>
 
 ## `createFileSystemProject`
+`createFileSystemProject(options: CreateFileSystemProjectOptions): FileSystemProject`
 
 Create a [Project](/api#project), the core of `bun-workspaces`'s functionality, based on a given root directory.
 
@@ -120,6 +121,7 @@ It will also detect and utilize any [workspace configuration](/config#workspace-
 
 
 ## `createMemoryProject`
+`createMemoryProject(options: CreateMemoryProjectOptions): MemoryProject`
 
 Create a [Project](/api#project) from a given array of [Workspace](/api#workspace)s. 
 
@@ -131,4 +133,12 @@ it isn't affected by [workspace configuration](/config#workspace-configuration).
 
 <SyntaxHighlighter language="typescript">
 {CREATE_MEMORY_PROJECT_EXAMPLE}
+</SyntaxHighlighter>
+
+## `setLogLevel`
+`setLogLevel(level: LogLevelSetting)`
+
+Set the global logging level. Defaults to "info" or "error" when `NODE_ENV` is "test".
+<SyntaxHighlighter language="typescript">
+{SET_LOG_LEVEL_EXAMPLE}
 </SyntaxHighlighter>
