@@ -9,6 +9,7 @@ import packageJson from "../../../bun-workspaces/package.json";
 import { Bwunster } from "../content/Bwunster";
 import { NormalizeIndex } from "../content/NormalizeIndex";
 import { SyntaxHighlighter } from "../content/highlight";
+import { BragTicker } from "../content/BragTicker";
 
 <Bwunster />
 
@@ -32,17 +33,23 @@ import { SyntaxHighlighter } from "../content/highlight";
 <h2 className="whats-new-title">What's New</h2>
 
 <h2 className="whats-new-subtitle">Notable recent updates 📦</h2>
-
+<div className="whats-new-list">
+- An API has been made official! 🛠️️ [Go see the documentation here](/api)
+  - If you are sneaky and found the previous experimental exports, this will be a breaking change for you.
+  - Now that the API has been officially released, stability will be maintained more rigorously.
+- New [workspace configuration](/config) is supported in either package.json or a separate config file.
+  - The root `bw.json` file is now <span className="deprecated">deprecated</span> ([more info](/config#config-file-bwjson))
 - Added
   `--json-outfile` option to `run-script` to output results ([more
   info](/cli#json-output))
+</div>
 
 ## Installation
 
 You can install the [CLI](/cli) in your project or simply use `bunx bun-workspaces`.
 
 <SyntaxHighlighter language="bash">
-{`# Install to lock the version used in your project
+{`# Install to use the API and/or lock your CLI version for your project
 bun add --dev bun-workspaces
 
 # Start using the CLI with or without the installation step
@@ -59,11 +66,6 @@ alias bw="bunx bun-workspaces"`}
 </SyntaxHighlighter>
 
 Examples in these docs will use the alias `bw` for `bunx bun-workspaces` for brevity.
-
-### Config
-
-[See here](/config) for more information on the optional `bw.json` file, where you can
-configure aliases for workspaces.
 
 ## Quick Start
 
@@ -120,3 +122,5 @@ bw --log-level=silent run my-script`}
 
 <br/>
 _`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Oven. This project aims to enhance enhance the experience of Bun for its users._
+
+<BragTicker />

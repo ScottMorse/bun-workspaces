@@ -35,7 +35,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   margin-bottom: 2rem;
 }
 
@@ -139,7 +139,7 @@ hr {
 }
 
 .config-deprecation-text {
-  color: #ff6057;
+  color: var(--rp-container-danger-text);
   font-weight: bold;
   font-size: 1.25rem;
   line-height: 1.1;
@@ -147,7 +147,7 @@ hr {
 }
 
 .cli-global-option-doc-deprecation-text {
-  color: #ff6057;
+  color: var(--rp-container-danger-text);
   font-weight: bold;
   font-size: 1.25rem;
   margin-bottom: 1rem;
@@ -156,4 +156,50 @@ hr {
 
 .workspace-config-path {
   margin-top: 0.5rem;
+}
+
+.whats-new-list ul,li {
+  line-height: 1.5;
+  margin-bottom: 0;
+  margin-top: 0.5rem !important;
+}
+
+.deprecated {
+  color: var(--rp-container-danger-text);
+}
+
+.brag-ticker-container {
+  height: 2rem;
+}
+
+@keyframes brag-ticker-animation {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-50% + 0.75rem));
+  }
+}
+
+.brag-ticker {
+  background-color: var(--rp-code-block-bg);
+  border-top: 1px solid var(--rp-c-divider-light);
+  padding: 0 1rem;
+  gap: 0.65rem;
+  height: 2rem;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  left: 0;
+  animation: brag-ticker-animation 60s linear infinite;
+}
+
+.brag-ticker-item {
+  white-space: nowrap;
+}
+
+.brag-ticker-item.dot {
+  color: var(--rp-container-info-text);
+  font-size: 0.75em;
 }
