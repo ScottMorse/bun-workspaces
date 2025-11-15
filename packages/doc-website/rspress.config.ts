@@ -184,12 +184,6 @@ export default defineConfig({
         ],
       },
       {
-        text: "Configuration",
-        link: "/config",
-        position: "left",
-        activeMatch: "/config",
-      },
-      {
         text: "API",
         link: "/api",
         position: "left",
@@ -208,6 +202,12 @@ export default defineConfig({
             link: "/api#createfilesystemproject",
           },
         ],
+      },
+      {
+        text: "Configuration",
+        link: "/config",
+        position: "left",
+        activeMatch: "/config",
       },
       {
         text: "Changelog",

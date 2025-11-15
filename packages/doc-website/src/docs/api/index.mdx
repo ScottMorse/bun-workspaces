@@ -84,6 +84,9 @@ Get a mapping of all project script names to the [Workspace](/api#workspace)s th
 `createScriptCommand(options: CreateProjectScriptCommandOptions): CreateProjectScriptCommandResult`
 
 Create a metadata that can be used to run a workspace's script.
+
+The `"method"` option changes what kind of `bun` command is implemented to run the script.
+`"cd"` is generally recommended over `"filter"` in order to get full stdout/stderr output from the script.
 <SyntaxHighlighter language="typescript">
 {CREATE_SCRIPT_COMMAND_EXAMPLE  }
 </SyntaxHighlighter>

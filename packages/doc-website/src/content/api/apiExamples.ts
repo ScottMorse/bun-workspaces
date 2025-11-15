@@ -26,18 +26,15 @@ const testProject = createMemoryProject({
 `;
 
 export const FIND_WORKSPACE_BY_NAME_EXAMPLE = `
-// Find a workspace by its package.json name
-// Returns null if not found
+// Find a workspace by its package.json name (or returns null)
 const workspace = project.findWorkspaceByName("my-workspace");`.trim();
 
 export const FIND_WORKSPACE_BY_ALIAS_EXAMPLE = `
-// Find a workspace by its alias
-// Returns null if not found
+// Find a workspace by its alias (or returns null)
 const workspace = project.findWorkspaceByAlias("my-alias");`.trim();
 
 export const FIND_WORKSPACE_BY_NAME_OR_ALIAS_EXAMPLE = `
-// Find a workspace by its package.json name or alias
-// Returns null if not found
+// Find a workspace by its package.json name or alias (or returns null)
 const workspace = project.findWorkspaceByNameOrAlias("my-workspace");`.trim();
 
 export const FIND_WORKSPACES_BY_PATTERN_EXAMPLE = `
