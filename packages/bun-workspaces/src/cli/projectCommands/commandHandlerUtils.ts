@@ -11,6 +11,7 @@ import {
 
 export interface ProjectCommandContext {
   project: Project;
+  projectError: Error | null;
   program: Command;
 }
 
@@ -38,10 +39,13 @@ commandOutputLogger.printLevel = "info";
 
 export const handleCommand = <T extends unknown[]>(
   commandName: CliProjectCommandName,
-  handler: (context: ProjectCommandContext, ...actionArgs: T) => void,
+  handler: (
+    context: Omit<ProjectCommandContext, "projectError">,
+    ...actionArgs: T
+  ) => void,
 ) => {
   const config = getProjectCommandConfig(commandName);
-  return ({ program, project }: ProjectCommandContext) => {
+  return ({ program, project, projectError }: ProjectCommandContext) => {
     program = program
       .command(config.command)
       .aliases(config.aliases)
@@ -49,9 +53,11 @@ export const handleCommand = <T extends unknown[]>(
     for (const option of Object.values(config.options)) {
       program.option(option.flags, option.description);
     }
-    program = program.action((...actionArgs) =>
-      handler({ program, project }, ...(actionArgs as T)),
-    );
+    if (!projectError) {
+      program = program.action((...actionArgs) =>
+        handler({ program, project }, ...(actionArgs as T)),
+      );
+    }
     return program;
   };
 };

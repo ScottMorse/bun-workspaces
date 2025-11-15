@@ -8,7 +8,11 @@ import {
 } from "../../config";
 import { defineErrors } from "../../internal/error";
 import { logger } from "../../internal/logger";
-import { _internalCreateFileSystemProject } from "../../project";
+import {
+  _internalCreateFileSystemProject,
+  createMemoryProject,
+  type Project,
+} from "../../project";
 import {
   type CliGlobalOptionName,
   type CliGlobalOptions,
@@ -103,19 +107,26 @@ const applyGlobalOptions = (
   logger.printLevel = options.logLevel;
   logger.debug("Log level: " + options.logLevel);
 
-  const project = _internalCreateFileSystemProject({
-    rootDirectory: options.cwd,
-    workspaceAliases: config?.project?.workspaceAliases ?? {},
-  });
+  let project: Project;
+  let error: Error | null = null;
+  try {
+    project = _internalCreateFileSystemProject({
+      rootDirectory: options.cwd,
+      workspaceAliases: config?.project?.workspaceAliases ?? {},
+    });
 
-  logger.debug(
-    `Project: ${JSON.stringify(project.name)} (${
-      project.workspaces.length
-    } workspace${project.workspaces.length === 1 ? "" : "s"})`,
-  );
-  logger.debug("Project root: " + path.resolve(project.rootDirectory));
+    logger.debug(
+      `Project: ${JSON.stringify(project.name)} (${
+        project.workspaces.length
+      } workspace${project.workspaces.length === 1 ? "" : "s"})`,
+    );
+    logger.debug("Project root: " + path.resolve(project.rootDirectory));
+  } catch (_error) {
+    error = _error as Error;
+    project = createMemoryProject({ workspaces: [] });
+  }
 
-  return { project };
+  return { project, error };
 };
 
 export const initializeWithGlobalOptions = (

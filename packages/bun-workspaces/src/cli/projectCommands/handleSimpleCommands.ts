@@ -4,32 +4,8 @@ import {
   commandOutputLogger,
   createScriptInfoLines,
   createWorkspaceInfoLines,
-  type ProjectCommandContext,
+  handleCommand,
 } from "./commandHandlerUtils";
-import {
-  getProjectCommandConfig,
-  type CliProjectCommandName,
-} from "./projectCommandsConfig";
-
-const handleCommand = <T extends unknown[]>(
-  commandName: CliProjectCommandName,
-  handler: (context: ProjectCommandContext, ...actionArgs: T) => void,
-) => {
-  const config = getProjectCommandConfig(commandName);
-  return ({ program, project }: ProjectCommandContext) => {
-    program = program
-      .command(config.command)
-      .aliases(config.aliases)
-      .description(config.description);
-    for (const option of Object.values(config.options)) {
-      program.option(option.flags, option.description);
-    }
-    program = program.action((...actionArgs) =>
-      handler({ program, project }, ...(actionArgs as T)),
-    );
-    return program;
-  };
-};
 
 export const listWorkspaces = handleCommand(
   "listWorkspaces",

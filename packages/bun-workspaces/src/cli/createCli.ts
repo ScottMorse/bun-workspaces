@@ -65,21 +65,22 @@ export const createCli = ({
         typeof argv === "string" ? argv.split(/s+/) : argv,
       );
 
-      const { project } = initializeWithGlobalOptions(
+      const { project, error } = initializeWithGlobalOptions(
         program,
         args,
         defaultCwd,
       );
-      if (!project) return;
 
       defineProjectCommands({
         program,
         project,
+        projectError: error,
       });
 
       await program.parseAsync(args, {
         from: programmatic ? "user" : "node",
       });
+      if (error) throw error;
     } catch (error) {
       if (error instanceof BunWorkspacesError) {
         logger.debug(error);

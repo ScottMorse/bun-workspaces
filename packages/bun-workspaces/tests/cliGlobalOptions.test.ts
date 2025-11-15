@@ -39,6 +39,15 @@ describe("Test CLI Global Options", () => {
     assertOutputMatches(helpResult4.stderr.sanitized, USAGE_OUTPUT_PATTERN);
   });
 
+  test("Usage shows for help command even with invalid project", async () => {
+    const { run } = setupCliTest({ testProject: "invalidDuplicateName" });
+
+    const helpResult = await run("help");
+    expect(helpResult.stderr.raw).toBeEmpty();
+    expect(helpResult.exitCode).toBe(0);
+    assertOutputMatches(helpResult.stdout.raw, USAGE_OUTPUT_PATTERN);
+  });
+
   test("Global Option --log-level", async () => {
     const { run } = setupCliTest();
 
