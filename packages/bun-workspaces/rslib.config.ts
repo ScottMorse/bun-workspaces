@@ -1,7 +1,7 @@
 import path from "path";
 import { defineConfig } from "@rslib/core";
 
-const IS_TEST_BUILD = process.env.BUILD_INCLUDE_TESTS === "true";
+export const IS_TEST_BUILD = process.env.BUILD_INCLUDE_TESTS === "true";
 
 const DIST_PATH = IS_TEST_BUILD ? "dist.test/src" : "dist/src";
 
@@ -48,6 +48,14 @@ export default defineConfig({
             {
               from: path.resolve(__dirname, "tests"),
               to: "../tests",
+            },
+            {
+              from: path.resolve(__dirname, "bunfig.toml"),
+              to: "../bunfig.toml",
+            },
+            {
+              from: path.resolve(__dirname, "setupTests.buildTest.ts"),
+              to: "../setupTests.ts",
             },
           ]
         : []),

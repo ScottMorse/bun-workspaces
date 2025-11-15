@@ -60,7 +60,7 @@ if (import.meta.main) {
   await runBuild();
 
   await runScript(
-    ["bun", "publish", ...(IS_DRY_RUN ? ["--dry-run"] : [])],
+    ["bun", "publish", "--tag", "next", ...(IS_DRY_RUN ? ["--dry-run"] : [])],
     "dist",
   );
 
