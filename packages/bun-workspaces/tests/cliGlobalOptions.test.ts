@@ -1,6 +1,5 @@
 import path from "node:path";
 import { test, expect, describe } from "bun:test";
-import { logger } from "../src/internal/logger";
 import { getProjectRoot } from "./testProjects";
 import {
   setupCliTest,
@@ -39,7 +38,7 @@ describe("Test CLI Global Options", () => {
     assertOutputMatches(helpResult4.stderr.sanitized, USAGE_OUTPUT_PATTERN);
   });
 
-  test("Usage shows for help command even with invalid project", async () => {
+  test("Usage shows for help command in invalid project", async () => {
     const { run } = setupCliTest({ testProject: "invalidDuplicateName" });
 
     const helpResult = await run("help");
