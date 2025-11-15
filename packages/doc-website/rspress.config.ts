@@ -61,7 +61,7 @@ export default defineConfig({
   title: TITLE,
   globalStyles: path.resolve("src/theme/css/global.css"),
   description: DESCRIPTION,
-  icon: "/bw-eye-circle-bg-dark.ico",
+  icon: "/favicon.ico",
   logo: "/bw-eye-square.png",
   logoText: `bun-workspaces`,
   search: {
@@ -194,6 +194,20 @@ export default defineConfig({
         link: "/api",
         position: "left",
         activeMatch: "/api",
+        items: [
+          {
+            text: "Project",
+            link: "/api#project",
+          },
+          {
+            text: "Workspace",
+            link: "/api#workspace",
+          },
+          {
+            text: "createFileSystemProject",
+            link: "/api#createfilesystemproject",
+          },
+        ],
       },
       {
         text: "Changelog",

@@ -8,7 +8,11 @@ import { ProjectBase } from "./projectBase";
 export type CreateFileSystemProjectOptions = {
   /** The directory containing the root package.json. Often the same root as a git repository. */
   rootDirectory: string;
-  /** The name of the project. By default will use the root package.json name */
+  /**
+   * The name of the project.
+   *
+   * By default will use the root package.json name
+   */
   name?: string;
 };
 

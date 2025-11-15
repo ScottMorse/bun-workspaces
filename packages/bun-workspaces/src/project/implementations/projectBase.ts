@@ -22,7 +22,7 @@ export abstract class ProjectBase implements Project {
     );
   }
 
-  listScriptsWithWorkspaces(): Record<string, ScriptMetadata> {
+  mapScriptsToWorkspaces(): Record<string, ScriptMetadata> {
     const scripts = new Set<string>();
     this.workspaces.forEach((workspace) => {
       workspace.scripts.forEach((script) => scripts.add(script));
@@ -94,7 +94,7 @@ export abstract class ProjectBase implements Project {
     return {
       workspace,
       scriptName: options.scriptName,
-      command: createScriptCommand({
+      commandDetails: createScriptCommand({
         ...options,
         workspace,
         rootDirectory: path.resolve(this.rootDirectory),

@@ -222,9 +222,9 @@ describe("Test Project utilities", () => {
       {},
     );
 
-  test("Project.prototype.listScriptsWithWorkspaces", async (project) => {
+  test("Project.prototype.mapScriptsToWorkspaces", async (project) => {
     expect(
-      stripMetadataToWorkspaceNames(project.listScriptsWithWorkspaces()),
+      stripMetadataToWorkspaceNames(project.mapScriptsToWorkspaces()),
     ).toEqual({
       "all-workspaces": {
         name: "all-workspaces",
@@ -476,7 +476,7 @@ describe("Test Project utilities", () => {
       workspace: testWs1,
     });
 
-    expect(projectWithData.listScriptsWithWorkspaces()).toEqual({
+    expect(projectWithData.mapScriptsToWorkspaces()).toEqual({
       "test-script": {
         name: "test-script",
         workspaces: [testWs1, testWs2],

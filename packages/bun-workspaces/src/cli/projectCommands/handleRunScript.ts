@@ -95,7 +95,7 @@ export const runScript = handleCommand(
     );
 
     const runCommand = async ({
-      command,
+      commandDetails: command,
       scriptName,
       workspace,
     }: (typeof scriptCommands)[number]) => {
@@ -103,14 +103,14 @@ export const runScript = handleCommand(
 
       logger.debug(
         `Running script ${scriptName} in workspace ${workspace.name} (cwd: ${
-          command.cwd
+          command.workingDirectory
         }): ${splitCommand.join(" ")}`,
       );
 
       const startTime = new Date();
 
       const proc = Bun.spawn(command.command.split(/\s+/g), {
-        cwd: command.cwd,
+        cwd: command.workingDirectory,
         env: { ...process.env, FORCE_COLOR: "1" },
         stdout: "pipe",
         stderr: "pipe",

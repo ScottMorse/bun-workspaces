@@ -81,7 +81,7 @@ export const listScripts = handleCommand(
   ) => {
     logger.debug(`Command: List scripts (options: ${JSON.stringify(options)})`);
 
-    const scripts = project.listScriptsWithWorkspaces();
+    const scripts = project.mapScriptsToWorkspaces();
     const lines: string[] = [];
 
     if (!project.workspaces.length && !options.nameOnly) {
@@ -159,7 +159,7 @@ export const scriptInfo = handleCommand(
       `Command: Script info for ${script} (options: ${JSON.stringify(options)})`,
     );
 
-    const scripts = project.listScriptsWithWorkspaces();
+    const scripts = project.mapScriptsToWorkspaces();
     const scriptMetadata = scripts[script];
     if (!scriptMetadata) {
       logger.error(`Script not found: ${JSON.stringify(script)}`);

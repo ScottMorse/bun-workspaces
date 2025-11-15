@@ -15,30 +15,39 @@ import { WORKSPACE_CONFIG_FILE_PATH, WORKSPACE_CONFIG_PACKAGE_JSON_KEY} from 'bu
 # Configuration
 ## Workspace Configuration
 
-You can add optional configuration to a workspace in its `package.json` file in  <code>"{WORKSPACE_CONFIG_PACKAGE_JSON_KEY}"</code> or in a separate <code>"{WORKSPACE_CONFIG_FILE_PATH}"</code> file.
+You can add optional configuration to a workspace in its `package.json` file in  <code>"{WORKSPACE_CONFIG_PACKAGE_JSON_KEY}"</code> 
+or in a separate <code>{WORKSPACE_CONFIG_FILE_PATH}</code> file.
+
+### About Workspace Aliases
+
+A workspace alias is a short name for a workspace that can be used instead of the full name in commands such as <a href="/cli#run-script">`run-script`</a>.
+Aliases are validated to be unique to each workspace and to not clash with other workspaces' `package.json` names.
+In the below examples, "myApp" may make a simpler reference to a workspace named `"@my-organization/my-application"`.
 
 ### Examples:
 
-#### Separate Config File
+#### 1. Separate Config File
 <p className="workspace-config-path"><code>path/to/your/workspace/{WORKSPACE_CONFIG_FILE_PATH}</code></p>
 
-You can configure an alias for the workspace that can be referenced instead of the full name in commands such as <a href="/cli#run-script">`run-script`</a>.
-In the below example, "myApp" may make a simpler reference to a workspace named `"@my-organization/my-application"`.
 <SyntaxHighlighter language="json">
   {JSON.stringify(exampleWorkspaceConfigSimple, null, 2)}
 </SyntaxHighlighter>
-A workspace can have multiple aliases.
+A workspace can have multiple aliases:
 <SyntaxHighlighter language="json">
   {JSON.stringify(exampleWorkspaceConfigArray, null, 2)}
 </SyntaxHighlighter>
 
-#### Package.json Configuration
+#### 2. Package.json Configuration
 <p className="workspace-config-path"><code>path/to/your/workspace/package.json</code></p>
 
 The same configuration can be added to the workspace's `package.json` file in <code>"{WORKSPACE_CONFIG_PACKAGE_JSON_KEY}"</code>.
 <SyntaxHighlighter language="json">
   {JSON.stringify(createPackageJsonExample(exampleWorkspaceConfigSimple), null, 2)}
 </SyntaxHighlighter>
+
+Note that if both package.json config and <code>{WORKSPACE_CONFIG_FILE_PATH}</code> are present, 
+<code>{WORKSPACE_CONFIG_FILE_PATH}</code> will take precedence. It's recommended to only use one type of configuration within your
+project for consistency.
 
 ## Config File (bw.json)
 

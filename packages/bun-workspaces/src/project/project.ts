@@ -24,8 +24,10 @@ export type CreateProjectScriptCommandOptions = {
 
 /** Result of {@link Project.createScriptCommand}. Includes a command string that will run a workspace's script. */
 export type CreateProjectScriptCommandResult = {
-  /** A command string using the `bun` CLI that will run a workspace's script. */
-  command: ScriptCommand;
+  /** Data including a command string using the `bun`
+   * CLI that will run a workspace's script and the
+   * directory to run it in. */
+  commandDetails: ScriptCommand;
   /** The name of the script to run */
   scriptName: string;
   /** The workspace that the script belongs to */
@@ -46,10 +48,6 @@ export interface Project {
   workspaces: Workspace[];
   /** The means by which the project was created */
   sourceType: "fileSystem" | "memory";
-  /** Get an array of all workspaces that have a given script in their package.json */
-  listWorkspacesWithScript(scriptName: string): Workspace[];
-  /** Get a mapping of all scripts to the workspaces that have them in their package.json */
-  listScriptsWithWorkspaces(): Record<string, ScriptMetadata>;
   /** Find a workspace by its package.json name */
   findWorkspaceByName(workspaceName: string): Workspace | null;
   /** Find a workspace by a workspace alias */
@@ -58,6 +56,10 @@ export interface Project {
   findWorkspaceByNameOrAlias(nameOrAlias: string): Workspace | null;
   /** Accepts a wildcard pattern for finding a list of workspaces by their name*/
   findWorkspacesByPattern(workspacePattern: string): Workspace[];
+  /** Get an array of all workspaces that have a given script in their package.json */
+  listWorkspacesWithScript(scriptName: string): Workspace[];
+  /** Get a mapping of all scripts to the workspaces that have them in their package.json */
+  mapScriptsToWorkspaces(): Record<string, ScriptMetadata>;
   /** Create metadata that can be used to run a workspace's script */
   createScriptCommand(
     options: CreateProjectScriptCommandOptions,

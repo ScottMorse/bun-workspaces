@@ -25,8 +25,10 @@ export interface CreateScriptCommandOptions {
 const spaceArgs = (args: string) => (args ? ` ${args.trim()}` : "");
 
 export interface ScriptCommand {
+  /** The command string to run */
   command: string;
-  cwd: string;
+  /** The directory to run the command in */
+  workingDirectory: string;
 }
 
 const METHODS: Record<
@@ -34,11 +36,11 @@ const METHODS: Record<
   (options: CreateScriptCommandOptions) => ScriptCommand
 > = {
   cd: ({ scriptName, workspace, rootDirectory, args }) => ({
-    cwd: path.resolve(rootDirectory, workspace.path),
+    workingDirectory: path.resolve(rootDirectory, workspace.path),
     command: `bun --silent run ${scriptName}${spaceArgs(args)}`,
   }),
   filter: ({ scriptName, workspace, args, rootDirectory }) => ({
-    cwd: rootDirectory,
+    workingDirectory: rootDirectory,
     command: `bun --silent run --filter=${JSON.stringify(
       workspace.name,
     )} ${scriptName}${spaceArgs(args)}`,
