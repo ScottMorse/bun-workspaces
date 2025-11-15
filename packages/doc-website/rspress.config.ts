@@ -168,7 +168,7 @@ export default defineConfig({
     ],
     nav: [
       {
-        text: "CLI Usage",
+        text: "CLI",
         link: "/cli",
         position: "left",
         activeMatch: "/cli",

@@ -82,14 +82,14 @@ export const WORKSPACE_EXAMPLE = `
   // The name of the workspace from its package.json
   name: "my-workspace",
 
-  // The relative path to the workspace from the root package.json
+  // The relative path to the workspace from the project root
   path: "my/workspace/path",
 
-  // The glob pattern from "workspaces" in the root package.json 
+  // The glob pattern from the root package.json "workspaces" field
   // that this workspace was matched from
   matchPattern: "my/workspace/pattern/*",
 
-  // The scripts available in package.json
+  // The scripts available in the workspace's package.json
   scripts: ["my-script"],
 
   // Aliases assigned to the workspace via the "workspaceAliases" 
