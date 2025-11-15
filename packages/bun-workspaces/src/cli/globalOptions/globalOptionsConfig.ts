@@ -35,7 +35,7 @@ const CLI_GLOBAL_OPTIONS_CONFIG = {
   configFile: {
     mainOption: "--config-file",
     shortOption: "-c",
-    description: "Config file",
+    description: "(DEPRECATED) Config file",
     defaultValue: "",
     values: null,
     param: "path",

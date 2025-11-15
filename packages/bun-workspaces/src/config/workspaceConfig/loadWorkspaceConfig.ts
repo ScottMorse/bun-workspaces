@@ -8,9 +8,10 @@ import {
   validateWorkspaceConfig,
   type WorkspaceConfig,
 } from "./workspaceConfig";
-
-export const WORKSPACE_CONFIG_FILE_PATH = "bw.workspace.json";
-export const WORKSPACE_CONFIG_PACKAGE_JSON_KEY = "bw";
+import {
+  WORKSPACE_CONFIG_FILE_PATH,
+  WORKSPACE_CONFIG_PACKAGE_JSON_KEY,
+} from "./workspaceConfigLocation";
 
 export const getPackageJsonConfig = (workspacePath: string) => {
   const packageJsonPath = path.resolve(workspacePath, "package.json");
