@@ -193,7 +193,18 @@ li {
   display: flex;
   align-items: center;
   left: 0;
-  animation: brag-ticker-animation 60s linear infinite;
+}
+
+@media (max-width: 768px) {
+  .brag-ticker {
+    animation: brag-ticker-animation 40s linear infinite;
+  }
+}
+
+@media (min-width: 769px) {
+  .brag-ticker {
+    animation: brag-ticker-animation 100s linear infinite;
+  }
 }
 
 .brag-ticker-item {

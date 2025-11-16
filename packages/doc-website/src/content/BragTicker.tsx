@@ -2,14 +2,14 @@ import { Fragment, useId } from "react";
 
 const BRAGS = [
   "Uses minimal dependencies",
-  "We believe in thorough tests and docs",
   "No setup required",
   "Run workspace scripts in series or parallel",
   "Set aliases for workspaces",
   "Output script results to a JSON file",
+  "We strive for thorough tests and docs",
   "JS API available",
   "TypeScript friendly",
-  "Intellisense Support",
+  "Intellisense support",
   "New features always on the way",
   "We listen to our users",
   "Configurable logging",
