@@ -48,7 +48,7 @@ bw run my-script --args "--my --args=<workspace>"
 import { createFileSystemProject } from "bun-workspaces";
 
 const project = createFileSystemProject({
-  projectRoot: "/path/to/your/project",
+  rootDirectory: "/path/to/your/project",
 });
 
 const myWorkspace = project.findWorkspaceByNameOrAlias("my-workspace");

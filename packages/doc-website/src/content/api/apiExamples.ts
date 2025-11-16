@@ -151,7 +151,7 @@ import { createFileSystemProject } from "bun-workspaces";
 
 // A Project contains the core functionality of bun-workspaces.
 const project = createFileSystemProject({
-  projectRoot: "/path/to/your/project",
+  rootDirectory: "path/to/your/project",
 });
 
 // A Workspace that matches the name or alias "my-workspace"
