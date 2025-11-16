@@ -17,6 +17,8 @@ $ bun add --dev bun-workspaces
 $ bunx bun-workspaces --help
 ```
 
+### CLI
+
 ```bash
 alias bw="bunx bun-workspaces"
 
@@ -38,6 +40,33 @@ bw run my-script "my-workspace-*"
 bw run my-script --parallel
 bw run my-script --args "--my --args"
 bw run my-script --args "--my --args=<workspace>"
+```
+
+### API
+
+```typescript
+import { createFileSystemProject } from "bun-workspaces";
+
+const project = createFileSystemProject({
+  projectRoot: "/path/to/your/project",
+});
+
+const myWorkspace = project.findWorkspaceByNameOrAlias("my-workspace");
+
+const wildcardWorkspaces = project.findWorkspacesByPattern("my-workspace-*");
+
+const workspacesWithScript = project.listWorkspacesWithScript("my-script");
+
+const {
+  commandDetails: { command, workingDirectory },
+} = project.createScriptCommand({
+  scriptName: "my-script",
+  workspaceNameOrAlias: myWorkspace.name,
+});
+
+const subprocess = Bun.spawn(command.split(/\\s+/), {
+  cwd: workingDirectory,
+});
 ```
 
 _`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Oven. This project aims to enhance enhance the experience of Bun for its users._
