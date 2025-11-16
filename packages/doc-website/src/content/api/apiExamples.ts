@@ -145,3 +145,36 @@ setLogLevel("warn");
 setLogLevel("error"); // default when NODE_ENV is "test"
 setLogLevel("silent");
 `.trim();
+
+export const API_QUICKSTART = `
+import { createFileSystemProject } from "bun-workspaces";
+
+// A Project contains the core functionality of bun-workspaces.
+const project = createFileSystemProject({
+  projectRoot: "/path/to/your/project",
+});
+
+// A Workspace that matches the name or alias "my-workspace"
+const myWorkspace = project.findWorkspaceByNameOrAlias("my-workspace");
+
+// Array of workspaces whose names match the wildcard pattern
+const wildcardWorkspaces = project.findWorkspacesByPattern("my-workspace-*");
+
+// Array of workspaces that have "my-script" in their package.json "scripts"
+const workspacesWithScript = project.listWorkspacesWithScript("my-script");
+
+// Create metadata for running a workspace's script
+const { 
+  commandDetails: { command, workingDirectory } 
+} = project.createScriptCommand({
+  scriptName: "my-script",
+  workspaceNameOrAlias: myWorkspace.name
+});
+
+// An example of a means by which you may actually run the script
+const subprocess = Bun.spawn(command.split(/\\s+/), {
+  cwd: workingDirectory
+});
+
+await subprocess.exited;
+`.trim();
