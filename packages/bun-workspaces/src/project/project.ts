@@ -1,5 +1,5 @@
 import type { Workspace } from "../workspaces";
-import type { ScriptCommand, ScriptCommandMethod } from "./scriptCommand";
+import type { ScriptCommand, ScriptCommandMethod } from "./runScript";
 
 /** Metadata about a {@link Project}'s script, including the workspaces that have it in their package.json */
 export type ScriptMetadata = {

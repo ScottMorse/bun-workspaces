@@ -95,22 +95,22 @@ export const runScript = handleCommand(
     );
 
     const runCommand = async ({
-      commandDetails: command,
+      commandDetails,
       scriptName,
       workspace,
     }: (typeof scriptCommands)[number]) => {
-      const splitCommand = command.command.split(/\s+/g);
+      const splitCommand = commandDetails.command.split(/\s+/g);
 
       logger.debug(
         `Running script ${scriptName} in workspace ${workspace.name} (cwd: ${
-          command.workingDirectory
+          commandDetails.workingDirectory
         }): ${splitCommand.join(" ")}`,
       );
 
       const startTime = new Date();
 
-      const proc = Bun.spawn(command.command.split(/\s+/g), {
-        cwd: command.workingDirectory,
+      const proc = Bun.spawn(commandDetails.command.split(/\s+/g), {
+        cwd: commandDetails.workingDirectory,
         env: { ...process.env, FORCE_COLOR: "1" },
         stdout: "pipe",
         stderr: "pipe",
@@ -145,7 +145,7 @@ export const runScript = handleCommand(
       return {
         scriptName,
         workspace,
-        command,
+        command: commandDetails,
         success: proc.exitCode === 0,
         exitCode: proc.exitCode!,
         startTime,

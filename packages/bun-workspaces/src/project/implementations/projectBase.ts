@@ -8,7 +8,7 @@ import type {
   Project,
   ScriptMetadata,
 } from "../project";
-import { createScriptCommand } from "../scriptCommand";
+import { createScriptCommand } from "../runScript";
 
 export abstract class ProjectBase implements Project {
   public abstract readonly name: string;
