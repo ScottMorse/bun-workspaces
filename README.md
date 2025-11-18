@@ -48,7 +48,8 @@ bw run my-script --args "--my --args=<workspace>"
 import { createFileSystemProject } from "bun-workspaces";
 
 const project = createFileSystemProject({
-  rootDirectory: "/path/to/your/project",
+  // typically a git repository root
+  rootDirectory: "path/to/your/project",
 });
 
 const myWorkspace = project.findWorkspaceByNameOrAlias("my-workspace");
@@ -64,7 +65,7 @@ const {
   workspaceNameOrAlias: myWorkspace.name,
 });
 
-const subprocess = Bun.spawn(command.split(/\\s+/), {
+const subprocess = Bun.spawn(command.split(/\s+/), {
   cwd: workingDirectory,
 });
 ```
