@@ -37,7 +37,7 @@ export type RunScriptOptions = {
  * stdout and stderr chunks and a result object
  * containing exit details.
  */
-export const runScript = async ({
+export const runScript = ({
   scriptCommand,
   outputPrefix = "",
 }: RunScriptOptions) => {

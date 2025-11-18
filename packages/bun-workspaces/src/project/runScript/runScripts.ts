@@ -1,4 +1,8 @@
-import { type RunScriptResult } from "./runScript";
+import {
+  runScript,
+  type RunScriptExit,
+  type RunScriptResult,
+} from "./runScript";
 import { type ScriptCommand } from "./scriptCommand";
 
 export type RunScriptsScript = {
@@ -21,11 +25,11 @@ export type RunScriptsCompleteExit = {
   startTimeISO: string;
   endTimeISO: string;
   durationMs: number;
-  scriptResults: RunScriptsScriptResult[];
+  scriptExits: RunScriptExit[];
 };
 
 export type RunScriptsResult = {
-  scriptResults: RunScriptResult[];
+  scriptResults: AsyncIterable<RunScriptsScriptResult>;
   completeExit: Promise<RunScriptsCompleteExit>;
 };
 
@@ -34,7 +38,95 @@ export type RunScriptsOptions = {
   parallel: boolean;
 };
 
-export const runScripts = async ({
+export const runScripts = ({
   scripts,
   parallel,
-}: RunScriptsOptions): RunScriptsResult => {};
+}: RunScriptsOptions): RunScriptsResult => {
+  const startTime = new Date();
+
+  type ScriptStartTrigger = {
+    promise: Promise<ScriptStartTrigger>;
+    trigger: () => void;
+    index: number;
+  };
+
+  const scriptStartTriggers: ScriptStartTrigger[] = scripts.map((_, index) => {
+    let trigger: () => void = () => {};
+
+    let result = {} as ScriptStartTrigger;
+    const promise = new Promise<ScriptStartTrigger>((res) => {
+      trigger = () => res(result);
+    });
+
+    result = { promise, trigger, index };
+
+    return { promise, trigger, index };
+  });
+
+  const scriptResults: RunScriptsScriptResult[] = scripts.map(
+    () => null as never as RunScriptsScriptResult,
+  );
+
+  function triggerScript(index: number) {
+    const scriptResult = {
+      script: scripts[index],
+      result: runScript(scripts[index]),
+    };
+
+    scriptResults[index] = scriptResult;
+
+    scriptStartTriggers[index].trigger();
+
+    return scriptResult;
+  }
+
+  async function* getScriptResults() {
+    let pendingCount = scripts.length;
+    while (pendingCount > 0) {
+      const { index } = await Promise.race(
+        scriptStartTriggers.map((trigger) => trigger.promise),
+      );
+
+      pendingCount--;
+
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      scriptStartTriggers[index].promise = new Promise<never>(() => {});
+
+      yield scriptResults[index];
+    }
+  }
+
+  const awaitCompleteExit = async () => {
+    if (parallel) {
+      await Promise.all(
+        scripts.map((_, index) => triggerScript(index).result.exit),
+      );
+    } else {
+      for (let index = 0; index < scripts.length; index++) {
+        await triggerScript(index).result.exit;
+      }
+    }
+
+    const scriptExits = await Promise.all(
+      scripts.map((_, index) => scriptResults[index].result.exit),
+    );
+
+    const endTime = new Date();
+    const durationMs = endTime.getTime() - startTime.getTime();
+
+    return {
+      successCount: scriptExits.filter((exit) => exit.success).length,
+      failureCount: scriptExits.filter((exit) => exit.success).length,
+      allSuccess: scriptExits.every((exit) => exit.success),
+      startTimeISO: startTime.toISOString(),
+      endTimeISO: endTime.toISOString(),
+      durationMs,
+      scriptExits,
+    };
+  };
+
+  return {
+    scriptResults: getScriptResults(),
+    completeExit: awaitCompleteExit(),
+  };
+};
