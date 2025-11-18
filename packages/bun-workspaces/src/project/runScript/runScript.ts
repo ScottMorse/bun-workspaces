@@ -16,6 +16,10 @@ export type OutputChunk = {
 export type RunScriptExit = {
   code: number;
   signal: NodeJS.Signals | null;
+  success: boolean;
+  startTimeISO: string;
+  endTimeISO: string;
+  durationMs: number;
 };
 
 export type RunScriptResult = {
@@ -23,11 +27,22 @@ export type RunScriptResult = {
   exit: Promise<RunScriptExit>;
 };
 
-export interface RunScriptOptions {
+export type RunScriptOptions = {
   scriptCommand: ScriptCommand;
-}
+  outputPrefix?: string;
+};
 
-export const runScript = async ({ scriptCommand }: RunScriptOptions) => {
+/**
+ * Run some script and get an async output stream of
+ * stdout and stderr chunks and a result object
+ * containing exit details.
+ */
+export const runScript = async ({
+  scriptCommand,
+  outputPrefix = "",
+}: RunScriptOptions) => {
+  const startTime = new Date();
+
   const proc = Bun.spawn(scriptCommand.command.split(/\s+/g), {
     cwd: scriptCommand.workingDirectory,
     env: { ...process.env, FORCE_COLOR: "1" },
@@ -36,12 +51,12 @@ export const runScript = async ({ scriptCommand }: RunScriptOptions) => {
   });
 
   async function* pipeOutput(
-    streamName: "stdout" | "stderr",
+    streamName: OutputStreamName,
   ): AsyncIterable<OutputChunk> {
     const stream = proc[streamName];
     if (stream) {
       for await (const chunk of stream) {
-        const text = new TextDecoder().decode(chunk);
+        const text = outputPrefix + new TextDecoder().decode(chunk);
         yield {
           streamName,
           text,
@@ -56,10 +71,17 @@ export const runScript = async ({ scriptCommand }: RunScriptOptions) => {
     pipeOutput("stderr"),
   ]);
 
-  const exit = proc.exited.then((exit) => ({
-    code: exit,
-    signal: proc.signalCode,
-  }));
+  const exit = proc.exited.then<RunScriptExit>((code) => {
+    const endTime = new Date();
+    return {
+      code,
+      signal: proc.signalCode,
+      success: code === 0,
+      startTimeISO: startTime.toISOString(),
+      endTimeISO: endTime.toISOString(),
+      durationMs: endTime.getTime() - startTime.getTime(),
+    };
+  });
 
   return { output, exit };
 };

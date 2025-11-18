@@ -1,3 +1,4 @@
+/** Run multiple async iterables in parallel and yield the results in the order they are completed. */
 export const mergeAsyncIterables = <T>(
   iterables: AsyncIterable<T>[],
 ): AsyncIterable<T> => ({
@@ -5,24 +6,23 @@ export const mergeAsyncIterables = <T>(
     const iterators = iterables.map((it) => it[Symbol.asyncIterator]());
     type NextState = { index: number; result: IteratorResult<T> };
 
-    const makeNext = (index: number) =>
+    const callNext = (index: number) =>
       iterators[index].next().then((result): NextState => ({ index, result }));
 
-    const nexts = iterators.map((_, i) => makeNext(i));
+    const nextCalls = iterators.map((_, i) => callNext(i));
 
     let activeCount = iterators.length;
     while (activeCount > 0) {
-      const { index, result } = await Promise.race(nexts);
+      const { index, result } = await Promise.race(nextCalls);
       if (result.done) {
         activeCount--;
-        // replace with a never-resolving promise so race ignores this iterator
         // eslint-disable-next-line @typescript-eslint/no-empty-function
-        nexts[index] = new Promise<never>(() => {});
+        nextCalls[index] = new Promise<never>(() => {});
         continue;
       }
 
-      // schedule next before yielding to keep it “live”
-      nexts[index] = makeNext(index);
+      nextCalls[index] = callNext(index);
+
       yield result.value;
     }
   },
