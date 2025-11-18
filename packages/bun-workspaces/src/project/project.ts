@@ -1,5 +1,5 @@
 import type { Workspace } from "../workspaces";
-import type { ScriptCommand, ScriptCommandMethod } from "./runScript";
+import type { ScriptCommand, WorkspaceScriptCommandMethod } from "./runScript";
 
 /** Metadata about a {@link Project}'s script, including the workspaces that have it in their package.json */
 export type ScriptMetadata = {
@@ -18,7 +18,7 @@ export type CreateProjectScriptCommandOptions = {
    * Either run in the workspace directory or use bun's --filter option.
    * Defaults to "cd".
    */
-  method?: ScriptCommandMethod;
+  method?: WorkspaceScriptCommandMethod;
   /** The arguments to append to the command */
   args?: string;
 };

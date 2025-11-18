@@ -38,6 +38,7 @@ export type RunScriptsOptions = {
   parallel: boolean;
 };
 
+/** Run a list of scripts */
 export const runScripts = ({
   scripts,
   parallel,
@@ -89,8 +90,9 @@ export const runScripts = ({
 
       pendingCount--;
 
-      // eslint-disable-next-line @typescript-eslint/no-empty-function
-      scriptStartTriggers[index].promise = new Promise<never>(() => {});
+      scriptStartTriggers[index].promise = new Promise<never>(() => {
+        void 0;
+      });
 
       yield scriptResults[index];
     }
@@ -112,15 +114,14 @@ export const runScripts = ({
     );
 
     const endTime = new Date();
-    const durationMs = endTime.getTime() - startTime.getTime();
 
     return {
       successCount: scriptExits.filter((exit) => exit.success).length,
-      failureCount: scriptExits.filter((exit) => exit.success).length,
+      failureCount: scriptExits.filter((exit) => !exit.success).length,
       allSuccess: scriptExits.every((exit) => exit.success),
       startTimeISO: startTime.toISOString(),
       endTimeISO: endTime.toISOString(),
-      durationMs,
+      durationMs: endTime.getTime() - startTime.getTime(),
       scriptExits,
     };
   };

@@ -8,7 +8,7 @@ import type {
   Project,
   ScriptMetadata,
 } from "../project";
-import { createScriptCommand } from "../runScript";
+import { createWorkspaceScriptCommand } from "../runScript";
 
 export abstract class ProjectBase implements Project {
   public abstract readonly name: string;
@@ -94,7 +94,7 @@ export abstract class ProjectBase implements Project {
     return {
       workspace,
       scriptName: options.scriptName,
-      commandDetails: createScriptCommand({
+      commandDetails: createWorkspaceScriptCommand({
         ...options,
         workspace,
         rootDirectory: path.resolve(this.rootDirectory),

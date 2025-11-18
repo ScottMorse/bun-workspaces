@@ -1,4 +1,5 @@
 import { mergeAsyncIterables } from "../../internal/mergeAsyncIterables";
+import { IS_WINDOWS } from "../../internal/os";
 import { sanitizeAnsi } from "../../internal/regex";
 import type { ScriptCommand } from "./scriptCommand";
 
@@ -43,12 +44,15 @@ export const runScript = ({
 }: RunScriptOptions) => {
   const startTime = new Date();
 
-  const proc = Bun.spawn(scriptCommand.command.split(/\s+/g), {
-    cwd: scriptCommand.workingDirectory,
-    env: { ...process.env, FORCE_COLOR: "1" },
-    stdout: "pipe",
-    stderr: "pipe",
-  });
+  const proc = Bun.spawn(
+    [...(IS_WINDOWS ? ["cmd", "/c"] : ["sh", "-c"]), scriptCommand.command],
+    {
+      cwd: scriptCommand.workingDirectory,
+      env: { ...process.env, FORCE_COLOR: "1" },
+      stdout: "pipe",
+      stderr: "pipe",
+    },
+  );
 
   async function* pipeOutput(
     streamName: OutputStreamName,

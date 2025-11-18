@@ -1,17 +1,18 @@
 import path from "path";
-import type { Workspace } from "../workspaces";
+import type { Workspace } from "../../workspaces";
 
-export const SCRIPT_COMMAND_METHODS = ["cd", "filter"] as const;
+export const WORKSPACE_SCRIPT_COMMAND_METHODS = ["cd", "filter"] as const;
 
-export type ScriptCommandMethod = (typeof SCRIPT_COMMAND_METHODS)[number];
+export type WorkspaceScriptCommandMethod =
+  (typeof WORKSPACE_SCRIPT_COMMAND_METHODS)[number];
 
-export interface CreateScriptCommandOptions {
+export interface CreateWorkspaceScriptCommandOptions {
   /**
    * The method to use to run the script.
    * Either run in the workspace directory or use bun's --filter option.
    * Defaults to "cd".
    */
-  method?: ScriptCommandMethod;
+  method?: WorkspaceScriptCommandMethod;
   /** The name of the script to run */
   scriptName: string;
   /** The arguments to append to the command */
@@ -24,6 +25,7 @@ export interface CreateScriptCommandOptions {
 
 const spaceArgs = (args: string) => (args ? ` ${args.trim()}` : "");
 
+/** Basic metadata to run a script, the command string and the directory to run it in */
 export interface ScriptCommand {
   /** The command string to run */
   command: string;
@@ -32,8 +34,8 @@ export interface ScriptCommand {
 }
 
 const METHODS: Record<
-  ScriptCommandMethod,
-  (options: CreateScriptCommandOptions) => ScriptCommand
+  WorkspaceScriptCommandMethod,
+  (options: CreateWorkspaceScriptCommandOptions) => ScriptCommand
 > = {
   cd: ({ scriptName, workspace, rootDirectory, args }) => ({
     workingDirectory: path.resolve(rootDirectory, workspace.path),
@@ -47,5 +49,6 @@ const METHODS: Record<
   }),
 };
 
-export const createScriptCommand = (options: CreateScriptCommandOptions) =>
-  METHODS[options.method ?? "cd"](options);
+export const createWorkspaceScriptCommand = (
+  options: CreateWorkspaceScriptCommandOptions,
+) => METHODS[options.method ?? "cd"](options);
