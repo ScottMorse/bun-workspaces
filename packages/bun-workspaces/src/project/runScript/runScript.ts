@@ -30,7 +30,6 @@ export type RunScriptResult = {
 
 export type RunScriptOptions = {
   scriptCommand: ScriptCommand;
-  outputPrefix?: string;
 };
 
 /**
@@ -38,10 +37,7 @@ export type RunScriptOptions = {
  * stdout and stderr chunks and a result object
  * containing exit details.
  */
-export const runScript = ({
-  scriptCommand,
-  outputPrefix = "",
-}: RunScriptOptions) => {
+export const runScript = ({ scriptCommand }: RunScriptOptions) => {
   const startTime = new Date();
 
   const proc = Bun.spawn(
@@ -60,7 +56,7 @@ export const runScript = ({
     const stream = proc[streamName];
     if (stream) {
       for await (const chunk of stream) {
-        const text = outputPrefix + new TextDecoder().decode(chunk);
+        const text = new TextDecoder().decode(chunk);
         yield {
           streamName,
           text,

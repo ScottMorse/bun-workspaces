@@ -7,7 +7,6 @@ import { type ScriptCommand } from "./scriptCommand";
 
 export type RunScriptsScript = {
   name: string;
-  outputPrefix: string;
   scriptCommand: ScriptCommand;
 };
 

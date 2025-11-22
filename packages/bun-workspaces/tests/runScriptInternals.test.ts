@@ -1,0 +1,378 @@
+import { test, expect, describe } from "bun:test";
+import { mergeAsyncIterables } from "../src/internal/mergeAsyncIterables";
+import {
+  runScript,
+  runScripts,
+  type OutputChunk,
+} from "../src/project/runScript";
+
+// Sanity tests for lower level runScript and runScripts functions
+
+describe("Run Single Script", () => {
+  test("Simple success", async () => {
+    const result = await runScript({
+      scriptCommand: {
+        command: "echo 'test-script 1'",
+        workingDirectory: ".",
+      },
+    });
+
+    let outputCount = 0;
+    for await (const outputChunk of result.output) {
+      expect(outputChunk.streamName).toBe("stdout");
+      expect(outputChunk.text).toMatch(`test-script ${outputCount + 1}`);
+      expect(outputChunk.textAnsiSanitized).toMatch(
+        `test-script ${outputCount + 1}`,
+      );
+      outputCount++;
+    }
+    const exit = await result.exit;
+    expect(exit).toEqual({
+      code: 0,
+      success: true,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      signal: null,
+    });
+    expect(new Date(exit.startTimeISO).getTime()).toBeLessThan(
+      new Date(exit.endTimeISO).getTime(),
+    );
+    expect(exit.durationMs).toBe(
+      new Date(exit.endTimeISO).getTime() -
+        new Date(exit.startTimeISO).getTime(),
+    );
+    expect(outputCount).toBe(1);
+  });
+
+  test("Simple failure", async () => {
+    const result = await runScript({
+      scriptCommand: {
+        command: "echo 'test-script 1' && exit 2",
+        workingDirectory: ".",
+      },
+    });
+
+    let outputCount = 0;
+    for await (const outputChunk of result.output) {
+      expect(outputChunk.streamName).toBe("stdout");
+      expect(outputChunk.text).toMatch(`test-script ${outputCount + 1}`);
+      expect(outputChunk.textAnsiSanitized).toMatch(
+        `test-script ${outputCount + 1}`,
+      );
+      outputCount++;
+    }
+    const exit = await result.exit;
+    expect(exit).toEqual({
+      code: 2,
+      success: false,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      signal: null,
+    });
+    expect(new Date(exit.startTimeISO).getTime()).toBeLessThan(
+      new Date(exit.endTimeISO).getTime(),
+    );
+    expect(exit.durationMs).toBe(
+      new Date(exit.endTimeISO).getTime() -
+        new Date(exit.startTimeISO).getTime(),
+    );
+    expect(outputCount).toBe(1);
+  });
+
+  test("Simple failure with signal", async () => {
+    const result = await runScript({
+      scriptCommand: {
+        command: "echo 'test-script 1' && kill -9 $$",
+        workingDirectory: ".",
+      },
+    });
+
+    let outputCount = 0;
+    for await (const outputChunk of result.output) {
+      expect(outputChunk.streamName).toBe("stdout");
+      expect(outputChunk.text).toMatch(`test-script ${outputCount + 1}`);
+      expect(outputChunk.textAnsiSanitized).toMatch(
+        `test-script ${outputCount + 1}`,
+      );
+      outputCount++;
+    }
+    const exit = await result.exit;
+    expect(exit).toEqual({
+      code: 137,
+      success: false,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      signal: "SIGKILL",
+    });
+  });
+
+  test("With stdout and stderr", async () => {
+    const result = await runScript({
+      scriptCommand: {
+        command:
+          "echo 'test-script 1' && sleep 0.1 && echo 'test-script 2' >&2 && sleep 0.1 && echo 'test-script 3'",
+        workingDirectory: ".",
+      },
+    });
+
+    let outputCount = 0;
+    for await (const outputChunk of result.output) {
+      expect(outputChunk.streamName).toBe(
+        outputCount === 1 ? "stderr" : "stdout",
+      );
+      expect(outputChunk.text).toMatch(`test-script ${outputCount + 1}`);
+      expect(outputChunk.textAnsiSanitized).toMatch(
+        `test-script ${outputCount + 1}`,
+      );
+      outputCount++;
+    }
+
+    const exit = await result.exit;
+    expect(exit).toEqual({
+      code: 0,
+      success: true,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      signal: null,
+    });
+  });
+});
+
+describe("Run Multiple Scripts", () => {
+  test("Run Scripts - simple series", async () => {
+    const result = await runScripts({
+      scripts: [
+        {
+          name: "test-script",
+          scriptCommand: {
+            command: "echo 'test-script 1'",
+            workingDirectory: "",
+          },
+        },
+        {
+          name: "test-script",
+          scriptCommand: {
+            command: "echo 'test-script 2'",
+            workingDirectory: "",
+          },
+        },
+      ],
+      parallel: false,
+    });
+
+    let i = 0;
+    for await (const scriptResult of result.scriptResults) {
+      expect(scriptResult.script.name).toBe("test-script");
+      for await (const outputChunk of scriptResult.result.output) {
+        expect(outputChunk.text).toMatch(`test-script ${i + 1}`);
+        expect(outputChunk.textAnsiSanitized).toMatch(`test-script ${i + 1}`);
+      }
+      const exit = await scriptResult.result.exit;
+      expect(exit.code).toBe(0);
+      expect(exit.success).toBe(true);
+      expect(exit.startTimeISO).toBeDefined();
+      expect(exit.endTimeISO).toBeDefined();
+      expect(new Date(exit.startTimeISO).getTime()).toBeLessThan(
+        new Date(exit.endTimeISO).getTime(),
+      );
+      expect(exit.durationMs).toBe(
+        new Date(exit.endTimeISO).getTime() -
+          new Date(exit.startTimeISO).getTime(),
+      );
+      i++;
+    }
+
+    const completeExit = await result.completeExit;
+    expect(completeExit).toEqual({
+      allSuccess: true,
+      failureCount: 0,
+      successCount: 2,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      scriptExits: [
+        {
+          code: 0,
+          success: true,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+        },
+        {
+          code: 0,
+          success: true,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+        },
+      ],
+    });
+  });
+
+  test("Run Scripts - simple series with failure", async () => {
+    const result = await runScripts({
+      scripts: [
+        {
+          name: "test-script",
+          scriptCommand: {
+            command: "echo 'test-script 1' && exit 1",
+            workingDirectory: "",
+          },
+        },
+        {
+          name: "test-script",
+          scriptCommand: {
+            command: "echo 'test-script 2'",
+            workingDirectory: "",
+          },
+        },
+      ],
+      parallel: false,
+    });
+
+    let i = 0;
+    for await (const scriptResult of result.scriptResults) {
+      expect(scriptResult.script.name).toBe("test-script");
+      for await (const outputChunk of scriptResult.result.output) {
+        expect(outputChunk.text).toMatch(`test-script ${i + 1}`);
+        expect(outputChunk.textAnsiSanitized).toMatch(`test-script ${i + 1}`);
+      }
+      const exit = await scriptResult.result.exit;
+      expect(exit.code).toBe(i === 0 ? 1 : 0);
+      expect(exit.success).toBe(i === 0 ? false : true);
+      expect(exit.startTimeISO).toBeDefined();
+      expect(exit.endTimeISO).toBeDefined();
+      expect(new Date(exit.startTimeISO).getTime()).toBeLessThan(
+        new Date(exit.endTimeISO).getTime(),
+      );
+      expect(exit.durationMs).toBe(
+        new Date(exit.endTimeISO).getTime() -
+          new Date(exit.startTimeISO).getTime(),
+      );
+      i++;
+    }
+
+    const completeExit = await result.completeExit;
+    expect(completeExit).toEqual({
+      allSuccess: false,
+      failureCount: 1,
+      successCount: 1,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      scriptExits: [
+        {
+          code: 1,
+          success: false,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+        },
+        {
+          code: 0,
+          success: true,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+        },
+      ],
+    });
+  });
+
+  test("Run Scripts - simple parallel", async () => {
+    const scripts = [
+      {
+        name: "test-script",
+        scriptCommand: {
+          command: "sleep 0.5 && echo 'test-script 1'",
+          workingDirectory: "",
+        },
+      },
+      {
+        name: "test-script",
+        scriptCommand: {
+          command: "echo 'test-script 2' && exit 2",
+          workingDirectory: "",
+        },
+      },
+      {
+        name: "test-script",
+        scriptCommand: {
+          command: "sleep 0.25 && echo 'test-script 3'",
+          workingDirectory: "",
+        },
+      },
+    ];
+
+    const result = await runScripts({
+      scripts,
+      parallel: true,
+    });
+
+    const comboOutputs: AsyncIterable<OutputChunk>[] = [];
+    let i = 0;
+    for await (const scriptResult of result.scriptResults) {
+      expect(scriptResult.script.scriptCommand.command).toBe(
+        scripts[i].scriptCommand.command,
+      );
+      comboOutputs.push(scriptResult.result.output);
+      i++;
+    }
+
+    let j = 0;
+    for await (const outputChunk of mergeAsyncIterables(comboOutputs)) {
+      expect(outputChunk.streamName).toBe("stdout");
+      expect(outputChunk.text).toMatch(
+        `test-script ${j === 0 ? 2 : j === 1 ? 3 : 1}`,
+      );
+      expect(outputChunk.textAnsiSanitized).toMatch(
+        `test-script ${j === 0 ? 2 : j === 1 ? 3 : 1}`,
+      );
+      j++;
+    }
+
+    const completeExit = await result.completeExit;
+    expect(completeExit).toEqual({
+      allSuccess: false,
+      failureCount: 1,
+      successCount: 2,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      scriptExits: [
+        {
+          code: 0,
+          success: true,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+        },
+        {
+          code: 2,
+          success: false,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+        },
+        {
+          code: 0,
+          success: true,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+        },
+      ],
+    });
+  });
+});
