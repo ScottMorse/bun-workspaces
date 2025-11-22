@@ -151,6 +151,16 @@ export default defineConfig({
   themeConfig: {
     socialLinks: [
       {
+        icon: {
+          svg: fs.readFileSync(
+            path.resolve(__dirname, "src/docs/public/buy-me-a-coffee-icon.svg"),
+            "utf8",
+          ),
+        },
+        mode: "link",
+        content: "https://buymeacoffee.com/scottmorse",
+      },
+      {
         icon: "github",
         mode: "link",
         content: GITHUB_REPO_URL,
