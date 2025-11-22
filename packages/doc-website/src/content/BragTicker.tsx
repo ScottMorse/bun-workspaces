@@ -13,6 +13,7 @@ const BRAGS = [
   "New features always on the way",
   "We listen to our users",
   "Configurable logging",
+  "Validations that help protect project hygiene",
 ];
 
 export const BragTicker = () => {
