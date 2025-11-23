@@ -153,4 +153,3 @@ const runManyScripts = async () => {
 ```
 
 _`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Oven. This project aims to enhance enhance the experience of Bun for its users._
-a
