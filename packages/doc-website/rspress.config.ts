@@ -11,7 +11,7 @@ const NPM_PACKAGE_URL = "https://www.npmjs.com/package/bun-workspaces";
 
 const TITLE = "bun-workspaces — Bun Workspaces CLI | Documentation";
 const DESCRIPTION =
-  "Documentation for bun-workspaces: A CLI for developers using the Bun runtime to manage monorepos. Lists workspaces and runs workspace scripts in parallel, with an API for JavaScript or TypeScript.";
+  "Documentation for bun-workspaces: A CLI and TypeScript API for developers using the Bun runtime to manage monorepos and run scripts across their workspaces.";
 
 const LD_JSON = {
   "@context": "https://schema.org",

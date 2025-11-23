@@ -110,4 +110,8 @@ if (import.meta.main) {
   console.log("\nCreate a release at " + releaseUrl + "\n");
 
   await runScript(["xdg-open", releaseUrl]);
+
+  console.log("Move to latest with the following:");
+  console.log(`npm dist-tag add bun-workspaces@${version} latest`);
+  console.log(`npm dist-tag rm bun-workspaces next`);
 }

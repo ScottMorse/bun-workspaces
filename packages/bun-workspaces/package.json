@@ -1,6 +1,6 @@
 {
   "name": "bun-workspaces",
-  "version": "1.0.0-alpha.17",
+  "version": "1.0.0-alpha.18",
   "main": "src/index.ts",
   "private": true,
   "homepage": "https://bunworkspaces.com",

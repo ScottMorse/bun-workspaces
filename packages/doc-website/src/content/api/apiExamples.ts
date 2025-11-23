@@ -117,19 +117,19 @@ const { output, exit } = project.runWorkspaceScript({
 
 // Get a stream of the script subprocess's output
 for await (const { text, textNoAnsi, streamName } of output) {
-  console.log(text); // the output chunk's content (string)
-  console.log(textNoAnsi); // text with ANSI codes sanitized (string)
-  console.log(streamName); // the output stream, "stdout" or "stderr"
+  console.log(text); // The output chunk's content (string)
+  console.log(textNoAnsi); // Text with ANSI codes sanitized (string)
+  console.log(streamName); // The output stream, "stdout" or "stderr"
 }
 
 // Get data about the script execution after it exits
 const exitResult = await exit;
 
-console.log(exitResult.exitCode); // the exit code (number)
-console.log(exitResult.signal); // the exit signal (string), or null
+console.log(exitResult.exitCode); // The exit code (number)
+console.log(exitResult.signal); // The exit signal (string), or null
 console.log(exitResult.success); // true if exit code was 0
-console.log(exitResult.startTimeISO); // Start time (ISO string)
-console.log(exitResult.endTimeISO); // End time (ISO string)
+console.log(exitResult.startTimeISO); // Start time (string)
+console.log(exitResult.endTimeISO); // End time (string)
 console.log(exitResult.durationMs); // Duration in milliseconds (number)
 console.log(exitResult.metadata.workspace); // The target workspace (Workspace)
 
@@ -139,7 +139,7 @@ export const RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE = `
 
 const { output, summary } = project.runScriptAcrossWorkspaces({
   workspacePatterns: ["*"], // this will run in all workspaces that have my-script
-  script: "my-script",
+  script: "my-script", // the package.json "scripts" field name to run
   args: "--my --appended --args", // optional, arguments to add to the command
   parallel: true, // optional, run the scripts in parallel
 });
@@ -158,18 +158,18 @@ for await (const { outputChunk, scriptMetadata } of output) {
 // Get final summary data and script exit details after all scripts have completed
 const summaryResult = await summary;
 
-console.log(summaryResult.totalCount); // total number of scripts
+console.log(summaryResult.totalCount); // Total number of scripts
 console.log(summaryResult.allSuccess); // true if all scripts succeeded
-console.log(summaryResult.successCount); // number of scripts that succeeded
-console.log(summaryResult.failureCount); // number of scripts that failed
-console.log(summaryResult.startTimeISO); // start time (ISO string)
-console.log(summaryResult.endTimeISO); // end time (ISO string)
-console.log(summaryResult.durationMs); // total duration in milliseconds (number)
+console.log(summaryResult.successCount); // Number of scripts that succeeded
+console.log(summaryResult.failureCount); // Number of scripts that failed
+console.log(summaryResult.startTimeISO); // Start time (string)
+console.log(summaryResult.endTimeISO); // End time (string)
+console.log(summaryResult.durationMs); // Total duration in milliseconds (number)
 
-// The exit result of each script as \`project.runWorkspaceScript\` resolves
+// The exit details of each workspace script
 for (const exitResult of summaryResult.scriptResults) {
-  console.log(exitResult.exitCode); // the exit code (number)
-  console.log(exitResult.signal); // the exit signal (string), or null
+  console.log(exitResult.exitCode); // The exit code (number)
+  console.log(exitResult.signal); // The exit signal (string), or null
   console.log(exitResult.success); // true if exit code was 0
   console.log(exitResult.startTimeISO); // Start time (ISO string)
   console.log(exitResult.endTimeISO); // End time (ISO string)
