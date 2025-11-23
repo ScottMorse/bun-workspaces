@@ -1,5 +1,7 @@
+import { createAsyncIterableQueue } from "../../internal/asyncIterableQueue";
 import {
   runScript,
+  type OutputChunk,
   type RunScriptExit,
   type RunScriptResult,
 } from "./runScript";
@@ -15,7 +17,7 @@ export type RunScriptsScriptResult<ScriptMetadata extends object = object> = {
   result: RunScriptResult<ScriptMetadata>;
 };
 
-export type RunScriptsCompleteExit<ScriptMetadata extends object = object> = {
+export type RunScriptsCompletion<ScriptMetadata extends object = object> = {
   successCount: number;
   failureCount: number;
   allSuccess: boolean;
@@ -25,9 +27,14 @@ export type RunScriptsCompleteExit<ScriptMetadata extends object = object> = {
   scriptExits: RunScriptExit<ScriptMetadata>[];
 };
 
+export type RunScriptsOutput<ScriptMetadata extends object = object> = {
+  outputChunk: OutputChunk;
+  scriptMetadata: ScriptMetadata;
+};
+
 export type RunScriptsResult<ScriptMetadata extends object = object> = {
-  scriptResults: AsyncIterable<RunScriptsScriptResult<ScriptMetadata>>;
-  completeExit: Promise<RunScriptsCompleteExit<ScriptMetadata>>;
+  output: AsyncIterable<RunScriptsOutput<ScriptMetadata>, void>;
+  completion: Promise<RunScriptsCompletion<ScriptMetadata>>;
 };
 
 export type RunScriptsOptions<ScriptMetadata extends object = object> = {
@@ -61,6 +68,9 @@ export const runScripts = <ScriptMetadata extends object = object>({
     return { promise, trigger, index };
   });
 
+  const outputQueue =
+    createAsyncIterableQueue<RunScriptsOutput<ScriptMetadata>>();
+
   const scriptResults: RunScriptsScriptResult<ScriptMetadata>[] = scripts.map(
     () => null as never as RunScriptsScriptResult<ScriptMetadata>,
   );
@@ -78,24 +88,38 @@ export const runScripts = <ScriptMetadata extends object = object>({
     return scriptResult;
   }
 
-  async function* getScriptResults() {
-    let pendingCount = scripts.length;
-    while (pendingCount > 0) {
+  const awaitScriptResults = async () => {
+    const outputReaders: Promise<void>[] = [];
+
+    let pendingScriptCount = scripts.length;
+    while (pendingScriptCount > 0) {
       const { index } = await Promise.race(
         scriptStartTriggers.map((trigger) => trigger.promise),
       );
 
-      pendingCount--;
+      pendingScriptCount--;
 
       scriptStartTriggers[index].promise = new Promise<never>(() => {
         void 0;
       });
 
-      yield scriptResults[index];
+      outputReaders.push(
+        (async () => {
+          for await (const chunk of scriptResults[index].result.output) {
+            outputQueue.push({
+              outputChunk: chunk,
+              scriptMetadata: scripts[index].metadata,
+            });
+          }
+        })(),
+      );
     }
-  }
 
-  const awaitCompleteExit = async () => {
+    await Promise.all(outputReaders);
+    outputQueue.close();
+  };
+
+  const awaitCompletion = async () => {
     if (parallel) {
       await Promise.all(
         scripts.map((_, index) => triggerScript(index).result.exit),
@@ -123,8 +147,10 @@ export const runScripts = <ScriptMetadata extends object = object>({
     };
   };
 
+  awaitScriptResults();
+
   return {
-    scriptResults: getScriptResults(),
-    completeExit: awaitCompleteExit(),
+    output: outputQueue,
+    completion: awaitCompletion(),
   };
 };

@@ -29,12 +29,13 @@ describe("Run Single Script", () => {
     }
     const exit = await result.exit;
     expect(exit).toEqual({
-      code: 0,
+      exitCode: 0,
       success: true,
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
       signal: null,
+      metadata: {},
     });
     expect(new Date(exit.startTimeISO).getTime()).toBeLessThan(
       new Date(exit.endTimeISO).getTime(),
@@ -66,12 +67,13 @@ describe("Run Single Script", () => {
     }
     const exit = await result.exit;
     expect(exit).toEqual({
-      code: 2,
+      exitCode: 2,
       success: false,
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
       signal: null,
+      metadata: {},
     });
     expect(new Date(exit.startTimeISO).getTime()).toBeLessThan(
       new Date(exit.endTimeISO).getTime(),
@@ -103,12 +105,13 @@ describe("Run Single Script", () => {
     }
     const exit = await result.exit;
     expect(exit).toEqual({
-      code: 137,
+      exitCode: 137,
       success: false,
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
       signal: "SIGKILL",
+      metadata: {},
     });
   });
 
@@ -136,12 +139,13 @@ describe("Run Single Script", () => {
 
     const exit = await result.exit;
     expect(exit).toEqual({
-      code: 0,
+      exitCode: 0,
       success: true,
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
       signal: null,
+      metadata: {},
     });
   });
 });
@@ -152,7 +156,7 @@ describe("Run Multiple Scripts", () => {
       scripts: [
         {
           metadata: {
-            name: "test-script",
+            name: "test-script name 1",
           },
           scriptCommand: {
             command: "echo 'test-script 1'",
@@ -161,7 +165,7 @@ describe("Run Multiple Scripts", () => {
         },
         {
           metadata: {
-            name: "test-script",
+            name: "test-script name 2",
           },
           scriptCommand: {
             command: "echo 'test-script 2'",
@@ -173,29 +177,18 @@ describe("Run Multiple Scripts", () => {
     });
 
     let i = 0;
-    for await (const scriptResult of result.scriptResults) {
-      expect(scriptResult.result.metadata.name).toBe("test-script");
-      for await (const outputChunk of scriptResult.result.output) {
-        expect(outputChunk.text).toMatch(`test-script ${i + 1}`);
-        expect(outputChunk.textAnsiSanitized).toMatch(`test-script ${i + 1}`);
-      }
-      const exit = await scriptResult.result.exit;
-      expect(exit.code).toBe(0);
-      expect(exit.success).toBe(true);
-      expect(exit.startTimeISO).toBeDefined();
-      expect(exit.endTimeISO).toBeDefined();
-      expect(new Date(exit.startTimeISO).getTime()).toBeLessThan(
-        new Date(exit.endTimeISO).getTime(),
-      );
-      expect(exit.durationMs).toBe(
-        new Date(exit.endTimeISO).getTime() -
-          new Date(exit.startTimeISO).getTime(),
-      );
+    for await (const {
+      outputChunk: output,
+      scriptMetadata: metadata,
+    } of result.output) {
+      expect(metadata.name).toBe(`test-script name ${i + 1}`);
+      expect(output.text).toMatch(`test-script ${i + 1}`);
+      expect(output.textAnsiSanitized).toMatch(`test-script ${i + 1}`);
       i++;
     }
 
-    const completeExit = await result.completeExit;
-    expect(completeExit).toEqual({
+    const completion = await result.completion;
+    expect(completion).toEqual({
       allSuccess: true,
       failureCount: 0,
       successCount: 2,
@@ -204,22 +197,26 @@ describe("Run Multiple Scripts", () => {
       durationMs: expect.any(Number),
       scriptExits: [
         {
-          code: 0,
+          exitCode: 0,
           success: true,
           startTimeISO: expect.any(String),
           endTimeISO: expect.any(String),
           durationMs: expect.any(Number),
           signal: null,
-          name: "test-script",
+          metadata: {
+            name: "test-script name 1",
+          },
         },
         {
-          code: 0,
+          exitCode: 0,
           success: true,
           startTimeISO: expect.any(String),
           endTimeISO: expect.any(String),
           durationMs: expect.any(Number),
           signal: null,
-          name: "test-script",
+          metadata: {
+            name: "test-script name 2",
+          },
         },
       ],
     });
@@ -230,7 +227,7 @@ describe("Run Multiple Scripts", () => {
       scripts: [
         {
           metadata: {
-            name: "test-script",
+            name: "test-script name 1",
           },
           scriptCommand: {
             command: "echo 'test-script 1' && exit 1",
@@ -239,7 +236,7 @@ describe("Run Multiple Scripts", () => {
         },
         {
           metadata: {
-            name: "test-script",
+            name: "test-script name 2",
           },
           scriptCommand: {
             command: "echo 'test-script 2'",
@@ -251,29 +248,18 @@ describe("Run Multiple Scripts", () => {
     });
 
     let i = 0;
-    for await (const scriptResult of result.scriptResults) {
-      expect(scriptResult.result.metadata.name).toBe("test-script");
-      for await (const outputChunk of scriptResult.result.output) {
-        expect(outputChunk.text).toMatch(`test-script ${i + 1}`);
-        expect(outputChunk.textAnsiSanitized).toMatch(`test-script ${i + 1}`);
-      }
-      const exit = await scriptResult.result.exit;
-      expect(exit.code).toBe(i === 0 ? 1 : 0);
-      expect(exit.success).toBe(i === 0 ? false : true);
-      expect(exit.startTimeISO).toBeDefined();
-      expect(exit.endTimeISO).toBeDefined();
-      expect(new Date(exit.startTimeISO).getTime()).toBeLessThan(
-        new Date(exit.endTimeISO).getTime(),
-      );
-      expect(exit.durationMs).toBe(
-        new Date(exit.endTimeISO).getTime() -
-          new Date(exit.startTimeISO).getTime(),
-      );
+    for await (const {
+      outputChunk: output,
+      scriptMetadata: metadata,
+    } of result.output) {
+      expect(metadata.name).toBe(`test-script name ${i + 1}`);
+      expect(output.text).toMatch(`test-script ${i + 1}`);
+      expect(output.textAnsiSanitized).toMatch(`test-script ${i + 1}`);
       i++;
     }
 
-    const completeExit = await result.completeExit;
-    expect(completeExit).toEqual({
+    const completion = await result.completion;
+    expect(completion).toEqual({
       allSuccess: false,
       failureCount: 1,
       successCount: 1,
@@ -282,22 +268,26 @@ describe("Run Multiple Scripts", () => {
       durationMs: expect.any(Number),
       scriptExits: [
         {
-          code: 1,
+          exitCode: 1,
           success: false,
           startTimeISO: expect.any(String),
           endTimeISO: expect.any(String),
           durationMs: expect.any(Number),
           signal: null,
-          name: "test-script",
+          metadata: {
+            name: "test-script name 1",
+          },
         },
         {
-          code: 0,
+          exitCode: 0,
           success: true,
           startTimeISO: expect.any(String),
           endTimeISO: expect.any(String),
           durationMs: expect.any(Number),
           signal: null,
-          name: "test-script",
+          metadata: {
+            name: "test-script name 2",
+          },
         },
       ],
     });
@@ -307,7 +297,7 @@ describe("Run Multiple Scripts", () => {
     const scripts = [
       {
         metadata: {
-          name: "test-script",
+          name: "test-script name 1",
         },
         scriptCommand: {
           command: "sleep 0.5 && echo 'test-script 1'",
@@ -316,7 +306,7 @@ describe("Run Multiple Scripts", () => {
       },
       {
         metadata: {
-          name: "test-script",
+          name: "test-script name 2",
         },
         scriptCommand: {
           command: "echo 'test-script 2' && exit 2",
@@ -325,7 +315,7 @@ describe("Run Multiple Scripts", () => {
       },
       {
         metadata: {
-          name: "test-script",
+          name: "test-script name 3",
         },
         scriptCommand: {
           command: "sleep 0.25 && echo 'test-script 3'",
@@ -339,28 +329,18 @@ describe("Run Multiple Scripts", () => {
       parallel: true,
     });
 
-    const comboOutputs: AsyncIterable<OutputChunk>[] = [];
     let i = 0;
-    for await (const scriptResult of result.scriptResults) {
-      expect(scriptResult.result.metadata.name).toBe(scripts[i].metadata.name);
-      comboOutputs.push(scriptResult.result.output);
+    for await (const { outputChunk, scriptMetadata } of result.output) {
+      expect(outputChunk.streamName).toBe("stdout");
+      const scriptNum = i === 0 ? 2 : i === 1 ? 3 : 1;
+      expect(scriptMetadata.name).toBe(`test-script name ${scriptNum}`);
+      expect(outputChunk.text).toMatch(`test-script ${scriptNum}`);
+      expect(outputChunk.textAnsiSanitized).toMatch(`test-script ${scriptNum}`);
       i++;
     }
 
-    let j = 0;
-    for await (const outputChunk of mergeAsyncIterables(comboOutputs)) {
-      expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.text).toMatch(
-        `test-script ${j === 0 ? 2 : j === 1 ? 3 : 1}`,
-      );
-      expect(outputChunk.textAnsiSanitized).toMatch(
-        `test-script ${j === 0 ? 2 : j === 1 ? 3 : 1}`,
-      );
-      j++;
-    }
-
-    const completeExit = await result.completeExit;
-    expect(completeExit).toEqual({
+    const completion = await result.completion;
+    expect(completion).toEqual({
       allSuccess: false,
       failureCount: 1,
       successCount: 2,
@@ -369,31 +349,37 @@ describe("Run Multiple Scripts", () => {
       durationMs: expect.any(Number),
       scriptExits: [
         {
-          code: 0,
+          exitCode: 0,
           success: true,
           startTimeISO: expect.any(String),
           endTimeISO: expect.any(String),
           durationMs: expect.any(Number),
           signal: null,
-          name: "test-script",
+          metadata: {
+            name: "test-script name 1",
+          },
         },
         {
-          code: 2,
+          exitCode: 2,
           success: false,
           startTimeISO: expect.any(String),
           endTimeISO: expect.any(String),
           durationMs: expect.any(Number),
           signal: null,
-          name: "test-script",
+          metadata: {
+            name: "test-script name 2",
+          },
         },
         {
-          code: 0,
+          exitCode: 0,
           success: true,
           startTimeISO: expect.any(String),
           endTimeISO: expect.any(String),
           durationMs: expect.any(Number),
           signal: null,
-          name: "test-script",
+          metadata: {
+            name: "test-script name 3",
+          },
         },
       ],
     });

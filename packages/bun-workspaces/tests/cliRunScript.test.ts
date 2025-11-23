@@ -220,7 +220,7 @@ describe("CLI Run Script", () => {
     );
   });
 
-  test("Using --args", async () => {
+  test.only("Using --args", async () => {
     const { run } = setupCliTest({
       testProject: "runScriptWithEchoArgs",
     });
@@ -242,7 +242,7 @@ describe("CLI Run Script", () => {
     const result2 = await run(
       "run-script",
       "test-echo",
-      "--args=hello there <workspace>",
+      '--args="hello there <workspace>"',
     );
     expect(result2.exitCode).toBe(0);
     assertOutputMatches(

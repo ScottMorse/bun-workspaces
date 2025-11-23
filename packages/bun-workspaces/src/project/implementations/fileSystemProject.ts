@@ -3,12 +3,7 @@ import path from "path";
 import { findWorkspaces, type Workspace } from "../../workspaces";
 import { ERRORS } from "../errors";
 import type { Project } from "../project";
-import {
-  runScript,
-  runScripts,
-  type RunScriptsCompleteExit,
-  type RunScriptsScriptResult,
-} from "../runScript";
+import { runScript, runScripts, type RunScriptsResult } from "../runScript";
 import { ProjectBase } from "./projectBase";
 
 /** Arguments for {@link createFileSystemProject} */
@@ -43,13 +38,8 @@ export type RunWorkspaceScriptsOptions = {
   parallel?: boolean;
 };
 
-export type RunWorkspaceScriptsScriptResult =
-  RunScriptsScriptResult<WorkspaceScriptMetadata>;
-
-export type RunWorkspaceScriptsResult = {
-  scriptResults: AsyncIterable<RunWorkspaceScriptsScriptResult>;
-  completeExit: Promise<RunScriptsCompleteExit<WorkspaceScriptMetadata>>;
-};
+export type RunWorkspaceScriptsResult =
+  RunScriptsResult<WorkspaceScriptMetadata>;
 
 class _FileSystemProject extends ProjectBase implements Project {
   public readonly rootDirectory: string;
@@ -118,7 +108,7 @@ class _FileSystemProject extends ProjectBase implements Project {
         const scriptCommand = this.createScriptCommand({
           workspaceNameOrAlias: workspace.name,
           scriptName: options.script,
-          args: options.args,
+          args: options.args?.replace(/<workspace>/g, workspace.name),
         }).commandDetails;
 
         return {

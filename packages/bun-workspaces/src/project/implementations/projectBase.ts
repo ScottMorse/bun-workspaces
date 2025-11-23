@@ -66,6 +66,10 @@ export abstract class ProjectBase implements Project {
   /** Accepts wildcard for finding a list of workspaces */
   findWorkspacesByPattern(workspacePattern: string): Workspace[] {
     if (!workspacePattern) return [];
+    if (!workspacePattern.includes("*")) {
+      const workspace = this.findWorkspaceByNameOrAlias(workspacePattern);
+      return workspace ? [workspace] : [];
+    }
     const regex = createWildcardRegex(workspacePattern);
     return this.workspaces.filter((workspace) => regex.test(workspace.name));
   }

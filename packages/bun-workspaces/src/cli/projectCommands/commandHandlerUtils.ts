@@ -1,6 +1,6 @@
 import { type Command } from "commander";
 import { createLogger } from "../../internal/logger";
-import type { Project } from "../../project";
+import type { FileSystemProject } from "../../project/implementations/fileSystemProject";
 import type { Workspace } from "../../workspaces";
 import {
   getProjectCommandConfig,
@@ -10,7 +10,7 @@ import {
 /** @todo DRY use of output text in cases such as having no workspaces/scripts */
 
 export interface ProjectCommandContext {
-  project: Project;
+  project: FileSystemProject;
   projectError: Error | null;
   program: Command;
 }

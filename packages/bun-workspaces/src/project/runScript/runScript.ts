@@ -15,13 +15,14 @@ export type OutputChunk = {
 };
 
 export type RunScriptExit<ScriptMetadata extends object = object> = {
-  code: number;
+  exitCode: number;
   signal: NodeJS.Signals | null;
   success: boolean;
   startTimeISO: string;
   endTimeISO: string;
   durationMs: number;
-} & ScriptMetadata;
+  metadata: ScriptMetadata;
+};
 
 export type RunScriptResult<ScriptMetadata extends object = object> = {
   output: AsyncIterable<OutputChunk>;
@@ -76,16 +77,16 @@ export const runScript = <ScriptMetadata extends object = object>({
     pipeOutput("stderr"),
   ]);
 
-  const exit = proc.exited.then<RunScriptExit<ScriptMetadata>>((code) => {
+  const exit = proc.exited.then<RunScriptExit<ScriptMetadata>>((exitCode) => {
     const endTime = new Date();
     return {
-      ...metadata,
-      code,
+      exitCode,
       signal: proc.signalCode,
-      success: code === 0,
+      success: exitCode === 0,
       startTimeISO: startTime.toISOString(),
       endTimeISO: endTime.toISOString(),
       durationMs: endTime.getTime() - startTime.getTime(),
+      metadata,
     };
   });
 
