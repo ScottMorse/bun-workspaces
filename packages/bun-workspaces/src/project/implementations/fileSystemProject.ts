@@ -36,13 +36,13 @@ export type RunWorkspaceScriptOptions = {
 };
 
 /** Metadata associated with a workspace script */
-export type WorkspaceScriptMetadata = {
+export type RunWorkspaceScriptMetadata = {
   workspace: Workspace;
 };
 
 /** Result of `FileSystemProject.runWorkspaceScript` */
 export type RunWorkspaceScriptResult = Simplify<
-  RunScriptResult<WorkspaceScriptMetadata>
+  RunScriptResult<RunWorkspaceScriptMetadata>
 >;
 
 /** Arguments for `FileSystemProject.runScriptAcrossWorkspaces` */
@@ -59,7 +59,7 @@ export type RunScriptAcrossWorkspacesOptions = {
 
 /** Result of `FileSystemProject.runScriptAcrossWorkspaces` */
 export type RunScriptAcrossWorkspacesResult = Simplify<
-  RunScriptsResult<WorkspaceScriptMetadata>
+  RunScriptsResult<RunWorkspaceScriptMetadata>
 >;
 
 class _FileSystemProject extends ProjectBase implements Project {

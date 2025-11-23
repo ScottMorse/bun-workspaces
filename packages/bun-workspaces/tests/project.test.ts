@@ -5,7 +5,7 @@ import {
   createFileSystemProject,
   createMemoryProject,
   type FileSystemProject,
-  type ScriptMetadata,
+  type RunWorkspaceScriptMetadata,
 } from "../src/project";
 import { PROJECT_ERRORS } from "../src/project/errors";
 import { WORKSPACE_ERRORS } from "../src/workspaces";
@@ -210,7 +210,7 @@ describe("Test Project utilities", () => {
   });
 
   const stripMetadataToWorkspaceNames = (
-    metadata: Record<string, ScriptMetadata>,
+    metadata: Record<string, RunWorkspaceScriptMetadata>,
   ) =>
     Object.values(metadata).reduce(
       (acc, { name, workspaces }) => ({

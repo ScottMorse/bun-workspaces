@@ -6,7 +6,7 @@ import type {
   CreateProjectScriptCommandOptions,
   CreateProjectScriptCommandResult,
   Project,
-  ScriptMetadata,
+  WorkspaceScriptMetadata,
 } from "../project";
 import { createWorkspaceScriptCommand } from "../runScript";
 
@@ -22,7 +22,7 @@ export abstract class ProjectBase implements Project {
     );
   }
 
-  mapScriptsToWorkspaces(): Record<string, ScriptMetadata> {
+  mapScriptsToWorkspaces(): Record<string, WorkspaceScriptMetadata> {
     const scripts = new Set<string>();
     this.workspaces.forEach((workspace) => {
       workspace.scripts.forEach((script) => scripts.add(script));
@@ -38,7 +38,7 @@ export abstract class ProjectBase implements Project {
           ...acc,
           [name]: { name, workspaces },
         }),
-        {} as Record<string, ScriptMetadata>,
+        {} as Record<string, WorkspaceScriptMetadata>,
       );
   }
 
