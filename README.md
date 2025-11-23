@@ -9,7 +9,7 @@
 This is a CLI and API that help you manage your monorepo on top of native [Bun workspaces](https://bun.sh/docs/install/workspaces), with no additional setup required. Get metadata about your workspaces and scripts, and run scripts across your workspaces.
 
 <a href="https://buymeacoffee.com/scottmorse">
-<img src="./packages/doc-website/src/docs/public/bmac-logo-circle.png" alt="Link to Buy Me A Coffee" width="40" />
+<img src="./packages/doc-website/src/docs/public/bmac-logo-circle.png" alt="Link to Buy Me A Coffee" width="60" />
 </a>
 
 ## Quick Start
