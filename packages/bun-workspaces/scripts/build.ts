@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, copyFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import { build } from "@rslib/core";
 import { $ } from "bun";
@@ -50,7 +50,16 @@ export const runBuild = async () => {
     JSON.stringify(createDesiredPackageJson(), null, 2),
   );
 
+  const outputPath = IS_TEST_BUILD ? "../dist.test" : "../dist";
+
+  writeFileSync(
+    path.resolve(__dirname, outputPath, ".prettierignore"),
+    "**/tests/**/*.json",
+  );
+
   await $`cd ${path.resolve(__dirname, IS_TEST_BUILD ? "../dist.test" : "../dist")} && bunx prettier --write .`;
+
+  rmSync(path.resolve(__dirname, outputPath, ".prettierignore"));
 };
 
 if (import.meta.main) {
