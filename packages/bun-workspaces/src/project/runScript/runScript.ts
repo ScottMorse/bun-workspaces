@@ -5,6 +5,7 @@ import type { ScriptCommand } from "./scriptCommand";
 
 export type OutputStreamName = "stdout" | "stderr";
 
+/** Output captured from a script subprocess */
 export type OutputChunk = {
   /** The source of the output, `"stdout"` or `"stderr"` */
   streamName: OutputStreamName;

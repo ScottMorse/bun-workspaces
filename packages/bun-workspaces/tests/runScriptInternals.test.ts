@@ -1,10 +1,5 @@
 import { test, expect, describe } from "bun:test";
-import { mergeAsyncIterables } from "../src/internal/mergeAsyncIterables";
-import {
-  runScript,
-  runScripts,
-  type OutputChunk,
-} from "../src/project/runScript";
+import { runScript, runScripts } from "../src/project/runScript";
 
 // Sanity tests for lower level runScript and runScripts functions
 
@@ -139,6 +134,22 @@ describe("Run Single Script", () => {
       signal: null,
       metadata: {},
     });
+  });
+
+  test("With ANSI escape codes", async () => {
+    const result = await runScript({
+      scriptCommand: {
+        command: "echo -e '\x1b[31mtest-script 1\x1b[0m'",
+        workingDirectory: ".",
+      },
+      metadata: {},
+    });
+
+    for await (const outputChunk of result.output) {
+      expect(outputChunk.streamName).toBe("stdout");
+      expect(outputChunk.text).toBe(`\x1b[31mtest-script 1\x1b[0m\n`);
+      expect(outputChunk.textNoAnsi).toBe(`test-script 1\n`);
+    }
   });
 });
 
