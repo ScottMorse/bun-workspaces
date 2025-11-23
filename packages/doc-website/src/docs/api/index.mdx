@@ -32,7 +32,8 @@ An object representing a workspace in a [Project](/api#project).
 
 The core of `bun-workspaces`'s functionality. 
 It contains a list of [Workspace](/api#workspace)s and provides 
-several useful methods for working with them.
+several useful methods for working with them. A Project is typically initialized at a git repository's root directory.
+The Project root should contain the `package.json` file in which `"workspaces"` are defined.
 
 Usually created via [createFileSystemProject](/api#createfilesystemproject).
 

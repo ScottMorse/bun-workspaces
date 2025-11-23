@@ -179,8 +179,8 @@ describe("Run Multiple Scripts", () => {
       i++;
     }
 
-    const completion = await result.completion;
-    expect(completion).toEqual({
+    const summary = await result.summary;
+    expect(summary).toEqual({
       totalCount: 2,
       allSuccess: true,
       failureCount: 0,
@@ -251,8 +251,8 @@ describe("Run Multiple Scripts", () => {
       i++;
     }
 
-    const completion = await result.completion;
-    expect(completion).toEqual({
+    const summary = await result.summary;
+    expect(summary).toEqual({
       totalCount: 2,
       allSuccess: false,
       failureCount: 1,
@@ -333,8 +333,8 @@ describe("Run Multiple Scripts", () => {
       i++;
     }
 
-    const completion = await result.completion;
-    expect(completion).toEqual({
+    const summary = await result.summary;
+    expect(summary).toEqual({
       totalCount: 3,
       allSuccess: false,
       failureCount: 1,

@@ -4,29 +4,6 @@ import { logger } from "../../internal/logger";
 import type { Workspace } from "../../workspaces";
 import { commandOutputLogger, handleCommand } from "./commandHandlerUtils";
 
-export interface RunScriptJsonOutputWorkspace {
-  workspace: Pick<Workspace, "name" | "path" | "aliases">;
-  exitCode: number;
-  success: boolean;
-  startTimeISO: string;
-  endTimeISO: string;
-  durationMs: number;
-}
-
-export interface RunScriptJsonOutputFile {
-  script: string;
-  args: string;
-  parallel: boolean;
-  totalCount: number;
-  successCount: number;
-  failureCount: number;
-  allSuccess: boolean;
-  startTimeISO: string;
-  endTimeISO: string;
-  durationMs: number;
-  workspaces: RunScriptJsonOutputWorkspace[];
-}
-
 export const runScript = handleCommand(
   "runScript",
   async (
@@ -92,7 +69,7 @@ export const runScript = handleCommand(
 
     workspaces.sort((a, b) => a.path.localeCompare(b.path));
 
-    const { output, completion } = project.runScriptAcrossWorkspaces({
+    const { output, summary } = project.runScriptAcrossWorkspaces({
       workspacePatterns: workspaces.map(({ name }) => name),
       script,
       args: options.args,
@@ -113,7 +90,7 @@ export const runScript = handleCommand(
 
     handleOutput();
 
-    const exitResults = await completion;
+    const exitResults = await summary;
 
     exitResults.scriptResults.forEach(
       ({ success, metadata: { workspace }, exitCode }) => {

@@ -17,7 +17,7 @@ export type RunScriptsScriptResult<ScriptMetadata extends object = object> = {
   result: RunScriptResult<ScriptMetadata>;
 };
 
-export type RunScriptsCompletion<ScriptMetadata extends object = object> = {
+export type RunScriptsSummary<ScriptMetadata extends object = object> = {
   totalCount: number;
   successCount: number;
   failureCount: number;
@@ -39,7 +39,7 @@ export type RunScriptsResult<ScriptMetadata extends object = object> = {
   /** Allows async iteration of output chunks from all script executions */
   output: AsyncIterable<RunScriptsOutput<ScriptMetadata>, void>;
   /** Resolves with a results summary after all scripts have exited */
-  completion: Promise<RunScriptsCompletion<ScriptMetadata>>;
+  summary: Promise<RunScriptsSummary<ScriptMetadata>>;
 };
 
 export type RunScriptsOptions<ScriptMetadata extends object = object> = {
@@ -126,7 +126,7 @@ export const runScripts = <ScriptMetadata extends object = object>({
     outputQueue.close();
   };
 
-  const awaitCompletion = async () => {
+  const awaitSummary = async () => {
     if (parallel) {
       await Promise.all(
         scripts.map((_, index) => triggerScript(index).result.exit),
@@ -159,6 +159,6 @@ export const runScripts = <ScriptMetadata extends object = object>({
 
   return {
     output: outputQueue,
-    completion: awaitCompletion(),
+    summary: awaitSummary(),
   };
 };

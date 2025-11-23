@@ -1,11 +1,10 @@
 import path from "path";
 import { expect, test as _test, describe } from "bun:test";
-import type { Workspace } from "../src";
+import type { Workspace, WorkspaceScriptMetadata } from "../src";
 import {
   createFileSystemProject,
   createMemoryProject,
   type FileSystemProject,
-  type RunWorkspaceScriptMetadata,
 } from "../src/project";
 import { PROJECT_ERRORS } from "../src/project/errors";
 import { WORKSPACE_ERRORS } from "../src/workspaces";
@@ -210,7 +209,7 @@ describe("Test Project utilities", () => {
   });
 
   const stripMetadataToWorkspaceNames = (
-    metadata: Record<string, RunWorkspaceScriptMetadata>,
+    metadata: Record<string, WorkspaceScriptMetadata>,
   ) =>
     Object.values(metadata).reduce(
       (acc, { name, workspaces }) => ({

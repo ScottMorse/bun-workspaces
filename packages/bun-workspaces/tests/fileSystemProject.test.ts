@@ -154,7 +154,7 @@ describe("Test FileSystemProject", () => {
       rootDirectory: getProjectRoot("default"),
     });
 
-    const { output, completion } = project.runScriptAcrossWorkspaces({
+    const { output, summary } = project.runScriptAcrossWorkspaces({
       workspacePatterns: ["library-b"],
       script: "b-workspaces",
     });
@@ -172,8 +172,8 @@ describe("Test FileSystemProject", () => {
       });
     }
 
-    const completionResult = await completion;
-    expect(completionResult).toEqual({
+    const summaryResult = await summary;
+    expect(summaryResult).toEqual({
       totalCount: 1,
       successCount: 1,
       failureCount: 0,
@@ -208,7 +208,7 @@ describe("Test FileSystemProject", () => {
       rootDirectory: getProjectRoot("simple1"),
     });
 
-    const { output, completion } = project.runScriptAcrossWorkspaces({
+    const { output, summary } = project.runScriptAcrossWorkspaces({
       workspacePatterns: ["application-1b", "library*"],
       script: "b-workspaces",
     });
@@ -255,8 +255,8 @@ describe("Test FileSystemProject", () => {
 
     expect(outputChunks).toEqual(expectedOutput);
 
-    const completionResult = await completion;
-    expect(completionResult).toEqual({
+    const summaryResult = await summary;
+    expect(summaryResult).toEqual({
       totalCount: 2,
       successCount: 2,
       failureCount: 0,
@@ -308,7 +308,7 @@ describe("Test FileSystemProject", () => {
       rootDirectory: getProjectRoot("simple1"),
     });
 
-    const { output, completion } = project.runScriptAcrossWorkspaces({
+    const { output, summary } = project.runScriptAcrossWorkspaces({
       workspacePatterns: [],
       script: "all-workspaces",
     });
@@ -320,9 +320,9 @@ describe("Test FileSystemProject", () => {
 
     expect(count).toBe(0);
 
-    const completionResult = await completion;
+    const summaryResult = await summary;
 
-    expect(completionResult).toEqual({
+    expect(summaryResult).toEqual({
       totalCount: 0,
       successCount: 0,
       failureCount: 0,
@@ -339,7 +339,7 @@ describe("Test FileSystemProject", () => {
       rootDirectory: getProjectRoot("simple1"),
     });
 
-    const { output, completion } = project.runScriptAcrossWorkspaces({
+    const { output, summary } = project.runScriptAcrossWorkspaces({
       workspacePatterns: ["*"],
       script: "all-workspaces",
     });
@@ -418,9 +418,9 @@ describe("Test FileSystemProject", () => {
 
     expect(outputChunks).toEqual(expectedOutput);
 
-    const completionResult = await completion;
+    const summaryResult = await summary;
 
-    expect(completionResult).toEqual({
+    expect(summaryResult).toEqual({
       totalCount: 4,
       successCount: 4,
       failureCount: 0,
@@ -560,7 +560,7 @@ describe("Test FileSystemProject", () => {
       rootDirectory: getProjectRoot("runScriptWithFailures"),
     });
 
-    const { output, completion } = project.runScriptAcrossWorkspaces({
+    const { output, summary } = project.runScriptAcrossWorkspaces({
       workspacePatterns: ["*"],
       script: "test-exit",
     });
@@ -639,9 +639,9 @@ describe("Test FileSystemProject", () => {
 
     expect(outputChunks).toEqual(expectedOutput);
 
-    const completionResult = await completion;
+    const summaryResult = await summary;
 
-    expect(completionResult).toEqual({
+    expect(summaryResult).toEqual({
       totalCount: 4,
       successCount: 2,
       failureCount: 2,
@@ -727,7 +727,7 @@ describe("Test FileSystemProject", () => {
       rootDirectory: getProjectRoot("runScriptWithDelays"),
     });
 
-    const { output, completion } = project.runScriptAcrossWorkspaces({
+    const { output, summary } = project.runScriptAcrossWorkspaces({
       workspacePatterns: ["*"],
       script: "test-delay",
       parallel: true,
@@ -823,12 +823,12 @@ describe("Test FileSystemProject", () => {
 
     expect(outputChunks).toEqual(expectedOutput);
 
-    const completionResult = await completion;
+    const summaryResult = await summary;
 
-    expect(completionResult.durationMs).toBeGreaterThan(1000);
-    expect(completionResult.durationMs).toBeLessThan(1100);
+    expect(summaryResult.durationMs).toBeGreaterThan(1000);
+    expect(summaryResult.durationMs).toBeLessThan(1100);
 
-    expect(completionResult).toEqual({
+    expect(summaryResult).toEqual({
       totalCount: 5,
       successCount: 5,
       failureCount: 0,
