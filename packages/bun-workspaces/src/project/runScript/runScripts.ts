@@ -61,7 +61,9 @@ export const runScripts = <ScriptMetadata extends object = object>({
   };
 
   const scriptStartTriggers: ScriptStartTrigger[] = scripts.map((_, index) => {
-    let trigger: () => void = () => {};
+    let trigger: () => void = () => {
+      void 0;
+    };
 
     let result = {} as ScriptStartTrigger;
     const promise = new Promise<ScriptStartTrigger>((res) => {

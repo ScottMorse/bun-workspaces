@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import { logger } from "../../internal/logger";
-import { runScripts } from "../../project";
 import type { Workspace } from "../../workspaces";
 import { commandOutputLogger, handleCommand } from "./commandHandlerUtils";
 
