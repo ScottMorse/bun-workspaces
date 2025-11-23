@@ -49,7 +49,7 @@ export const runBuild = async () => {
     JSON.stringify(createDesiredPackageJson(), null, 2),
   );
 
-  await Bun.spawn(["bunx", "prettier", "--write", "."], {
+  await Bun.spawn(["sh", "-c", "bunx prettier --write ."], {
     cwd: path.resolve(__dirname, "../dist"),
   });
 };
