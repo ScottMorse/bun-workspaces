@@ -25,16 +25,20 @@ export type RunScriptsCompletion<ScriptMetadata extends object = object> = {
   startTimeISO: string;
   endTimeISO: string;
   durationMs: number;
-  scriptExits: RunScriptExit<ScriptMetadata>[];
+  scriptDetails: RunScriptExit<ScriptMetadata>[];
 };
 
 export type RunScriptsOutput<ScriptMetadata extends object = object> = {
+  /** The output chunk from a script execution */
   outputChunk: OutputChunk;
+  /** The metadata for the script that produced the output chunk */
   scriptMetadata: ScriptMetadata;
 };
 
 export type RunScriptsResult<ScriptMetadata extends object = object> = {
+  /** Allows async iteration of output chunks from all script executions */
   output: AsyncIterable<RunScriptsOutput<ScriptMetadata>, void>;
+  /** Resolves with a results summary after all scripts have exited */
   completion: Promise<RunScriptsCompletion<ScriptMetadata>>;
 };
 
@@ -131,21 +135,21 @@ export const runScripts = <ScriptMetadata extends object = object>({
       }
     }
 
-    const scriptExits = await Promise.all(
+    const scriptDetails = await Promise.all(
       scripts.map((_, index) => scriptResults[index].result.exit),
     );
 
     const endTime = new Date();
 
     return {
-      totalCount: scriptExits.length,
-      successCount: scriptExits.filter((exit) => exit.success).length,
-      failureCount: scriptExits.filter((exit) => !exit.success).length,
-      allSuccess: scriptExits.every((exit) => exit.success),
+      totalCount: scriptDetails.length,
+      successCount: scriptDetails.filter((exit) => exit.success).length,
+      failureCount: scriptDetails.filter((exit) => !exit.success).length,
+      allSuccess: scriptDetails.every((exit) => exit.success),
       startTimeISO: startTime.toISOString(),
       endTimeISO: endTime.toISOString(),
       durationMs: endTime.getTime() - startTime.getTime(),
-      scriptExits,
+      scriptDetails,
     };
   };
 

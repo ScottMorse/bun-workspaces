@@ -7,7 +7,7 @@ import {
   type FileSystemProject,
   type ScriptMetadata,
 } from "../src/project";
-import { ERRORS } from "../src/project/errors";
+import { PROJECT_ERRORS } from "../src/project/errors";
 import { WORKSPACE_ERRORS } from "../src/workspaces";
 import { getProjectRoot } from "./testProjects";
 
@@ -421,7 +421,7 @@ describe("Test Project utilities", () => {
         scriptName: "not-a-script",
         workspaceNameOrAlias: "library-b",
       }),
-    ).toThrow(ERRORS.WorkspaceScriptDoesNotExist);
+    ).toThrow(PROJECT_ERRORS.WorkspaceScriptDoesNotExist);
 
     expect(() =>
       project.createScriptCommand({
@@ -430,7 +430,7 @@ describe("Test Project utilities", () => {
         scriptName: "all-workspaces",
         workspaceNameOrAlias: "not-a-workspace",
       }),
-    ).toThrow(ERRORS.ProjectWorkspaceNotFound);
+    ).toThrow(PROJECT_ERRORS.ProjectWorkspaceNotFound);
   });
 
   test("MemoryProject", async () => {

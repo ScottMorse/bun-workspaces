@@ -196,7 +196,7 @@ describe("Run Multiple Scripts", () => {
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptExits: [
+      scriptDetails: [
         {
           exitCode: 0,
           success: true,
@@ -268,7 +268,7 @@ describe("Run Multiple Scripts", () => {
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptExits: [
+      scriptDetails: [
         {
           exitCode: 1,
           success: false,
@@ -350,7 +350,7 @@ describe("Run Multiple Scripts", () => {
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptExits: [
+      scriptDetails: [
         {
           exitCode: 0,
           success: true,

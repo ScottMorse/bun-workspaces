@@ -13,6 +13,11 @@ export {
   type RunWorkspaceScriptResult,
   type RunScriptAcrossWorkspacesOptions,
   type RunScriptAcrossWorkspacesResult,
+  type OutputChunk,
+  type RunScriptExit as _RunScriptExit,
+  type RunScriptResult as _RunScriptResult,
+  type RunScriptsOutput as _RunScriptsOutput,
+  type RunScriptsResult as _RunScriptsResult,
 } from "./project";
 export { type Workspace } from "./workspaces";
 export { setLogLevel, type LogLevelSetting } from "./internal/logger";

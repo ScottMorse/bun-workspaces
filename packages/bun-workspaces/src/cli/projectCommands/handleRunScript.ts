@@ -84,6 +84,13 @@ export const runScript = handleCommand(
       process.exit(1);
     }
 
+    if (!workspaces.some((workspace) => workspace.scripts.includes(script))) {
+      logger.error(
+        `Script not found in target workspace${workspaces.length === 1 ? "" : "s"}: ${JSON.stringify(script)}`,
+      );
+      process.exit(1);
+    }
+
     workspaces.sort((a, b) => a.path.localeCompare(b.path));
 
     const { output, completion } = project.runScriptAcrossWorkspaces({
@@ -109,7 +116,7 @@ export const runScript = handleCommand(
 
     const exitResults = await completion;
 
-    exitResults.scriptExits.forEach(
+    exitResults.scriptDetails.forEach(
       ({ success, metadata: { workspace }, exitCode }) => {
         logger.info(
           `${success ? "✅" : "❌"} ${workspace.name}: ${script}${exitCode ? ` (exited with code ${exitCode})` : ""}`,
@@ -117,13 +124,13 @@ export const runScript = handleCommand(
       },
     );
 
-    const s = exitResults.scriptExits.length === 1 ? "" : "s";
+    const s = exitResults.scriptDetails.length === 1 ? "" : "s";
     if (exitResults.failureCount) {
-      const message = `${exitResults.failureCount} of ${exitResults.scriptExits.length} script${s} failed`;
+      const message = `${exitResults.failureCount} of ${exitResults.scriptDetails.length} script${s} failed`;
       logger.info(message);
     } else {
       logger.info(
-        `${exitResults.scriptExits.length} script${s} ran successfully`,
+        `${exitResults.scriptDetails.length} script${s} ran successfully`,
       );
     }
 
