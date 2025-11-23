@@ -30,7 +30,7 @@ export type RunWorkspaceScriptOptions = {
   /** The name of the workspace to run the script in */
   workspaceNameOrAlias: string;
   /** The name of the script to run */
-  scriptName: string;
+  script: string;
   /** The arguments to append to the script command */
   args?: string;
 };
@@ -108,13 +108,13 @@ class _FileSystemProject extends ProjectBase implements Project {
     }
 
     logger.debug(
-      `Running script ${options.scriptName} in workspace: ${workspace.name}`,
+      `Running script ${options.script} in workspace: ${workspace.name}`,
     );
 
     return runScript({
       scriptCommand: this.createScriptCommand({
         workspaceNameOrAlias: options.workspaceNameOrAlias,
-        scriptName: options.scriptName,
+        scriptName: options.script,
         args: options.args,
       }).commandDetails,
       metadata: {

@@ -22,9 +22,7 @@ describe("Run Single Script", () => {
     for await (const outputChunk of result.output) {
       expect(outputChunk.streamName).toBe("stdout");
       expect(outputChunk.text).toMatch(`test-script ${outputCount + 1}`);
-      expect(outputChunk.textAnsiSanitized).toMatch(
-        `test-script ${outputCount + 1}`,
-      );
+      expect(outputChunk.textNoAnsi).toMatch(`test-script ${outputCount + 1}`);
       outputCount++;
     }
     const exit = await result.exit;
@@ -60,9 +58,7 @@ describe("Run Single Script", () => {
     for await (const outputChunk of result.output) {
       expect(outputChunk.streamName).toBe("stdout");
       expect(outputChunk.text).toMatch(`test-script ${outputCount + 1}`);
-      expect(outputChunk.textAnsiSanitized).toMatch(
-        `test-script ${outputCount + 1}`,
-      );
+      expect(outputChunk.textNoAnsi).toMatch(`test-script ${outputCount + 1}`);
       outputCount++;
     }
     const exit = await result.exit;
@@ -98,9 +94,7 @@ describe("Run Single Script", () => {
     for await (const outputChunk of result.output) {
       expect(outputChunk.streamName).toBe("stdout");
       expect(outputChunk.text).toMatch(`test-script ${outputCount + 1}`);
-      expect(outputChunk.textAnsiSanitized).toMatch(
-        `test-script ${outputCount + 1}`,
-      );
+      expect(outputChunk.textNoAnsi).toMatch(`test-script ${outputCount + 1}`);
       outputCount++;
     }
     const exit = await result.exit;
@@ -131,9 +125,7 @@ describe("Run Single Script", () => {
         outputCount === 1 ? "stderr" : "stdout",
       );
       expect(outputChunk.text).toMatch(`test-script ${outputCount + 1}`);
-      expect(outputChunk.textAnsiSanitized).toMatch(
-        `test-script ${outputCount + 1}`,
-      );
+      expect(outputChunk.textNoAnsi).toMatch(`test-script ${outputCount + 1}`);
       outputCount++;
     }
 
@@ -183,7 +175,7 @@ describe("Run Multiple Scripts", () => {
     } of result.output) {
       expect(metadata.name).toBe(`test-script name ${i + 1}`);
       expect(output.text).toMatch(`test-script ${i + 1}`);
-      expect(output.textAnsiSanitized).toMatch(`test-script ${i + 1}`);
+      expect(output.textNoAnsi).toMatch(`test-script ${i + 1}`);
       i++;
     }
 
@@ -196,7 +188,7 @@ describe("Run Multiple Scripts", () => {
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptDetails: [
+      scriptResults: [
         {
           exitCode: 0,
           success: true,
@@ -255,7 +247,7 @@ describe("Run Multiple Scripts", () => {
     } of result.output) {
       expect(metadata.name).toBe(`test-script name ${i + 1}`);
       expect(output.text).toMatch(`test-script ${i + 1}`);
-      expect(output.textAnsiSanitized).toMatch(`test-script ${i + 1}`);
+      expect(output.textNoAnsi).toMatch(`test-script ${i + 1}`);
       i++;
     }
 
@@ -268,7 +260,7 @@ describe("Run Multiple Scripts", () => {
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptDetails: [
+      scriptResults: [
         {
           exitCode: 1,
           success: false,
@@ -337,7 +329,7 @@ describe("Run Multiple Scripts", () => {
       const scriptNum = i === 0 ? 2 : i === 1 ? 3 : 1;
       expect(scriptMetadata.name).toBe(`test-script name ${scriptNum}`);
       expect(outputChunk.text).toMatch(`test-script ${scriptNum}`);
-      expect(outputChunk.textAnsiSanitized).toMatch(`test-script ${scriptNum}`);
+      expect(outputChunk.textNoAnsi).toMatch(`test-script ${scriptNum}`);
       i++;
     }
 
@@ -350,7 +342,7 @@ describe("Run Multiple Scripts", () => {
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptDetails: [
+      scriptResults: [
         {
           exitCode: 0,
           success: true,

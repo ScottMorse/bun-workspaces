@@ -115,7 +115,7 @@ export const runScript = handleCommand(
 
     const exitResults = await completion;
 
-    exitResults.scriptDetails.forEach(
+    exitResults.scriptResults.forEach(
       ({ success, metadata: { workspace }, exitCode }) => {
         logger.info(
           `${success ? "✅" : "❌"} ${workspace.name}: ${script}${exitCode ? ` (exited with code ${exitCode})` : ""}`,
@@ -123,13 +123,13 @@ export const runScript = handleCommand(
       },
     );
 
-    const s = exitResults.scriptDetails.length === 1 ? "" : "s";
+    const s = exitResults.scriptResults.length === 1 ? "" : "s";
     if (exitResults.failureCount) {
-      const message = `${exitResults.failureCount} of ${exitResults.scriptDetails.length} script${s} failed`;
+      const message = `${exitResults.failureCount} of ${exitResults.scriptResults.length} script${s} failed`;
       logger.info(message);
     } else {
       logger.info(
-        `${exitResults.scriptDetails.length} script${s} ran successfully`,
+        `${exitResults.scriptResults.length} script${s} ran successfully`,
       );
     }
 

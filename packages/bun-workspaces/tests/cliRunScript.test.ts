@@ -450,7 +450,7 @@ success2
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptDetails: [
+      scriptResults: [
         {
           metadata: {
             workspace: {
@@ -523,7 +523,7 @@ success2
     });
     for (const { startTimeISO, endTimeISO, durationMs } of [
       jsonOutput1,
-      ...jsonOutput1.scriptDetails,
+      ...jsonOutput1.scriptResults,
     ]) {
       expect(startTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
       expect(endTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
@@ -546,7 +546,7 @@ success2
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptDetails: [
+      scriptResults: [
         {
           metadata: {
             workspace: {
@@ -586,7 +586,7 @@ success2
 
     for (const { startTimeISO, endTimeISO, durationMs } of [
       jsonOutput2,
-      ...jsonOutput2.scriptDetails,
+      ...jsonOutput2.scriptResults,
     ]) {
       expect(startTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
       expect(endTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
@@ -610,7 +610,7 @@ success2
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptDetails: [
+      scriptResults: [
         {
           metadata: {
             workspace: {
@@ -633,7 +633,7 @@ success2
 
     for (const { startTimeISO, endTimeISO, durationMs } of [
       jsonOutput3,
-      ...jsonOutput3.scriptDetails,
+      ...jsonOutput3.scriptResults,
     ]) {
       expect(startTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
       expect(endTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
@@ -659,7 +659,7 @@ success2
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptDetails: [
+      scriptResults: [
         {
           metadata: {
             workspace: {
@@ -733,7 +733,7 @@ success2
 
     for (const { startTimeISO, endTimeISO, durationMs } of [
       json,
-      ...json.scriptDetails,
+      ...json.scriptResults,
     ]) {
       expect(startTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
       expect(endTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
@@ -774,7 +774,7 @@ success2
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptDetails: [
+      scriptResults: [
         {
           metadata: {
             workspace: {

@@ -71,7 +71,7 @@ const {
 });
 
 // A means by which you may actually run the script
-const subprocess = Bun.spawn(command.split(/\\s+/g), {
+const subprocess = Bun.spawn(["sh", "-c", command], {
   cwd: workingDirectory,
 });
 
@@ -96,44 +96,6 @@ export const WORKSPACE_EXAMPLE = `
   // field in the config
   aliases: ["my-alias"]
 }
-`.trim();
-
-export const MULTI_METHOD_SCRIPTS_EXAMPLE = `
-import { createFileSystemProject } from "bun-workspaces";
-
-const project = createFileSystemProject({
-  rootDirectory: ".",
-});
-
-const targetWorkspaces = project.findWorkspacesByPattern("my-workspace-*");
-
-const scriptCommands = targetWorkspaces.map((workspace) =>
-  project.createScriptCommand({
-    workspaceNameOrAlias: workspace.name,
-    scriptName: "my-script",
-  })
-);
-
-// Run all scripts in series
-for (const {
-  commandDetails: { command, workingDirectory },
-} of scriptCommands) {
-  const subprocess = Bun.spawn(command.split(/\\s+/), {
-    cwd: workingDirectory,
-  });
-
-  await subprocess.exited;
-}
-
-// Run all scripts in parallel
-await Promise.allSettled(
-  scriptCommands.map(
-    ({ commandDetails: { command, workingDirectory } }) =>
-      Bun.spawn(command.split(/\\s+/), {
-        cwd: workingDirectory,
-      }).exited
-  )
-);
 `.trim();
 
 export const SET_LOG_LEVEL_EXAMPLE = `
@@ -172,9 +134,79 @@ const {
 });
 
 // An example of a means by which you may actually run the script
-const subprocess = Bun.spawn(command.split(/\\s+/), {
+const subprocess = Bun.spawn(["sh", "-c", command], {
   cwd: workingDirectory
 });
 
 await subprocess.exited;
+`.trim();
+
+export const RUN_WORKSPACE_SCRIPT_EXAMPLE = `
+const { output, exit } = project.runWorkspaceScript({
+  workspaceNameOrAlias: "my-workspace",
+  script: "my-script",
+  args: "--my --appended --args", // optional, arguments to add to the command
+});
+
+// Get a stream of the script subprocess's output
+for await (const { text, textNoAnsi, streamName } of output) {
+  console.log(text); // the output chunk's content (string)
+  console.log(textNoAnsi); // text with ANSI codes sanitized (string)
+  console.log(streamName); // the output stream, "stdout" or "stderr"
+}
+
+// Get data about the script execution after it exits
+const exitResult = await exit;
+
+console.log(exitResult.exitCode); // the exit code (number)
+console.log(exitResult.signal); // the exit signal (string), or null
+console.log(exitResult.success); // true if exit code was 0
+console.log(exitResult.startTimeISO); // Start time (ISO string)
+console.log(exitResult.endTimeISO); // End time (ISO string)
+console.log(exitResult.durationMs); // Duration in milliseconds (number)
+console.log(exitResult.metadata.workspace); // The target workspace (Workspace)
+
+`.trim();
+
+export const RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE = `
+
+const { output, completion } = project.runScriptAcrossWorkspaces({
+  workspacePatterns: ["*"], // this will run in all workspaces that have my-script
+  script: "my-script",
+  args: "--my --appended --args", // optional, arguments to add to the command
+  parallel: true, // optional, run the scripts in parallel
+});
+
+// Get a stream of script output
+for await (const { outputChunk, scriptMetadata } of output) {
+  console.log(outputChunk.text); // the output chunk's content (string)
+  console.log(outputChunk.textNoAnsi); // text with ANSI codes sanitized (string)
+  console.log(outputChunk.streamName); // the output stream name, "stdout" or "stderr"
+
+  // The metadata can distinguish which workspace script 
+  // the current output chunk came from
+  console.log(scriptMetadata.workspace); // Workspace object
+}
+
+// Get final summary data and script exit details after all scripts have completed
+const completionResult = await completion;
+
+console.log(completionResult.totalCount); // total number of scripts
+console.log(completionResult.allSuccess); // true if all scripts succeeded
+console.log(completionResult.successCount); // number of scripts that succeeded
+console.log(completionResult.failureCount); // number of scripts that failed
+console.log(completionResult.startTimeISO); // start time (ISO string)
+console.log(completionResult.endTimeISO); // end time (ISO string)
+console.log(completionResult.durationMs); // total duration in milliseconds (number)
+
+// The exit result of each script as \`project.runWorkspaceScript\` resolves
+for (const exitResult of completionResult.scriptResults) {
+  console.log(exitResult.exitCode); // the exit code (number)
+  console.log(exitResult.signal); // the exit signal (string), or null
+  console.log(exitResult.success); // true if exit code was 0
+  console.log(exitResult.startTimeISO); // Start time (ISO string)
+  console.log(exitResult.endTimeISO); // End time (ISO string)
+  console.log(exitResult.durationMs); // Duration in milliseconds (number)
+  console.log(exitResult.metadata.workspace); // The target workspace (Workspace)
+}
 `.trim();

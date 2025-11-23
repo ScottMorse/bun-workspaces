@@ -9,12 +9,24 @@ footer: false
 ---
 
 import { SyntaxHighlighter } from "../../content/highlight";
-import { CREATE_FS_PROJECT_EXAMPLE, CREATE_SCRIPT_COMMAND_EXAMPLE, FIND_WORKSPACE_BY_ALIAS_EXAMPLE, FIND_WORKSPACE_BY_NAME_EXAMPLE, FIND_WORKSPACE_BY_NAME_OR_ALIAS_EXAMPLE, FIND_WORKSPACES_BY_PATTERN_EXAMPLE, LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE, MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE, MULTI_METHOD_SCRIPTS_EXAMPLE, SET_LOG_LEVEL_EXAMPLE, WORKSPACE_EXAMPLE } from '../../content/api/apiExamples';
+import { CREATE_FS_PROJECT_EXAMPLE, CREATE_SCRIPT_COMMAND_EXAMPLE, FIND_WORKSPACE_BY_ALIAS_EXAMPLE, FIND_WORKSPACE_BY_NAME_EXAMPLE, FIND_WORKSPACE_BY_NAME_OR_ALIAS_EXAMPLE, FIND_WORKSPACES_BY_PATTERN_EXAMPLE, LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE, MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE, RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE, RUN_WORKSPACE_SCRIPT_EXAMPLE, SET_LOG_LEVEL_EXAMPLE, WORKSPACE_EXAMPLE } from '../../content/api/apiExamples';
 import { CREATE_MEMORY_PROJECT_EXAMPLE } from '../../content/api/apiExamples';
 
 # Library API
 
-Reminder: While the CLI can be used simply with `bunx bun-workspaces`, using the API will require you to install the package via `bun add --dev bun-workspaces`.
+Install the package via `bun add --dev bun-workspaces` to use the API.
+
+### TypeScript
+
+Ensure you have `@types/bun` installed for accurate types. Your `"lib"` field in `tsconfig.json` should ideally include `"ESNext"`.
+
+## `Workspace`
+
+An object representing a workspace in a [Project](/api#project).
+
+<SyntaxHighlighter language="typescript">
+{WORKSPACE_EXAMPLE}
+</SyntaxHighlighter>
 
 ## `Project`
 
@@ -91,20 +103,29 @@ The `"method"` option changes what kind of `bun` command is implemented to run t
 {CREATE_SCRIPT_COMMAND_EXAMPLE  }
 </SyntaxHighlighter>
 
-### Running a set of scripts
+## `FileSystemProject`
 
-An example of running multiple scripts in series and parallel:
+Inherits from [Project](/api#project). Used to represent a project in the file system. Created via [createFileSystemProject](/api#createfilesystemproject).
+
+Includes methods for running scripts in the workspaces of the project.
+
+
+### `.runWorkspaceScript`
+`runWorkspaceScript(options: RunWorkspaceScriptOptions): RunWorkspaceScriptResult`
+
+Run a script in a given workspace.
 
 <SyntaxHighlighter language="typescript">
-{MULTI_METHOD_SCRIPTS_EXAMPLE}
+{RUN_WORKSPACE_SCRIPT_EXAMPLE}
 </SyntaxHighlighter>
 
-## `Workspace`
+### `.runScriptAcrossWorkspaces`
+`runScriptAcrossWorkspaces(options: RunScriptAcrossWorkspacesOptions): RunScriptAcrossWorkspacesResult`
 
-An object representing a workspace in a [Project](/api#project).
+Run a script in all workspaces that have it in their package.json "scripts" field.
 
 <SyntaxHighlighter language="typescript">
-{WORKSPACE_EXAMPLE}
+{RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE}
 </SyntaxHighlighter>
 
 ## `createFileSystemProject`
@@ -130,6 +151,8 @@ in the file system.
 
 Since it doesn't read anything from the file system,
 it isn't affected by [workspace configuration](/config#workspace-configuration).
+
+A `MemoryProject` currently does not support running scripts directly, though a means of mocking script execution may be added later, considering demand.
 
 <SyntaxHighlighter language="typescript">
 {CREATE_MEMORY_PROJECT_EXAMPLE}

@@ -10,12 +10,12 @@ describe("Test FileSystemProject", () => {
 
     const { output, exit } = project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
-      scriptName: "a-workspaces",
+      script: "a-workspaces",
     });
 
-    for await (const { text, textAnsiSanitized, streamName } of output) {
+    for await (const { text, textNoAnsi, streamName } of output) {
       expect(text).toMatch("script for a workspaces");
-      expect(textAnsiSanitized).toMatch("script for a workspaces");
+      expect(textNoAnsi).toMatch("script for a workspaces");
       expect(streamName).toBe("stdout");
     }
 
@@ -47,12 +47,12 @@ describe("Test FileSystemProject", () => {
 
     const { output, exit } = project.runWorkspaceScript({
       workspaceNameOrAlias: "appA",
-      scriptName: "a-workspaces",
+      script: "a-workspaces",
     });
 
-    for await (const { text, textAnsiSanitized, streamName } of output) {
+    for await (const { text, textNoAnsi, streamName } of output) {
       expect(text).toMatch("script for a workspaces");
-      expect(textAnsiSanitized).toMatch("script for a workspaces");
+      expect(textNoAnsi).toMatch("script for a workspaces");
       expect(streamName).toBe("stdout");
     }
 
@@ -85,7 +85,7 @@ describe("Test FileSystemProject", () => {
     try {
       project.runWorkspaceScript({
         workspaceNameOrAlias: "invalid-workspace",
-        scriptName: "a-workspaces",
+        script: "a-workspaces",
       });
     } catch (error) {
       expect(error).toBeInstanceOf(PROJECT_ERRORS.ProjectWorkspaceNotFound);
@@ -99,32 +99,32 @@ describe("Test FileSystemProject", () => {
 
     const { output, exit } = project.runWorkspaceScript({
       workspaceNameOrAlias: "fail1",
-      scriptName: "test-exit",
+      script: "test-exit",
     });
 
     const expectedOutput = [
       {
         text: "fail1 stdout 1",
-        textAnsiSanitized: "fail1 stdout 1",
+        textNoAnsi: "fail1 stdout 1",
         streamName: "stdout",
       },
       {
         text: "fail1 stderr 1",
-        textAnsiSanitized: "fail1 stderr 1",
+        textNoAnsi: "fail1 stderr 1",
         streamName: "stderr",
       },
       {
         text: "fail1 stdout 2",
-        textAnsiSanitized: "fail1 stdout 2",
+        textNoAnsi: "fail1 stdout 2",
         streamName: "stdout",
       },
     ] as const;
 
     let i = 0;
-    for await (const { text, textAnsiSanitized, streamName } of output) {
+    for await (const { text, textNoAnsi, streamName } of output) {
       const expected = expectedOutput[i];
       expect(text).toMatch(expected.text);
-      expect(textAnsiSanitized).toMatch(expected.textAnsiSanitized);
+      expect(textNoAnsi).toMatch(expected.textNoAnsi);
       expect(streamName).toBe(expected.streamName);
       i++;
     }
@@ -161,7 +161,7 @@ describe("Test FileSystemProject", () => {
 
     for await (const { outputChunk, scriptMetadata } of output) {
       expect(outputChunk.text).toMatch("script for b workspaces");
-      expect(outputChunk.textAnsiSanitized).toMatch("script for b workspaces");
+      expect(outputChunk.textNoAnsi).toMatch("script for b workspaces");
       expect(outputChunk.streamName).toBe("stdout");
       expect(scriptMetadata.workspace).toEqual({
         name: "library-b",
@@ -181,7 +181,7 @@ describe("Test FileSystemProject", () => {
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptDetails: [
+      scriptResults: [
         {
           exitCode: 0,
           success: true,
@@ -218,7 +218,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "script for b workspaces\n",
-          textAnsiSanitized: "script for b workspaces\n",
+          textNoAnsi: "script for b workspaces\n",
         },
         scriptMetadata: {
           workspace: {
@@ -234,7 +234,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "script for b workspaces\n",
-          textAnsiSanitized: "script for b workspaces\n",
+          textNoAnsi: "script for b workspaces\n",
         },
         scriptMetadata: {
           workspace: {
@@ -264,7 +264,7 @@ describe("Test FileSystemProject", () => {
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptDetails: [
+      scriptResults: [
         {
           exitCode: 0,
           success: true,
@@ -330,7 +330,7 @@ describe("Test FileSystemProject", () => {
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptDetails: [],
+      scriptResults: [],
     });
   });
 
@@ -349,7 +349,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "script for all workspaces\n",
-          textAnsiSanitized: "script for all workspaces\n",
+          textNoAnsi: "script for all workspaces\n",
         },
         scriptMetadata: {
           workspace: {
@@ -365,7 +365,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "script for all workspaces\n",
-          textAnsiSanitized: "script for all workspaces\n",
+          textNoAnsi: "script for all workspaces\n",
         },
         scriptMetadata: {
           workspace: {
@@ -381,7 +381,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "script for all workspaces\n",
-          textAnsiSanitized: "script for all workspaces\n",
+          textNoAnsi: "script for all workspaces\n",
         },
         scriptMetadata: {
           workspace: {
@@ -397,7 +397,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "script for all workspaces\n",
-          textAnsiSanitized: "script for all workspaces\n",
+          textNoAnsi: "script for all workspaces\n",
         },
         scriptMetadata: {
           workspace: {
@@ -428,7 +428,7 @@ describe("Test FileSystemProject", () => {
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptDetails: [
+      scriptResults: [
         {
           exitCode: 0,
           signal: null,
@@ -517,7 +517,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "passed args: --arg1=value1 --arg2=value2\n",
-          textAnsiSanitized: "passed args: --arg1=value1 --arg2=value2\n",
+          textNoAnsi: "passed args: --arg1=value1 --arg2=value2\n",
         },
         scriptMetadata: {
           workspace: {
@@ -533,7 +533,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "passed args: --arg1=value1 --arg2=value2\n",
-          textAnsiSanitized: "passed args: --arg1=value1 --arg2=value2\n",
+          textNoAnsi: "passed args: --arg1=value1 --arg2=value2\n",
         },
         scriptMetadata: {
           workspace: {
@@ -570,7 +570,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stderr" as const,
           text: "fail1\n",
-          textAnsiSanitized: "fail1\n",
+          textNoAnsi: "fail1\n",
         },
         scriptMetadata: {
           workspace: {
@@ -586,7 +586,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stderr" as const,
           text: "fail2\n",
-          textAnsiSanitized: "fail2\n",
+          textNoAnsi: "fail2\n",
         },
         scriptMetadata: {
           workspace: {
@@ -602,7 +602,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "success1\n",
-          textAnsiSanitized: "success1\n",
+          textNoAnsi: "success1\n",
         },
         scriptMetadata: {
           workspace: {
@@ -618,7 +618,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "success2\n",
-          textAnsiSanitized: "success2\n",
+          textNoAnsi: "success2\n",
         },
         scriptMetadata: {
           workspace: {
@@ -649,7 +649,7 @@ describe("Test FileSystemProject", () => {
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptDetails: [
+      scriptResults: [
         {
           exitCode: 1,
           signal: null,
@@ -738,7 +738,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "first\n",
-          textAnsiSanitized: "first\n",
+          textNoAnsi: "first\n",
         },
         scriptMetadata: {
           workspace: {
@@ -754,7 +754,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "second\n",
-          textAnsiSanitized: "second\n",
+          textNoAnsi: "second\n",
         },
         scriptMetadata: {
           workspace: {
@@ -770,7 +770,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "third\n",
-          textAnsiSanitized: "third\n",
+          textNoAnsi: "third\n",
         },
         scriptMetadata: {
           workspace: {
@@ -786,7 +786,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "fourth\n",
-          textAnsiSanitized: "fourth\n",
+          textNoAnsi: "fourth\n",
         },
         scriptMetadata: {
           workspace: {
@@ -802,7 +802,7 @@ describe("Test FileSystemProject", () => {
         outputChunk: {
           streamName: "stdout" as const,
           text: "fifth\n",
-          textAnsiSanitized: "fifth\n",
+          textNoAnsi: "fifth\n",
         },
         scriptMetadata: {
           workspace: {
@@ -836,7 +836,7 @@ describe("Test FileSystemProject", () => {
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      scriptDetails: [
+      scriptResults: [
         {
           exitCode: 0,
           signal: null,

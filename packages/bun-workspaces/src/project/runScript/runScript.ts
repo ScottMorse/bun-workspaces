@@ -6,12 +6,12 @@ import type { ScriptCommand } from "./scriptCommand";
 export type OutputStreamName = "stdout" | "stderr";
 
 export type OutputChunk = {
-  /** The source of the output, stdout or stderr */
+  /** The source of the output, `"stdout"` or `"stderr"` */
   streamName: OutputStreamName;
   /** Raw output text */
   text: string;
   /** Stripped of ANSI escape codes */
-  textAnsiSanitized: string;
+  textNoAnsi: string;
 };
 
 export type RunScriptExit<ScriptMetadata extends object = object> = {
@@ -66,7 +66,7 @@ export const runScript = <ScriptMetadata extends object = object>({
         yield {
           streamName,
           text,
-          textAnsiSanitized: sanitizeAnsi(text),
+          textNoAnsi: sanitizeAnsi(text),
         };
       }
     }

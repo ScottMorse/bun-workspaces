@@ -200,16 +200,16 @@ export default defineConfig({
         activeMatch: "/api",
         items: [
           {
-            text: "Project",
-            link: "/api#project",
-          },
-          {
             text: "Workspace",
             link: "/api#workspace",
           },
           {
-            text: "createFileSystemProject",
-            link: "/api#createfilesystemproject",
+            text: "Project",
+            link: "/api#project",
+          },
+          {
+            text: "FileSystemProject",
+            link: "/api#filesystemproject",
           },
         ],
       },

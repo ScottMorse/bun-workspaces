@@ -25,7 +25,7 @@ export type RunScriptsCompletion<ScriptMetadata extends object = object> = {
   startTimeISO: string;
   endTimeISO: string;
   durationMs: number;
-  scriptDetails: RunScriptExit<ScriptMetadata>[];
+  scriptResults: RunScriptExit<ScriptMetadata>[];
 };
 
 export type RunScriptsOutput<ScriptMetadata extends object = object> = {
@@ -137,21 +137,21 @@ export const runScripts = <ScriptMetadata extends object = object>({
       }
     }
 
-    const scriptDetails = await Promise.all(
+    const scriptExitResults = await Promise.all(
       scripts.map((_, index) => scriptResults[index].result.exit),
     );
 
     const endTime = new Date();
 
     return {
-      totalCount: scriptDetails.length,
-      successCount: scriptDetails.filter((exit) => exit.success).length,
-      failureCount: scriptDetails.filter((exit) => !exit.success).length,
-      allSuccess: scriptDetails.every((exit) => exit.success),
+      totalCount: scriptExitResults.length,
+      successCount: scriptExitResults.filter((exit) => exit.success).length,
+      failureCount: scriptExitResults.filter((exit) => !exit.success).length,
+      allSuccess: scriptExitResults.every((exit) => exit.success),
       startTimeISO: startTime.toISOString(),
       endTimeISO: endTime.toISOString(),
       durationMs: endTime.getTime() - startTime.getTime(),
-      scriptDetails,
+      scriptResults: scriptExitResults,
     };
   };
 
