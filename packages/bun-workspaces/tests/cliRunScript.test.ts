@@ -220,7 +220,7 @@ describe("CLI Run Script", () => {
     );
   });
 
-  test.only("Using --args", async () => {
+  test("Using --args", async () => {
     const { run } = setupCliTest({
       testProject: "runScriptWithEchoArgs",
     });
@@ -443,60 +443,77 @@ success2
       '--args="test args"',
     );
     expect(jsonOutput1).toEqual({
-      script: "all-workspaces",
-      args: '"test args"',
       totalCount: 4,
-      parallel: false,
       successCount: 4,
       failureCount: 0,
       allSuccess: true,
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      workspaces: [
+      scriptExits: [
         {
-          workspace: {
-            name: "application-1a",
-            path: "applications/applicationA",
-            aliases: ["deprecated_appA"],
+          metadata: {
+            workspace: {
+              name: "application-1a",
+              matchPattern: "applications/*",
+              path: "applications/applicationA",
+              aliases: ["deprecated_appA"],
+              scripts: ["a-workspaces", "all-workspaces", "application-a"],
+            },
           },
           success: true,
+          signal: null,
           exitCode: 0,
           startTimeISO: expect.any(String),
           endTimeISO: expect.any(String),
           durationMs: expect.any(Number),
         },
         {
-          workspace: {
-            name: "application-1b",
-            path: "applications/applicationB",
-            aliases: ["deprecated_appB"],
+          metadata: {
+            workspace: {
+              name: "application-1b",
+              matchPattern: "applications/*",
+              path: "applications/applicationB",
+              aliases: ["deprecated_appB"],
+              scripts: ["all-workspaces", "application-b", "b-workspaces"],
+            },
           },
           success: true,
+          signal: null,
           exitCode: 0,
           startTimeISO: expect.any(String),
           endTimeISO: expect.any(String),
           durationMs: expect.any(Number),
         },
         {
-          workspace: {
-            name: "library-1a",
-            path: "libraries/libraryA",
-            aliases: ["deprecated_libA"],
+          metadata: {
+            workspace: {
+              name: "library-1a",
+              matchPattern: "libraries/*",
+              path: "libraries/libraryA",
+              aliases: ["deprecated_libA"],
+              scripts: ["a-workspaces", "all-workspaces", "library-a"],
+            },
           },
           success: true,
+          signal: null,
           exitCode: 0,
           startTimeISO: expect.any(String),
           endTimeISO: expect.any(String),
           durationMs: expect.any(Number),
         },
         {
-          workspace: {
-            name: "library-1b",
-            path: "libraries/libraryB",
-            aliases: ["deprecated_libB"],
+          metadata: {
+            workspace: {
+              name: "library-1b",
+              matchPattern: "libraries/*",
+              path: "libraries/libraryB",
+              aliases: ["deprecated_libB"],
+              scripts: ["all-workspaces", "b-workspaces", "library-b"],
+            },
           },
           success: true,
+          signal: null,
           exitCode: 0,
           startTimeISO: expect.any(String),
           endTimeISO: expect.any(String),
@@ -506,7 +523,7 @@ success2
     });
     for (const { startTimeISO, endTimeISO, durationMs } of [
       jsonOutput1,
-      ...jsonOutput1.workspaces,
+      ...jsonOutput1.scriptExits,
     ]) {
       expect(startTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
       expect(endTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
@@ -522,9 +539,6 @@ success2
       "--args=my-args",
     );
     expect(jsonOutput2).toEqual({
-      script: "a-workspaces",
-      args: "my-args",
-      parallel: false,
       totalCount: 2,
       successCount: 2,
       failureCount: 0,
@@ -532,26 +546,36 @@ success2
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      workspaces: [
+      scriptExits: [
         {
-          workspace: {
-            name: "application-1a",
-            path: "applications/applicationA",
-            aliases: ["deprecated_appA"],
+          metadata: {
+            workspace: {
+              name: "application-1a",
+              matchPattern: "applications/*",
+              path: "applications/applicationA",
+              aliases: ["deprecated_appA"],
+              scripts: ["a-workspaces", "all-workspaces", "application-a"],
+            },
           },
           success: true,
+          signal: null,
           exitCode: 0,
           startTimeISO: expect.any(String),
           endTimeISO: expect.any(String),
           durationMs: expect.any(Number),
         },
         {
-          workspace: {
-            name: "library-1a",
-            path: "libraries/libraryA",
-            aliases: ["deprecated_libA"],
+          metadata: {
+            workspace: {
+              name: "library-1a",
+              matchPattern: "libraries/*",
+              path: "libraries/libraryA",
+              aliases: ["deprecated_libA"],
+              scripts: ["a-workspaces", "all-workspaces", "library-a"],
+            },
           },
           success: true,
+          signal: null,
           exitCode: 0,
           startTimeISO: expect.any(String),
           endTimeISO: expect.any(String),
@@ -562,7 +586,7 @@ success2
 
     for (const { startTimeISO, endTimeISO, durationMs } of [
       jsonOutput2,
-      ...jsonOutput2.workspaces,
+      ...jsonOutput2.scriptExits,
     ]) {
       expect(startTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
       expect(endTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
@@ -579,9 +603,6 @@ success2
       "library*",
     );
     expect(jsonOutput3).toEqual({
-      script: "b-workspaces",
-      args: "",
-      parallel: true,
       totalCount: 1,
       successCount: 1,
       failureCount: 0,
@@ -589,13 +610,18 @@ success2
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      workspaces: [
+      scriptExits: [
         {
-          workspace: {
-            name: "library-1b",
-            path: "libraries/libraryB",
-            aliases: ["deprecated_libB"],
+          metadata: {
+            workspace: {
+              name: "library-1b",
+              matchPattern: "libraries/*",
+              path: "libraries/libraryB",
+              scripts: ["all-workspaces", "b-workspaces", "library-b"],
+              aliases: ["deprecated_libB"],
+            },
           },
+          signal: null,
           success: true,
           exitCode: 0,
           startTimeISO: expect.any(String),
@@ -607,7 +633,7 @@ success2
 
     for (const { startTimeISO, endTimeISO, durationMs } of [
       jsonOutput3,
-      ...jsonOutput3.workspaces,
+      ...jsonOutput3.scriptExits,
     ]) {
       expect(startTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
       expect(endTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
@@ -626,9 +652,6 @@ success2
     );
 
     expect(json).toEqual({
-      script: "test-exit",
-      args: "",
-      parallel: true,
       totalCount: 4,
       successCount: 2,
       failureCount: 2,
@@ -636,13 +659,18 @@ success2
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      workspaces: [
+      scriptExits: [
         {
-          workspace: {
-            name: "fail1",
-            path: "packages/fail1",
-            aliases: [],
+          metadata: {
+            workspace: {
+              name: "fail1",
+              matchPattern: "packages/**/*",
+              path: "packages/fail1",
+              aliases: [],
+              scripts: ["test-exit"],
+            },
           },
+          signal: null,
           success: false,
           exitCode: 1,
           startTimeISO: expect.any(String),
@@ -650,11 +678,16 @@ success2
           durationMs: expect.any(Number),
         },
         {
-          workspace: {
-            name: "fail2",
-            path: "packages/fail2",
-            aliases: [],
+          metadata: {
+            workspace: {
+              name: "fail2",
+              matchPattern: "packages/**/*",
+              path: "packages/fail2",
+              aliases: [],
+              scripts: ["test-exit"],
+            },
           },
+          signal: null,
           success: false,
           exitCode: 2,
           startTimeISO: expect.any(String),
@@ -662,11 +695,16 @@ success2
           durationMs: expect.any(Number),
         },
         {
-          workspace: {
-            name: "success1",
-            path: "packages/success1",
-            aliases: [],
+          metadata: {
+            workspace: {
+              name: "success1",
+              matchPattern: "packages/**/*",
+              path: "packages/success1",
+              aliases: [],
+              scripts: ["test-exit"],
+            },
           },
+          signal: null,
           success: true,
           exitCode: 0,
           startTimeISO: expect.any(String),
@@ -674,11 +712,16 @@ success2
           durationMs: expect.any(Number),
         },
         {
-          workspace: {
-            name: "success2",
-            path: "packages/success2",
-            aliases: [],
+          metadata: {
+            workspace: {
+              name: "success2",
+              matchPattern: "packages/**/*",
+              path: "packages/success2",
+              aliases: [],
+              scripts: ["test-exit"],
+            },
           },
+          signal: null,
           success: true,
           exitCode: 0,
           startTimeISO: expect.any(String),
@@ -690,7 +733,7 @@ success2
 
     for (const { startTimeISO, endTimeISO, durationMs } of [
       json,
-      ...json.workspaces,
+      ...json.scriptExits,
     ]) {
       expect(startTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
       expect(endTimeISO).toStartWith(new Date().toISOString().slice(0, 10));
@@ -724,9 +767,6 @@ success2
         ),
       ),
     ).toEqual({
-      script: "application-a",
-      args: "test-args",
-      parallel: false,
       totalCount: 1,
       successCount: 1,
       failureCount: 0,
@@ -734,14 +774,19 @@ success2
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      workspaces: [
+      scriptExits: [
         {
-          workspace: {
-            name: "application-1a",
-            path: "applications/applicationA",
-            aliases: ["deprecated_appA"],
+          metadata: {
+            workspace: {
+              name: "application-1a",
+              matchPattern: "applications/*",
+              path: "applications/applicationA",
+              aliases: ["deprecated_appA"],
+              scripts: ["a-workspaces", "all-workspaces", "application-a"],
+            },
           },
           success: true,
+          signal: null,
           exitCode: 0,
           startTimeISO: expect.any(String),
           endTimeISO: expect.any(String),

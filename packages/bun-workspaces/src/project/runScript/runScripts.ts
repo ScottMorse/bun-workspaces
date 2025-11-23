@@ -18,6 +18,7 @@ export type RunScriptsScriptResult<ScriptMetadata extends object = object> = {
 };
 
 export type RunScriptsCompletion<ScriptMetadata extends object = object> = {
+  totalCount: number;
   successCount: number;
   failureCount: number;
   allSuccess: boolean;
@@ -137,6 +138,7 @@ export const runScripts = <ScriptMetadata extends object = object>({
     const endTime = new Date();
 
     return {
+      totalCount: scriptExits.length,
       successCount: scriptExits.filter((exit) => exit.success).length,
       failureCount: scriptExits.filter((exit) => !exit.success).length,
       allSuccess: scriptExits.every((exit) => exit.success),
