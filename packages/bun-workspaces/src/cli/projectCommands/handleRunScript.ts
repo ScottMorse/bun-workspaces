@@ -86,7 +86,7 @@ export const runScript = handleCommand(
 
     workspaces.sort((a, b) => a.path.localeCompare(b.path));
 
-    const { output, completion } = project.runWorkspaceScripts({
+    const { output, completion } = project.runScriptAcrossWorkspaces({
       workspacePatterns: workspaces.map(({ name }) => name),
       script,
       args: options.args,

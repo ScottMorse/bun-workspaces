@@ -1,9 +1,15 @@
 import fs from "fs";
 import path from "path";
+import type { Simplify } from "../../internal/types";
 import { findWorkspaces, type Workspace } from "../../workspaces";
 import { ERRORS } from "../errors";
 import type { Project } from "../project";
-import { runScript, runScripts, type RunScriptsResult } from "../runScript";
+import {
+  runScript,
+  runScripts,
+  type RunScriptResult,
+  type RunScriptsResult,
+} from "../runScript";
 import { ProjectBase } from "./projectBase";
 
 /** Arguments for {@link createFileSystemProject} */
@@ -31,15 +37,20 @@ export type WorkspaceScriptMetadata = {
   workspace: Workspace;
 };
 
-export type RunWorkspaceScriptsOptions = {
+export type RunWorkspaceScriptResult = Simplify<
+  RunScriptResult<WorkspaceScriptMetadata>
+>;
+
+export type RunScriptAcrossWorkspacesOptions = {
   workspacePatterns: string[];
   script: string;
   args?: string;
   parallel?: boolean;
 };
 
-export type RunWorkspaceScriptsResult =
-  RunScriptsResult<WorkspaceScriptMetadata>;
+export type RunScriptAcrossWorkspacesResult = Simplify<
+  RunScriptsResult<WorkspaceScriptMetadata>
+>;
 
 class _FileSystemProject extends ProjectBase implements Project {
   public readonly rootDirectory: string;
@@ -73,7 +84,9 @@ class _FileSystemProject extends ProjectBase implements Project {
     }
   }
 
-  runWorkspaceScript(options: RunWorkspaceScriptOptions) {
+  runWorkspaceScript(
+    options: RunWorkspaceScriptOptions,
+  ): RunWorkspaceScriptResult {
     const workspace = this.findWorkspaceByNameOrAlias(
       options.workspaceNameOrAlias,
     );
@@ -96,9 +109,9 @@ class _FileSystemProject extends ProjectBase implements Project {
     });
   }
 
-  runWorkspaceScripts(
-    options: RunWorkspaceScriptsOptions,
-  ): RunWorkspaceScriptsResult {
+  runScriptAcrossWorkspaces(
+    options: RunScriptAcrossWorkspacesOptions,
+  ): RunScriptAcrossWorkspacesResult {
     const workspaces = options.workspacePatterns.flatMap((pattern) =>
       this.findWorkspacesByPattern(pattern),
     );
