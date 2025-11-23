@@ -14,22 +14,24 @@ export type OutputChunk = {
   textAnsiSanitized: string;
 };
 
-export type RunScriptExit = {
+export type RunScriptExit<ScriptMetadata extends object = object> = {
   code: number;
   signal: NodeJS.Signals | null;
   success: boolean;
   startTimeISO: string;
   endTimeISO: string;
   durationMs: number;
-};
+} & ScriptMetadata;
 
-export type RunScriptResult = {
+export type RunScriptResult<ScriptMetadata extends object = object> = {
   output: AsyncIterable<OutputChunk>;
-  exit: Promise<RunScriptExit>;
+  exit: Promise<RunScriptExit<ScriptMetadata>>;
+  metadata: ScriptMetadata;
 };
 
-export type RunScriptOptions = {
+export type RunScriptOptions<ScriptMetadata extends object = object> = {
   scriptCommand: ScriptCommand;
+  metadata: ScriptMetadata;
 };
 
 /**
@@ -37,7 +39,10 @@ export type RunScriptOptions = {
  * stdout and stderr chunks and a result object
  * containing exit details.
  */
-export const runScript = ({ scriptCommand }: RunScriptOptions) => {
+export const runScript = <ScriptMetadata extends object = object>({
+  scriptCommand,
+  metadata,
+}: RunScriptOptions<ScriptMetadata>): RunScriptResult<ScriptMetadata> => {
   const startTime = new Date();
 
   const proc = Bun.spawn(
@@ -71,9 +76,10 @@ export const runScript = ({ scriptCommand }: RunScriptOptions) => {
     pipeOutput("stderr"),
   ]);
 
-  const exit = proc.exited.then<RunScriptExit>((code) => {
+  const exit = proc.exited.then<RunScriptExit<ScriptMetadata>>((code) => {
     const endTime = new Date();
     return {
+      ...metadata,
       code,
       signal: proc.signalCode,
       success: code === 0,
@@ -83,5 +89,5 @@ export const runScript = ({ scriptCommand }: RunScriptOptions) => {
     };
   });
 
-  return { output, exit };
+  return { output, exit, metadata };
 };

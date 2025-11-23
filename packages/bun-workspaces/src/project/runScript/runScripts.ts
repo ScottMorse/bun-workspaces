@@ -5,43 +5,41 @@ import {
 } from "./runScript";
 import { type ScriptCommand } from "./scriptCommand";
 
-export type RunScriptsScript = {
-  name: string;
+export type RunScriptsScript<ScriptMetadata extends object = object> = {
   scriptCommand: ScriptCommand;
+  metadata: ScriptMetadata;
 };
 
-export type RunScriptsScriptResult = {
-  /** The input script metadata */
-  script: RunScriptsScript;
+export type RunScriptsScriptResult<ScriptMetadata extends object = object> = {
   /** The result of running the script */
-  result: RunScriptResult;
+  result: RunScriptResult<ScriptMetadata>;
 };
 
-export type RunScriptsCompleteExit = {
+export type RunScriptsCompleteExit<ScriptMetadata extends object = object> = {
   successCount: number;
   failureCount: number;
   allSuccess: boolean;
   startTimeISO: string;
   endTimeISO: string;
   durationMs: number;
-  scriptExits: RunScriptExit[];
+  scriptExits: RunScriptExit<ScriptMetadata>[];
 };
 
-export type RunScriptsResult = {
-  scriptResults: AsyncIterable<RunScriptsScriptResult>;
-  completeExit: Promise<RunScriptsCompleteExit>;
+export type RunScriptsResult<ScriptMetadata extends object = object> = {
+  scriptResults: AsyncIterable<RunScriptsScriptResult<ScriptMetadata>>;
+  completeExit: Promise<RunScriptsCompleteExit<ScriptMetadata>>;
 };
 
-export type RunScriptsOptions = {
-  scripts: RunScriptsScript[];
+export type RunScriptsOptions<ScriptMetadata extends object = object> = {
+  scripts: RunScriptsScript<ScriptMetadata>[];
   parallel: boolean;
 };
 
 /** Run a list of scripts */
-export const runScripts = ({
+export const runScripts = <ScriptMetadata extends object = object>({
   scripts,
   parallel,
-}: RunScriptsOptions): RunScriptsResult => {
+}: RunScriptsOptions<ScriptMetadata>): RunScriptsResult<ScriptMetadata> => {
   const startTime = new Date();
 
   type ScriptStartTrigger = {
@@ -63,13 +61,13 @@ export const runScripts = ({
     return { promise, trigger, index };
   });
 
-  const scriptResults: RunScriptsScriptResult[] = scripts.map(
-    () => null as never as RunScriptsScriptResult,
+  const scriptResults: RunScriptsScriptResult<ScriptMetadata>[] = scripts.map(
+    () => null as never as RunScriptsScriptResult<ScriptMetadata>,
   );
 
   function triggerScript(index: number) {
     const scriptResult = {
-      script: scripts[index],
+      ...scripts[index],
       result: runScript(scripts[index]),
     };
 
