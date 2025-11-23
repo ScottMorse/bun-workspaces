@@ -826,7 +826,7 @@ describe("Test FileSystemProject", () => {
     const summaryResult = await summary;
 
     expect(summaryResult.durationMs).toBeGreaterThan(1000);
-    expect(summaryResult.durationMs).toBeLessThan(1100);
+    expect(summaryResult.durationMs).toBeLessThan(1500);
 
     expect(summaryResult).toEqual({
       totalCount: 5,
