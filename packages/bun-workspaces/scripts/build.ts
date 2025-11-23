@@ -1,6 +1,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { build } from "@rslib/core";
+import { $ } from "bun";
 
 import rsLibConfig from "../rslib.config.ts";
 
@@ -49,9 +50,7 @@ export const runBuild = async () => {
     JSON.stringify(createDesiredPackageJson(), null, 2),
   );
 
-  await Bun.spawn(["sh", "-c", "bunx prettier --write ."], {
-    cwd: path.resolve(__dirname, "../dist"),
-  });
+  await $`cd ${path.resolve(__dirname, "../dist")} && bunx prettier --write .`;
 };
 
 if (import.meta.main) {
