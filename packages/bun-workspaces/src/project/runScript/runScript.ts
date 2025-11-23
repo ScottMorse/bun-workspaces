@@ -1,6 +1,7 @@
 import { mergeAsyncIterables } from "../../internal/mergeAsyncIterables";
 import { IS_WINDOWS } from "../../internal/os";
 import { sanitizeAnsi } from "../../internal/regex";
+import type { SimpleAsyncIterable } from "../../internal/types";
 import type { ScriptCommand } from "./scriptCommand";
 
 export type OutputStreamName = "stdout" | "stderr";
@@ -26,7 +27,7 @@ export type RunScriptExit<ScriptMetadata extends object = object> = {
 };
 
 export type RunScriptResult<ScriptMetadata extends object = object> = {
-  output: AsyncIterable<OutputChunk>;
+  output: SimpleAsyncIterable<OutputChunk>;
   exit: Promise<RunScriptExit<ScriptMetadata>>;
   metadata: ScriptMetadata;
 };
@@ -59,7 +60,7 @@ export const runScript = <ScriptMetadata extends object = object>({
 
   async function* pipeOutput(
     streamName: OutputStreamName,
-  ): AsyncIterable<OutputChunk> {
+  ): SimpleAsyncIterable<OutputChunk> {
     const stream = proc[streamName];
     if (stream) {
       for await (const chunk of stream) {

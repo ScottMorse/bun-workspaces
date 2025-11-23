@@ -1,3 +1,5 @@
+import type { SimpleAsyncIterable } from "./types";
+
 export type AsyncQueueItem<T> = { type: "value"; value: T } | { type: "done" };
 
 export const createAsyncIterableQueue = <T>() => {
@@ -55,7 +57,7 @@ export const createAsyncIterableQueue = <T>() => {
     },
   };
 
-  const iterator: AsyncIterable<T> & {
+  const iterator: SimpleAsyncIterable<T> & {
     push: (value: T) => void;
     close: () => void;
   } = {

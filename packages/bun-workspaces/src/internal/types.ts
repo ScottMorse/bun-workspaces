@@ -2,3 +2,6 @@
 export type Simplify<T extends object> = {
   [K in keyof T]: T[K];
 };
+
+/** A normal `AsyncIterable` that is only intended for `for await` style iteration */
+export type SimpleAsyncIterable<T> = AsyncIterable<T, void, undefined>;

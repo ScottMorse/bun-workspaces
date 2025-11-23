@@ -1,7 +1,9 @@
+import type { SimpleAsyncIterable } from "./types";
+
 /** Run multiple async iterables in parallel and yield the results in the order they are completed. */
 export const mergeAsyncIterables = <T>(
-  iterables: AsyncIterable<T>[],
-): AsyncIterable<T> => ({
+  iterables: SimpleAsyncIterable<T>[],
+): SimpleAsyncIterable<T> => ({
   async *[Symbol.asyncIterator]() {
     const iterators = iterables.map((it) => it[Symbol.asyncIterator]());
     type NextState = { index: number; result: IteratorResult<T> };

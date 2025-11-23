@@ -1,4 +1,5 @@
 import { createAsyncIterableQueue } from "../../internal/asyncIterableQueue";
+import type { SimpleAsyncIterable } from "../../internal/types";
 import {
   runScript,
   type OutputChunk,
@@ -37,7 +38,7 @@ export type RunScriptsOutput<ScriptMetadata extends object = object> = {
 
 export type RunScriptsResult<ScriptMetadata extends object = object> = {
   /** Allows async iteration of output chunks from all script executions */
-  output: AsyncIterable<RunScriptsOutput<ScriptMetadata>, void>;
+  output: SimpleAsyncIterable<RunScriptsOutput<ScriptMetadata>>;
   /** Resolves with a results summary after all scripts have exited */
   summary: Promise<RunScriptsSummary<ScriptMetadata>>;
 };
