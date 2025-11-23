@@ -3,7 +3,7 @@ import path from "node:path";
 import { build } from "@rslib/core";
 import { $ } from "bun";
 
-import rsLibConfig from "../rslib.config.ts";
+import rsLibConfig, { IS_TEST_BUILD } from "../rslib.config.ts";
 
 const PACKAGE_JSON_PATH = path.resolve(
   rsLibConfig.output?.distPath?.root ?? "",
@@ -50,7 +50,7 @@ export const runBuild = async () => {
     JSON.stringify(createDesiredPackageJson(), null, 2),
   );
 
-  await $`cd ${path.resolve(__dirname, "../dist")} && bunx prettier --write .`;
+  await $`cd ${path.resolve(__dirname, IS_TEST_BUILD ? "../dist.test" : "../dist")} && bunx prettier --write .`;
 };
 
 if (import.meta.main) {
