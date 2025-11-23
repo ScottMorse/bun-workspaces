@@ -12,11 +12,18 @@ const PACKAGE_JSON_PATH = path.resolve(
 const ROOT_PACKAGE_JSON_PATH = path.resolve(__dirname, "../../../package.json");
 
 const createDesiredPackageJson = () => {
-  const { name, version, main, homepage, repository, bin, custom } = JSON.parse(
-    readFileSync(path.resolve(PACKAGE_JSON_PATH)).toString(),
-  );
+  const {
+    name,
+    version,
+    main,
+    homepage,
+    repository,
+    bin,
+    custom,
+    dependencies,
+  } = JSON.parse(readFileSync(path.resolve(PACKAGE_JSON_PATH)).toString());
 
-  const { dependencies, license } = JSON.parse(
+  const { license } = JSON.parse(
     readFileSync(ROOT_PACKAGE_JSON_PATH).toString(),
   );
 
@@ -41,6 +48,10 @@ export const runBuild = async () => {
     PACKAGE_JSON_PATH,
     JSON.stringify(createDesiredPackageJson(), null, 2),
   );
+
+  await Bun.spawn(["bunx", "prettier", "--write", "."], {
+    cwd: path.resolve(__dirname, "../dist"),
+  });
 };
 
 if (import.meta.main) {

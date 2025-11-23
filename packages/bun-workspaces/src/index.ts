@@ -16,6 +16,7 @@ export {
   type RunScriptAcrossWorkspacesOptions,
   type RunScriptAcrossWorkspacesResult,
   type OutputChunk,
+  type OutputStreamName,
 } from "./project";
 export { type Workspace } from "./workspaces";
 export { type SimpleAsyncIterable } from "./internal/types";

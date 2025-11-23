@@ -30,6 +30,11 @@
     "publish-build:npm": "bun run scripts/publish.ts"
   },
   "devDependencies": {
+    "@rslib/core": "^0.15.1",
     "bun-workspaces": "file:."
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "glob": "^11.0.3"
   }
 }

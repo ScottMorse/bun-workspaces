@@ -33,11 +33,26 @@ An object representing a workspace in a [Project](/api#project).
 ## `Project`
 
 The core of `bun-workspaces`'s functionality. 
-It contains a list of [Workspace](/api#workspace)s and provides 
+It contains a list of [Workspaces](/api#workspace) and provides 
 several useful methods for working with them. A Project is typically initialized at a git repository's root directory.
 The Project root should contain the `package.json` file in which `"workspaces"` are defined.
 
 Usually created via [createFileSystemProject](/api#createfilesystemproject).
+
+### `.name`
+`type: string`
+
+The name of the project. This is typically the name found in the root `package.json` unless otherwise provided.
+
+### `.rootDirectory`
+`type: string`
+
+The given root directory of the project.
+
+### `.workspaces`
+`type: Workspace[]`
+
+The list of all [Workspaces](/api#workspace) in the project.
 
 ### `.findWorkspaceByName`
 `findWorkspaceByName(workspaceName: string): Workspace | null`
@@ -71,7 +86,7 @@ this method can still unambiguously find a workspace.
 ### `.findWorkspacesByPattern`
 `findWorkspacesByPattern(workspacePattern: string): Workspace[]`
 
-Find a list of [Workspace](/api#workspace)s by their name, using a wildcard pattern.
+Find a list of [Workspaces](/api#workspace) by their name, using a wildcard pattern.
 
 To prevent ambiguity, this method does not match workspace [aliases](/config#about-workspace-aliases).
 <SyntaxHighlighter language="typescript">
@@ -82,7 +97,7 @@ To prevent ambiguity, this method does not match workspace [aliases](/config#abo
 ### `.listWorkspacesWithScript`
 `listWorkspacesWithScript(scriptName: string): Workspace[]`
 
-Get an array of all [Workspace](/api#workspace)s that have a given script in their package.json "scripts" field.
+Get an array of all [Workspaces](/api#workspace) that have a given script in their package.json "scripts" field.
 <SyntaxHighlighter language="typescript">
 {LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE}
 </SyntaxHighlighter>
@@ -90,7 +105,7 @@ Get an array of all [Workspace](/api#workspace)s that have a given script in the
 ### `.mapScriptsToWorkspaces`
 `mapScriptsToWorkspaces(): Record<string, WorkspaceScriptMetadata>`
 
-Get a mapping of all project script names to the [Workspace](/api#workspace)s that have them in their package.json "scripts" field.
+Get a mapping of all project script names to the [Workspaces](/api#workspace) that have them in their package.json "scripts" field.
 <SyntaxHighlighter language="typescript">
 {MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE}
 </SyntaxHighlighter>
@@ -147,7 +162,7 @@ It will also detect and utilize any [workspace configuration](/config#workspace-
 ## `createMemoryProject`
 `createMemoryProject(options: CreateMemoryProjectOptions): MemoryProject`
 
-Create a [Project](/api#project) from a given array of [Workspace](/api#workspace)s. 
+Create a [Project](/api#project) from a given array of [Workspaces](/api#workspace). 
 
 Usually used  only for testing purposes to do without the need for a real project
 in the file system.

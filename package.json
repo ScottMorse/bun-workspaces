@@ -3,7 +3,7 @@
   "private": true,
   "license": "MIT",
   "workspaces": [
-    "packages/bun-workspaces"
+    "packages/*"
   ],
   "scripts": {
     "bw": "bun --silent --cwd=./packages/bun-workspaces",
@@ -12,12 +12,10 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format-check": "prettier --check .",
-    "type-check": "tsc --noEmit",
-    "prepare": "bun --cwd=./packages/doc-website install --frozen-lockfile # cannot install as normal workspace (rspress/rslib dep conflicts)"
+    "type-check": "tsc --noEmit"
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",
-    "@rslib/core": "^0.15.1",
     "@types/bun": "^1.3.0",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
@@ -27,9 +25,5 @@
     "prettier": "^3.6.2",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.2"
-  },
-  "dependencies": {
-    "commander": "^12.1.0",
-    "glob": "^11.0.3"
   }
 }
