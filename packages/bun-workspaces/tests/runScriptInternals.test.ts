@@ -139,7 +139,7 @@ describe("Run Single Script", () => {
   test("With ANSI escape codes", async () => {
     const result = await runScript({
       scriptCommand: {
-        command: "echo -e '\x1b[31mtest-script 1\x1b[0m'",
+        command: "echo '\x1b[31mtest-script 1\x1b[0m'",
         workingDirectory: ".",
       },
       metadata: {},
