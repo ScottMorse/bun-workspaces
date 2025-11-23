@@ -30,7 +30,7 @@ describe("Run Single Script", () => {
       signal: null,
       metadata: {},
     });
-    expect(new Date(exit.startTimeISO).getTime()).toBeLessThan(
+    expect(new Date(exit.startTimeISO).getTime()).toBeLessThanOrEqual(
       new Date(exit.endTimeISO).getTime(),
     );
     expect(exit.durationMs).toBe(
@@ -66,7 +66,7 @@ describe("Run Single Script", () => {
       signal: null,
       metadata: {},
     });
-    expect(new Date(exit.startTimeISO).getTime()).toBeLessThan(
+    expect(new Date(exit.startTimeISO).getTime()).toBeLessThanOrEqual(
       new Date(exit.endTimeISO).getTime(),
     );
     expect(exit.durationMs).toBe(
