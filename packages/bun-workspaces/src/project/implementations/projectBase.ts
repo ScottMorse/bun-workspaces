@@ -1,14 +1,14 @@
 import path from "path";
 import { createWildcardRegex } from "../../internal/regex";
 import { type Workspace } from "../../workspaces";
-import { ERRORS } from "../errors";
+import { PROJECT_ERRORS } from "../errors";
 import type {
   CreateProjectScriptCommandOptions,
   CreateProjectScriptCommandResult,
   Project,
-  ScriptMetadata,
+  WorkspaceScriptMetadata,
 } from "../project";
-import { createScriptCommand } from "../scriptCommand";
+import { createWorkspaceScriptCommand } from "../runScript";
 
 export abstract class ProjectBase implements Project {
   public abstract readonly name: string;
@@ -22,7 +22,7 @@ export abstract class ProjectBase implements Project {
     );
   }
 
-  mapScriptsToWorkspaces(): Record<string, ScriptMetadata> {
+  mapScriptsToWorkspaces(): Record<string, WorkspaceScriptMetadata> {
     const scripts = new Set<string>();
     this.workspaces.forEach((workspace) => {
       workspace.scripts.forEach((script) => scripts.add(script));
@@ -38,7 +38,7 @@ export abstract class ProjectBase implements Project {
           ...acc,
           [name]: { name, workspaces },
         }),
-        {} as Record<string, ScriptMetadata>,
+        {} as Record<string, WorkspaceScriptMetadata>,
       );
   }
 
@@ -66,6 +66,10 @@ export abstract class ProjectBase implements Project {
   /** Accepts wildcard for finding a list of workspaces */
   findWorkspacesByPattern(workspacePattern: string): Workspace[] {
     if (!workspacePattern) return [];
+    if (!workspacePattern.includes("*")) {
+      const workspace = this.findWorkspaceByNameOrAlias(workspacePattern);
+      return workspace ? [workspace] : [];
+    }
     const regex = createWildcardRegex(workspacePattern);
     return this.workspaces.filter((workspace) => regex.test(workspace.name));
   }
@@ -78,12 +82,12 @@ export abstract class ProjectBase implements Project {
     );
 
     if (!workspace) {
-      throw new ERRORS.ProjectWorkspaceNotFound(
+      throw new PROJECT_ERRORS.ProjectWorkspaceNotFound(
         `Workspace not found: ${JSON.stringify(options.workspaceNameOrAlias)}`,
       );
     }
     if (!workspace.scripts.includes(options.scriptName)) {
-      throw new ERRORS.WorkspaceScriptDoesNotExist(
+      throw new PROJECT_ERRORS.WorkspaceScriptDoesNotExist(
         `Script not found in workspace ${JSON.stringify(
           workspace.name,
         )}: ${JSON.stringify(options.scriptName)} (available: ${
@@ -94,7 +98,7 @@ export abstract class ProjectBase implements Project {
     return {
       workspace,
       scriptName: options.scriptName,
-      commandDetails: createScriptCommand({
+      commandDetails: createWorkspaceScriptCommand({
         ...options,
         workspace,
         rootDirectory: path.resolve(this.rootDirectory),

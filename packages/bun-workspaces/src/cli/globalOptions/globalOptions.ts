@@ -11,7 +11,7 @@ import { logger } from "../../internal/logger";
 import {
   _internalCreateFileSystemProject,
   createMemoryProject,
-  type Project,
+  type FileSystemProject,
 } from "../../project";
 import {
   type CliGlobalOptionName,
@@ -107,7 +107,7 @@ const applyGlobalOptions = (
   logger.printLevel = options.logLevel;
   logger.debug("Log level: " + options.logLevel);
 
-  let project: Project;
+  let project: FileSystemProject;
   let error: Error | null = null;
   try {
     project = _internalCreateFileSystemProject({
@@ -123,7 +123,9 @@ const applyGlobalOptions = (
     logger.debug("Project root: " + path.resolve(project.rootDirectory));
   } catch (_error) {
     error = _error as Error;
-    project = createMemoryProject({ workspaces: [] });
+    project = createMemoryProject({
+      workspaces: [],
+    }) as unknown as FileSystemProject;
   }
 
   return { project, error };

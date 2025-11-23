@@ -20,6 +20,8 @@ describe("setLogLevel", () => {
     console.info = info;
     console.warn = warn;
     console.error = error;
+
+    setLogLevel("silent");
   });
   /* eslint-enable */
 

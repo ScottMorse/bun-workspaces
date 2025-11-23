@@ -7,7 +7,6 @@ footer: false
 
 import packageJson from "../../../bun-workspaces/package.json";
 import { Bwunster } from "../content/Bwunster";
-import { NormalizeIndex } from "../content/NormalizeIndex";
 import { SyntaxHighlighter } from "../content/highlight";
 import { BragTicker } from "../content/BragTicker";
 import { API_QUICKSTART } from '../content/api/apiExamples';
@@ -15,10 +14,8 @@ import { CLI_QUICKSTART } from '../content/cli/quickstart';
 
 <Bwunster />
 
-<NormalizeIndex />
-
 <h1 className="home-title">bun-workspaces<br/><span className="home-subtitle">
-  A CLI on top of native [Bun
+  A CLI and API on top of native [Bun
   workspaces](https://bun.sh/docs/install/workspaces)</span></h1>
 <p className="home-version">v{packageJson.version}</p>
 
@@ -36,6 +33,7 @@ import { CLI_QUICKSTART } from '../content/cli/quickstart';
 
 <h2 className="whats-new-subtitle">Notable recent updates 📦</h2>
 <div className="whats-new-list">
+- API: Added methods for directly running scripts in series or parallel in workspaces via [FileSystemProject](/api#filesystemproject).
 - An API has been made official! 🛠️️ [Go see the documentation here](/api)
   - If you are sneaky and found the previous experimental exports, this will be a breaking change for you.
   - Now that the API has been officially released, stability will be maintained more rigorously.

@@ -1,8 +1,8 @@
 import type { Workspace } from "../workspaces";
-import type { ScriptCommand, ScriptCommandMethod } from "./scriptCommand";
+import type { ScriptCommand, WorkspaceScriptCommandMethod } from "./runScript";
 
 /** Metadata about a {@link Project}'s script, including the workspaces that have it in their package.json */
-export type ScriptMetadata = {
+export type WorkspaceScriptMetadata = {
   name: string;
   workspaces: Workspace[];
 };
@@ -18,7 +18,7 @@ export type CreateProjectScriptCommandOptions = {
    * Either run in the workspace directory or use bun's --filter option.
    * Defaults to "cd".
    */
-  method?: ScriptCommandMethod;
+  method?: WorkspaceScriptCommandMethod;
   /** The arguments to append to the command */
   args?: string;
 };
@@ -60,7 +60,7 @@ export interface Project {
   /** Get an array of all workspaces that have a given script in their package.json */
   listWorkspacesWithScript(scriptName: string): Workspace[];
   /** Get a mapping of all scripts to the workspaces that have them in their package.json */
-  mapScriptsToWorkspaces(): Record<string, ScriptMetadata>;
+  mapScriptsToWorkspaces(): Record<string, WorkspaceScriptMetadata>;
   /** Create metadata that can be used to run a workspace's script */
   createScriptCommand(
     options: CreateProjectScriptCommandOptions,

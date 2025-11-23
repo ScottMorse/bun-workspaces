@@ -1,13 +1,12 @@
 import path from "path";
 import { expect, test as _test, describe } from "bun:test";
-import type { Workspace } from "../src";
+import type { Workspace, WorkspaceScriptMetadata } from "../src";
 import {
   createFileSystemProject,
   createMemoryProject,
   type FileSystemProject,
-  type ScriptMetadata,
 } from "../src/project";
-import { ERRORS } from "../src/project/errors";
+import { PROJECT_ERRORS } from "../src/project/errors";
 import { WORKSPACE_ERRORS } from "../src/workspaces";
 import { getProjectRoot } from "./testProjects";
 
@@ -210,7 +209,7 @@ describe("Test Project utilities", () => {
   });
 
   const stripMetadataToWorkspaceNames = (
-    metadata: Record<string, ScriptMetadata>,
+    metadata: Record<string, WorkspaceScriptMetadata>,
   ) =>
     Object.values(metadata).reduce(
       (acc, { name, workspaces }) => ({
@@ -421,7 +420,7 @@ describe("Test Project utilities", () => {
         scriptName: "not-a-script",
         workspaceNameOrAlias: "library-b",
       }),
-    ).toThrow(ERRORS.WorkspaceScriptDoesNotExist);
+    ).toThrow(PROJECT_ERRORS.WorkspaceScriptDoesNotExist);
 
     expect(() =>
       project.createScriptCommand({
@@ -430,7 +429,7 @@ describe("Test Project utilities", () => {
         scriptName: "all-workspaces",
         workspaceNameOrAlias: "not-a-workspace",
       }),
-    ).toThrow(ERRORS.ProjectWorkspaceNotFound);
+    ).toThrow(PROJECT_ERRORS.ProjectWorkspaceNotFound);
   });
 
   test("MemoryProject", async () => {

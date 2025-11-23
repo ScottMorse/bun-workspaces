@@ -14,7 +14,7 @@ export const exampleWorkspaceConfigArray: WorkspaceConfig = {
 
 export const createPackageJsonExample = (config: WorkspaceConfig) => {
   return {
-    name: "my-app",
+    name: "@my-organization/my-application",
     version: "1.0.0",
     description: "My app",
     [WORKSPACE_CONFIG_PACKAGE_JSON_KEY]: config,

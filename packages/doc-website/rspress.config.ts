@@ -11,7 +11,7 @@ const NPM_PACKAGE_URL = "https://www.npmjs.com/package/bun-workspaces";
 
 const TITLE = "bun-workspaces — Bun Workspaces CLI | Documentation";
 const DESCRIPTION =
-  "Documentation for bun-workspaces: A CLI for developers using the Bun runtime to manage monorepos. Lists workspaces and runs workspace scripts in parallel, with an API for JavaScript or TypeScript.";
+  "Documentation for bun-workspaces: A CLI and TypeScript API for developers using the Bun runtime to manage monorepos and run scripts across their workspaces.";
 
 const LD_JSON = {
   "@context": "https://schema.org",
@@ -151,6 +151,16 @@ export default defineConfig({
   themeConfig: {
     socialLinks: [
       {
+        icon: {
+          svg: fs.readFileSync(
+            path.resolve(__dirname, "src/docs/public/buy-me-a-coffee-icon.svg"),
+            "utf8",
+          ),
+        },
+        mode: "link",
+        content: "https://buymeacoffee.com/scottmorse",
+      },
+      {
         icon: "github",
         mode: "link",
         content: GITHUB_REPO_URL,
@@ -190,16 +200,16 @@ export default defineConfig({
         activeMatch: "/api",
         items: [
           {
-            text: "Project",
-            link: "/api#project",
-          },
-          {
             text: "Workspace",
             link: "/api#workspace",
           },
           {
-            text: "createFileSystemProject",
-            link: "/api#createfilesystemproject",
+            text: "Project",
+            link: "/api#project",
+          },
+          {
+            text: "FileSystemProject",
+            link: "/api#filesystemproject",
           },
         ],
       },

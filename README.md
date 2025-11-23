@@ -6,14 +6,20 @@
 
 **_New: [An API is now officially released!](https://bunworkspaces.com/api)_**
 
-This is a CLI that works on top of native [Bun workspaces](https://bun.sh/docs/install/workspaces) with no additional setup required. Get metadata about your workspaces and scripts, and run scripts across your workspaces.
+This is a CLI and API that help you manage your monorepo on top of native [Bun workspaces](https://bun.sh/docs/install/workspaces), with no additional setup required. Get metadata about your workspaces and scripts, and run scripts across your workspaces.
+
+<a href="https://buymeacoffee.com/scottmorse">
+<img src="./packages/doc-website/src/docs/public/bmac-logo-circle.png" alt="Link to Buy Me A Coffee" width="40" />
+</a>
 
 ## Quick Start
 
-You can install the CLI in your project or simply use `bunx bun-workspaces`.
+Installation:
 
 ```bash
+$ # Install to use the API and/or lock your CLI version for your project
 $ bun add --dev bun-workspaces
+$ # Start using the CLI with or without the installation step
 $ bunx bun-workspaces --help
 ```
 
@@ -71,3 +77,4 @@ const subprocess = Bun.spawn(command.split(/\s+/), {
 ```
 
 _`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Oven. This project aims to enhance enhance the experience of Bun for its users._
+a

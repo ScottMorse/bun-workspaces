@@ -1,3 +1,4 @@
+import type { Simplify } from "../../internal/types";
 import {
   validateWorkspaceAliases,
   WORKSPACE_ERRORS,
@@ -58,7 +59,7 @@ class _MemoryProject extends ProjectBase implements Project {
  * An implementation of {@link Project} that is created from a list of workspaces in memory.
  *
  * Mainly used for testing without needing a real file system project. */
-export type MemoryProject = Required<InstanceType<typeof _MemoryProject>>;
+export type MemoryProject = Simplify<InstanceType<typeof _MemoryProject>>;
 
 /** Create a {@link Project} from a provided list of workspace objects.
  *

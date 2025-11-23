@@ -8,7 +8,16 @@ export {
   type CreateMemoryProjectOptions,
   type CreateProjectScriptCommandOptions,
   type CreateProjectScriptCommandResult,
-  type ScriptMetadata,
+  type WorkspaceScriptMetadata,
+  type RunWorkspaceScriptMetadata,
+  type WorkspaceScriptCommandMethod,
+  type RunWorkspaceScriptOptions,
+  type RunWorkspaceScriptResult,
+  type RunScriptAcrossWorkspacesOptions,
+  type RunScriptAcrossWorkspacesResult,
+  type OutputChunk,
+  type OutputStreamName,
 } from "./project";
 export { type Workspace } from "./workspaces";
+export { type SimpleAsyncIterable } from "./internal/types";
 export { setLogLevel, type LogLevelSetting } from "./internal/logger";

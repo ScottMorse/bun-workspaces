@@ -1,6 +1,6 @@
 {
   "name": "bun-workspaces",
-  "version": "1.0.0-alpha.17",
+  "version": "1.0.0-alpha.18",
   "main": "src/index.ts",
   "private": true,
   "homepage": "https://bunworkspaces.com",
@@ -30,6 +30,11 @@
     "publish-build:npm": "bun run scripts/publish.ts"
   },
   "devDependencies": {
+    "@rslib/core": "^0.15.1",
     "bun-workspaces": "file:."
+  },
+  "dependencies": {
+    "commander": "^12.1.0",
+    "glob": "^11.1.0"
   }
 }

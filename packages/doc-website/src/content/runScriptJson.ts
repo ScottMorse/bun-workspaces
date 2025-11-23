@@ -1,13 +1,12 @@
-import { type RunScriptJsonOutputFile } from "bun-workspaces/src/cli/projectCommands/handleRunScript";
+import { type RunScriptAcrossWorkspacesResult } from "bun-workspaces";
 
 const start = new Date("1999-12-31T23:59:59.999Z");
 const end = new Date(start.getTime() + 5136);
 const durationMs = end.getTime() - start.getTime();
 
-export const RUN_SCRIPT_EXAMPLE_JSON_OUTPUT: RunScriptJsonOutputFile = {
-  script: "my-script",
-  args: "my script args",
-  parallel: false,
+export const RUN_SCRIPT_EXAMPLE_JSON_OUTPUT: Awaited<
+  RunScriptAcrossWorkspacesResult["summary"]
+> = {
   totalCount: 2,
   successCount: 1,
   failureCount: 1,
@@ -15,30 +14,40 @@ export const RUN_SCRIPT_EXAMPLE_JSON_OUTPUT: RunScriptJsonOutputFile = {
   startTimeISO: start.toISOString(),
   endTimeISO: end.toISOString(),
   durationMs,
-  workspaces: [
+  scriptResults: [
     {
-      workspace: {
-        name: "my-workspace-a",
-        path: "packages/my-workspace-a",
-        aliases: ["mwa"],
-      },
-      success: true,
       exitCode: 0,
+      signal: null,
+      success: true,
       startTimeISO: start.toISOString(),
       endTimeISO: new Date(end.getTime() - durationMs * 0.75).toISOString(),
       durationMs: durationMs * 0.75,
+      metadata: {
+        workspace: {
+          name: "my-workspace-a",
+          matchPattern: "packages/**/*",
+          path: "packages/my-workspace-a",
+          scripts: ["my-script"],
+          aliases: ["mwa"],
+        },
+      },
     },
     {
-      workspace: {
-        name: "my-workspace-b",
-        path: "packages/my-workspace-b",
-        aliases: ["mwb"],
-      },
-      success: false,
       exitCode: 1,
+      signal: null,
+      success: false,
       startTimeISO: new Date(start.getTime() + durationMs * 0.75).toISOString(),
       endTimeISO: new Date(end.getTime() - 1).toISOString(),
       durationMs: durationMs * 0.25 - 1,
+      metadata: {
+        workspace: {
+          name: "my-workspace-b",
+          matchPattern: "packages/**/*",
+          path: "packages/my-workspace-b",
+          scripts: ["my-script"],
+          aliases: ["mwb"],
+        },
+      },
     },
   ],
 };

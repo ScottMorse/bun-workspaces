@@ -549,7 +549,7 @@ Script: library-b
       );
       assertOutputMatches(
         noWorkspaceScriptResult.stderr.sanitizedCompactLines,
-        `Script not found in workspace "application-a": "does-not-exist" (available: a-workspaces, all-workspaces, application-a)`,
+        `Script not found in target workspace: "does-not-exist"`,
       );
     },
   );

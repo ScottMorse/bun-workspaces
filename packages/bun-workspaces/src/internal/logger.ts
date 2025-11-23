@@ -45,7 +45,7 @@ export type Logger = {
   ): Log<Message, Metadata>;
 
   logOutput(
-    chunk: Uint8Array,
+    chunk: Uint8Array | string,
     level: LogLevel,
     stream: NodeJS.WriteStream,
     prefix: string,
@@ -98,12 +98,15 @@ class _Logger implements Logger {
   }
 
   logOutput(
-    chunk: Uint8Array,
+    chunk: Uint8Array | string,
     level: LogLevel,
     stream: NodeJS.WriteStream,
     prefix: string,
   ) {
-    const message = new TextDecoder().decode(chunk).trim();
+    const message =
+      typeof chunk === "string"
+        ? chunk.trim()
+        : new TextDecoder().decode(chunk).trim();
 
     const log: Log<string, Record<string, unknown>> = {
       message,

@@ -18,6 +18,7 @@ export default defineConfig({
   ],
   output: {
     minify: {
+      js: false,
       jsOptions: {
         extractComments: true,
       },

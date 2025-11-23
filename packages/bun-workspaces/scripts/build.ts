@@ -1,8 +1,9 @@
-import { readFileSync, writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync, copyFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import { build } from "@rslib/core";
+import { $ } from "bun";
 
-import rsLibConfig from "../rslib.config.ts";
+import rsLibConfig, { IS_TEST_BUILD } from "../rslib.config.ts";
 
 const PACKAGE_JSON_PATH = path.resolve(
   rsLibConfig.output?.distPath?.root ?? "",
@@ -12,11 +13,18 @@ const PACKAGE_JSON_PATH = path.resolve(
 const ROOT_PACKAGE_JSON_PATH = path.resolve(__dirname, "../../../package.json");
 
 const createDesiredPackageJson = () => {
-  const { name, version, main, homepage, repository, bin, custom } = JSON.parse(
-    readFileSync(path.resolve(PACKAGE_JSON_PATH)).toString(),
-  );
+  const {
+    name,
+    version,
+    main,
+    homepage,
+    repository,
+    bin,
+    custom,
+    dependencies,
+  } = JSON.parse(readFileSync(path.resolve(PACKAGE_JSON_PATH)).toString());
 
-  const { dependencies, license } = JSON.parse(
+  const { license } = JSON.parse(
     readFileSync(ROOT_PACKAGE_JSON_PATH).toString(),
   );
 
@@ -35,12 +43,30 @@ const createDesiredPackageJson = () => {
 };
 
 export const runBuild = async () => {
+  console.log("Running rslib build...");
   await build(rsLibConfig);
 
+  console.log("Writing package.json...");
   writeFileSync(
     PACKAGE_JSON_PATH,
     JSON.stringify(createDesiredPackageJson(), null, 2),
   );
+
+  const outputPath = IS_TEST_BUILD ? "../dist.test" : "../dist";
+
+  console.log("Writing .prettierignore...");
+  writeFileSync(
+    path.resolve(__dirname, outputPath, ".prettierignore"),
+    "**/tests/**/*.json",
+  );
+
+  await $`cd ${path.resolve(__dirname, IS_TEST_BUILD ? "../dist.test" : "../dist")} && bunx prettier --write . > /dev/null`;
+
+  rmSync(path.resolve(__dirname, outputPath, ".prettierignore"));
+  rmSync(path.resolve(__dirname, outputPath, "node_modules"), {
+    recursive: true,
+    force: true,
+  });
 };
 
 if (import.meta.main) {
