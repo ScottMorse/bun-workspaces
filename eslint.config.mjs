@@ -80,6 +80,13 @@ export default defineConfig([
     },
   },
   {
+    name: "packageScripts",
+    files: ["packages/*/scripts/**/*.{js,mjs,cjs,ts,mts,cts}"],
+    rules: {
+      "no-console": "off",
+    },
+  },
+  {
     name: "testConfig",
     files: [
       "**/tests/**/*.{js,mjs,cjs,ts,mts,cts}",

@@ -35,6 +35,6 @@
   },
   "dependencies": {
     "commander": "^12.1.0",
-    "glob": "^11.0.3"
+    "glob": "^11.1.0"
   }
 }

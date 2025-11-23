@@ -43,8 +43,10 @@ const createDesiredPackageJson = () => {
 };
 
 export const runBuild = async () => {
+  console.log("Running rslib build...");
   await build(rsLibConfig);
 
+  console.log("Writing package.json...");
   writeFileSync(
     PACKAGE_JSON_PATH,
     JSON.stringify(createDesiredPackageJson(), null, 2),
@@ -52,14 +54,19 @@ export const runBuild = async () => {
 
   const outputPath = IS_TEST_BUILD ? "../dist.test" : "../dist";
 
+  console.log("Writing .prettierignore...");
   writeFileSync(
     path.resolve(__dirname, outputPath, ".prettierignore"),
     "**/tests/**/*.json",
   );
 
-  await $`cd ${path.resolve(__dirname, IS_TEST_BUILD ? "../dist.test" : "../dist")} && bunx prettier --write .`;
+  await $`cd ${path.resolve(__dirname, IS_TEST_BUILD ? "../dist.test" : "../dist")} && bunx prettier --write . > /dev/null`;
 
   rmSync(path.resolve(__dirname, outputPath, ".prettierignore"));
+  rmSync(path.resolve(__dirname, outputPath, "node_modules"), {
+    recursive: true,
+    force: true,
+  });
 };
 
 if (import.meta.main) {
