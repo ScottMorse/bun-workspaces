@@ -92,8 +92,7 @@ export const WORKSPACE_EXAMPLE = `
   // The scripts available in the workspace's package.json
   scripts: ["my-script"],
 
-  // Aliases assigned to the workspace via the "workspaceAliases" 
-  // field in the config
+  // Aliases defined in workspace configuration (see the Configuration section)
   aliases: ["my-alias"]
 }
 `.trim();
