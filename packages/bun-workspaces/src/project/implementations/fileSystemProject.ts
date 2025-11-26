@@ -13,8 +13,10 @@ import {
 } from "../runScript";
 import { ProjectBase, resolveWorkspacePath } from "./projectBase";
 
-const resolveArgs = (args: string | undefined, workspace: Workspace) =>
-  args?.replace(/<workspace>/g, workspace.name) ?? "";
+const interpolateWorkspace = (
+  commandString: string | undefined,
+  workspace: Workspace,
+) => commandString?.replace(/<workspace>/g, workspace.name) ?? "";
 
 /** Arguments for {@link createFileSystemProject} */
 export type CreateFileSystemProjectOptions = {
@@ -118,17 +120,22 @@ class _FileSystemProject extends ProjectBase implements Project {
       `Running script ${options.script} in workspace: ${workspace.name}`,
     );
 
-    const args = resolveArgs(options.args, workspace);
+    const args = interpolateWorkspace(options.args, workspace);
+
+    const script = options.inline
+      ? interpolateWorkspace(options.script, workspace) +
+        (args ? " " + args : "")
+      : options.script;
 
     const scriptCommand = options.inline
       ? {
-          command: options.script + (args ? " " + args : ""),
+          command: script,
           workingDirectory: resolveWorkspacePath(this, workspace),
         }
       : this.createScriptCommand({
           workspaceNameOrAlias: options.workspaceNameOrAlias,
-          scriptName: options.script,
-          args: options.args,
+          scriptName: script,
+          args,
         }).commandDetails;
 
     return runScript({
@@ -144,7 +151,10 @@ class _FileSystemProject extends ProjectBase implements Project {
   ): RunScriptAcrossWorkspacesResult {
     const workspaces = options.workspacePatterns
       .flatMap((pattern) => this.findWorkspacesByPattern(pattern))
-      .filter((workspace) => workspace.scripts.includes(options.script));
+      .filter(
+        (workspace) =>
+          options.inline || workspace.scripts.includes(options.script),
+      );
 
     logger.debug(
       `Running script ${options.script} across workspaces: ${workspaces.map((workspace) => workspace.name).join(", ")}`,
@@ -152,15 +162,20 @@ class _FileSystemProject extends ProjectBase implements Project {
 
     return runScripts({
       scripts: workspaces.map((workspace) => {
-        const args = resolveArgs(options.args, workspace);
+        const args = interpolateWorkspace(options.args, workspace);
+        const script = options.inline
+          ? interpolateWorkspace(options.script, workspace) +
+            (args ? " " + args : "")
+          : options.script;
+
         const scriptCommand = options.inline
           ? {
-              command: options.script + (args ? " " + args : ""),
+              command: script,
               workingDirectory: resolveWorkspacePath(this, workspace),
             }
           : this.createScriptCommand({
               workspaceNameOrAlias: workspace.name,
-              scriptName: options.script,
+              scriptName: script,
               args,
             }).commandDetails;
 
