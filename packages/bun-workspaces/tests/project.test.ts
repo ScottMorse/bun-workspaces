@@ -536,6 +536,147 @@ describe("Test Project utilities", () => {
     );
   });
 
+  // Note that a lot more tests around running scripts are present in other files
+  // These are mainly sanity tests that the glue code is correct and options are followed
+
+  test("FileSystemProject.runWorkspaceScript - simple", async (project) => {
+    const { output, exit } = project.runWorkspaceScript({
+      workspaceNameOrAlias: "application-a",
+      script: "a-workspaces",
+    });
+
+    for await (const { text, textNoAnsi, streamName } of output) {
+      expect(text).toBe("script for a workspaces\n");
+      expect(textNoAnsi).toBe("script for a workspaces\n");
+      expect(streamName).toBe("stdout");
+    }
+
+    const exitResult = await exit;
+    expect(exitResult).toEqual({
+      exitCode: 0,
+      success: true,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      signal: null,
+      metadata: {
+        workspace: {
+          name: "application-a",
+          matchPattern: "applications/*",
+          path: "applications/applicationA",
+          scripts: ["a-workspaces", "all-workspaces", "application-a"],
+          aliases: [],
+        },
+      },
+    });
+  });
+
+  test("FileSystemProject.runWorkspaceScript - inline", async (project) => {
+    const echo = `this is my inline script ${Math.round(Math.random() * 1000000)}`;
+
+    const { output, exit } = project.runWorkspaceScript({
+      workspaceNameOrAlias: "application-a",
+      script: `echo "${echo}"`,
+      inline: true,
+    });
+
+    for await (const { text, textNoAnsi, streamName } of output) {
+      expect(text).toBe(`${echo}\n`);
+      expect(textNoAnsi).toBe(`${echo}\n`);
+      expect(streamName).toBe("stdout");
+    }
+
+    const exitResult = await exit;
+    expect(exitResult).toEqual({
+      exitCode: 0,
+      success: true,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      signal: null,
+      metadata: {
+        workspace: {
+          name: "application-a",
+          matchPattern: "applications/*",
+          path: "applications/applicationA",
+          scripts: ["a-workspaces", "all-workspaces", "application-a"],
+          aliases: [],
+        },
+      },
+    });
+  });
+
+  test("FileSystemProject.runWorkspaceScript - with args", async () => {
+    const project = createFileSystemProject({
+      rootDirectory: getProjectRoot("runScriptWithEchoArgs"),
+    });
+
+    const packageScript = project.runWorkspaceScript({
+      workspaceNameOrAlias: "application-1a",
+      script: "test-echo",
+      args: "--arg1=value1 --arg2=value2",
+    });
+
+    for await (const { text, textNoAnsi, streamName } of packageScript.output) {
+      expect(text).toBe("passed args: --arg1=value1 --arg2=value2\n");
+      expect(textNoAnsi).toBe("passed args: --arg1=value1 --arg2=value2\n");
+      expect(streamName).toBe("stdout");
+    }
+
+    const exitResult = await packageScript.exit;
+    expect(exitResult).toEqual({
+      exitCode: 0,
+      success: true,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      signal: null,
+      metadata: {
+        workspace: {
+          name: "application-1a",
+          matchPattern: "applications/*",
+          path: "applications/applicationA",
+          scripts: ["test-echo"],
+          aliases: [],
+        },
+      },
+    });
+
+    const inline = project.runWorkspaceScript({
+      workspaceNameOrAlias: "application-1a",
+      script: `echo inline passed args: `,
+      inline: true,
+      args: "--arg1=value1 --arg2=value2",
+    });
+
+    for await (const { text, textNoAnsi, streamName } of inline.output) {
+      expect(text).toBe("inline passed args: --arg1=value1 --arg2=value2\n");
+      expect(textNoAnsi).toBe(
+        "inline passed args: --arg1=value1 --arg2=value2\n",
+      );
+      expect(streamName).toBe("stdout");
+    }
+
+    const inlineExitResult = await inline.exit;
+    expect(inlineExitResult).toEqual({
+      exitCode: 0,
+      success: true,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      signal: null,
+      metadata: {
+        workspace: {
+          name: "application-1a",
+          matchPattern: "applications/*",
+          path: "applications/applicationA",
+          scripts: ["test-echo"],
+          aliases: [],
+        },
+      },
+    });
+  });
+
   test("MemoryProject validates workspace names and aliases", () => {
     expect(() =>
       createMemoryProject({

@@ -11,7 +11,10 @@ import {
   type RunScriptResult,
   type RunScriptsResult,
 } from "../runScript";
-import { ProjectBase } from "./projectBase";
+import { ProjectBase, resolveWorkspacePath } from "./projectBase";
+
+const resolveArgs = (args: string | undefined, workspace: Workspace) =>
+  args?.replace(/<workspace>/g, workspace.name) ?? "";
 
 /** Arguments for {@link createFileSystemProject} */
 export type CreateFileSystemProjectOptions = {
@@ -115,10 +118,12 @@ class _FileSystemProject extends ProjectBase implements Project {
       `Running script ${options.script} in workspace: ${workspace.name}`,
     );
 
+    const args = resolveArgs(options.args, workspace);
+
     const scriptCommand = options.inline
       ? {
-          command: options.script,
-          workingDirectory: workspace.path,
+          command: options.script + (args ? " " + args : ""),
+          workingDirectory: resolveWorkspacePath(this, workspace),
         }
       : this.createScriptCommand({
           workspaceNameOrAlias: options.workspaceNameOrAlias,
@@ -147,15 +152,16 @@ class _FileSystemProject extends ProjectBase implements Project {
 
     return runScripts({
       scripts: workspaces.map((workspace) => {
+        const args = resolveArgs(options.args, workspace);
         const scriptCommand = options.inline
           ? {
-              command: options.script,
-              workingDirectory: workspace.path,
+              command: options.script + (args ? " " + args : ""),
+              workingDirectory: resolveWorkspacePath(this, workspace),
             }
           : this.createScriptCommand({
               workspaceNameOrAlias: workspace.name,
               scriptName: options.script,
-              args: options.args?.replace(/<workspace>/g, workspace.name),
+              args,
             }).commandDetails;
 
         return {
