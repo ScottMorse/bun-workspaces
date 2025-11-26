@@ -177,6 +177,23 @@ for (const exitResult of summaryResult.scriptResults) {
 }
 `.trim();
 
+export const RUN_INLINE_SCRIPTS_EXAMPLE = `
+
+project.runWorkspaceScript({
+  workspaceNameOrAlias: "my-workspace",
+  script: "echo 'this is my inline script for <workspace>'",
+  args: "--my-workspace=<workspace>",
+  inline: true,
+});
+
+project.runScriptAcrossWorkspaces({
+  workspacePatterns: ["*"],
+  script: "echo 'this is my inline script for <workspace>'",
+  args: "--my-workspace=<workspace>",
+  inline: true,
+});
+`.trim();
+
 export const API_QUICKSTART = `
 import { createFileSystemProject } from "bun-workspaces";
 

@@ -14,6 +14,7 @@ export const runScript = handleCommand(
       parallel: boolean;
       args: string;
       prefix: boolean;
+      inline: boolean;
       jsonOutfile: string | undefined;
     },
   ) => {
@@ -31,7 +32,10 @@ export const runScript = handleCommand(
             if (workspacePattern.includes("*")) {
               return project
                 .findWorkspacesByPattern(workspacePattern)
-                .filter(({ scripts }) => scripts.includes(script))
+                .filter(
+                  (workspace) =>
+                    options.inline || workspace.scripts.includes(script),
+                )
                 .map(({ name }) => name);
             }
             return [workspacePattern];
@@ -47,20 +51,25 @@ export const runScript = handleCommand(
             return workspace;
           })
           .filter(Boolean) as Workspace[])
-      : project.listWorkspacesWithScript(script);
+      : options.inline
+        ? project.workspaces
+        : project.listWorkspacesWithScript(script);
 
     if (!workspaces.length) {
       if (_workspaces.length === 1 && !_workspaces[0].includes("*")) {
         logger.error(`Workspace not found: ${JSON.stringify(_workspaces[0])}`);
       } else {
         logger.error(
-          `No ${_workspaces.length ? "matching " : ""}workspaces found with script ${JSON.stringify(script)}`,
+          `No ${_workspaces.length ? "matching " : ""}workspaces found${options.inline ? " in the project" : " with script " + JSON.stringify(script)}`,
         );
       }
       process.exit(1);
     }
 
-    if (!workspaces.some((workspace) => workspace.scripts.includes(script))) {
+    if (
+      !options.inline &&
+      !workspaces.some((workspace) => workspace.scripts.includes(script))
+    ) {
       logger.error(
         `Script not found in target workspace${workspaces.length === 1 ? "" : "s"}: ${JSON.stringify(script)}`,
       );
@@ -72,9 +81,12 @@ export const runScript = handleCommand(
     const { output, summary } = project.runScriptAcrossWorkspaces({
       workspacePatterns: workspaces.map(({ name }) => name),
       script,
+      inline: options.inline,
       args: options.args,
       parallel: !!options.parallel,
     });
+
+    const scriptName = options.inline ? "<inline>" : script;
 
     const handleOutput = async () => {
       if (logger.printLevel === "silent") return;
@@ -83,7 +95,9 @@ export const runScript = handleCommand(
           outputChunk.text,
           "info",
           process[outputChunk.streamName],
-          options.prefix ? `[${scriptMetadata.workspace.name}:${script}] ` : "",
+          options.prefix
+            ? `[${scriptMetadata.workspace.name}:${scriptName}] `
+            : "",
         );
       }
     };
@@ -95,7 +109,7 @@ export const runScript = handleCommand(
     exitResults.scriptResults.forEach(
       ({ success, metadata: { workspace }, exitCode }) => {
         logger.info(
-          `${success ? "✅" : "❌"} ${workspace.name}: ${script}${exitCode ? ` (exited with code ${exitCode})` : ""}`,
+          `${success ? "✅" : "❌"} ${workspace.name}: ${scriptName}${exitCode ? ` (exited with code ${exitCode})` : ""}`,
         );
       },
     );

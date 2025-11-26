@@ -98,6 +98,11 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
         flags: "--no-prefix",
         description: "Do not prefix the workspace name to the script output",
       },
+      inline: {
+        flags: "--inline",
+        description:
+          "Run the script as an inline command from the workspace directory",
+      },
       jsonOutfile: {
         flags: "--json-outfile <file>",
         description: "Output results in a JSON file",

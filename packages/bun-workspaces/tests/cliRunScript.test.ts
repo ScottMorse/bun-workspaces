@@ -372,6 +372,72 @@ success2
     );
   });
 
+  test("Using --inline", async () => {
+    const { run } = setupCliTest({
+      testProject: "runScriptWithEchoArgs",
+    });
+
+    const resultSimple = await run(
+      "run-script",
+      "echo 'this is my inline script for <workspace>'",
+      "--inline",
+    );
+    expect(resultSimple.exitCode).toBe(0);
+    assertOutputMatches(
+      resultSimple.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:<inline>] this is my inline script for application-1a
+[application-1b:<inline>] this is my inline script for application-1b
+[library-1a:<inline>] this is my inline script for library-1a
+[library-1b:<inline>] this is my inline script for library-1b
+✅ application-1a: <inline>
+✅ application-1b: <inline>
+✅ library-1a: <inline>
+✅ library-1b: <inline>
+4 scripts ran successfully`,
+    );
+
+    const resultWithArgs = await run(
+      "run-script",
+      "echo 'this is my inline script for <workspace>'",
+      "--inline",
+      "--args=test-args-<workspace>",
+    );
+    expect(resultWithArgs.exitCode).toBe(0);
+    assertOutputMatches(
+      resultWithArgs.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:<inline>] this is my inline script for application-1a test-args-application-1a
+[application-1b:<inline>] this is my inline script for application-1b test-args-application-1b
+[library-1a:<inline>] this is my inline script for library-1a test-args-library-1a
+[library-1b:<inline>] this is my inline script for library-1b test-args-library-1b
+✅ application-1a: <inline>
+✅ application-1b: <inline>
+✅ library-1a: <inline>
+✅ library-1b: <inline>
+4 scripts ran successfully`,
+    );
+
+    const resultWithArgsNoPrefix = await run(
+      "run-script",
+      "echo 'this is my inline script for <workspace>'",
+      "--inline",
+      "--args=test-args-<workspace>",
+      "--no-prefix",
+    );
+    expect(resultWithArgsNoPrefix.exitCode).toBe(0);
+    assertOutputMatches(
+      resultWithArgsNoPrefix.stdoutAndErr.sanitizedCompactLines,
+      `this is my inline script for application-1a test-args-application-1a
+this is my inline script for application-1b test-args-application-1b
+this is my inline script for library-1a test-args-library-1a
+this is my inline script for library-1b test-args-library-1b
+✅ application-1a: <inline>
+✅ application-1b: <inline>
+✅ library-1a: <inline>
+✅ library-1b: <inline>
+4 scripts ran successfully`,
+    );
+  });
+
   test("JSON output - errors with output path", async () => {
     const { run } = setupCliTest({
       testProject: "simple1",

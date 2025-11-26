@@ -10,6 +10,9 @@ import type {
 } from "../project";
 import { createWorkspaceScriptCommand } from "../runScript";
 
+export const resolveWorkspacePath = (project: Project, workspace: Workspace) =>
+  path.resolve(project.rootDirectory, workspace.path);
+
 export abstract class ProjectBase implements Project {
   public abstract readonly name: string;
   public abstract readonly rootDirectory: string;
