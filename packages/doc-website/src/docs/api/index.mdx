@@ -9,7 +9,7 @@ footer: false
 ---
 
 import { SyntaxHighlighter } from "../../content/highlight";
-import { CREATE_FS_PROJECT_EXAMPLE, CREATE_SCRIPT_COMMAND_EXAMPLE, FIND_WORKSPACE_BY_ALIAS_EXAMPLE, FIND_WORKSPACE_BY_NAME_EXAMPLE, FIND_WORKSPACE_BY_NAME_OR_ALIAS_EXAMPLE, FIND_WORKSPACES_BY_PATTERN_EXAMPLE, LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE, MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE, RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE, RUN_WORKSPACE_SCRIPT_EXAMPLE, SET_LOG_LEVEL_EXAMPLE, WORKSPACE_EXAMPLE } from '../../content/api/apiExamples';
+import { CREATE_FS_PROJECT_EXAMPLE, CREATE_SCRIPT_COMMAND_EXAMPLE, FIND_WORKSPACE_BY_ALIAS_EXAMPLE, FIND_WORKSPACE_BY_NAME_EXAMPLE, FIND_WORKSPACE_BY_NAME_OR_ALIAS_EXAMPLE, FIND_WORKSPACES_BY_PATTERN_EXAMPLE, LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE, MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE, RUN_INLINE_SCRIPTS_EXAMPLE, RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE, RUN_WORKSPACE_SCRIPT_EXAMPLE, SET_LOG_LEVEL_EXAMPLE, WORKSPACE_EXAMPLE } from '../../content/api/apiExamples';
 import { CREATE_MEMORY_PROJECT_EXAMPLE } from '../../content/api/apiExamples';
 
 # Library API
@@ -146,6 +146,16 @@ Run a script in all workspaces that have it in their package.json "scripts" fiel
 
 <SyntaxHighlighter language="typescript">
 {RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE}
+</SyntaxHighlighter>
+
+### Inline scripts
+When passing `inline: true` to `.runWorkspaceScript` or `.runScriptAcrossWorkspaces`, `script` is ran as an inline command from the workspace directory,
+instead of looking up the script from the workspace's `package.json` `"scripts"` field.
+
+When `<workspace>` is used in an inline script or args, it will be replaced with the workspace name.
+
+<SyntaxHighlighter language="typescript">
+{RUN_INLINE_SCRIPTS_EXAMPLE}
 </SyntaxHighlighter>
 
 ## `createFileSystemProject`
