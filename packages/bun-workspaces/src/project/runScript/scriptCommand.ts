@@ -6,6 +6,14 @@ export const WORKSPACE_SCRIPT_COMMAND_METHODS = ["cd", "filter"] as const;
 export type WorkspaceScriptCommandMethod =
   (typeof WORKSPACE_SCRIPT_COMMAND_METHODS)[number];
 
+/** Basic metadata to run a script, the command string and the directory to run it in */
+export interface ScriptCommand {
+  /** The command string to run */
+  command: string;
+  /** The directory to run the command in */
+  workingDirectory: string;
+}
+
 export interface CreateWorkspaceScriptCommandOptions {
   /**
    * The method to use to run the script.
@@ -24,14 +32,6 @@ export interface CreateWorkspaceScriptCommandOptions {
 }
 
 const spaceArgs = (args: string) => (args ? ` ${args.trim()}` : "");
-
-/** Basic metadata to run a script, the command string and the directory to run it in */
-export interface ScriptCommand {
-  /** The command string to run */
-  command: string;
-  /** The directory to run the command in */
-  workingDirectory: string;
-}
 
 const METHODS: Record<
   WorkspaceScriptCommandMethod,

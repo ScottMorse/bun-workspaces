@@ -29,8 +29,10 @@ export type CreateFileSystemProjectOptions = {
 export type RunWorkspaceScriptOptions = {
   /** The name of the workspace to run the script in */
   workspaceNameOrAlias: string;
-  /** The name of the script to run */
+  /** The name of the script to run, or an inline command when `inline` is true */
   script: string;
+  /** Whether to run the script as an inline command */
+  inline?: boolean;
   /** The arguments to append to the script command */
   args?: string;
 };
@@ -49,8 +51,10 @@ export type RunWorkspaceScriptResult = Simplify<
 export type RunScriptAcrossWorkspacesOptions = {
   /** Workspace names, aliases, or patterns including a wildcard */
   workspacePatterns: string[];
-  /** The name of the script to run */
+  /** The name of the script to run, or an inline command when `inline` is true */
   script: string;
+  /** Whether to run the script as an inline command */
+  inline?: boolean;
   /** The arguments to append to the script command. `<workspace>` will be replaced with the workspace name */
   args?: string;
   /** Whether to run the scripts in parallel (series by default) */
@@ -111,12 +115,19 @@ class _FileSystemProject extends ProjectBase implements Project {
       `Running script ${options.script} in workspace: ${workspace.name}`,
     );
 
+    const scriptCommand = options.inline
+      ? {
+          command: options.script,
+          workingDirectory: workspace.path,
+        }
+      : this.createScriptCommand({
+          workspaceNameOrAlias: options.workspaceNameOrAlias,
+          scriptName: options.script,
+          args: options.args,
+        }).commandDetails;
+
     return runScript({
-      scriptCommand: this.createScriptCommand({
-        workspaceNameOrAlias: options.workspaceNameOrAlias,
-        scriptName: options.script,
-        args: options.args,
-      }).commandDetails,
+      scriptCommand,
       metadata: {
         workspace,
       },
@@ -136,11 +147,16 @@ class _FileSystemProject extends ProjectBase implements Project {
 
     return runScripts({
       scripts: workspaces.map((workspace) => {
-        const scriptCommand = this.createScriptCommand({
-          workspaceNameOrAlias: workspace.name,
-          scriptName: options.script,
-          args: options.args?.replace(/<workspace>/g, workspace.name),
-        }).commandDetails;
+        const scriptCommand = options.inline
+          ? {
+              command: options.script,
+              workingDirectory: workspace.path,
+            }
+          : this.createScriptCommand({
+              workspaceNameOrAlias: workspace.name,
+              scriptName: options.script,
+              args: options.args?.replace(/<workspace>/g, workspace.name),
+            }).commandDetails;
 
         return {
           metadata: {
