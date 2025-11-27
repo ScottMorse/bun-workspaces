@@ -11,6 +11,7 @@ import { type ScriptCommand } from "./scriptCommand";
 export type RunScriptsScript<ScriptMetadata extends object = object> = {
   scriptCommand: ScriptCommand;
   metadata: ScriptMetadata;
+  env: Record<string, string>;
 };
 
 export type RunScriptsScriptResult<ScriptMetadata extends object = object> = {

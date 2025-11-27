@@ -385,14 +385,14 @@ success2
     expect(resultSimple.exitCode).toBe(0);
     assertOutputMatches(
       resultSimple.stdoutAndErr.sanitizedCompactLines,
-      `[application-1a:<inline>] this is my inline script for application-1a
-[application-1b:<inline>] this is my inline script for application-1b
-[library-1a:<inline>] this is my inline script for library-1a
-[library-1b:<inline>] this is my inline script for library-1b
-✅ application-1a: <inline>
-✅ application-1b: <inline>
-✅ library-1a: <inline>
-✅ library-1b: <inline>
+      `[application-1a:(inline)] this is my inline script for application-1a
+[application-1b:(inline)] this is my inline script for application-1b
+[library-1a:(inline)] this is my inline script for library-1a
+[library-1b:(inline)] this is my inline script for library-1b
+✅ application-1a: (inline)
+✅ application-1b: (inline)
+✅ library-1a: (inline)
+✅ library-1b: (inline)
 4 scripts ran successfully`,
     );
 
@@ -405,14 +405,14 @@ success2
     expect(resultWithArgs.exitCode).toBe(0);
     assertOutputMatches(
       resultWithArgs.stdoutAndErr.sanitizedCompactLines,
-      `[application-1a:<inline>] this is my inline script for application-1a test-args-application-1a
-[application-1b:<inline>] this is my inline script for application-1b test-args-application-1b
-[library-1a:<inline>] this is my inline script for library-1a test-args-library-1a
-[library-1b:<inline>] this is my inline script for library-1b test-args-library-1b
-✅ application-1a: <inline>
-✅ application-1b: <inline>
-✅ library-1a: <inline>
-✅ library-1b: <inline>
+      `[application-1a:(inline)] this is my inline script for application-1a test-args-application-1a
+[application-1b:(inline)] this is my inline script for application-1b test-args-application-1b
+[library-1a:(inline)] this is my inline script for library-1a test-args-library-1a
+[library-1b:(inline)] this is my inline script for library-1b test-args-library-1b
+✅ application-1a: (inline)
+✅ application-1b: (inline)
+✅ library-1a: (inline)
+✅ library-1b: (inline)
 4 scripts ran successfully`,
     );
 
@@ -430,10 +430,10 @@ success2
 this is my inline script for application-1b test-args-application-1b
 this is my inline script for library-1a test-args-library-1a
 this is my inline script for library-1b test-args-library-1b
-✅ application-1a: <inline>
-✅ application-1b: <inline>
-✅ library-1a: <inline>
-✅ library-1b: <inline>
+✅ application-1a: (inline)
+✅ application-1b: (inline)
+✅ library-1a: (inline)
+✅ library-1b: (inline)
 4 scripts ran successfully`,
     );
   });

@@ -35,6 +35,7 @@ export type RunScriptResult<ScriptMetadata extends object = object> = {
 export type RunScriptOptions<ScriptMetadata extends object = object> = {
   scriptCommand: ScriptCommand;
   metadata: ScriptMetadata;
+  env: Record<string, string>;
 };
 
 /**
@@ -45,6 +46,7 @@ export type RunScriptOptions<ScriptMetadata extends object = object> = {
 export const runScript = <ScriptMetadata extends object = object>({
   scriptCommand,
   metadata,
+  env,
 }: RunScriptOptions<ScriptMetadata>): RunScriptResult<ScriptMetadata> => {
   const startTime = new Date();
 
@@ -52,7 +54,7 @@ export const runScript = <ScriptMetadata extends object = object>({
     [...(IS_WINDOWS ? ["cmd", "/c"] : ["sh", "-c"]), scriptCommand.command],
     {
       cwd: scriptCommand.workingDirectory,
-      env: { ...process.env, FORCE_COLOR: "1" },
+      env: { ...process.env, ...env, FORCE_COLOR: "1" },
       stdout: "pipe",
       stderr: "pipe",
     },

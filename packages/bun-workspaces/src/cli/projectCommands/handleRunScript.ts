@@ -86,7 +86,7 @@ export const runScript = handleCommand(
       parallel: !!options.parallel,
     });
 
-    const scriptName = options.inline ? "<inline>" : script;
+    const scriptName = options.inline ? "(inline)" : script;
 
     const handleOutput = async () => {
       if (logger.printLevel === "silent") return;
