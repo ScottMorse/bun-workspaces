@@ -149,6 +149,59 @@ describe("Test FileSystemProject", () => {
     });
   });
 
+  test("runWorkspaceScript: runtime metadata", async () => {
+    const project = createFileSystemProject({
+      rootDirectory: getProjectRoot("runScriptWithRuntimeMetadataDebug"),
+    });
+
+    const plainResult = project.runWorkspaceScript({
+      workspaceNameOrAlias: "application-a",
+      script: "test-echo",
+    });
+
+    for await (const { text, textNoAnsi, streamName } of plainResult.output) {
+      expect(text).toBe(
+        `${project.rootDirectory} application-a ${project.rootDirectory}/applications/application-a test-echo\n`,
+      );
+      expect(textNoAnsi).toBe(
+        `${project.rootDirectory} application-a ${project.rootDirectory}/applications/application-a test-echo\n`,
+      );
+      expect(streamName).toBe("stdout");
+    }
+
+    const argsResult = project.runWorkspaceScript({
+      workspaceNameOrAlias: "application-a",
+      script: "test-echo",
+      args: "--arg1=<projectPath> --arg2=<workspace> --arg3=<workspacePath> --arg4=<scriptName>",
+    });
+
+    for await (const { text, textNoAnsi, streamName } of argsResult.output) {
+      expect(text).toBe(
+        `${project.rootDirectory} application-a ${project.rootDirectory}/applications/application-a test-echo --arg1=${project.rootDirectory} --arg2=application-a --arg3=${project.rootDirectory}/applications/application-a --arg4=test-echo\n`,
+      );
+      expect(textNoAnsi).toBe(
+        `${project.rootDirectory} application-a ${project.rootDirectory}/applications/application-a test-echo --arg1=${project.rootDirectory} --arg2=application-a --arg3=${project.rootDirectory}/applications/application-a --arg4=test-echo\n`,
+      );
+      expect(streamName).toBe("stdout");
+    }
+
+    const inlineResult = project.runWorkspaceScript({
+      workspaceNameOrAlias: "application-a",
+      script: "echo '<projectPath> <workspace> <workspacePath> <scriptName>'",
+      inline: true,
+    });
+
+    for await (const { text, textNoAnsi, streamName } of inlineResult.output) {
+      expect(text).toBe(
+        `${project.rootDirectory} application-a ${project.rootDirectory}/applications/application-a \n`,
+      );
+      expect(textNoAnsi).toBe(
+        `${project.rootDirectory} application-a ${project.rootDirectory}/applications/application-a \n`,
+      );
+      expect(streamName).toBe("stdout");
+    }
+  });
+
   test("runScriptAcrossWorkspaces: simple success", async () => {
     const project = createFileSystemProject({
       rootDirectory: getProjectRoot("default"),
@@ -553,6 +606,74 @@ describe("Test FileSystemProject", () => {
     }
 
     expect(outputChunks).toEqual(expectedOutput);
+  });
+
+  test("runScriptAcrossWorkspaces: runtime metadata", async () => {
+    const project = createFileSystemProject({
+      rootDirectory: getProjectRoot("runScriptWithRuntimeMetadataDebug"),
+    });
+
+    const plainResult = project.runScriptAcrossWorkspaces({
+      workspacePatterns: ["application-*"],
+      script: "test-echo",
+    });
+
+    let i = 0;
+    for await (const {
+      outputChunk: { text, textNoAnsi, streamName },
+    } of plainResult.output) {
+      const appLetter = i === 0 ? "a" : "b";
+      expect(text).toBe(
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} test-echo\n`,
+      );
+      expect(textNoAnsi).toBe(
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} test-echo\n`,
+      );
+      expect(streamName).toBe("stdout");
+      i++;
+    }
+
+    const argsResult = project.runScriptAcrossWorkspaces({
+      workspacePatterns: ["application-*"],
+      script: "test-echo",
+      args: "--arg1=<projectPath> --arg2=<workspace> --arg3=<workspacePath> --arg4=<scriptName>",
+    });
+
+    let j = 0;
+    for await (const {
+      outputChunk: { text, textNoAnsi, streamName },
+    } of argsResult.output) {
+      const appLetter = j === 0 ? "a" : "b";
+      expect(text).toBe(
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} test-echo --arg1=${project.rootDirectory} --arg2=application-${appLetter} --arg3=${project.rootDirectory}/applications/application-${appLetter} --arg4=test-echo\n`,
+      );
+      expect(textNoAnsi).toBe(
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} test-echo --arg1=${project.rootDirectory} --arg2=application-${appLetter} --arg3=${project.rootDirectory}/applications/application-${appLetter} --arg4=test-echo\n`,
+      );
+      expect(streamName).toBe("stdout");
+      j++;
+    }
+
+    const inlineResult = project.runScriptAcrossWorkspaces({
+      workspacePatterns: ["application-*"],
+      script: "echo '<projectPath> <workspace> <workspacePath> <scriptName>'",
+      inline: true,
+    });
+
+    let k = 0;
+    for await (const {
+      outputChunk: { text, textNoAnsi, streamName },
+    } of inlineResult.output) {
+      const appLetter = k === 0 ? "a" : "b";
+      expect(text).toBe(
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} \n`,
+      );
+      expect(textNoAnsi).toBe(
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} \n`,
+      );
+      expect(streamName).toBe("stdout");
+      k++;
+    }
   });
 
   test("runScriptAcrossWorkspaces: with failures", async () => {
