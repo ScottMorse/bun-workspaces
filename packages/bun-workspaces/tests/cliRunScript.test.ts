@@ -512,8 +512,8 @@ this is my inline script for library-1b test-args-library-1b
     expect(plainResult.exitCode).toBe(0);
     assertOutputMatches(
       plainResult.stdoutAndErr.sanitizedCompactLines,
-      `[application-a:test-echo] ${projectRoot} application-a ${projectRoot}/applications/application-a test-echo
-[application-b:test-echo] ${projectRoot} application-b ${projectRoot}/applications/application-b test-echo
+      `[application-a:test-echo] ${projectRoot} application-a ${projectRoot}/applications/application-a applications/application-a test-echo
+[application-b:test-echo] ${projectRoot} application-b ${projectRoot}/applications/application-b applications/application-b test-echo
 ✅ application-a: test-echo
 ✅ application-b: test-echo
 2 scripts ran successfully`,
@@ -522,12 +522,12 @@ this is my inline script for library-1b test-args-library-1b
     const argsResult = await run(
       "run-script",
       "test-echo",
-      "--args=--arg1=<projectPath> --arg2=<workspaceName> --arg3=<workspacePath> --arg4=<scriptName>",
+      "--args=--arg1=<projectPath> --arg2=<workspaceName> --arg3=<workspacePath> --arg4=<workspaceRelativePath> --arg5=<scriptName>",
     );
     assertOutputMatches(
       argsResult.stdoutAndErr.sanitizedCompactLines,
-      `[application-a:test-echo] ${projectRoot} application-a ${projectRoot}/applications/application-a test-echo --arg1=${projectRoot} --arg2=application-a --arg3=${projectRoot}/applications/application-a --arg4=test-echo
-[application-b:test-echo] ${projectRoot} application-b ${projectRoot}/applications/application-b test-echo --arg1=${projectRoot} --arg2=application-b --arg3=${projectRoot}/applications/application-b --arg4=test-echo
+      `[application-a:test-echo] ${projectRoot} application-a ${projectRoot}/applications/application-a applications/application-a test-echo --arg1=${projectRoot} --arg2=application-a --arg3=${projectRoot}/applications/application-a --arg4=applications/application-a --arg5=test-echo
+[application-b:test-echo] ${projectRoot} application-b ${projectRoot}/applications/application-b applications/application-b test-echo --arg1=${projectRoot} --arg2=application-b --arg3=${projectRoot}/applications/application-b --arg4=applications/application-b --arg5=test-echo
 ✅ application-a: test-echo
 ✅ application-b: test-echo
 2 scripts ran successfully`,
@@ -535,14 +535,14 @@ this is my inline script for library-1b test-args-library-1b
 
     const inlineResult = await run(
       "run-script",
-      "echo '<projectPath> <workspaceName> <workspacePath> <scriptName>'",
+      "echo '<projectPath> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>'",
       "--inline",
     );
     expect(inlineResult.exitCode).toBe(0);
     assertOutputMatches(
       inlineResult.stdoutAndErr.sanitizedCompactLines,
-      `[application-a:(inline)] ${projectRoot} application-a ${projectRoot}/applications/application-a
-[application-b:(inline)] ${projectRoot} application-b ${projectRoot}/applications/application-b
+      `[application-a:(inline)] ${projectRoot} application-a ${projectRoot}/applications/application-a applications/application-a
+[application-b:(inline)] ${projectRoot} application-b ${projectRoot}/applications/application-b applications/application-b
 ✅ application-a: (inline)
 ✅ application-b: (inline)
 2 scripts ran successfully`,

@@ -123,6 +123,7 @@ class _FileSystemProject extends ProjectBase implements Project {
     const scriptRuntimeMetadata: ScriptRuntimeMetadata = {
       projectPath: this.rootDirectory,
       workspacePath: resolveWorkspacePath(this, workspace),
+      workspaceRelativePath: workspace.path,
       workspaceName: workspace.name,
       scriptName: options.inline ? "" : options.script,
     };
@@ -178,6 +179,7 @@ class _FileSystemProject extends ProjectBase implements Project {
         const scriptRuntimeMetadata: ScriptRuntimeMetadata = {
           projectPath: this.rootDirectory,
           workspacePath: resolveWorkspacePath(this, workspace),
+          workspaceRelativePath: workspace.path,
           workspaceName: workspace.name,
           scriptName: options.inline ? "" : options.script,
         };

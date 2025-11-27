@@ -1,6 +1,7 @@
 export interface ScriptRuntimeMetadata {
   projectPath: string;
   workspacePath: string;
+  workspaceRelativePath: string;
   workspaceName: string;
   scriptName: string;
 }
@@ -13,6 +14,10 @@ const SCRIPT_RUNTIME_METADATA_CONFIG = {
   workspacePath: {
     inlineName: ["<workspacePath>"],
     envVarName: "BW_WORKSPACE_PATH",
+  },
+  workspaceRelativePath: {
+    inlineName: ["<workspaceRelativePath>"],
+    envVarName: "BW_WORKSPACE_RELATIVE_PATH",
   },
   scriptName: {
     inlineName: ["<scriptName>"],

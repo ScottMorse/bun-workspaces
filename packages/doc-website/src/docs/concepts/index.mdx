@@ -28,25 +28,31 @@ When running scripts via the API or CLI, runtime metadata is available to be use
 #### Project Path
 The absolute path to the project root.<br/>
 
-In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("projectPath").inlineName}</code><br/>
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("projectPath").inlineName[0]}</code><br/>
 Environment variable: <code>{getScriptRuntimeMetadataConfig("projectPath").envVarName}</code>
 
 #### Workspace Name
 The name of the workspace (as in its `package.json` `"name"` field).<br/>
 
-In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("workspaceName").inlineName}</code><br/>
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("workspaceName").inlineName[0]}</code><br/>
 Environment variable: <code>{getScriptRuntimeMetadataConfig("workspaceName").envVarName}</code>
 
 #### Workspace Path
 The absolute path to the workspace.<br/>
 
-In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("workspacePath").inlineName}</code><br/>
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("workspacePath").inlineName[0]}</code><br/>
 Environment variable: <code>{getScriptRuntimeMetadataConfig("workspacePath").envVarName}</code>
+
+#### Workspace Relative Path
+The relative path to the workspace from the project root.<br/>
+
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("workspaceRelativePath").inlineName[0]}</code><br/>
+Environment variable: <code>{getScriptRuntimeMetadataConfig("workspaceRelativePath").envVarName}</code>
 
 #### Script Name
 The name of the script. This is an empty string when running as an inline script.<br/>
 
-In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("scriptName").inlineName}</code><br/>
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("scriptName").inlineName[0]}</code><br/>
 Environment variable: <code>{getScriptRuntimeMetadataConfig("scriptName").envVarName}</code>
 
 #### Examples
