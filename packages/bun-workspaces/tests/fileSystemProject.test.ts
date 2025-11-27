@@ -172,7 +172,7 @@ describe("Test FileSystemProject", () => {
     const argsResult = project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script: "test-echo",
-      args: "--arg1=<projectPath> --arg2=<workspace> --arg3=<workspacePath> --arg4=<scriptName>",
+      args: "--arg1=<projectPath> --arg2=<workspaceName> --arg3=<workspacePath> --arg4=<scriptName>",
     });
 
     for await (const { text, textNoAnsi, streamName } of argsResult.output) {
@@ -187,7 +187,8 @@ describe("Test FileSystemProject", () => {
 
     const inlineResult = project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
-      script: "echo '<projectPath> <workspace> <workspacePath> <scriptName>'",
+      script:
+        "echo '<projectPath> <workspaceName> <workspacePath> <scriptName>'",
       inline: true,
     });
 
@@ -636,7 +637,7 @@ describe("Test FileSystemProject", () => {
     const argsResult = project.runScriptAcrossWorkspaces({
       workspacePatterns: ["application-*"],
       script: "test-echo",
-      args: "--arg1=<projectPath> --arg2=<workspace> --arg3=<workspacePath> --arg4=<scriptName>",
+      args: "--arg1=<projectPath> --arg2=<workspaceName> --arg3=<workspacePath> --arg4=<scriptName>",
     });
 
     let j = 0;
@@ -656,7 +657,8 @@ describe("Test FileSystemProject", () => {
 
     const inlineResult = project.runScriptAcrossWorkspaces({
       workspacePatterns: ["application-*"],
-      script: "echo '<projectPath> <workspace> <workspacePath> <scriptName>'",
+      script:
+        "echo '<projectPath> <workspaceName> <workspacePath> <scriptName>'",
       inline: true,
     });
 

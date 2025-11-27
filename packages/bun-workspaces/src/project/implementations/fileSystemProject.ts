@@ -60,7 +60,7 @@ export type RunScriptAcrossWorkspacesOptions = {
   script: string;
   /** Whether to run the script as an inline command */
   inline?: boolean;
-  /** The arguments to append to the script command. `<workspace>` will be replaced with the workspace name */
+  /** The arguments to append to the script command. `<workspaceName>` will be replaced with the workspace name */
   args?: string;
   /** Whether to run the scripts in parallel (series by default) */
   parallel?: boolean;

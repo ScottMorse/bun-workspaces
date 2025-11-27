@@ -242,7 +242,7 @@ describe("CLI Run Script", () => {
     const result2 = await run(
       "run-script",
       "test-echo",
-      '--args="hello there <workspace>"',
+      '--args="hello there <workspaceName>"',
     );
     expect(result2.exitCode).toBe(0);
     assertOutputMatches(
@@ -261,7 +261,7 @@ describe("CLI Run Script", () => {
     const result3 = await run(
       "run-script",
       "test-echo",
-      "--args=<workspace> and <workspace> and <workspace>",
+      "--args=<workspaceName> and <workspaceName> and <workspaceName>",
     );
     expect(result3.exitCode).toBe(0);
     assertOutputMatches(
@@ -282,7 +282,7 @@ describe("CLI Run Script", () => {
       "test-echo",
       "deprecated_appA",
       "deprecated_libB",
-      "--args=for workspace <workspace>",
+      "--args=for workspace <workspaceName>",
     );
     expect(result4.exitCode).toBe(0);
     assertOutputMatches(
@@ -318,7 +318,7 @@ passed args: test-args
       "run-script",
       "test-echo",
       "--no-prefix",
-      "--args=<workspace>",
+      "--args=<workspaceName>",
     );
     expect(result6.exitCode).toBe(0);
     assertOutputMatches(
@@ -379,7 +379,7 @@ success2
 
     const resultSimple = await run(
       "run-script",
-      "echo 'this is my inline script for <workspace>'",
+      "echo 'this is my inline script for <workspaceName>'",
       "--inline",
     );
     expect(resultSimple.exitCode).toBe(0);
@@ -398,9 +398,9 @@ success2
 
     const resultWithArgs = await run(
       "run-script",
-      "echo 'this is my inline script for <workspace>'",
+      "echo 'this is my inline script for <workspaceName>'",
       "--inline",
-      "--args=test-args-<workspace>",
+      "--args=test-args-<workspaceName>",
     );
     expect(resultWithArgs.exitCode).toBe(0);
     assertOutputMatches(
@@ -418,9 +418,9 @@ success2
 
     const resultWithArgsNoPrefix = await run(
       "run-script",
-      "echo 'this is my inline script for <workspace>'",
+      "echo 'this is my inline script for <workspaceName>'",
       "--inline",
-      "--args=test-args-<workspace>",
+      "--args=test-args-<workspaceName>",
       "--no-prefix",
     );
     expect(resultWithArgsNoPrefix.exitCode).toBe(0);
@@ -522,7 +522,7 @@ this is my inline script for library-1b test-args-library-1b
     const argsResult = await run(
       "run-script",
       "test-echo",
-      "--args=--arg1=<projectPath> --arg2=<workspace> --arg3=<workspacePath> --arg4=<scriptName>",
+      "--args=--arg1=<projectPath> --arg2=<workspaceName> --arg3=<workspacePath> --arg4=<scriptName>",
     );
     assertOutputMatches(
       argsResult.stdoutAndErr.sanitizedCompactLines,
@@ -535,7 +535,7 @@ this is my inline script for library-1b test-args-library-1b
 
     const inlineResult = await run(
       "run-script",
-      "echo '<projectPath> <workspace> <workspacePath> <scriptName>'",
+      "echo '<projectPath> <workspaceName> <workspacePath> <scriptName>'",
       "--inline",
     );
     expect(inlineResult.exitCode).toBe(0);

@@ -15,7 +15,7 @@ bw run lint my-workspace-a my-workspace-b # Run for multiple workspaces
 bw run lint "my-workspace-*" # Run for matching workspace names
 bw run lint --parallel # Run at the same time
 bw run lint --args="--my-appended-args" # Add args to each script call
-bw run lint --args="--my-arg=<workspace>" # Use the workspace name in args
+bw run lint --args="--my-arg=<workspaceName>" # Use the workspace name in args
 
 # Show usage (you can pass --help to any command)
 bw help

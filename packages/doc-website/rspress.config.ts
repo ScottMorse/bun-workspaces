@@ -220,6 +220,22 @@ export default defineConfig({
         activeMatch: "/config",
       },
       {
+        text: "Concepts",
+        link: "/concepts",
+        position: "left",
+        activeMatch: "/concepts",
+        items: [
+          {
+            text: "Workspace Aliases",
+            link: "/concepts#workspace-aliases",
+          },
+          {
+            text: "Script Runtime Metadata",
+            link: "/concepts#script-runtime-metadata",
+          },
+        ],
+      },
+      {
         text: "Changelog",
         link: CHANGELOG_URL,
         position: "left",

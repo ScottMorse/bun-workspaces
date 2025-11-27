@@ -7,22 +7,29 @@ export interface ScriptRuntimeMetadata {
 
 const SCRIPT_RUNTIME_METADATA_CONFIG = {
   projectPath: {
-    inlineName: "<projectPath>",
+    inlineName: ["<projectPath>"],
     envVarName: "BW_PROJECT_PATH",
   },
   workspacePath: {
-    inlineName: "<workspacePath>",
+    inlineName: ["<workspacePath>"],
     envVarName: "BW_WORKSPACE_PATH",
   },
   scriptName: {
-    inlineName: "<scriptName>",
+    inlineName: ["<scriptName>"],
     envVarName: "BW_SCRIPT_NAME",
   },
   workspaceName: {
-    inlineName: "<workspace>",
+    /** @todo  @deprecated Deprecate <workspace> in favor of <workspaceName> in major release */
+    inlineName: ["<workspaceName>", "<workspace>"],
     envVarName: "BW_WORKSPACE_NAME",
   },
 } as const;
+
+export type ScriptRuntimeMetadataKey =
+  keyof typeof SCRIPT_RUNTIME_METADATA_CONFIG;
+
+export const getScriptRuntimeMetadataConfig = (key: ScriptRuntimeMetadataKey) =>
+  SCRIPT_RUNTIME_METADATA_CONFIG[key];
 
 export const createScriptRuntimeEnvVars = (metadata: ScriptRuntimeMetadata) =>
   Object.entries(SCRIPT_RUNTIME_METADATA_CONFIG).reduce(
@@ -40,13 +47,13 @@ export const interpolateScriptRuntimeMetadata = (
   text.replace(
     new RegExp(
       Object.values(SCRIPT_RUNTIME_METADATA_CONFIG)
-        .map((value) => value.inlineName)
+        .flatMap((value) => value.inlineName)
         .join("|"),
       "g",
     ),
     (match) => {
       const key = Object.entries(SCRIPT_RUNTIME_METADATA_CONFIG).find(
-        ([_, value]) => value.inlineName === match,
+        ([_, value]) => (value.inlineName as readonly string[]).includes(match),
       )?.[0];
       return metadata[key as keyof ScriptRuntimeMetadata];
     },
