@@ -11,12 +11,12 @@ import {
   type RunScriptResult,
   type RunScriptsResult,
 } from "../runScript";
+import {
+  createScriptRuntimeEnvVars,
+  interpolateScriptRuntimeMetadata,
+  type ScriptRuntimeMetadata,
+} from "../runScript/scriptRuntimeMetadata";
 import { ProjectBase, resolveWorkspacePath } from "./projectBase";
-
-const interpolateWorkspace = (
-  commandString: string | undefined,
-  workspace: Workspace,
-) => commandString?.replace(/<workspace>/g, workspace.name) ?? "";
 
 /** Arguments for {@link createFileSystemProject} */
 export type CreateFileSystemProjectOptions = {
@@ -84,7 +84,7 @@ class _FileSystemProject extends ProjectBase implements Project {
   ) {
     super();
 
-    this.rootDirectory = options.rootDirectory;
+    this.rootDirectory = path.resolve(options.rootDirectory);
 
     const { workspaces } = findWorkspaces({
       rootDirectory: options.rootDirectory,
@@ -120,11 +120,23 @@ class _FileSystemProject extends ProjectBase implements Project {
       `Running script ${options.script} in workspace: ${workspace.name}`,
     );
 
-    const args = interpolateWorkspace(options.args, workspace);
+    const scriptRuntimeMetadata: ScriptRuntimeMetadata = {
+      projectPath: this.rootDirectory,
+      workspacePath: resolveWorkspacePath(this, workspace),
+      workspaceName: workspace.name,
+      scriptName: options.inline ? "" : options.script,
+    };
+
+    const args = interpolateScriptRuntimeMetadata(
+      options.args ?? "",
+      scriptRuntimeMetadata,
+    );
 
     const script = options.inline
-      ? interpolateWorkspace(options.script, workspace) +
-        (args ? " " + args : "")
+      ? interpolateScriptRuntimeMetadata(
+          options.script,
+          scriptRuntimeMetadata,
+        ) + (args ? " " + args : "")
       : options.script;
 
     const scriptCommand = options.inline
@@ -143,6 +155,7 @@ class _FileSystemProject extends ProjectBase implements Project {
       metadata: {
         workspace,
       },
+      env: createScriptRuntimeEnvVars(scriptRuntimeMetadata),
     });
   }
 
@@ -162,10 +175,23 @@ class _FileSystemProject extends ProjectBase implements Project {
 
     return runScripts({
       scripts: workspaces.map((workspace) => {
-        const args = interpolateWorkspace(options.args, workspace);
+        const scriptRuntimeMetadata: ScriptRuntimeMetadata = {
+          projectPath: this.rootDirectory,
+          workspacePath: resolveWorkspacePath(this, workspace),
+          workspaceName: workspace.name,
+          scriptName: options.inline ? "" : options.script,
+        };
+
+        const args = interpolateScriptRuntimeMetadata(
+          options.args ?? "",
+          scriptRuntimeMetadata,
+        );
+
         const script = options.inline
-          ? interpolateWorkspace(options.script, workspace) +
-            (args ? " " + args : "")
+          ? interpolateScriptRuntimeMetadata(
+              options.script,
+              scriptRuntimeMetadata,
+            ) + (args ? " " + args : "")
           : options.script;
 
         const scriptCommand = options.inline
@@ -184,6 +210,7 @@ class _FileSystemProject extends ProjectBase implements Project {
             workspace,
           },
           scriptCommand,
+          env: createScriptRuntimeEnvVars(scriptRuntimeMetadata),
         };
       }),
       parallel: !!options.parallel,
