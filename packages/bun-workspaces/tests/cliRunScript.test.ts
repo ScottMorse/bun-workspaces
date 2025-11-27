@@ -501,6 +501,54 @@ this is my inline script for library-1b test-args-library-1b
     };
   };
 
+  test("Runtime metadata", async () => {
+    const projectRoot = getProjectRoot("runScriptWithRuntimeMetadataDebug");
+
+    const { run } = setupCliTest({
+      testProject: "runScriptWithRuntimeMetadataDebug",
+    });
+
+    const plainResult = await run("run-script", "test-echo");
+    expect(plainResult.exitCode).toBe(0);
+    assertOutputMatches(
+      plainResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-a:test-echo] ${projectRoot} application-a ${projectRoot}/applications/application-a test-echo
+[application-b:test-echo] ${projectRoot} application-b ${projectRoot}/applications/application-b test-echo
+✅ application-a: test-echo
+✅ application-b: test-echo
+2 scripts ran successfully`,
+    );
+
+    const argsResult = await run(
+      "run-script",
+      "test-echo",
+      "--args=--arg1=<projectPath> --arg2=<workspace> --arg3=<workspacePath> --arg4=<scriptName>",
+    );
+    assertOutputMatches(
+      argsResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-a:test-echo] ${projectRoot} application-a ${projectRoot}/applications/application-a test-echo --arg1=${projectRoot} --arg2=application-a --arg3=${projectRoot}/applications/application-a --arg4=test-echo
+[application-b:test-echo] ${projectRoot} application-b ${projectRoot}/applications/application-b test-echo --arg1=${projectRoot} --arg2=application-b --arg3=${projectRoot}/applications/application-b --arg4=test-echo
+✅ application-a: test-echo
+✅ application-b: test-echo
+2 scripts ran successfully`,
+    );
+
+    const inlineResult = await run(
+      "run-script",
+      "echo '<projectPath> <workspace> <workspacePath> <scriptName>'",
+      "--inline",
+    );
+    expect(inlineResult.exitCode).toBe(0);
+    assertOutputMatches(
+      inlineResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-a:(inline)] ${projectRoot} application-a ${projectRoot}/applications/application-a
+[application-b:(inline)] ${projectRoot} application-b ${projectRoot}/applications/application-b
+✅ application-a: (inline)
+✅ application-b: (inline)
+2 scripts ran successfully`,
+    );
+  });
+
   test("JSON output file - all success", async () => {
     const { json: jsonOutput1 } = await runAndGetJsonOutput(
       "simple1",
