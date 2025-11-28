@@ -1,5 +1,6 @@
 export interface ScriptRuntimeMetadata {
   projectPath: string;
+  projectName: string;
   workspacePath: string;
   workspaceRelativePath: string;
   workspaceName: string;

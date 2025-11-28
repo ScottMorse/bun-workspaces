@@ -161,10 +161,10 @@ describe("Test FileSystemProject", () => {
 
     for await (const { text, textNoAnsi, streamName } of plainResult.output) {
       expect(text).toBe(
-        `${project.rootDirectory} application-a ${project.rootDirectory}/applications/application-a applications/application-a test-echo\n`,
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a test-echo\n`,
       );
       expect(textNoAnsi).toBe(
-        `${project.rootDirectory} application-a ${project.rootDirectory}/applications/application-a applications/application-a test-echo\n`,
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a test-echo\n`,
       );
       expect(streamName).toBe("stdout");
     }
@@ -172,15 +172,15 @@ describe("Test FileSystemProject", () => {
     const argsResult = project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script: "test-echo",
-      args: "--arg1=<projectPath> --arg2=<workspaceName> --arg3=<workspacePath> --arg4=<workspaceRelativePath> --arg5=<scriptName>",
+      args: "--arg1=<projectPath> --arg2=<projectName> --arg3=<workspaceName> --arg4=<workspacePath> --arg5=<workspaceRelativePath> --arg6=<scriptName>",
     });
 
     for await (const { text, textNoAnsi, streamName } of argsResult.output) {
       expect(text).toBe(
-        `${project.rootDirectory} application-a ${project.rootDirectory}/applications/application-a applications/application-a test-echo --arg1=${project.rootDirectory} --arg2=application-a --arg3=${project.rootDirectory}/applications/application-a --arg4=applications/application-a --arg5=test-echo\n`,
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-a --arg4=${project.rootDirectory}/applications/application-a --arg5=applications/application-a --arg6=test-echo\n`,
       );
       expect(textNoAnsi).toBe(
-        `${project.rootDirectory} application-a ${project.rootDirectory}/applications/application-a applications/application-a test-echo --arg1=${project.rootDirectory} --arg2=application-a --arg3=${project.rootDirectory}/applications/application-a --arg4=applications/application-a --arg5=test-echo\n`,
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-a --arg4=${project.rootDirectory}/applications/application-a --arg5=applications/application-a --arg6=test-echo\n`,
       );
       expect(streamName).toBe("stdout");
     }
@@ -188,16 +188,16 @@ describe("Test FileSystemProject", () => {
     const inlineResult = project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script:
-        "echo '<projectPath> <workspaceName> <workspacePath> <scriptName>'",
+        "echo '<projectPath> <projectName> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>'",
       inline: true,
     });
 
     for await (const { text, textNoAnsi, streamName } of inlineResult.output) {
       expect(text).toBe(
-        `${project.rootDirectory} application-a ${project.rootDirectory}/applications/application-a \n`,
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a \n`,
       );
       expect(textNoAnsi).toBe(
-        `${project.rootDirectory} application-a ${project.rootDirectory}/applications/application-a \n`,
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a \n`,
       );
       expect(streamName).toBe("stdout");
     }
@@ -625,10 +625,10 @@ describe("Test FileSystemProject", () => {
     } of plainResult.output) {
       const appLetter = i === 0 ? "a" : "b";
       expect(text).toBe(
-        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} test-echo\n`,
+        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} test-echo\n`,
       );
       expect(textNoAnsi).toBe(
-        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} test-echo\n`,
+        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} test-echo\n`,
       );
       expect(streamName).toBe("stdout");
       i++;
@@ -637,7 +637,7 @@ describe("Test FileSystemProject", () => {
     const argsResult = project.runScriptAcrossWorkspaces({
       workspacePatterns: ["application-*"],
       script: "test-echo",
-      args: "--arg1=<projectPath> --arg2=<workspaceName> --arg3=<workspacePath> --arg4=<workspaceRelativePath> --arg5=<scriptName>",
+      args: "--arg1=<projectPath> --arg2=<projectName> --arg3=<workspaceName> --arg4=<workspacePath> --arg5=<workspaceRelativePath> --arg6=<scriptName>",
     });
 
     let j = 0;
@@ -646,10 +646,10 @@ describe("Test FileSystemProject", () => {
     } of argsResult.output) {
       const appLetter = j === 0 ? "a" : "b";
       expect(text).toBe(
-        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} test-echo --arg1=${project.rootDirectory} --arg2=application-${appLetter} --arg3=${project.rootDirectory}/applications/application-${appLetter} --arg4=applications/application-${appLetter} --arg5=test-echo\n`,
+        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-${appLetter} --arg4=${project.rootDirectory}/applications/application-${appLetter} --arg5=applications/application-${appLetter} --arg6=test-echo\n`,
       );
       expect(textNoAnsi).toBe(
-        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} test-echo --arg1=${project.rootDirectory} --arg2=application-${appLetter} --arg3=${project.rootDirectory}/applications/application-${appLetter} --arg4=applications/application-${appLetter} --arg5=test-echo\n`,
+        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-${appLetter} --arg4=${project.rootDirectory}/applications/application-${appLetter} --arg5=applications/application-${appLetter} --arg6=test-echo\n`,
       );
       expect(streamName).toBe("stdout");
       j++;
