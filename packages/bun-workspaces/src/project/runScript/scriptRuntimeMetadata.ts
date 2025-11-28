@@ -11,6 +11,10 @@ const SCRIPT_RUNTIME_METADATA_CONFIG = {
     inlineName: ["<projectPath>"],
     envVarName: "BW_PROJECT_PATH",
   },
+  projectName: {
+    inlineName: ["<projectName>"],
+    envVarName: "BW_PROJECT_NAME",
+  },
   workspacePath: {
     inlineName: ["<workspacePath>"],
     envVarName: "BW_WORKSPACE_PATH",

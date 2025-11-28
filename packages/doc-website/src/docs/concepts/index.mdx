@@ -31,6 +31,12 @@ The absolute path to the project root.<br/>
 In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("projectPath").inlineName[0]}</code><br/>
 Environment variable: <code>{getScriptRuntimeMetadataConfig("projectPath").envVarName}</code>
 
+#### Project Name
+The name of the project (as in its `package.json` `"name"` field).<br/>
+
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("projectName").inlineName[0]}</code><br/>
+Environment variable: <code>{getScriptRuntimeMetadataConfig("projectName").envVarName}</code>
+
 #### Workspace Name
 The name of the workspace (as in its `package.json` `"name"` field).<br/>
 
@@ -62,8 +68,10 @@ This example shows various uses of the runtime metadata to run the same file fro
 <SyntaxHighlighter language="typescript">
 {`// my-script.ts (in project root)
 console.log(process.env.${getScriptRuntimeMetadataConfig("projectPath").envVarName});
+console.log(process.env.${getScriptRuntimeMetadataConfig("projectName").envVarName});
 console.log(process.env.${getScriptRuntimeMetadataConfig("workspaceName").envVarName});
 console.log(process.env.${getScriptRuntimeMetadataConfig("workspacePath").envVarName});
+console.log(process.env.${getScriptRuntimeMetadataConfig("workspaceRelativePath").envVarName});
 console.log(process.env.${getScriptRuntimeMetadataConfig("scriptName").envVarName});`}
 </SyntaxHighlighter>
 
