@@ -1,0 +1,6 @@
+{
+  "name": "workspace-a",
+  "scripts": {
+    "workspace-script": "bun run script.ts"
+  }
+}

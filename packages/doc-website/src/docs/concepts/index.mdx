@@ -1,0 +1,98 @@
+---
+title: Library API
+titleSuffix: " | bun-workspaces"
+description: "Concepts: Documentation for bun-workspaces | Documentation for bun-workspaces: A CLI to help manage Bun monorepos"
+pageType: doc
+sidebar: false
+outline: true
+footer: false
+---
+
+import { getScriptRuntimeMetadataConfig } from 'bun-workspaces/src/project/runScript/scriptRuntimeMetadata';
+import { SyntaxHighlighter } from '../../content/highlight';
+
+# Concepts
+
+## Workspace Aliases
+
+A workspace alias is a short name for a workspace that can be used instead of the full name in commands such as <a href="/cli#run-script">`run-script`</a>.
+
+Aliases are validated to be unique to each workspace and to not clash with other workspaces' `package.json` names.
+
+Workspace aliases are defined in the [workspace configuration](/config#workspace-configuration).
+
+## Script Runtime Metadata
+
+When running scripts via the API or CLI, runtime metadata is available to be used in the script, which can be interpolated in an inline script or appended args, or it can be read from environment variables.
+
+#### Project Path
+The absolute path to the project root.<br/>
+
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("projectPath").inlineName[0]}</code><br/>
+Environment variable: <code>{getScriptRuntimeMetadataConfig("projectPath").envVarName}</code>
+
+#### Project Name
+The name of the project (as in its `package.json` `"name"` field).<br/>
+
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("projectName").inlineName[0]}</code><br/>
+Environment variable: <code>{getScriptRuntimeMetadataConfig("projectName").envVarName}</code>
+
+#### Workspace Name
+The name of the workspace (as in its `package.json` `"name"` field).<br/>
+
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("workspaceName").inlineName[0]}</code><br/>
+Environment variable: <code>{getScriptRuntimeMetadataConfig("workspaceName").envVarName}</code>
+
+#### Workspace Path
+The absolute path to the workspace.<br/>
+
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("workspacePath").inlineName[0]}</code><br/>
+Environment variable: <code>{getScriptRuntimeMetadataConfig("workspacePath").envVarName}</code>
+
+#### Workspace Relative Path
+The relative path to the workspace from the project root.<br/>
+
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("workspaceRelativePath").inlineName[0]}</code><br/>
+Environment variable: <code>{getScriptRuntimeMetadataConfig("workspaceRelativePath").envVarName}</code>
+
+#### Script Name
+The name of the script. This is an empty string when running as an inline script.<br/>
+
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("scriptName").inlineName[0]}</code><br/>
+Environment variable: <code>{getScriptRuntimeMetadataConfig("scriptName").envVarName}</code>
+
+#### Examples
+
+This example shows various uses of the runtime metadata to run the same file from all workspaces, while having a means of distinguishing the workspace and script running the file, thanks to the metadata.
+
+<SyntaxHighlighter language="typescript">
+{`// my-script.ts (in project root)
+console.log(process.env.${getScriptRuntimeMetadataConfig("projectPath").envVarName});
+console.log(process.env.${getScriptRuntimeMetadataConfig("projectName").envVarName});
+console.log(process.env.${getScriptRuntimeMetadataConfig("workspaceName").envVarName});
+console.log(process.env.${getScriptRuntimeMetadataConfig("workspacePath").envVarName});
+console.log(process.env.${getScriptRuntimeMetadataConfig("workspaceRelativePath").envVarName});
+console.log(process.env.${getScriptRuntimeMetadataConfig("scriptName").envVarName});`}
+</SyntaxHighlighter>
+
+##### CLI:
+<SyntaxHighlighter language="bash">
+{`bw run "bun run <projectPath>/my-script.ts" --inline --args="<scriptName>"`}
+</SyntaxHighlighter>
+
+##### API:
+<SyntaxHighlighter language="typescript">
+{`
+import { createFileSystemProject } from 'bun-workspaces';
+
+const project = createFileSystemProject({
+${"  "}rootDirectory: ".",
+});
+
+project.runScriptAcrossWorkspaces({
+${"  "}workspacePatterns: ["*"],
+${"  "}script: "bun run <projectPath>/my-script.ts",
+${"  "}args: "<scriptName>",
+${"  "}inline: true,
+});`}
+</SyntaxHighlighter>

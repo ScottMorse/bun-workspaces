@@ -242,7 +242,7 @@ describe("CLI Run Script", () => {
     const result2 = await run(
       "run-script",
       "test-echo",
-      '--args="hello there <workspace>"',
+      '--args="hello there <workspaceName>"',
     );
     expect(result2.exitCode).toBe(0);
     assertOutputMatches(
@@ -261,7 +261,7 @@ describe("CLI Run Script", () => {
     const result3 = await run(
       "run-script",
       "test-echo",
-      "--args=<workspace> and <workspace> and <workspace>",
+      "--args=<workspaceName> and <workspaceName> and <workspaceName>",
     );
     expect(result3.exitCode).toBe(0);
     assertOutputMatches(
@@ -282,7 +282,7 @@ describe("CLI Run Script", () => {
       "test-echo",
       "deprecated_appA",
       "deprecated_libB",
-      "--args=for workspace <workspace>",
+      "--args=for workspace <workspaceName>",
     );
     expect(result4.exitCode).toBe(0);
     assertOutputMatches(
@@ -318,7 +318,7 @@ passed args: test-args
       "run-script",
       "test-echo",
       "--no-prefix",
-      "--args=<workspace>",
+      "--args=<workspaceName>",
     );
     expect(result6.exitCode).toBe(0);
     assertOutputMatches(
@@ -379,48 +379,48 @@ success2
 
     const resultSimple = await run(
       "run-script",
-      "echo 'this is my inline script for <workspace>'",
+      "echo 'this is my inline script for <workspaceName>'",
       "--inline",
     );
     expect(resultSimple.exitCode).toBe(0);
     assertOutputMatches(
       resultSimple.stdoutAndErr.sanitizedCompactLines,
-      `[application-1a:<inline>] this is my inline script for application-1a
-[application-1b:<inline>] this is my inline script for application-1b
-[library-1a:<inline>] this is my inline script for library-1a
-[library-1b:<inline>] this is my inline script for library-1b
-✅ application-1a: <inline>
-✅ application-1b: <inline>
-✅ library-1a: <inline>
-✅ library-1b: <inline>
+      `[application-1a:(inline)] this is my inline script for application-1a
+[application-1b:(inline)] this is my inline script for application-1b
+[library-1a:(inline)] this is my inline script for library-1a
+[library-1b:(inline)] this is my inline script for library-1b
+✅ application-1a: (inline)
+✅ application-1b: (inline)
+✅ library-1a: (inline)
+✅ library-1b: (inline)
 4 scripts ran successfully`,
     );
 
     const resultWithArgs = await run(
       "run-script",
-      "echo 'this is my inline script for <workspace>'",
+      "echo 'this is my inline script for <workspaceName>'",
       "--inline",
-      "--args=test-args-<workspace>",
+      "--args=test-args-<workspaceName>",
     );
     expect(resultWithArgs.exitCode).toBe(0);
     assertOutputMatches(
       resultWithArgs.stdoutAndErr.sanitizedCompactLines,
-      `[application-1a:<inline>] this is my inline script for application-1a test-args-application-1a
-[application-1b:<inline>] this is my inline script for application-1b test-args-application-1b
-[library-1a:<inline>] this is my inline script for library-1a test-args-library-1a
-[library-1b:<inline>] this is my inline script for library-1b test-args-library-1b
-✅ application-1a: <inline>
-✅ application-1b: <inline>
-✅ library-1a: <inline>
-✅ library-1b: <inline>
+      `[application-1a:(inline)] this is my inline script for application-1a test-args-application-1a
+[application-1b:(inline)] this is my inline script for application-1b test-args-application-1b
+[library-1a:(inline)] this is my inline script for library-1a test-args-library-1a
+[library-1b:(inline)] this is my inline script for library-1b test-args-library-1b
+✅ application-1a: (inline)
+✅ application-1b: (inline)
+✅ library-1a: (inline)
+✅ library-1b: (inline)
 4 scripts ran successfully`,
     );
 
     const resultWithArgsNoPrefix = await run(
       "run-script",
-      "echo 'this is my inline script for <workspace>'",
+      "echo 'this is my inline script for <workspaceName>'",
       "--inline",
-      "--args=test-args-<workspace>",
+      "--args=test-args-<workspaceName>",
       "--no-prefix",
     );
     expect(resultWithArgsNoPrefix.exitCode).toBe(0);
@@ -430,10 +430,10 @@ success2
 this is my inline script for application-1b test-args-application-1b
 this is my inline script for library-1a test-args-library-1a
 this is my inline script for library-1b test-args-library-1b
-✅ application-1a: <inline>
-✅ application-1b: <inline>
-✅ library-1a: <inline>
-✅ library-1b: <inline>
+✅ application-1a: (inline)
+✅ application-1b: (inline)
+✅ library-1a: (inline)
+✅ library-1b: (inline)
 4 scripts ran successfully`,
     );
   });
@@ -500,6 +500,54 @@ this is my inline script for library-1b test-args-library-1b
       json: JSON.parse(fs.readFileSync(fullOutputPath, "utf8")),
     };
   };
+
+  test("Runtime metadata", async () => {
+    const projectRoot = getProjectRoot("runScriptWithRuntimeMetadataDebug");
+
+    const { run } = setupCliTest({
+      testProject: "runScriptWithRuntimeMetadataDebug",
+    });
+
+    const plainResult = await run("run-script", "test-echo");
+    expect(plainResult.exitCode).toBe(0);
+    assertOutputMatches(
+      plainResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-a:test-echo] ${projectRoot} application-a ${projectRoot}/applications/application-a applications/application-a test-echo
+[application-b:test-echo] ${projectRoot} application-b ${projectRoot}/applications/application-b applications/application-b test-echo
+✅ application-a: test-echo
+✅ application-b: test-echo
+2 scripts ran successfully`,
+    );
+
+    const argsResult = await run(
+      "run-script",
+      "test-echo",
+      "--args=--arg1=<projectPath> --arg2=<workspaceName> --arg3=<workspacePath> --arg4=<workspaceRelativePath> --arg5=<scriptName>",
+    );
+    assertOutputMatches(
+      argsResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-a:test-echo] ${projectRoot} application-a ${projectRoot}/applications/application-a applications/application-a test-echo --arg1=${projectRoot} --arg2=application-a --arg3=${projectRoot}/applications/application-a --arg4=applications/application-a --arg5=test-echo
+[application-b:test-echo] ${projectRoot} application-b ${projectRoot}/applications/application-b applications/application-b test-echo --arg1=${projectRoot} --arg2=application-b --arg3=${projectRoot}/applications/application-b --arg4=applications/application-b --arg5=test-echo
+✅ application-a: test-echo
+✅ application-b: test-echo
+2 scripts ran successfully`,
+    );
+
+    const inlineResult = await run(
+      "run-script",
+      "echo '<projectPath> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>'",
+      "--inline",
+    );
+    expect(inlineResult.exitCode).toBe(0);
+    assertOutputMatches(
+      inlineResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-a:(inline)] ${projectRoot} application-a ${projectRoot}/applications/application-a applications/application-a
+[application-b:(inline)] ${projectRoot} application-b ${projectRoot}/applications/application-b applications/application-b
+✅ application-a: (inline)
+✅ application-b: (inline)
+2 scripts ran successfully`,
+    );
+  });
 
   test("JSON output file - all success", async () => {
     const { json: jsonOutput1 } = await runAndGetJsonOutput(

@@ -1,0 +1,34 @@
+{
+  "name": "@bw/sandbox",
+  "version": "1.0.0-alpha.19",
+  "main": "src/index.ts",
+  "private": true,
+  "homepage": "https://bunworkspaces.com",
+  "workspaces": [
+    "workspaces/*"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ScottMorse/bun-workspaces.git"
+  },
+  "bin": {
+    "bun-workspaces": "bin/cli.js",
+    "bw": "bin/cli.js"
+  },
+  "custom": {
+    "bunVersion": {
+      "build": "1.3.1",
+      "libraryConsumer": "^1.1.x"
+    }
+  },
+  "scripts": {
+    "api:local": "bun run src/local.ts",
+    "cli:local": "CLI=true bun run src/local.ts",
+    "api:release": "bun run src/release.ts",
+    "cli:release": "CLI=true bun run src/release.ts"
+  },
+  "devDependencies": {
+    "bun-workspaces_local": "file:../bun-workspaces",
+    "bun-workspaces_release": "npm:bun-workspaces@latest"
+  }
+}

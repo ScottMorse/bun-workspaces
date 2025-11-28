@@ -11,6 +11,7 @@ describe("Run Single Script", () => {
         workingDirectory: ".",
       },
       metadata: {},
+      env: {},
     });
 
     let outputCount = 0;
@@ -47,6 +48,7 @@ describe("Run Single Script", () => {
         workingDirectory: ".",
       },
       metadata: {},
+      env: {},
     });
 
     let outputCount = 0;
@@ -83,6 +85,7 @@ describe("Run Single Script", () => {
         workingDirectory: ".",
       },
       metadata: {},
+      env: {},
     });
 
     let outputCount = 0;
@@ -112,6 +115,7 @@ describe("Run Single Script", () => {
         workingDirectory: ".",
       },
       metadata: {},
+      env: {},
     });
 
     let outputCount = 0;
@@ -136,6 +140,40 @@ describe("Run Single Script", () => {
     });
   });
 
+  test("Env vars are passed", async () => {
+    const testValue = `test value ${Math.round(Math.random() * 1000000)}`;
+    const scriptCommand = {
+      command: "echo $NODE_ENV $TEST_ENV_VAR",
+      workingDirectory: ".",
+      env: { TEST_ENV_VAR: testValue },
+    };
+
+    const options = {
+      scriptCommand,
+      metadata: {},
+      env: { TEST_ENV_VAR: testValue },
+    };
+
+    const singleResult = await runScript(options);
+
+    for await (const outputChunk of singleResult.output) {
+      expect(outputChunk.streamName).toBe("stdout");
+      expect(outputChunk.text).toBe(`test ${testValue}\n`);
+      expect(outputChunk.textNoAnsi).toBe(`test ${testValue}\n`);
+    }
+
+    const multiResult = await runScripts({
+      scripts: [options, options],
+      parallel: false,
+    });
+
+    for await (const { outputChunk } of multiResult.output) {
+      expect(outputChunk.streamName).toBe("stdout");
+      expect(outputChunk.text).toBe(`test ${testValue}\n`);
+      expect(outputChunk.textNoAnsi).toBe(`test ${testValue}\n`);
+    }
+  });
+
   test("With ANSI escape codes", async () => {
     const result = await runScript({
       scriptCommand: {
@@ -143,6 +181,7 @@ describe("Run Single Script", () => {
         workingDirectory: ".",
       },
       metadata: {},
+      env: {},
     });
 
     for await (const outputChunk of result.output) {
@@ -165,6 +204,7 @@ describe("Run Multiple Scripts", () => {
             command: "echo 'test-script 1'",
             workingDirectory: "",
           },
+          env: {},
         },
         {
           metadata: {
@@ -174,6 +214,7 @@ describe("Run Multiple Scripts", () => {
             command: "echo 'test-script 2'",
             workingDirectory: "",
           },
+          env: {},
         },
       ],
       parallel: false,
@@ -237,6 +278,7 @@ describe("Run Multiple Scripts", () => {
             command: "echo 'test-script 1' && exit 1",
             workingDirectory: "",
           },
+          env: {},
         },
         {
           metadata: {
@@ -246,6 +288,7 @@ describe("Run Multiple Scripts", () => {
             command: "echo 'test-script 2'",
             workingDirectory: "",
           },
+          env: {},
         },
       ],
       parallel: false,
@@ -308,6 +351,7 @@ describe("Run Multiple Scripts", () => {
           command: "sleep 0.5 && echo 'test-script 1'",
           workingDirectory: "",
         },
+        env: {},
       },
       {
         metadata: {
@@ -317,6 +361,7 @@ describe("Run Multiple Scripts", () => {
           command: "echo 'test-script 2' && exit 2",
           workingDirectory: "",
         },
+        env: {},
       },
       {
         metadata: {
@@ -326,6 +371,7 @@ describe("Run Multiple Scripts", () => {
           command: "sleep 0.25 && echo 'test-script 3'",
           workingDirectory: "",
         },
+        env: {},
       },
     ];
 

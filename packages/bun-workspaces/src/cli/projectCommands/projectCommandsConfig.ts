@@ -47,7 +47,7 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
     },
   },
   workspaceInfo: {
-    command: "workspace-info <workspace>",
+    command: "workspace-info <workspaceName>",
     aliases: ["info"],
     description: "Show information about a workspace",
     options: {

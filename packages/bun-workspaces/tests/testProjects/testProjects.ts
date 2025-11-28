@@ -29,6 +29,7 @@ const TEST_PROJECTS = {
   runScriptWithFailures: "forRunScript/withFailures",
   runScriptWithMixedOutput: "forRunScript/withMixedOutput",
   runScriptWithEchoArgs: "forRunScript/withEchoArgs",
+  runScriptWithRuntimeMetadataDebug: "forRunScript/withRuntimeMetadataDebug",
   workspaceConfigPackageOnly: "workspaceConfig/packageOnly",
   workspaceConfigPackageFileMix: "workspaceConfig/packageFileMix",
   workspaceConfigFileOnly: "workspaceConfig/fileOnly",
