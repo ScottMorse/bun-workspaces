@@ -122,6 +122,7 @@ class _FileSystemProject extends ProjectBase implements Project {
 
     const scriptRuntimeMetadata: ScriptRuntimeMetadata = {
       projectPath: this.rootDirectory,
+      projectName: this.name,
       workspacePath: resolveWorkspacePath(this, workspace),
       workspaceRelativePath: workspace.path,
       workspaceName: workspace.name,
@@ -178,6 +179,7 @@ class _FileSystemProject extends ProjectBase implements Project {
       scripts: workspaces.map((workspace) => {
         const scriptRuntimeMetadata: ScriptRuntimeMetadata = {
           projectPath: this.rootDirectory,
+          projectName: this.name,
           workspacePath: resolveWorkspacePath(this, workspace),
           workspaceRelativePath: workspace.path,
           workspaceName: workspace.name,
