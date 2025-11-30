@@ -1,3 +1,4 @@
+import type { ResolvedWorkspaceConfig } from "../../config";
 import type { Simplify } from "../../internal/types";
 import {
   validateWorkspaceAliases,
@@ -22,6 +23,11 @@ class _MemoryProject extends ProjectBase implements Project {
   public readonly workspaces: Workspace[];
   public readonly name: string;
   public readonly sourceType = "memory";
+  protected readonly _workspaceConfigMap: Record<
+    string,
+    ResolvedWorkspaceConfig
+  > = {};
+
   constructor(options: CreateMemoryProjectOptions) {
     super();
     this.name = options.name ?? "";

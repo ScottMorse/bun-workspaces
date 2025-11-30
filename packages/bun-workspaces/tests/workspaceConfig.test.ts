@@ -2,6 +2,7 @@ import path from "path";
 import { expect, test, describe, spyOn } from "bun:test";
 import { loadConfigFile } from "../src/config";
 import {
+  createWorkspaceConfig,
   getFileConfig,
   getPackageJsonConfig,
   loadWorkspaceConfig,
@@ -24,6 +25,10 @@ describe("Test workspace config", () => {
 
     expect(config).toEqual({
       aliases: ["appA"],
+      scriptDefaults: {
+        order: 0,
+      },
+      scripts: {},
     });
 
     const config2 = loadWorkspaceConfig(
@@ -35,6 +40,10 @@ describe("Test workspace config", () => {
 
     expect(config2).toEqual({
       aliases: ["appB_file"],
+      scriptDefaults: {
+        order: 0,
+      },
+      scripts: {},
     });
 
     const config3 = loadWorkspaceConfig(
@@ -45,6 +54,10 @@ describe("Test workspace config", () => {
     );
     expect(config3).toEqual({
       aliases: ["libA_file"],
+      scriptDefaults: {
+        order: 0,
+      },
+      scripts: {},
     });
 
     const config4 = loadWorkspaceConfig(
@@ -56,6 +69,10 @@ describe("Test workspace config", () => {
 
     expect(config4).toEqual({
       aliases: ["libB", "libB2"],
+      scriptDefaults: {
+        order: 0,
+      },
+      scripts: {},
     });
 
     const config5 = loadWorkspaceConfig(
@@ -66,6 +83,10 @@ describe("Test workspace config", () => {
     );
     expect(config5).toEqual({
       aliases: [],
+      scriptDefaults: {
+        order: 0,
+      },
+      scripts: {},
     });
 
     const config6 = loadWorkspaceConfig(
@@ -76,6 +97,10 @@ describe("Test workspace config", () => {
     );
     expect(config6).toEqual({
       aliases: [],
+      scriptDefaults: {
+        order: 0,
+      },
+      scripts: {},
     });
   });
 
@@ -209,6 +234,12 @@ describe("Test workspace config", () => {
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
         },
       ],
+      workspaceConfigMap: {
+        "application-a": createWorkspaceConfig(),
+        "application-1b": createWorkspaceConfig(),
+        "library-1a": createWorkspaceConfig(),
+        "library-1b": createWorkspaceConfig(),
+      },
     });
 
     expect(
@@ -246,6 +277,12 @@ describe("Test workspace config", () => {
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
         },
       ],
+      workspaceConfigMap: {
+        "application-1a": createWorkspaceConfig(),
+        "application-1b": createWorkspaceConfig(),
+        "library-1a": createWorkspaceConfig(),
+        "library-1b": createWorkspaceConfig(),
+      },
     });
 
     expect(
@@ -297,6 +334,13 @@ describe("Test workspace config", () => {
           scripts: ["all-workspaces", "c-workspaces", "library-c"],
         },
       ],
+      workspaceConfigMap: {
+        "application-1a": createWorkspaceConfig(),
+        "application-1b": createWorkspaceConfig(),
+        "library-1a": createWorkspaceConfig(),
+        "library-1b": createWorkspaceConfig(),
+        "library-1c": createWorkspaceConfig(),
+      },
     });
   });
 

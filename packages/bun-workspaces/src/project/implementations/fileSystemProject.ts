@@ -1,5 +1,9 @@
 import fs from "fs";
 import path from "path";
+import {
+  createWorkspaceConfig,
+  type ResolvedWorkspaceConfig,
+} from "../../config";
 import { logger } from "../../internal/logger";
 import type { Simplify } from "../../internal/types";
 import { findWorkspaces, type Workspace } from "../../workspaces";
@@ -76,6 +80,7 @@ class _FileSystemProject extends ProjectBase implements Project {
   public readonly workspaces: Workspace[];
   public readonly name: string;
   public readonly sourceType = "fileSystem";
+
   constructor(
     options: CreateFileSystemProjectOptions & {
       /** @deprecated  */
@@ -86,12 +91,13 @@ class _FileSystemProject extends ProjectBase implements Project {
 
     this.rootDirectory = path.resolve(options.rootDirectory);
 
-    const { workspaces } = findWorkspaces({
+    const { workspaces, workspaceConfigMap } = findWorkspaces({
       rootDirectory: options.rootDirectory,
       workspaceAliases: options.workspaceAliases,
     });
 
     this.workspaces = workspaces;
+    this._workspaceConfigMap = workspaceConfigMap;
 
     if (!options.name) {
       const packageJson = JSON.parse(
@@ -169,7 +175,26 @@ class _FileSystemProject extends ProjectBase implements Project {
       .filter(
         (workspace) =>
           options.inline || workspace.scripts.includes(options.script),
-      );
+      )
+      .sort((a, b) => {
+        const aScriptConfig =
+          this._workspaceConfigMap[a.name]?.scripts[options.script] ??
+          this._workspaceConfigMap[a.name]?.scriptDefaults;
+
+        const bScriptConfig =
+          this._workspaceConfigMap[b.name]?.scripts[options.script] ??
+          this._workspaceConfigMap[b.name]?.scriptDefaults;
+
+        if (!aScriptConfig) {
+          return 0;
+        }
+
+        if (!bScriptConfig) {
+          return -1;
+        }
+
+        return (aScriptConfig.order ?? 0) - (bScriptConfig.order ?? 0);
+      });
 
     logger.debug(
       `Running script ${options.script} across workspaces: ${workspaces.map((workspace) => workspace.name).join(", ")}`,
@@ -220,6 +245,11 @@ class _FileSystemProject extends ProjectBase implements Project {
       parallel: !!options.parallel,
     });
   }
+
+  protected readonly _workspaceConfigMap: Record<
+    string,
+    ResolvedWorkspaceConfig
+  >;
 }
 
 /** An implementation of {@link Project} that is created from a root directory in the file system. */

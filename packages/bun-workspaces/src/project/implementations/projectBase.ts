@@ -1,4 +1,5 @@
 import path from "path";
+import type { ResolvedWorkspaceConfig } from "../../config";
 import { createWildcardRegex } from "../../internal/regex";
 import { type Workspace } from "../../workspaces";
 import { PROJECT_ERRORS } from "../errors";
@@ -18,6 +19,11 @@ export abstract class ProjectBase implements Project {
   public abstract readonly rootDirectory: string;
   public abstract readonly workspaces: Workspace[];
   public abstract readonly sourceType: "fileSystem" | "memory";
+
+  protected abstract readonly _workspaceConfigMap: Record<
+    string,
+    ResolvedWorkspaceConfig
+  >;
 
   listWorkspacesWithScript(scriptName: string): Workspace[] {
     return this.workspaces.filter((workspace) =>

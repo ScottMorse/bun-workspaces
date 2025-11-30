@@ -1,4 +1,5 @@
 import { expect, test, describe } from "bun:test";
+import { createWorkspaceConfig } from "../src/config";
 import { WORKSPACE_ERRORS } from "../src/workspaces/errors";
 import { findWorkspaces } from "../src/workspaces/findWorkspaces";
 import { getProjectRoot } from "./testProjects";
@@ -47,6 +48,13 @@ describe("Test finding workspaces", () => {
           aliases: [],
         },
       ],
+      workspaceConfigMap: {
+        "application-a": createWorkspaceConfig(),
+        "application-b": createWorkspaceConfig(),
+        "library-a": createWorkspaceConfig(),
+        "library-b": createWorkspaceConfig(),
+        "library-c": createWorkspaceConfig(),
+      },
     });
 
     expect(defaultProject).toEqual({
@@ -92,6 +100,12 @@ describe("Test finding workspaces", () => {
           aliases: [],
         },
       ],
+      workspaceConfigMap: {
+        "application-a": createWorkspaceConfig(),
+        "application-b": createWorkspaceConfig(),
+        "library-a": createWorkspaceConfig(),
+        "library-b": createWorkspaceConfig(),
+      },
     });
 
     expect(
@@ -116,6 +130,10 @@ describe("Test finding workspaces", () => {
           aliases: [],
         },
       ],
+      workspaceConfigMap: {
+        "application-a": createWorkspaceConfig(),
+        "application-b": createWorkspaceConfig(),
+      },
     });
   });
 
@@ -162,6 +180,13 @@ describe("Test finding workspaces", () => {
           aliases: [],
         },
       ],
+      workspaceConfigMap: {
+        "application-a": createWorkspaceConfig(),
+        "application-b": createWorkspaceConfig(),
+        "library-a": createWorkspaceConfig(),
+        "library-b": createWorkspaceConfig(),
+        "library-c": createWorkspaceConfig(),
+      },
     });
   });
 
@@ -215,6 +240,13 @@ describe("Test finding workspaces", () => {
           aliases: [],
         },
       ],
+      workspaceConfigMap: {
+        "application-a": createWorkspaceConfig(),
+        "application-b": createWorkspaceConfig(),
+        "library-a": createWorkspaceConfig(),
+        "library-b": createWorkspaceConfig(),
+        "library-c": createWorkspaceConfig(),
+      },
     });
   });
 

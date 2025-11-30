@@ -1,6 +1,11 @@
 import fs from "fs";
 import path from "path";
-import { loadWorkspaceConfig, type ProjectConfig } from "../config";
+import {
+  createWorkspaceConfig,
+  loadWorkspaceConfig,
+  type ProjectConfig,
+  type ResolvedWorkspaceConfig,
+} from "../config";
 import { WORKSPACE_ERRORS } from "./errors";
 import {
   resolvePackageJsonContent,
@@ -87,6 +92,8 @@ export const findWorkspaces = ({
     }
   }
 
+  const workspaceConfigMap: Record<string, ResolvedWorkspaceConfig> = {};
+
   for (const pattern of positivePatterns) {
     for (const item of scanWorkspaceGlob(
       pattern.replace(/^!/, ""),
@@ -129,6 +136,8 @@ export const findWorkspaces = ({
           validateWorkspace(workspace, workspaces)
         ) {
           workspaces.push(workspace);
+          workspaceConfigMap[workspace.name] =
+            workspaceConfig ?? createWorkspaceConfig();
         }
       }
     }
@@ -140,7 +149,7 @@ export const findWorkspaces = ({
 
   validateWorkspaceAliases(workspaces, workspaceAliases);
 
-  return { workspaces };
+  return { workspaces, workspaceConfigMap };
 };
 
 export const validateWorkspaceAliases = (
