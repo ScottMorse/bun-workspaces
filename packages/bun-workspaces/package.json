@@ -6,7 +6,7 @@
   "homepage": "https://bunworkspaces.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ScottMorse/bun-workspaces.git"
+    "url": "https://github.com/bun-workspaces/bun-workspaces.git"
   },
   "bin": {
     "bun-workspaces": "bin/cli.js",
