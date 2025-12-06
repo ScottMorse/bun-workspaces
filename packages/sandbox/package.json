@@ -29,6 +29,6 @@
   },
   "devDependencies": {
     "bun-workspaces_local": "file:../bun-workspaces",
-    "bun-workspaces_release": "npm:bun-workspaces@latest"
+    "bun-workspaces_release": "npm:bun-workspaces@1.0.0-alpha.20"
   }
 }
