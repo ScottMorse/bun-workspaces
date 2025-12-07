@@ -107,11 +107,4 @@ export const resolveWorkspaceConfig = (
 
 export const createWorkspaceConfig = (
   config?: WorkspaceConfig,
-): ResolvedWorkspaceConfig => ({
-  ...resolveWorkspaceConfig(config ?? {}),
-  aliases: [],
-  scriptDefaults: {
-    order: 0,
-  },
-  scripts: {},
-});
+): ResolvedWorkspaceConfig => resolveWorkspaceConfig(config ?? {});

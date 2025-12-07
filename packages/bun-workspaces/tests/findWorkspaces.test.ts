@@ -243,8 +243,9 @@ describe("Test finding workspaces", () => {
       workspaceConfigMap: {
         "application-a": createWorkspaceConfig(),
         "application-b": createWorkspaceConfig(),
+        "group-b-other-a": createWorkspaceConfig(),
+        "group-b-other-b": createWorkspaceConfig(),
         "library-a": createWorkspaceConfig(),
-        "library-b": createWorkspaceConfig(),
         "library-c": createWorkspaceConfig(),
       },
     });
