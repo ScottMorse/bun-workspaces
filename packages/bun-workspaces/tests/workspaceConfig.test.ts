@@ -25,7 +25,9 @@ describe("Test workspace config", () => {
 
     expect(config).toEqual({
       aliases: ["appA"],
-      scriptDefaults: {},
+      scriptDefaults: {
+        order: 1,
+      },
       scripts: {},
     });
 
@@ -38,8 +40,14 @@ describe("Test workspace config", () => {
 
     expect(config2).toEqual({
       aliases: ["appB_file"],
-      scriptDefaults: {},
-      scripts: {},
+      scriptDefaults: {
+        order: 2,
+      },
+      scripts: {
+        "all-workspaces": {
+          order: 0,
+        },
+      },
     });
 
     const config3 = loadWorkspaceConfig(
@@ -65,7 +73,14 @@ describe("Test workspace config", () => {
     expect(config4).toEqual({
       aliases: ["libB", "libB2"],
       scriptDefaults: {},
-      scripts: {},
+      scripts: {
+        "all-workspaces": {
+          order: 100,
+        },
+        "b-workspaces": {
+          order: 2,
+        },
+      },
     });
 
     const config5 = loadWorkspaceConfig(
@@ -387,11 +402,34 @@ describe("Test workspace config", () => {
         },
       ],
       workspaceConfigMap: {
-        "application-1a": createWorkspaceConfig({ alias: ["appA"] }),
-        "application-1b": createWorkspaceConfig({ alias: ["appB_file"] }),
+        "application-1a": createWorkspaceConfig({
+          alias: ["appA"],
+          scriptDefaults: { order: 1 },
+        }),
+        "application-1b": createWorkspaceConfig({
+          alias: ["appB_file"],
+          scriptDefaults: { order: 2 },
+          scripts: {
+            "all-workspaces": {
+              order: 0,
+            },
+          },
+        }),
         "application-1c": createWorkspaceConfig({ alias: [] }),
-        "library-1a": createWorkspaceConfig({ alias: ["libA_file"] }),
-        "library-1b": createWorkspaceConfig({ alias: ["libB", "libB2"] }),
+        "library-1a": createWorkspaceConfig({
+          alias: ["libA_file"],
+        }),
+        "library-1b": createWorkspaceConfig({
+          alias: ["libB", "libB2"],
+          scripts: {
+            "all-workspaces": {
+              order: 100,
+            },
+            "b-workspaces": {
+              order: 2,
+            },
+          },
+        }),
         "library-1c": createWorkspaceConfig({ alias: [] }),
       },
     });

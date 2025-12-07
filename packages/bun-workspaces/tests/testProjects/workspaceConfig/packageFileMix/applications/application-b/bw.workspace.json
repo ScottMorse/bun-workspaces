@@ -1,3 +1,11 @@
 {
-  "alias": "appB_file"
+  "alias": "appB_file",
+  "scriptDefaults": {
+    "order": 2
+  },
+  "scripts": {
+    "all-workspaces": {
+      "order": 0
+    }
+  }
 }

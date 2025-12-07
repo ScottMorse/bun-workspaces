@@ -1,3 +1,11 @@
 {
-  "alias": ["libB", "libB2"]
+  "alias": ["libB", "libB2"],
+  "scripts":{
+    "all-workspaces": {
+      "order": 100
+    },
+    "b-workspaces": {
+      "order": 2
+    }
+  }
 }
