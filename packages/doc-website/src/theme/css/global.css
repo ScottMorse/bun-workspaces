@@ -198,13 +198,13 @@ li {
 
 @media (max-width: 768px) {
   .brag-ticker {
-    animation: brag-ticker-animation 40s linear infinite;
+    animation: brag-ticker-animation 90s linear infinite;
   }
 }
 
 @media (min-width: 769px) {
   .brag-ticker {
-    animation: brag-ticker-animation 100s linear infinite;
+    animation: brag-ticker-animation 165s linear infinite;
   }
 }
 

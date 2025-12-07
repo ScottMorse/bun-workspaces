@@ -152,7 +152,8 @@ Run a script in all workspaces that have it in their package.json "scripts" fiel
 When passing `inline: true` to `.runWorkspaceScript` or `.runScriptAcrossWorkspaces`, `script` is ran as an inline command from the workspace directory,
 instead of looking up the script from the workspace's `package.json` `"scripts"` field.
 
-When `<workspaceName>` is used in an inline script or args, it will be replaced with the workspace name.
+When `<workspaceName>` is used in an inline script or args, it will be replaced with the workspace name. 
+See [Script Runtime Metadata](/concepts#script-runtime-metadata) for more details and other available metadata.
 
 <SyntaxHighlighter language="typescript">
 {RUN_INLINE_SCRIPTS_EXAMPLE}
