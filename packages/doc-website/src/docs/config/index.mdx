@@ -18,11 +18,19 @@ import { WORKSPACE_CONFIG_FILE_PATH, WORKSPACE_CONFIG_PACKAGE_JSON_KEY} from 'bu
 You can add optional configuration to a workspace in its `package.json` file in  <code>"{WORKSPACE_CONFIG_PACKAGE_JSON_KEY}"</code> 
 or in a separate <code>{WORKSPACE_CONFIG_FILE_PATH}</code> file.
 
-See more on [workspace aliases](/concepts#workspace-aliases).
-
 ### Examples:
-In the below examples, `"myApp"` may make a simpler reference to a workspace named `"@my-organization/my-application"`.
+In the below examples, `"myApp"` may make a simpler reference to a workspace named `"@my-organization/my-application"`.  See more on [workspace aliases](/concepts#workspace-aliases).
 
+#### Script Order
+
+You can set an `"order"` value to sort the execution order of a script per workspace. 
+By default, workspaces are sorted in alphabetical order of their relative path from the project root. 
+
+Workspace scripts with
+an `"order"` value will be executed before workspaces with no `"order"` set for the same script, falling back to the default alphabetical order.
+
+In this example, any other workspaces in the project with an `"order"` for the `"start"` script less than `10` will be executed before this workspace, 
+and any workspaces with an `"order"` for the `"start"` script greater than `10` will be executed after this workspace.
 
 #### 1. Separate Config File
 <p className="workspace-config-path"><code>path/to/your/workspace/{WORKSPACE_CONFIG_FILE_PATH}</code></p>
