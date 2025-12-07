@@ -1,0 +1,13 @@
+{
+  "name": "e",
+  "bw": {
+    "scripts": {
+      "test-echo": {
+        "order": 100
+      }
+    }
+  },
+  "scripts": {
+    "test-echo": "echo e"
+  }
+}

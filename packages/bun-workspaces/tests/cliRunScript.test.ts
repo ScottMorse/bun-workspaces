@@ -627,6 +627,45 @@ this is my inline script for library-1b test-args-library-1b
 ✅ fifth: test-echo
 5 scripts ran successfully`),
     );
+
+    const { run: runSequencePartial } = setupCliTest({
+      testProject: "runScriptWithSequenceConfigPartial",
+    });
+    const seriesSequencePartialResult = await runSequencePartial(
+      "run-script",
+      "test-echo",
+    );
+    expect(seriesSequencePartialResult.exitCode).toBe(0);
+    assertOutputMatches(
+      seriesSequencePartialResult.stdoutAndErr.sanitizedCompactLines,
+      `[e:test-echo] e
+[d:test-echo] d
+[b:test-echo] b
+[a:test-echo] a
+[c:test-echo] c
+✅ e: test-echo
+✅ d: test-echo
+✅ b: test-echo
+✅ a: test-echo
+✅ c: test-echo
+5 scripts ran successfully`,
+    );
+
+    const parallelSequencePartialResult = await runSequencePartial(
+      "run-script",
+      "test-echo",
+      "--parallel",
+    );
+    expect(parallelSequencePartialResult.exitCode).toBe(0);
+    assertOutputMatches(
+      parallelSequencePartialResult.stdoutAndErr.sanitizedCompactLines,
+      new RegExp(`✅ e: test-echo
+✅ d: test-echo
+✅ b: test-echo
+✅ a: test-echo
+✅ c: test-echo
+5 scripts ran successfully`),
+    );
   });
 
   test("JSON output file - all success", async () => {

@@ -33,6 +33,7 @@ const TEST_PROJECTS = {
   runScriptWithDelaysAndSequenceConfig:
     "forRunScript/withDelaysAndSequenceConfig",
   runScriptWithSequenceConfig: "forRunScript/withSequenceConfig",
+  runScriptWithSequenceConfigPartial: "forRunScript/withSequenceConfigPartial",
   workspaceConfigPackageOnly: "workspaceConfig/packageOnly",
   workspaceConfigPackageFileMix: "workspaceConfig/packageFileMix",
   workspaceConfigFileOnly: "workspaceConfig/fileOnly",
