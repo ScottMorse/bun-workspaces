@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { type ResolvedWorkspaceConfig } from "../../config";
 import { logger } from "../../internal/logger";
 import type { Simplify } from "../../internal/types";
 import { findWorkspaces, type Workspace } from "../../workspaces";
@@ -71,11 +72,35 @@ export type RunScriptAcrossWorkspacesResult = Simplify<
   RunScriptsResult<RunWorkspaceScriptMetadata>
 >;
 
+const INSTANCE_PRIVATE_MAP = new WeakMap<
+  FileSystemProject,
+  { workspaceConfigMap: Record<string, ResolvedWorkspaceConfig> }
+>();
+
+const getInstancePrivateMap = (project: FileSystemProject) => {
+  let instancePrivateMap = INSTANCE_PRIVATE_MAP.get(project);
+  if (!instancePrivateMap) {
+    instancePrivateMap = { workspaceConfigMap: {} };
+    INSTANCE_PRIVATE_MAP.set(project, instancePrivateMap);
+  }
+  return instancePrivateMap;
+};
+
+const setInstancePrivateMap = (
+  project: FileSystemProject,
+  instancePrivateMap: {
+    workspaceConfigMap: Record<string, ResolvedWorkspaceConfig>;
+  },
+) => {
+  INSTANCE_PRIVATE_MAP.set(project, instancePrivateMap);
+};
+
 class _FileSystemProject extends ProjectBase implements Project {
   public readonly rootDirectory: string;
   public readonly workspaces: Workspace[];
   public readonly name: string;
   public readonly sourceType = "fileSystem";
+
   constructor(
     options: CreateFileSystemProjectOptions & {
       /** @deprecated  */
@@ -86,12 +111,13 @@ class _FileSystemProject extends ProjectBase implements Project {
 
     this.rootDirectory = path.resolve(options.rootDirectory);
 
-    const { workspaces } = findWorkspaces({
+    const { workspaces, workspaceConfigMap } = findWorkspaces({
       rootDirectory: options.rootDirectory,
       workspaceAliases: options.workspaceAliases,
     });
 
     this.workspaces = workspaces;
+    setInstancePrivateMap(this, { workspaceConfigMap });
 
     if (!options.name) {
       const packageJson = JSON.parse(
@@ -169,7 +195,28 @@ class _FileSystemProject extends ProjectBase implements Project {
       .filter(
         (workspace) =>
           options.inline || workspace.scripts.includes(options.script),
-      );
+      )
+      .sort((a, b) => {
+        const aScriptConfig =
+          getInstancePrivateMap(this).workspaceConfigMap[a.name]?.scripts[
+            options.script
+          ];
+
+        const bScriptConfig =
+          getInstancePrivateMap(this).workspaceConfigMap[b.name]?.scripts[
+            options.script
+          ];
+
+        if (!aScriptConfig) {
+          return bScriptConfig ? 1 : 0;
+        }
+
+        if (!bScriptConfig) {
+          return aScriptConfig ? -1 : 0;
+        }
+
+        return (aScriptConfig.order ?? 0) - (bScriptConfig.order ?? 0);
+      });
 
     logger.debug(
       `Running script ${options.script} across workspaces: ${workspaces.map((workspace) => workspace.name).join(", ")}`,

@@ -6,6 +6,14 @@ import { WORKSPACE_CONFIG_PACKAGE_JSON_KEY } from "bun-workspaces/src/config/wor
 
 export const exampleWorkspaceConfigSimple: WorkspaceConfig = {
   alias: "myApp",
+  scripts: {
+    start: {
+      order: 10,
+    },
+    test: {
+      order: 20,
+    },
+  },
 };
 
 export const exampleWorkspaceConfigArray: WorkspaceConfig = {
@@ -20,6 +28,7 @@ export const createPackageJsonExample = (config: WorkspaceConfig) => {
     [WORKSPACE_CONFIG_PACKAGE_JSON_KEY]: config,
     scripts: {
       start: "bun run index.js",
+      test: "bun test",
     },
   };
 };

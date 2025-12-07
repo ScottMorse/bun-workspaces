@@ -1,0 +1,13 @@
+{
+  "name": "first",  
+  "bw": {
+    "scripts": {
+      "test-delay": {
+        "order": 1
+      }
+    }
+  },
+  "scripts": {
+    "test-delay": "echo first"
+  }
+}

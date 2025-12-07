@@ -22,6 +22,7 @@ class _MemoryProject extends ProjectBase implements Project {
   public readonly workspaces: Workspace[];
   public readonly name: string;
   public readonly sourceType = "memory";
+
   constructor(options: CreateMemoryProjectOptions) {
     super();
     this.name = options.name ?? "";

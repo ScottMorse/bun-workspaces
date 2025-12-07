@@ -1,0 +1,8 @@
+{
+  "alias": "valid",
+  "scripts": {
+    "all-workspaces": {
+      "order": {}
+    }
+  }
+}
