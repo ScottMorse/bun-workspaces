@@ -25,10 +25,11 @@ describe("Test workspace config", () => {
 
     expect(config).toEqual({
       aliases: ["appA"],
-      scriptDefaults: {
-        order: 1,
+      scripts: {
+        "all-workspaces": {
+          order: 1,
+        },
       },
-      scripts: {},
     });
 
     const config2 = loadWorkspaceConfig(
@@ -40,12 +41,12 @@ describe("Test workspace config", () => {
 
     expect(config2).toEqual({
       aliases: ["appB_file"],
-      scriptDefaults: {
-        order: 2,
-      },
       scripts: {
         "all-workspaces": {
           order: 0,
+        },
+        "b-workspaces": {
+          order: 2,
         },
       },
     });
@@ -59,7 +60,6 @@ describe("Test workspace config", () => {
 
     expect(config3).toEqual({
       aliases: ["libA_file"],
-      scriptDefaults: {},
       scripts: {},
     });
 
@@ -72,7 +72,6 @@ describe("Test workspace config", () => {
 
     expect(config4).toEqual({
       aliases: ["libB", "libB2"],
-      scriptDefaults: {},
       scripts: {
         "all-workspaces": {
           order: 100,
@@ -91,7 +90,6 @@ describe("Test workspace config", () => {
     );
     expect(config5).toEqual({
       aliases: [],
-      scriptDefaults: {},
       scripts: {},
     });
 
@@ -103,7 +101,6 @@ describe("Test workspace config", () => {
     );
     expect(config6).toEqual({
       aliases: [],
-      scriptDefaults: {},
       scripts: {},
     });
 
@@ -115,8 +112,11 @@ describe("Test workspace config", () => {
     );
     expect(config7).toEqual({
       aliases: ["appA"],
-      scriptDefaults: { order: 1 },
-      scripts: {},
+      scripts: {
+        "all-workspaces": {
+          order: 1,
+        },
+      },
     });
   });
 
@@ -301,7 +301,11 @@ describe("Test workspace config", () => {
       workspaceConfigMap: {
         "application-1a": createWorkspaceConfig({
           alias: ["appA"],
-          scriptDefaults: { order: 1 },
+          scripts: {
+            "all-workspaces": {
+              order: 1,
+            },
+          },
         }),
         "application-1b": createWorkspaceConfig({ alias: ["appB"] }),
         "library-1a": createWorkspaceConfig({ alias: ["libA", "libA2"] }),
@@ -404,14 +408,20 @@ describe("Test workspace config", () => {
       workspaceConfigMap: {
         "application-1a": createWorkspaceConfig({
           alias: ["appA"],
-          scriptDefaults: { order: 1 },
+          scripts: {
+            "all-workspaces": {
+              order: 1,
+            },
+          },
         }),
         "application-1b": createWorkspaceConfig({
           alias: ["appB_file"],
-          scriptDefaults: { order: 2 },
           scripts: {
             "all-workspaces": {
               order: 0,
+            },
+            "b-workspaces": {
+              order: 2,
             },
           },
         }),

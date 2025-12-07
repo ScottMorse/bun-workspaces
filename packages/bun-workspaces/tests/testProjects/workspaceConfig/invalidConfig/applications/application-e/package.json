@@ -2,8 +2,10 @@
   "name": "application-e",
   "bw":{
     "alias": "valid",
-    "scriptDefaults": {
-      "order": {}
+    "scripts": {
+      "all-workspaces": {
+        "order": {}
+      }
     }
   }
 }

@@ -1,9 +1,6 @@
 import fs from "fs";
 import path from "path";
-import {
-  createWorkspaceConfig,
-  type ResolvedWorkspaceConfig,
-} from "../../config";
+import { type ResolvedWorkspaceConfig } from "../../config";
 import { logger } from "../../internal/logger";
 import type { Simplify } from "../../internal/types";
 import { findWorkspaces, type Workspace } from "../../workspaces";
@@ -178,19 +175,17 @@ class _FileSystemProject extends ProjectBase implements Project {
       )
       .sort((a, b) => {
         const aScriptConfig =
-          this._workspaceConfigMap[a.name]?.scripts[options.script] ??
-          this._workspaceConfigMap[a.name]?.scriptDefaults;
+          this._workspaceConfigMap[a.name]?.scripts[options.script];
 
         const bScriptConfig =
-          this._workspaceConfigMap[b.name]?.scripts[options.script] ??
-          this._workspaceConfigMap[b.name]?.scriptDefaults;
+          this._workspaceConfigMap[b.name]?.scripts[options.script];
 
         if (!aScriptConfig) {
-          return 0;
+          return bScriptConfig ? 1 : 0;
         }
 
         if (!bScriptConfig) {
-          return -1;
+          return aScriptConfig ? -1 : 0;
         }
 
         return (aScriptConfig.order ?? 0) - (bScriptConfig.order ?? 0);

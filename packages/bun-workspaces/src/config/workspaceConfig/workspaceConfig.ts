@@ -12,15 +12,12 @@ export interface ScriptConfig {
 
 export interface WorkspaceConfig {
   alias?: OptionalArray<string>;
-  /** The default configuration for scripts in the workspace */
-  scriptDefaults?: ScriptConfig;
   /** The configuration for specific scripts in the workspace */
   scripts?: Record<string, ScriptConfig>;
 }
 
 export interface ResolvedWorkspaceConfig {
   aliases: string[];
-  scriptDefaults: ScriptConfig;
   scripts: Record<string, ScriptConfig>;
 }
 
@@ -56,8 +53,6 @@ const VALIDATIONS = {
     }
     return null;
   },
-  scriptDefaults: (value: unknown) =>
-    validateScriptConfig(value, '"scriptDefaults"'),
   scripts: (value: unknown) => {
     if (!isJsonObject(value)) {
       return new WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig(
@@ -98,7 +93,6 @@ export const resolveWorkspaceConfig = (
 ): ResolvedWorkspaceConfig => {
   return {
     aliases: resolveOptionalArray(config.alias ?? []),
-    scriptDefaults: config.scriptDefaults ?? {},
     scripts: config.scripts ?? {},
   };
 };

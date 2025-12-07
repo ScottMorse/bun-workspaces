@@ -1,6 +1,8 @@
 {
   "alias": "valid",
-  "scriptDefaults": {
-    "order": {}
+  "scripts": {
+    "all-workspaces": {
+      "order": {}
+    }
   }
 }

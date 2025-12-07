@@ -1,6 +1,8 @@
 {
   "alias": "appA",
-  "scriptDefaults": {
-    "order": 1
+  "scripts": {
+    "all-workspaces": {
+      "order": 1
+    }
   }
 }

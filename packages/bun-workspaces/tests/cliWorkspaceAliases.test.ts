@@ -119,12 +119,12 @@ describe("CLI Workspace Aliases", () => {
     expect(result3.exitCode).toBe(0);
     assertOutputMatches(
       result3.stdout.sanitizedCompactLines,
-      `[application-1a:all-workspaces] script for all workspaces
-[application-1b:all-workspaces] script for all workspaces
+      `[application-1b:all-workspaces] script for all workspaces
+[application-1a:all-workspaces] script for all workspaces
 [application-1c:all-workspaces] script for all workspaces
 [library-1a:all-workspaces] script for all workspaces
-✅ application-1a: all-workspaces
 ✅ application-1b: all-workspaces
+✅ application-1a: all-workspaces
 ✅ application-1c: all-workspaces
 ✅ library-1a: all-workspaces
 4 scripts ran successfully`,

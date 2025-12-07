@@ -1,6 +1,10 @@
 {
   "name": "application-f",
   "bw":{
-    "scriptDefaults": 100
+    "scripts": {
+      "all-workspaces": {
+        "order": 100
+      }
+    }
   }
 }

@@ -2,8 +2,10 @@
   "name": "application-1a",
   "bw": {
     "alias": "appA",
-    "scriptDefaults": {
-      "order": 1
+    "scripts": {
+      "all-workspaces": {
+        "order": 1
+      }
     }
   },
   "scripts": {
