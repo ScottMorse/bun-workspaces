@@ -56,10 +56,8 @@ const VALIDATIONS = {
     }
     return null;
   },
-  scriptDefaults: (value: unknown) => {
-    validateScriptConfig(value, '"scriptDefaults"');
-    return null;
-  },
+  scriptDefaults: (value: unknown) =>
+    validateScriptConfig(value, '"scriptDefaults"'),
   scripts: (value: unknown) => {
     if (!isJsonObject(value)) {
       return new WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig(

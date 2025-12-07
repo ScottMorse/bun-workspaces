@@ -91,6 +91,18 @@ describe("Test workspace config", () => {
       scriptDefaults: {},
       scripts: {},
     });
+
+    const config7 = loadWorkspaceConfig(
+      path.join(
+        getProjectRoot("workspaceConfigFileOnly"),
+        "applications/application-a",
+      ),
+    );
+    expect(config7).toEqual({
+      aliases: ["appA"],
+      scriptDefaults: { order: 1 },
+      scripts: {},
+    });
   });
 
   test("loadWorkspaceConfig with invalid JSON", () => {
@@ -185,6 +197,54 @@ describe("Test workspace config", () => {
       ),
     );
     expect(invalidResult2).toBeNull();
+
+    const invalidResult3 = loadWorkspaceConfig(
+      path.join(
+        getProjectRoot("workspaceConfigInvalidConfig"),
+        "applications/application-c",
+      ),
+    );
+    expect(invalidResult3).toBeNull();
+
+    const invalidResult4 = loadWorkspaceConfig(
+      path.join(
+        getProjectRoot("workspaceConfigInvalidConfig"),
+        "applications/application-d",
+      ),
+    );
+    expect(invalidResult4).toBeNull();
+
+    const invalidResult5 = loadWorkspaceConfig(
+      path.join(
+        getProjectRoot("workspaceConfigInvalidConfig"),
+        "applications/application-e",
+      ),
+    );
+    expect(invalidResult5).toBeNull();
+
+    const invalidResult6 = loadWorkspaceConfig(
+      path.join(
+        getProjectRoot("workspaceConfigInvalidConfig"),
+        "applications/application-f",
+      ),
+    );
+    expect(invalidResult6).toBeNull();
+
+    const invalidResult7 = loadWorkspaceConfig(
+      path.join(
+        getProjectRoot("workspaceConfigInvalidConfig"),
+        "applications/application-g",
+      ),
+    );
+    expect(invalidResult7).toBeNull();
+
+    const invalidResult8 = loadWorkspaceConfig(
+      path.join(
+        getProjectRoot("workspaceConfigInvalidConfig"),
+        "applications/application-h",
+      ),
+    );
+    expect(invalidResult8).toBeNull();
   });
 
   test("findWorkspaces results with workspace configs", () => {
