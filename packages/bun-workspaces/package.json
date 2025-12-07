@@ -1,12 +1,12 @@
 {
   "name": "bun-workspaces",
-  "version": "1.0.0-alpha.19",
+  "version": "1.0.0-alpha.20",
   "main": "src/index.ts",
   "private": true,
   "homepage": "https://bunworkspaces.com",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ScottMorse/bun-workspaces.git"
+    "url": "https://github.com/bun-workspaces/bun-workspaces.git"
   },
   "bin": {
     "bun-workspaces": "bin/cli.js",
