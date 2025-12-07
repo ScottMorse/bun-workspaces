@@ -20,11 +20,6 @@ export abstract class ProjectBase implements Project {
   public abstract readonly workspaces: Workspace[];
   public abstract readonly sourceType: "fileSystem" | "memory";
 
-  protected abstract readonly _workspaceConfigMap: Record<
-    string,
-    ResolvedWorkspaceConfig
-  >;
-
   listWorkspacesWithScript(scriptName: string): Workspace[] {
     return this.workspaces.filter((workspace) =>
       workspace.scripts.includes(scriptName),

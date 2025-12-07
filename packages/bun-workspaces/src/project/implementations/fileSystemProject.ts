@@ -72,6 +72,29 @@ export type RunScriptAcrossWorkspacesResult = Simplify<
   RunScriptsResult<RunWorkspaceScriptMetadata>
 >;
 
+const INSTANCE_PRIVATE_MAP = new WeakMap<
+  FileSystemProject,
+  { workspaceConfigMap: Record<string, ResolvedWorkspaceConfig> }
+>();
+
+const getInstancePrivateMap = (project: FileSystemProject) => {
+  let instancePrivateMap = INSTANCE_PRIVATE_MAP.get(project);
+  if (!instancePrivateMap) {
+    instancePrivateMap = { workspaceConfigMap: {} };
+    INSTANCE_PRIVATE_MAP.set(project, instancePrivateMap);
+  }
+  return instancePrivateMap;
+};
+
+const setInstancePrivateMap = (
+  project: FileSystemProject,
+  instancePrivateMap: {
+    workspaceConfigMap: Record<string, ResolvedWorkspaceConfig>;
+  },
+) => {
+  INSTANCE_PRIVATE_MAP.set(project, instancePrivateMap);
+};
+
 class _FileSystemProject extends ProjectBase implements Project {
   public readonly rootDirectory: string;
   public readonly workspaces: Workspace[];
@@ -94,7 +117,7 @@ class _FileSystemProject extends ProjectBase implements Project {
     });
 
     this.workspaces = workspaces;
-    this._workspaceConfigMap = workspaceConfigMap;
+    setInstancePrivateMap(this, { workspaceConfigMap });
 
     if (!options.name) {
       const packageJson = JSON.parse(
@@ -175,10 +198,14 @@ class _FileSystemProject extends ProjectBase implements Project {
       )
       .sort((a, b) => {
         const aScriptConfig =
-          this._workspaceConfigMap[a.name]?.scripts[options.script];
+          getInstancePrivateMap(this).workspaceConfigMap[a.name]?.scripts[
+            options.script
+          ];
 
         const bScriptConfig =
-          this._workspaceConfigMap[b.name]?.scripts[options.script];
+          getInstancePrivateMap(this).workspaceConfigMap[b.name]?.scripts[
+            options.script
+          ];
 
         if (!aScriptConfig) {
           return bScriptConfig ? 1 : 0;
@@ -240,11 +267,6 @@ class _FileSystemProject extends ProjectBase implements Project {
       parallel: !!options.parallel,
     });
   }
-
-  protected readonly _workspaceConfigMap: Record<
-    string,
-    ResolvedWorkspaceConfig
-  >;
 }
 
 /** An implementation of {@link Project} that is created from a root directory in the file system. */
