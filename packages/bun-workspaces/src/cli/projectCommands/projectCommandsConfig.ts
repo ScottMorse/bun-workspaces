@@ -103,6 +103,10 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
         description:
           "Run the script as an inline command from the workspace directory",
       },
+      inlineName: {
+        flags: "--inline-name <name>",
+        description: "An optional name for the inline script",
+      },
       jsonOutfile: {
         flags: "--json-outfile <file>",
         description: "Output results in a JSON file",

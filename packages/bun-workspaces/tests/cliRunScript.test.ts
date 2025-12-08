@@ -438,6 +438,31 @@ this is my inline script for library-1b test-args-library-1b
     );
   });
 
+  test("Named inline script", async () => {
+    const { run } = setupCliTest({
+      testProject: "runScriptWithEchoArgs",
+    });
+    const result = await run(
+      "run-script",
+      "echo 'this is my inline script for <workspaceName>'",
+      "--inline",
+      "--inline-name=test-echo-inline",
+    );
+    expect(result.exitCode).toBe(0);
+    assertOutputMatches(
+      result.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:test-echo-inline] this is my inline script for application-1a
+[application-1b:test-echo-inline] this is my inline script for application-1b
+[library-1a:test-echo-inline] this is my inline script for library-1a
+[library-1b:test-echo-inline] this is my inline script for library-1b
+✅ application-1a: test-echo-inline
+✅ application-1b: test-echo-inline
+✅ library-1a: test-echo-inline
+✅ library-1b: test-echo-inline
+4 scripts ran successfully`,
+    );
+  });
+
   test("JSON output - errors with output path", async () => {
     const { run } = setupCliTest({
       testProject: "simple1",
