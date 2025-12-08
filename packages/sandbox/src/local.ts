@@ -17,6 +17,6 @@ if (import.meta.main && process.env.CLI === "true") {
   });
 
   for await (const { outputChunk } of output) {
-    console.log(outputChunk.text.trim());
+    console.log(outputChunk.decode().trim());
   }
 }

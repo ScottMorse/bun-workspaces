@@ -1,5 +1,4 @@
 import path from "path";
-import type { ResolvedWorkspaceConfig } from "../../config";
 import { createWildcardRegex } from "../../internal/regex";
 import { type Workspace } from "../../workspaces";
 import { PROJECT_ERRORS } from "../errors";

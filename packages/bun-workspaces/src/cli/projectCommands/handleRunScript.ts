@@ -92,7 +92,7 @@ export const runScript = handleCommand(
       if (logger.printLevel === "silent") return;
       for await (const { outputChunk, scriptMetadata } of output) {
         commandOutputLogger.logOutput(
-          outputChunk.text,
+          outputChunk.decode(),
           "info",
           process[outputChunk.streamName],
           options.prefix

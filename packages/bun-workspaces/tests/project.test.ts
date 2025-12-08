@@ -545,10 +545,12 @@ describe("Test Project utilities", () => {
       script: "a-workspaces",
     });
 
-    for await (const { text, textNoAnsi, streamName } of output) {
-      expect(text).toBe("script for a workspaces\n");
-      expect(textNoAnsi).toBe("script for a workspaces\n");
-      expect(streamName).toBe("stdout");
+    for await (const chunk of output) {
+      expect(chunk.decode()).toBe("script for a workspaces\n");
+      expect(chunk.decode({ stripAnsi: true })).toBe(
+        "script for a workspaces\n",
+      );
+      expect(chunk.streamName).toBe("stdout");
     }
 
     const exitResult = await exit;
@@ -580,10 +582,10 @@ describe("Test Project utilities", () => {
       inline: true,
     });
 
-    for await (const { text, textNoAnsi, streamName } of output) {
-      expect(text).toBe(`${echo}\n`);
-      expect(textNoAnsi).toBe(`${echo}\n`);
-      expect(streamName).toBe("stdout");
+    for await (const chunk of output) {
+      expect(chunk.decode()).toBe(`${echo}\n`);
+      expect(chunk.decode({ stripAnsi: true })).toBe(`${echo}\n`);
+      expect(chunk.streamName).toBe("stdout");
     }
 
     const exitResult = await exit;
@@ -617,10 +619,12 @@ describe("Test Project utilities", () => {
       args: "--arg1=value1 --arg2=value2",
     });
 
-    for await (const { text, textNoAnsi, streamName } of packageScript.output) {
-      expect(text).toBe("passed args: --arg1=value1 --arg2=value2\n");
-      expect(textNoAnsi).toBe("passed args: --arg1=value1 --arg2=value2\n");
-      expect(streamName).toBe("stdout");
+    for await (const chunk of packageScript.output) {
+      expect(chunk.decode()).toBe("passed args: --arg1=value1 --arg2=value2\n");
+      expect(chunk.decode({ stripAnsi: true })).toBe(
+        "passed args: --arg1=value1 --arg2=value2\n",
+      );
+      expect(chunk.streamName).toBe("stdout");
     }
 
     const exitResult = await packageScript.exit;
@@ -649,12 +653,14 @@ describe("Test Project utilities", () => {
       args: "--arg1=value1 --arg2=value2",
     });
 
-    for await (const { text, textNoAnsi, streamName } of inline.output) {
-      expect(text).toBe("inline passed args: --arg1=value1 --arg2=value2\n");
-      expect(textNoAnsi).toBe(
+    for await (const chunk of inline.output) {
+      expect(chunk.decode()).toBe(
         "inline passed args: --arg1=value1 --arg2=value2\n",
       );
-      expect(streamName).toBe("stdout");
+      expect(chunk.decode({ stripAnsi: true })).toBe(
+        "inline passed args: --arg1=value1 --arg2=value2\n",
+      );
+      expect(chunk.streamName).toBe("stdout");
     }
 
     const inlineExitResult = await inline.exit;

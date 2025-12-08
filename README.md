@@ -93,10 +93,11 @@ const runSingleScript = async () => {
   });
 
   // Get a stream of the script subprocess's output
-  for await (const { text, textNoAnsi, streamName } of output) {
-    console.log(text); // The output chunk's content (string)
-    console.log(textNoAnsi); // Text with ANSI codes sanitized (string)
-    console.log(streamName); // The output stream, "stdout" or "stderr"
+  for await (const chunk of output) {
+    console.log(chunk.raw); // The raw output content (Uint8Array)
+    console.log(chunk.decode()); // The output chunk's content (string)
+    console.log(chunk.decode({ stripAnsi: true })); // Text with ANSI codes sanitized
+    console.log(chunk.streamName); // The output stream, "stdout" or "stderr"
   }
 
   // Get data about the script execution after it exits
@@ -122,8 +123,9 @@ const runManyScripts = async () => {
 
   // Get a stream of script output
   for await (const { outputChunk, scriptMetadata } of output) {
-    console.log(outputChunk.text); // the output chunk's content (string)
-    console.log(outputChunk.textNoAnsi); // text with ANSI codes sanitized (string)
+    console.log(outputChunk.raw); // The raw output content (Uint8Array)
+    console.log(outputChunk.decode()); // the output chunk's content (string)
+    console.log(outputChunk.decode({ stripAnsi: true })); // text with ANSI codes sanitized (string)
     console.log(outputChunk.streamName); // "stdout" or "stderr"
 
     // The metadata can distinguish which workspace script
