@@ -15,6 +15,7 @@ export const runScript = handleCommand(
       args: string;
       prefix: boolean;
       inline: boolean;
+      inlineName: string | undefined;
       jsonOutfile: string | undefined;
     },
   ) => {
@@ -81,12 +82,18 @@ export const runScript = handleCommand(
     const { output, summary } = project.runScriptAcrossWorkspaces({
       workspacePatterns: workspaces.map(({ name }) => name),
       script,
-      inline: options.inline,
+      inline: options.inline
+        ? options.inlineName
+          ? { scriptName: options.inlineName }
+          : true
+        : undefined,
       args: options.args,
       parallel: !!options.parallel,
     });
 
-    const scriptName = options.inline ? "(inline)" : script;
+    const scriptName = options.inline
+      ? options.inlineName || "(inline)"
+      : script;
 
     const handleOutput = async () => {
       if (logger.printLevel === "silent") return;
