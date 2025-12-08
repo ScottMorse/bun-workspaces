@@ -13,6 +13,7 @@ export {
   type WorkspaceScriptCommandMethod,
   type RunWorkspaceScriptOptions,
   type RunWorkspaceScriptResult,
+  type InlineScriptOptions as InlineOptions,
   type RunScriptAcrossWorkspacesOptions,
   type RunScriptAcrossWorkspacesResult,
   type OutputChunk,

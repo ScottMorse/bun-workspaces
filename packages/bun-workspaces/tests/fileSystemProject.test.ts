@@ -188,20 +188,43 @@ describe("Test FileSystemProject", () => {
       );
       expect(chunk.streamName).toBe("stdout");
     }
+  });
 
-    const inlineResult = project.runWorkspaceScript({
+  test("runWorkspaceScript: runtime metadata (inline)", async () => {
+    const project = createFileSystemProject({
+      rootDirectory: getProjectRoot("runScriptWithRuntimeMetadataDebug"),
+    });
+
+    const anonymousScriptResult = project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script:
         "echo '<projectPath> <projectName> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>'",
       inline: true,
     });
 
-    for await (const chunk of inlineResult.output) {
+    for await (const chunk of anonymousScriptResult.output) {
       expect(chunk.decode()).toBe(
         `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a \n`,
       );
       expect(chunk.decode({ stripAnsi: true })).toBe(
         `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a \n`,
+      );
+      expect(chunk.streamName).toBe("stdout");
+    }
+
+    const namedScriptResult = project.runWorkspaceScript({
+      workspaceNameOrAlias: "application-a",
+      script:
+        "echo '<projectPath> <projectName> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>'",
+      inline: { scriptName: "my-named-script" },
+    });
+
+    for await (const chunk of namedScriptResult.output) {
+      expect(chunk.decode()).toBe(
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a my-named-script\n`,
+      );
+      expect(chunk.decode({ stripAnsi: true })).toBe(
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a my-named-script\n`,
       );
       expect(chunk.streamName).toBe("stdout");
     }
@@ -671,8 +694,14 @@ describe("Test FileSystemProject", () => {
       expect(chunk.streamName).toBe("stdout");
       j++;
     }
+  });
 
-    const inlineResult = project.runScriptAcrossWorkspaces({
+  test("runScriptAcrossWorkspaces: runtime metadata (inline)", async () => {
+    const project = createFileSystemProject({
+      rootDirectory: getProjectRoot("runScriptWithRuntimeMetadataDebug"),
+    });
+
+    const anonymousScriptResult = project.runScriptAcrossWorkspaces({
       workspacePatterns: ["application-*"],
       script:
         "echo '<projectPath> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>'",
@@ -680,7 +709,7 @@ describe("Test FileSystemProject", () => {
     });
 
     let k = 0;
-    for await (const { outputChunk: chunk } of inlineResult.output) {
+    for await (const { outputChunk: chunk } of anonymousScriptResult.output) {
       const appLetter = k === 0 ? "a" : "b";
       expect(chunk.decode()).toBe(
         `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} \n`,
@@ -691,6 +720,70 @@ describe("Test FileSystemProject", () => {
       expect(chunk.streamName).toBe("stdout");
       k++;
     }
+
+    const namedScriptResult = project.runScriptAcrossWorkspaces({
+      workspacePatterns: ["application-*"],
+      script:
+        "echo '<projectPath> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>'",
+      inline: { scriptName: "my-named-script" },
+    });
+
+    let l = 0;
+    for await (const { outputChunk: chunk } of namedScriptResult.output) {
+      const appLetter = l === 0 ? "a" : "b";
+
+      expect(chunk.decode()).toBe(
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} my-named-script\n`,
+      );
+      expect(chunk.decode({ stripAnsi: true })).toBe(
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} my-named-script\n`,
+      );
+      expect(chunk.streamName).toBe("stdout");
+      l++;
+    }
+  });
+
+  test("Inline script env var metadata", async () => {
+    const project = createFileSystemProject({
+      rootDirectory: getProjectRoot("default"),
+    });
+
+    const singleResult = project.runWorkspaceScript({
+      workspaceNameOrAlias: "application-a",
+      script: "bun run <projectPath>/../testScriptMetadataEnv.ts",
+      inline: { scriptName: "test-script-metadata-env" },
+    });
+
+    let output = "";
+    for await (const chunk of singleResult.output) {
+      output += chunk.decode();
+    }
+
+    expect(output).toBe(`${project.rootDirectory}
+test-root
+application-a
+${project.rootDirectory}/applications/applicationA
+applications/applicationA
+test-script-metadata-env
+`);
+
+    const multiResult = project.runScriptAcrossWorkspaces({
+      workspacePatterns: ["application-b"],
+      script: "bun run <projectPath>/../testScriptMetadataEnv.ts",
+      inline: { scriptName: "test-script-metadata-env-b" },
+    });
+
+    output = "";
+    for await (const { outputChunk: chunk } of multiResult.output) {
+      output += chunk.decode();
+    }
+    expect(output).toBe(`${project.rootDirectory}
+test-root
+application-b
+${project.rootDirectory}/applications/applicationB
+applications/applicationB
+test-script-metadata-env-b
+`);
   });
 
   test("runScriptAcrossWorkspaces: with failures", async () => {
