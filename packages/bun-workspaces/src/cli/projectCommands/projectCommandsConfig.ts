@@ -105,7 +105,7 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
       },
       inlineName: {
         flags: "--inline-name <name>",
-        description: "An optional name for the inline script",
+        description: "An optional name the script when --inline is passed",
       },
       jsonOutfile: {
         flags: "--json-outfile <file>",
