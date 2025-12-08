@@ -19,7 +19,7 @@
     },
     "packages/bun-workspaces": {
       "name": "bun-workspaces",
-      "version": "1.0.0-alpha.20",
+      "version": "1.0.0-alpha.21",
       "bin": {
         "bun-workspaces": "bin/cli.js",
         "bw": "bin/cli.js",
@@ -53,7 +53,7 @@
       "version": "1.0.0-alpha.19",
       "devDependencies": {
         "bun-workspaces_local": "file:../bun-workspaces",
-        "bun-workspaces_release": "npm:bun-workspaces@1.0.0-alpha.20",
+        "bun-workspaces_release": "npm:bun-workspaces@1.0.0-alpha.21",
       },
     },
   },
