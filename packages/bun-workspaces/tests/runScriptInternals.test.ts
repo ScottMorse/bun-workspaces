@@ -16,9 +16,12 @@ describe("Run Single Script", () => {
 
     let outputCount = 0;
     for await (const outputChunk of result.output) {
+      expect(outputChunk.raw).toBeInstanceOf(Uint8Array);
       expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.text).toMatch(`test-script ${outputCount + 1}`);
-      expect(outputChunk.textNoAnsi).toMatch(`test-script ${outputCount + 1}`);
+      expect(outputChunk.decode()).toMatch(`test-script ${outputCount + 1}`);
+      expect(outputChunk.decode({ stripAnsi: true })).toMatch(
+        `test-script ${outputCount + 1}`,
+      );
       outputCount++;
     }
     const exit = await result.exit;
@@ -53,9 +56,12 @@ describe("Run Single Script", () => {
 
     let outputCount = 0;
     for await (const outputChunk of result.output) {
+      expect(outputChunk.raw).toBeInstanceOf(Uint8Array);
       expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.text).toMatch(`test-script ${outputCount + 1}`);
-      expect(outputChunk.textNoAnsi).toMatch(`test-script ${outputCount + 1}`);
+      expect(outputChunk.decode()).toMatch(`test-script ${outputCount + 1}`);
+      expect(outputChunk.decode({ stripAnsi: true })).toMatch(
+        `test-script ${outputCount + 1}`,
+      );
       outputCount++;
     }
     const exit = await result.exit;
@@ -90,9 +96,12 @@ describe("Run Single Script", () => {
 
     let outputCount = 0;
     for await (const outputChunk of result.output) {
+      expect(outputChunk.raw).toBeInstanceOf(Uint8Array);
       expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.text).toMatch(`test-script ${outputCount + 1}`);
-      expect(outputChunk.textNoAnsi).toMatch(`test-script ${outputCount + 1}`);
+      expect(outputChunk.decode()).toMatch(`test-script ${outputCount + 1}`);
+      expect(outputChunk.decode({ stripAnsi: true })).toMatch(
+        `test-script ${outputCount + 1}`,
+      );
       outputCount++;
     }
     const exit = await result.exit;
@@ -120,11 +129,14 @@ describe("Run Single Script", () => {
 
     let outputCount = 0;
     for await (const outputChunk of result.output) {
+      expect(outputChunk.raw).toBeInstanceOf(Uint8Array);
       expect(outputChunk.streamName).toBe(
         outputCount === 1 ? "stderr" : "stdout",
       );
-      expect(outputChunk.text).toMatch(`test-script ${outputCount + 1}`);
-      expect(outputChunk.textNoAnsi).toMatch(`test-script ${outputCount + 1}`);
+      expect(outputChunk.decode()).toMatch(`test-script ${outputCount + 1}`);
+      expect(outputChunk.decode({ stripAnsi: true })).toMatch(
+        `test-script ${outputCount + 1}`,
+      );
       outputCount++;
     }
 
@@ -158,8 +170,10 @@ describe("Run Single Script", () => {
 
     for await (const outputChunk of singleResult.output) {
       expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.text).toBe(`test ${testValue}\n`);
-      expect(outputChunk.textNoAnsi).toBe(`test ${testValue}\n`);
+      expect(outputChunk.decode()).toBe(`test ${testValue}\n`);
+      expect(outputChunk.decode({ stripAnsi: true })).toBe(
+        `test ${testValue}\n`,
+      );
     }
 
     const multiResult = await runScripts({
@@ -168,9 +182,12 @@ describe("Run Single Script", () => {
     });
 
     for await (const { outputChunk } of multiResult.output) {
+      expect(outputChunk.raw).toBeInstanceOf(Uint8Array);
       expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.text).toBe(`test ${testValue}\n`);
-      expect(outputChunk.textNoAnsi).toBe(`test ${testValue}\n`);
+      expect(outputChunk.decode()).toBe(`test ${testValue}\n`);
+      expect(outputChunk.decode({ stripAnsi: true })).toBe(
+        `test ${testValue}\n`,
+      );
     }
   });
 
@@ -186,8 +203,8 @@ describe("Run Single Script", () => {
 
     for await (const outputChunk of result.output) {
       expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.text).toBe(`\x1b[31mtest-script 1\x1b[0m\n`);
-      expect(outputChunk.textNoAnsi).toBe(`test-script 1\n`);
+      expect(outputChunk.decode()).toBe(`\x1b[31mtest-script 1\x1b[0m\n`);
+      expect(outputChunk.decode({ stripAnsi: true })).toBe(`test-script 1\n`);
     }
   });
 });
@@ -226,8 +243,10 @@ describe("Run Multiple Scripts", () => {
       scriptMetadata: metadata,
     } of result.output) {
       expect(metadata.name).toBe(`test-script name ${i + 1}`);
-      expect(output.text).toMatch(`test-script ${i + 1}`);
-      expect(output.textNoAnsi).toMatch(`test-script ${i + 1}`);
+      expect(output.decode()).toMatch(`test-script ${i + 1}`);
+      expect(output.decode({ stripAnsi: true })).toMatch(
+        `test-script ${i + 1}`,
+      );
       i++;
     }
 
@@ -300,8 +319,10 @@ describe("Run Multiple Scripts", () => {
       scriptMetadata: metadata,
     } of result.output) {
       expect(metadata.name).toBe(`test-script name ${i + 1}`);
-      expect(output.text).toMatch(`test-script ${i + 1}`);
-      expect(output.textNoAnsi).toMatch(`test-script ${i + 1}`);
+      expect(output.decode()).toMatch(`test-script ${i + 1}`);
+      expect(output.decode({ stripAnsi: true })).toMatch(
+        `test-script ${i + 1}`,
+      );
       i++;
     }
 
@@ -385,8 +406,10 @@ describe("Run Multiple Scripts", () => {
       expect(outputChunk.streamName).toBe("stdout");
       const scriptNum = i === 0 ? 2 : i === 1 ? 3 : 1;
       expect(scriptMetadata.name).toBe(`test-script name ${scriptNum}`);
-      expect(outputChunk.text).toMatch(`test-script ${scriptNum}`);
-      expect(outputChunk.textNoAnsi).toMatch(`test-script ${scriptNum}`);
+      expect(outputChunk.decode()).toMatch(`test-script ${scriptNum}`);
+      expect(outputChunk.decode({ stripAnsi: true })).toMatch(
+        `test-script ${scriptNum}`,
+      );
       i++;
     }
 

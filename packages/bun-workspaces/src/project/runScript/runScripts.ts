@@ -1,8 +1,8 @@
 import { createAsyncIterableQueue } from "../../internal/asyncIterableQueue";
 import type { SimpleAsyncIterable } from "../../internal/types";
+import type { OutputChunk } from "./outputChunk";
 import {
   runScript,
-  type OutputChunk,
   type RunScriptExit,
   type RunScriptResult,
 } from "./runScript";

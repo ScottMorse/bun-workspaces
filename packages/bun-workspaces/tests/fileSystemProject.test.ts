@@ -13,10 +13,12 @@ describe("Test FileSystemProject", () => {
       script: "a-workspaces",
     });
 
-    for await (const { text, textNoAnsi, streamName } of output) {
-      expect(text).toMatch("script for a workspaces");
-      expect(textNoAnsi).toMatch("script for a workspaces");
-      expect(streamName).toBe("stdout");
+    for await (const chunk of output) {
+      expect(chunk.decode()).toMatch("script for a workspaces");
+      expect(chunk.decode({ stripAnsi: true })).toMatch(
+        "script for a workspaces",
+      );
+      expect(chunk.streamName).toBe("stdout");
     }
 
     const exitResult = await exit;
@@ -50,10 +52,12 @@ describe("Test FileSystemProject", () => {
       script: "a-workspaces",
     });
 
-    for await (const { text, textNoAnsi, streamName } of output) {
-      expect(text).toMatch("script for a workspaces");
-      expect(textNoAnsi).toMatch("script for a workspaces");
-      expect(streamName).toBe("stdout");
+    for await (const chunk of output) {
+      expect(chunk.decode()).toMatch("script for a workspaces");
+      expect(chunk.decode({ stripAnsi: true })).toMatch(
+        "script for a workspaces",
+      );
+      expect(chunk.streamName).toBe("stdout");
     }
 
     const exitResult = await exit;
@@ -121,11 +125,11 @@ describe("Test FileSystemProject", () => {
     ] as const;
 
     let i = 0;
-    for await (const { text, textNoAnsi, streamName } of output) {
+    for await (const chunk of output) {
       const expected = expectedOutput[i];
-      expect(text).toMatch(expected.text);
-      expect(textNoAnsi).toMatch(expected.textNoAnsi);
-      expect(streamName).toBe(expected.streamName);
+      expect(chunk.decode()).toMatch(expected.text);
+      expect(chunk.decode({ stripAnsi: true })).toMatch(expected.textNoAnsi);
+      expect(chunk.streamName).toBe(expected.streamName);
       i++;
     }
 
@@ -159,14 +163,14 @@ describe("Test FileSystemProject", () => {
       script: "test-echo",
     });
 
-    for await (const { text, textNoAnsi, streamName } of plainResult.output) {
-      expect(text).toBe(
+    for await (const chunk of plainResult.output) {
+      expect(chunk.decode()).toBe(
         `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a test-echo\n`,
       );
-      expect(textNoAnsi).toBe(
+      expect(chunk.decode({ stripAnsi: true })).toBe(
         `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a test-echo\n`,
       );
-      expect(streamName).toBe("stdout");
+      expect(chunk.streamName).toBe("stdout");
     }
 
     const argsResult = project.runWorkspaceScript({
@@ -175,14 +179,14 @@ describe("Test FileSystemProject", () => {
       args: "--arg1=<projectPath> --arg2=<projectName> --arg3=<workspaceName> --arg4=<workspacePath> --arg5=<workspaceRelativePath> --arg6=<scriptName>",
     });
 
-    for await (const { text, textNoAnsi, streamName } of argsResult.output) {
-      expect(text).toBe(
+    for await (const chunk of argsResult.output) {
+      expect(chunk.decode()).toBe(
         `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-a --arg4=${project.rootDirectory}/applications/application-a --arg5=applications/application-a --arg6=test-echo\n`,
       );
-      expect(textNoAnsi).toBe(
+      expect(chunk.decode({ stripAnsi: true })).toBe(
         `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-a --arg4=${project.rootDirectory}/applications/application-a --arg5=applications/application-a --arg6=test-echo\n`,
       );
-      expect(streamName).toBe("stdout");
+      expect(chunk.streamName).toBe("stdout");
     }
 
     const inlineResult = project.runWorkspaceScript({
@@ -192,14 +196,14 @@ describe("Test FileSystemProject", () => {
       inline: true,
     });
 
-    for await (const { text, textNoAnsi, streamName } of inlineResult.output) {
-      expect(text).toBe(
+    for await (const chunk of inlineResult.output) {
+      expect(chunk.decode()).toBe(
         `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a \n`,
       );
-      expect(textNoAnsi).toBe(
+      expect(chunk.decode({ stripAnsi: true })).toBe(
         `${project.rootDirectory} test-root application-a ${project.rootDirectory}/applications/application-a applications/application-a \n`,
       );
-      expect(streamName).toBe("stdout");
+      expect(chunk.streamName).toBe("stdout");
     }
   });
 
@@ -214,8 +218,10 @@ describe("Test FileSystemProject", () => {
     });
 
     for await (const { outputChunk, scriptMetadata } of output) {
-      expect(outputChunk.text).toMatch("script for b workspaces");
-      expect(outputChunk.textNoAnsi).toMatch("script for b workspaces");
+      expect(outputChunk.decode()).toMatch("script for b workspaces");
+      expect(outputChunk.decode({ stripAnsi: true })).toMatch(
+        "script for b workspaces",
+      );
       expect(outputChunk.streamName).toBe("stdout");
       expect(scriptMetadata.workspace).toEqual({
         name: "library-b",
@@ -302,12 +308,17 @@ describe("Test FileSystemProject", () => {
       },
     ];
 
-    const outputChunks = [];
-    for await (const chunk of output) {
-      outputChunks.push(chunk);
+    let i = 0;
+    for await (const { outputChunk } of output) {
+      expect(outputChunk.decode()).toBe(expectedOutput[i].outputChunk.text);
+      expect(outputChunk.decode({ stripAnsi: true })).toBe(
+        expectedOutput[i].outputChunk.textNoAnsi,
+      );
+      expect(outputChunk.streamName).toBe(
+        expectedOutput[i].outputChunk.streamName,
+      );
+      i++;
     }
-
-    expect(outputChunks).toEqual(expectedOutput);
 
     const summaryResult = await summary;
     expect(summaryResult).toEqual({
@@ -465,12 +476,17 @@ describe("Test FileSystemProject", () => {
       },
     ];
 
-    const outputChunks = [];
-    for await (const chunk of output) {
-      outputChunks.push(chunk);
+    let i = 0;
+    for await (const { outputChunk } of output) {
+      expect(outputChunk.decode()).toBe(expectedOutput[i].outputChunk.text);
+      expect(outputChunk.decode({ stripAnsi: true })).toBe(
+        expectedOutput[i].outputChunk.textNoAnsi,
+      );
+      expect(outputChunk.streamName).toBe(
+        expectedOutput[i].outputChunk.streamName,
+      );
+      i++;
     }
-
-    expect(outputChunks).toEqual(expectedOutput);
 
     const summaryResult = await summary;
 
@@ -601,12 +617,17 @@ describe("Test FileSystemProject", () => {
       },
     ];
 
-    const outputChunks = [];
-    for await (const chunk of output) {
-      outputChunks.push(chunk);
+    let i = 0;
+    for await (const { outputChunk } of output) {
+      expect(outputChunk.decode()).toBe(expectedOutput[i].outputChunk.text);
+      expect(outputChunk.decode({ stripAnsi: true })).toBe(
+        expectedOutput[i].outputChunk.textNoAnsi,
+      );
+      expect(outputChunk.streamName).toBe(
+        expectedOutput[i].outputChunk.streamName,
+      );
+      i++;
     }
-
-    expect(outputChunks).toEqual(expectedOutput);
   });
 
   test("runScriptAcrossWorkspaces: runtime metadata", async () => {
@@ -620,17 +641,15 @@ describe("Test FileSystemProject", () => {
     });
 
     let i = 0;
-    for await (const {
-      outputChunk: { text, textNoAnsi, streamName },
-    } of plainResult.output) {
+    for await (const { outputChunk: chunk } of plainResult.output) {
       const appLetter = i === 0 ? "a" : "b";
-      expect(text).toBe(
+      expect(chunk.decode()).toBe(
         `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} test-echo\n`,
       );
-      expect(textNoAnsi).toBe(
+      expect(chunk.decode({ stripAnsi: true })).toBe(
         `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} test-echo\n`,
       );
-      expect(streamName).toBe("stdout");
+      expect(chunk.streamName).toBe("stdout");
       i++;
     }
 
@@ -641,17 +660,15 @@ describe("Test FileSystemProject", () => {
     });
 
     let j = 0;
-    for await (const {
-      outputChunk: { text, textNoAnsi, streamName },
-    } of argsResult.output) {
+    for await (const { outputChunk: chunk } of argsResult.output) {
       const appLetter = j === 0 ? "a" : "b";
-      expect(text).toBe(
+      expect(chunk.decode()).toBe(
         `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-${appLetter} --arg4=${project.rootDirectory}/applications/application-${appLetter} --arg5=applications/application-${appLetter} --arg6=test-echo\n`,
       );
-      expect(textNoAnsi).toBe(
+      expect(chunk.decode({ stripAnsi: true })).toBe(
         `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-${appLetter} --arg4=${project.rootDirectory}/applications/application-${appLetter} --arg5=applications/application-${appLetter} --arg6=test-echo\n`,
       );
-      expect(streamName).toBe("stdout");
+      expect(chunk.streamName).toBe("stdout");
       j++;
     }
 
@@ -663,17 +680,15 @@ describe("Test FileSystemProject", () => {
     });
 
     let k = 0;
-    for await (const {
-      outputChunk: { text, textNoAnsi, streamName },
-    } of inlineResult.output) {
+    for await (const { outputChunk: chunk } of inlineResult.output) {
       const appLetter = k === 0 ? "a" : "b";
-      expect(text).toBe(
+      expect(chunk.decode()).toBe(
         `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} \n`,
       );
-      expect(textNoAnsi).toBe(
+      expect(chunk.decode({ stripAnsi: true })).toBe(
         `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/applications/application-${appLetter} applications/application-${appLetter} \n`,
       );
-      expect(streamName).toBe("stdout");
+      expect(chunk.streamName).toBe("stdout");
       k++;
     }
   });
@@ -755,12 +770,17 @@ describe("Test FileSystemProject", () => {
       },
     ];
 
-    const outputChunks = [];
-    for await (const chunk of output) {
-      outputChunks.push(chunk);
+    let i = 0;
+    for await (const { outputChunk } of output) {
+      expect(outputChunk.decode()).toBe(expectedOutput[i].outputChunk.text);
+      expect(outputChunk.decode({ stripAnsi: true })).toBe(
+        expectedOutput[i].outputChunk.textNoAnsi,
+      );
+      expect(outputChunk.streamName).toBe(
+        expectedOutput[i].outputChunk.streamName,
+      );
+      i++;
     }
-
-    expect(outputChunks).toEqual(expectedOutput);
 
     const summaryResult = await summary;
 
@@ -939,12 +959,17 @@ describe("Test FileSystemProject", () => {
       },
     ];
 
-    const outputChunks = [];
-    for await (const chunk of output) {
-      outputChunks.push(chunk);
+    let i = 0;
+    for await (const { outputChunk } of output) {
+      expect(outputChunk.decode()).toBe(expectedOutput[i].outputChunk.text);
+      expect(outputChunk.decode({ stripAnsi: true })).toBe(
+        expectedOutput[i].outputChunk.textNoAnsi,
+      );
+      expect(outputChunk.streamName).toBe(
+        expectedOutput[i].outputChunk.streamName,
+      );
+      i++;
     }
-
-    expect(outputChunks).toEqual(expectedOutput);
 
     const summaryResult = await summary;
 

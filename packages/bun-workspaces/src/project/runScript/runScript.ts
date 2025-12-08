@@ -1,20 +1,10 @@
 import { mergeAsyncIterables } from "../../internal/mergeAsyncIterables";
 import { IS_WINDOWS } from "../../internal/os";
-import { sanitizeAnsi } from "../../internal/regex";
 import type { SimpleAsyncIterable } from "../../internal/types";
+import { createOutputChunk, type OutputChunk } from "./outputChunk";
 import type { ScriptCommand } from "./scriptCommand";
 
 export type OutputStreamName = "stdout" | "stderr";
-
-/** Output captured from a script subprocess */
-export type OutputChunk = {
-  /** The source of the output, `"stdout"` or `"stderr"` */
-  streamName: OutputStreamName;
-  /** Raw output text */
-  text: string;
-  /** Stripped of ANSI escape codes */
-  textNoAnsi: string;
-};
 
 export type RunScriptExit<ScriptMetadata extends object = object> = {
   exitCode: number;
@@ -66,12 +56,7 @@ export const runScript = <ScriptMetadata extends object = object>({
     const stream = proc[streamName];
     if (stream) {
       for await (const chunk of stream) {
-        const text = new TextDecoder().decode(chunk);
-        yield {
-          streamName,
-          text,
-          textNoAnsi: sanitizeAnsi(text),
-        };
+        yield createOutputChunk(streamName, chunk);
       }
     }
   }
