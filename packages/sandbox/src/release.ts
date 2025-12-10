@@ -13,10 +13,10 @@ if (import.meta.main && process.env.CLI === "true") {
     script:
       'bun run <projectPath>/src/script.ts --inline-args="<projectPath> <workspacePath> <workspaceName> <workspaceRelativePath> <scriptName>"',
     args: '--appended-args="<projectPath> <workspacePath> <workspaceName> <workspaceRelativePath> <scriptName>"',
-    inline: true,
+    inline: { scriptName: "hello" },
   });
 
   for await (const { outputChunk } of output) {
-    console.log(outputChunk.decode().trim());
+    console.log(outputChunk.decode({ stripAnsi: false }).trim());
   }
 }
