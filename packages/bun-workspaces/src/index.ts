@@ -13,11 +13,13 @@ export {
   type WorkspaceScriptCommandMethod,
   type RunWorkspaceScriptOptions,
   type RunWorkspaceScriptResult,
-  type InlineScriptOptions as InlineOptions,
+  type InlineScriptOptions,
   type RunScriptAcrossWorkspacesOptions,
   type RunScriptAcrossWorkspacesResult,
   type OutputChunk,
   type OutputStreamName,
+  type PercentageValue,
+  type ParallelMaxValue,
 } from "./project";
 export { type Workspace } from "./workspaces";
 export { type SimpleAsyncIterable } from "./internal/types";
