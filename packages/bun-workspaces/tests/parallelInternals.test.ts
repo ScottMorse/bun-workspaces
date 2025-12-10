@@ -16,6 +16,7 @@ describe("Parallelism core logic", () => {
     expect(() => determineParallelMax(-1)).toThrow();
     expect(() => determineParallelMax(-2)).toThrow();
     expect(() => determineParallelMax("101%")).toThrow();
+    expect(() => determineParallelMax("0%")).toThrow();
     expect(() => determineParallelMax("-1%")).toThrow();
     // @ts-expect-error - Invalid parallel max value
     expect(() => determineParallelMax("wrong")).toThrow();
