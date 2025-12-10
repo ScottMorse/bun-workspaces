@@ -31,6 +31,11 @@ export type CreateFileSystemProjectOptions = {
   name?: string;
 };
 
+export interface InlineScriptOptions {
+  /** A name to act as a label for the inline script */
+  scriptName: string;
+}
+
 /** Arguments for `FileSystemProject.runWorkspaceScript` */
 export type RunWorkspaceScriptOptions = {
   /** The name of the workspace to run the script in */
@@ -38,7 +43,7 @@ export type RunWorkspaceScriptOptions = {
   /** The name of the script to run, or an inline command when `inline` is true */
   script: string;
   /** Whether to run the script as an inline command */
-  inline?: boolean;
+  inline?: boolean | InlineScriptOptions;
   /** The arguments to append to the script command */
   args?: string;
 };
@@ -60,7 +65,7 @@ export type RunScriptAcrossWorkspacesOptions = {
   /** The name of the script to run, or an inline command when `inline` is true */
   script: string;
   /** Whether to run the script as an inline command */
-  inline?: boolean;
+  inline?: boolean | InlineScriptOptions;
   /** The arguments to append to the script command. `<workspaceName>` will be replaced with the workspace name */
   args?: string;
   /** Whether to run the scripts in parallel (series by default) */
@@ -146,13 +151,18 @@ class _FileSystemProject extends ProjectBase implements Project {
       `Running script ${options.script} in workspace: ${workspace.name}`,
     );
 
+    const inlineScriptName =
+      typeof options.inline === "object"
+        ? (options.inline?.scriptName ?? "")
+        : "";
+
     const scriptRuntimeMetadata: ScriptRuntimeMetadata = {
       projectPath: this.rootDirectory,
       projectName: this.name,
       workspacePath: resolveWorkspacePath(this, workspace),
       workspaceRelativePath: workspace.path,
       workspaceName: workspace.name,
-      scriptName: options.inline ? "" : options.script,
+      scriptName: options.inline ? inlineScriptName : options.script,
     };
 
     const args = interpolateScriptRuntimeMetadata(
@@ -224,13 +234,18 @@ class _FileSystemProject extends ProjectBase implements Project {
 
     return runScripts({
       scripts: workspaces.map((workspace) => {
+        const inlineScriptName =
+          typeof options.inline === "object"
+            ? (options.inline?.scriptName ?? "")
+            : "";
+
         const scriptRuntimeMetadata: ScriptRuntimeMetadata = {
           projectPath: this.rootDirectory,
           projectName: this.name,
           workspacePath: resolveWorkspacePath(this, workspace),
           workspaceRelativePath: workspace.path,
           workspaceName: workspace.name,
-          scriptName: options.inline ? "" : options.script,
+          scriptName: options.inline ? inlineScriptName : options.script,
         };
 
         const args = interpolateScriptRuntimeMetadata(

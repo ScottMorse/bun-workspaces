@@ -182,8 +182,8 @@ export const RUN_INLINE_SCRIPTS_EXAMPLE = `
 
 project.runWorkspaceScript({
   workspaceNameOrAlias: "my-workspace",
-  script: "echo 'this is my inline script for <workspaceName>'",
-  args: "--my-workspace=<workspaceName>",
+  script: "echo 'this is my inline script'",
+  args: "--my-appended-args",
   inline: true,
 });
 
@@ -192,6 +192,19 @@ project.runScriptAcrossWorkspaces({
   script: "echo 'this is my inline script for <workspaceName>'",
   args: "--my-workspace=<workspaceName>",
   inline: true,
+});
+
+// Pass a name for an inline script
+project.runWorkspaceScript({
+  workspaceNameOrAlias: "my-workspace",
+  script: "echo 'this is my inline script'",
+  inline: { scriptName: "my-inline-script" },
+});
+
+project.runScriptAcrossWorkspaces({
+  workspacePatterns: ["*"],
+  script: "echo 'this is my inline script for <workspaceName>'",
+  inline: { scriptName: "my-inline-script" },
 });
 `.trim();
 
