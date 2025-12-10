@@ -1,6 +1,8 @@
 import { createAsyncIterableQueue } from "../../internal/asyncIterableQueue";
+import { logger } from "../../internal/logger";
 import type { SimpleAsyncIterable } from "../../internal/types";
 import type { OutputChunk } from "./outputChunk";
+import { determineParallelMax, type ParallelMaxValue } from "./parallel";
 import {
   runScript,
   type RunScriptExit,
@@ -44,9 +46,13 @@ export type RunScriptsResult<ScriptMetadata extends object = object> = {
   summary: Promise<RunScriptsSummary<ScriptMetadata>>;
 };
 
+export type RunScriptsParallelOptions = {
+  max: ParallelMaxValue;
+};
+
 export type RunScriptsOptions<ScriptMetadata extends object = object> = {
   scripts: RunScriptsScript<ScriptMetadata>[];
-  parallel: boolean;
+  parallel: boolean | RunScriptsParallelOptions;
 };
 
 /** Run a list of scripts */
@@ -84,7 +90,18 @@ export const runScripts = <ScriptMetadata extends object = object>({
     () => null as never as RunScriptsScriptResult<ScriptMetadata>,
   );
 
-  function triggerScript(index: number) {
+  const parallelMax = determineParallelMax(
+    typeof parallel === "boolean" ? "auto" : parallel.max,
+  );
+  const parallelBatchSize = Math.min(parallelMax, scripts.length);
+  const recommendedParallelMax = determineParallelMax("auto");
+  if (parallel && parallelBatchSize > recommendedParallelMax) {
+    logger.warn(
+      `Number of scripts to run in parallel (${parallelBatchSize}) is greater than the available CPUs (${recommendedParallelMax})`,
+    );
+  }
+
+  const triggerScript = (index: number) => {
     const scriptResult = {
       ...scripts[index],
       result: runScript(scripts[index]),
@@ -95,7 +112,7 @@ export const runScripts = <ScriptMetadata extends object = object>({
     scriptStartTriggers[index].trigger();
 
     return scriptResult;
-  }
+  };
 
   const awaitScriptResults = async () => {
     const outputReaders: Promise<void>[] = [];
@@ -130,9 +147,9 @@ export const runScripts = <ScriptMetadata extends object = object>({
 
   const awaitSummary = async () => {
     if (parallel) {
-      await Promise.all(
-        scripts.map((_, index) => triggerScript(index).result.exit),
-      );
+      scripts
+        .slice(0, parallelBatchSize)
+        .forEach((_, index) => triggerScript(index));
     } else {
       for (let index = 0; index < scripts.length; index++) {
         await triggerScript(index).result.exit;
