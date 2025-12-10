@@ -14,6 +14,12 @@ export interface OutputChunk {
   decode(options?: DecodeOptions): string;
   /** The raw output content */
   raw: Uint8Array<ArrayBuffer>;
+  /** @deprecated Use `decode()` instead */
+  // TODO remove in future major release
+  text: string;
+  /** @deprecated Use `decode({ stripAnsi: true })` instead */
+  // TODO remove in future major release
+  textNoAnsi: string;
 }
 
 class _OutputChunk implements OutputChunk {
