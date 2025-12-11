@@ -55,6 +55,10 @@ export default defineConfig({
               to: "../bunfig.toml",
             },
             {
+              from: path.resolve(__dirname, ".env.test"),
+              to: "../",
+            },
+            {
               from: path.resolve(__dirname, "setupTests.buildTest.ts"),
               to: "../setupTests.ts",
             },

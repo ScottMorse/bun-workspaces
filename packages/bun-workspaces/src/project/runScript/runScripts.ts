@@ -63,48 +63,27 @@ export const runScripts = <ScriptMetadata extends object = object>({
   const startTime = new Date();
 
   type ScriptTrigger = {
-    promise: Promise<ScriptTriggerResult>;
+    promise: Promise<ScriptTrigger>;
     trigger: () => void;
-  };
-
-  type ScriptTriggerSet = {
-    start: ScriptTrigger;
-    end: ScriptTrigger;
     index: number;
   };
 
-  type ScriptTriggerResult = ScriptTrigger & {
-    index: number;
-  };
-
-  const createScriptTrigger = (result: ScriptTriggerResult) => {
+  const scriptTriggers: ScriptTrigger[] = scripts.map((_, index) => {
     let trigger: () => void = () => {
       void 0;
     };
+
     const promise = new Promise<ScriptTrigger>((res) => {
       trigger = () => res(result);
     });
 
-    return { promise, trigger };
-  };
-
-  const scriptTriggerSets: ScriptTriggerSet[] = scripts.map((_, index) => {
-    const start: ScriptTriggerResult = {
-      promise: null as never,
-      trigger: null as never,
+    const result: ScriptTrigger = {
+      promise,
+      trigger,
       index,
     };
-    const end: ScriptTriggerResult = {
-      promise: null as never,
-      trigger: null as never,
-      index,
-    };
-    const startTrigger = createScriptTrigger(start);
-    const endTrigger = createScriptTrigger(end);
-    Object.assign(start, startTrigger);
-    Object.assign(end, endTrigger);
 
-    return { start, end, index };
+    return result;
   });
 
   const outputQueue =
@@ -118,7 +97,7 @@ export const runScripts = <ScriptMetadata extends object = object>({
     parallel === false
       ? 1
       : determineParallelMax(
-          typeof parallel === "boolean" ? "auto" : parallel.max,
+          typeof parallel === "boolean" ? "default" : parallel.max,
         );
 
   const parallelBatchSize = Math.min(parallelMax, scripts.length);
@@ -143,7 +122,7 @@ export const runScripts = <ScriptMetadata extends object = object>({
 
     scriptResults[index] = scriptResult;
 
-    scriptTriggerSets[index].start.trigger();
+    scriptTriggers[index].trigger();
 
     runningScriptCount++;
     nextScriptIndex++;
@@ -158,10 +137,6 @@ export const runScripts = <ScriptMetadata extends object = object>({
     return scriptResult;
   };
 
-  const endScript = (index: number) => {
-    scriptTriggerSets[index].end.trigger();
-  };
-
   const handleScriptProcesses = async () => {
     const outputReaders: Promise<void>[] = [];
     const scriptExits: Promise<void>[] = [];
@@ -169,12 +144,12 @@ export const runScripts = <ScriptMetadata extends object = object>({
     let pendingScriptCount = scripts.length;
     while (pendingScriptCount > 0) {
       const { index } = await Promise.race(
-        scriptTriggerSets.map((trigger) => trigger.start.promise),
+        scriptTriggers.map((trigger) => trigger.promise),
       );
 
       pendingScriptCount--;
 
-      scriptTriggerSets[index].start.promise = new Promise<never>(() => {
+      scriptTriggers[index].promise = new Promise<never>(() => {
         void 0;
       });
 
@@ -188,32 +163,21 @@ export const runScripts = <ScriptMetadata extends object = object>({
           }
         })(),
       );
-
-      scriptExits.push(
-        (async () => {
-          await scriptResults[index].result.exit;
-          endScript(index);
-        })(),
-      );
     }
 
     await Promise.all(outputReaders);
     await Promise.all(scriptExits);
     outputQueue.close();
   };
-  const awaitAllScriptsExit = async () => {
-    await Promise.all(scriptTriggerSets.map((trigger) => trigger.end.promise));
-
-    const scriptExitResults = await Promise.all(
-      scripts.map((_, index) => scriptResults[index].result.exit),
-    );
-    return scriptExitResults;
-  };
 
   const awaitSummary = async () => {
     scripts.forEach((_, index) => queueScript(index));
 
-    const scriptExitResults = await awaitAllScriptsExit();
+    await handleScriptProcesses();
+
+    const scriptExitResults = await Promise.all(
+      scripts.map((_, index) => scriptResults[index].result.exit),
+    );
 
     const endTime = new Date();
 
@@ -229,12 +193,8 @@ export const runScripts = <ScriptMetadata extends object = object>({
     };
   };
 
-  handleScriptProcesses();
-
-  const summary = awaitSummary();
-
   return {
     output: outputQueue,
-    summary,
+    summary: awaitSummary(),
   };
 };
