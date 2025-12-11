@@ -184,12 +184,21 @@ export default defineConfig({
         activeMatch: "/cli",
         items: [
           {
+            text: "Quick Start",
+            link: "/cli",
+            activeMatch: "/cli$",
+          },
+          {
             text: "Global Options",
-            link: "/cli#global-options",
+            link: "/cli/global-options",
           },
           {
             text: "Commands",
-            link: "/cli#commands",
+            link: "/cli/commands",
+          },
+          {
+            text: "Examples",
+            link: "/cli/examples",
           },
         ],
       },
@@ -200,16 +209,17 @@ export default defineConfig({
         activeMatch: "/api",
         items: [
           {
-            text: "Workspace",
-            link: "/api#workspace",
+            text: "Quick Start",
+            link: "/api",
+            activeMatch: "/api$",
           },
           {
-            text: "Project",
-            link: "/api#project",
+            text: "Utilities",
+            link: "/api/utilities",
           },
           {
-            text: "FileSystemProject",
-            link: "/api#filesystemproject",
+            text: "Examples",
+            link: "/api/examples",
           },
         ],
       },

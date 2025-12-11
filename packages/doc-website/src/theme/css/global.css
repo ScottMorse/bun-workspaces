@@ -71,7 +71,6 @@
 
 .note {
   font-size: 0.95rem;
-  margin: -1rem 0;
 }
 
 .rspress-nav-menu-item {
@@ -215,4 +214,29 @@ li {
 .brag-ticker-item.dot {
   color: var(--rp-container-info-text);
   font-size: 0.8em;
+}
+
+.sub-header {
+  margin-top: -1rem;
+}
+
+.sub-header hr {
+  margin: 2rem 0;
+}
+
+.sub-header-links {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.sub-header-links a {
+  color: var(--rp-c-link);
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+}
+
+.sub-header-links a.active {
+  background-color: var(--rp-c-bg-soft);
 }

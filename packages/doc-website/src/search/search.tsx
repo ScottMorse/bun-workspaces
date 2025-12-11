@@ -26,12 +26,12 @@ const onSearch: OnSearch = async (query, defaultResult) => {
       matches(command.optionName, query) ||
       Object.values(command.options).some(
         (option) =>
-          matches(option.flags, query) || matches(option.description, query),
+          matches(option.flags, query) || matches(option.description, query)
       )
     ) {
       defaultResult[0].result?.push({
         statement: "CLI Command: " + command.title,
-        link: "/cli#" + getCommandId(command),
+        link: "/cli/commands#" + getCommandId(command),
         type: "content",
         title: "CLI | Commands",
         header: "",
@@ -58,7 +58,7 @@ const onSearch: OnSearch = async (query, defaultResult) => {
           " | " +
           globalOption.shortOption +
           ")",
-        link: "/cli#" + getGlobalOptionId(globalOption),
+        link: "/cli/global-options#" + getGlobalOptionId(globalOption),
         type: "content",
         title: "CLI | Global Options",
         header: "",

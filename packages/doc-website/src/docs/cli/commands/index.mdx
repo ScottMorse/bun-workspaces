@@ -1,0 +1,51 @@
+---
+title: CLI Commands
+titleSuffix: " | bun-workspaces"
+description: "Commands documentation for bun-workspaces CLI | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
+pageType: doc
+sidebar: false
+outline: true
+footer: false
+---
+
+
+import { CliCommandDoc } from "../../../content/cli/CliCommandDoc";
+import { RUN_SCRIPT_EXAMPLE_JSON_OUTPUT } from "../../../content/runScriptJson";
+import { SyntaxHighlighter } from "../../../content/highlight";
+import { CliHeader } from "../../../content/cli/CliHeader";
+
+
+<CliHeader activeHref="commands" />
+
+### List Workspaces
+<CliCommandDoc command={"listWorkspaces"} />
+<hr />
+### Workspace Info
+<CliCommandDoc command={"workspaceInfo"} />
+<hr />
+### List Scripts
+<CliCommandDoc command={"listScripts"} />
+<hr />
+### Script Info
+<CliCommandDoc command={"scriptInfo"} />
+<hr />
+### Run Script
+<CliCommandDoc command={"runScript"} />
+
+### More Info
+
+See more on [script runtime metadata](/concepts#script-runtime-metadata), such as environment variables available in scripts and interpolating values in inline scripts and args such as `<workspaceName>`.<br/>
+
+See more on [workspace aliases](/concepts#workspace-aliases) for referencing workspaces via shorthands.
+
+#### JSON Output
+
+Using the `--json-outfile=path/to/results.json` option will output the results of all script runs to a JSON file.
+The file will be written relative to the project root, so it is affected by the [`--cwd` global option](/cli#working-directory).
+This is the same data as would be returned by the equivalent [API](/api#runscriptacrossworkspaces).
+
+##### Example Output:
+
+<SyntaxHighlighter language="json">
+  {JSON.stringify(RUN_SCRIPT_EXAMPLE_JSON_OUTPUT, null, 2)}
+</SyntaxHighlighter>
