@@ -62,25 +62,49 @@ export const runScripts = <ScriptMetadata extends object = object>({
 }: RunScriptsOptions<ScriptMetadata>): RunScriptsResult<ScriptMetadata> => {
   const startTime = new Date();
 
-  type ScriptStartTrigger = {
-    promise: Promise<ScriptStartTrigger>;
+  type ScriptTrigger = {
+    promise: Promise<ScriptTriggerResult>;
     trigger: () => void;
+  };
+
+  type ScriptTriggerSet = {
+    start: ScriptTrigger;
+    end: ScriptTrigger;
     index: number;
   };
 
-  const scriptStartTriggers: ScriptStartTrigger[] = scripts.map((_, index) => {
+  type ScriptTriggerResult = ScriptTrigger & {
+    index: number;
+  };
+
+  const createScriptTrigger = (result: ScriptTriggerResult) => {
     let trigger: () => void = () => {
       void 0;
     };
-
-    let result = {} as ScriptStartTrigger;
-    const promise = new Promise<ScriptStartTrigger>((res) => {
+    const promise = new Promise<ScriptTrigger>((res) => {
       trigger = () => res(result);
     });
 
-    result = { promise, trigger, index };
+    return { promise, trigger };
+  };
 
-    return { promise, trigger, index };
+  const scriptTriggerSets: ScriptTriggerSet[] = scripts.map((_, index) => {
+    const start: ScriptTriggerResult = {
+      promise: null as never,
+      trigger: null as never,
+      index,
+    };
+    const end: ScriptTriggerResult = {
+      promise: null as never,
+      trigger: null as never,
+      index,
+    };
+    const startTrigger = createScriptTrigger(start);
+    const endTrigger = createScriptTrigger(end);
+    Object.assign(start, startTrigger);
+    Object.assign(end, endTrigger);
+
+    return { start, end, index };
   });
 
   const outputQueue =
@@ -90,9 +114,13 @@ export const runScripts = <ScriptMetadata extends object = object>({
     () => null as never as RunScriptsScriptResult<ScriptMetadata>,
   );
 
-  const parallelMax = determineParallelMax(
-    typeof parallel === "boolean" ? "auto" : parallel.max,
-  );
+  const parallelMax =
+    parallel === false
+      ? 1
+      : determineParallelMax(
+          typeof parallel === "boolean" ? "auto" : parallel.max,
+        );
+
   const parallelBatchSize = Math.min(parallelMax, scripts.length);
   const recommendedParallelMax = determineParallelMax("auto");
   if (parallel && parallelBatchSize > recommendedParallelMax) {
@@ -101,7 +129,13 @@ export const runScripts = <ScriptMetadata extends object = object>({
     );
   }
 
-  const triggerScript = (index: number) => {
+  let runningScriptCount = 0;
+  let nextScriptIndex = 0;
+  const queueScript = (index: number) => {
+    if (runningScriptCount >= parallelMax) {
+      return;
+    }
+
     const scriptResult = {
       ...scripts[index],
       result: runScript(scripts[index]),
@@ -109,23 +143,38 @@ export const runScripts = <ScriptMetadata extends object = object>({
 
     scriptResults[index] = scriptResult;
 
-    scriptStartTriggers[index].trigger();
+    scriptTriggerSets[index].start.trigger();
+
+    runningScriptCount++;
+    nextScriptIndex++;
+
+    scriptResults[index].result.exit.then(() => {
+      runningScriptCount--;
+      if (nextScriptIndex < scripts.length) {
+        queueScript(nextScriptIndex);
+      }
+    });
 
     return scriptResult;
   };
 
-  const awaitScriptResults = async () => {
+  const endScript = (index: number) => {
+    scriptTriggerSets[index].end.trigger();
+  };
+
+  const handleScriptProcesses = async () => {
     const outputReaders: Promise<void>[] = [];
+    const scriptExits: Promise<void>[] = [];
 
     let pendingScriptCount = scripts.length;
     while (pendingScriptCount > 0) {
       const { index } = await Promise.race(
-        scriptStartTriggers.map((trigger) => trigger.promise),
+        scriptTriggerSets.map((trigger) => trigger.start.promise),
       );
 
       pendingScriptCount--;
 
-      scriptStartTriggers[index].promise = new Promise<never>(() => {
+      scriptTriggerSets[index].start.promise = new Promise<never>(() => {
         void 0;
       });
 
@@ -139,26 +188,32 @@ export const runScripts = <ScriptMetadata extends object = object>({
           }
         })(),
       );
+
+      scriptExits.push(
+        (async () => {
+          await scriptResults[index].result.exit;
+          endScript(index);
+        })(),
+      );
     }
 
     await Promise.all(outputReaders);
+    await Promise.all(scriptExits);
     outputQueue.close();
   };
-
-  const awaitSummary = async () => {
-    if (parallel) {
-      scripts
-        .slice(0, parallelBatchSize)
-        .forEach((_, index) => triggerScript(index));
-    } else {
-      for (let index = 0; index < scripts.length; index++) {
-        await triggerScript(index).result.exit;
-      }
-    }
+  const awaitAllScriptsExit = async () => {
+    await Promise.all(scriptTriggerSets.map((trigger) => trigger.end.promise));
 
     const scriptExitResults = await Promise.all(
       scripts.map((_, index) => scriptResults[index].result.exit),
     );
+    return scriptExitResults;
+  };
+
+  const awaitSummary = async () => {
+    scripts.forEach((_, index) => queueScript(index));
+
+    const scriptExitResults = await awaitAllScriptsExit();
 
     const endTime = new Date();
 
@@ -174,10 +229,12 @@ export const runScripts = <ScriptMetadata extends object = object>({
     };
   };
 
-  awaitScriptResults();
+  handleScriptProcesses();
+
+  const summary = awaitSummary();
 
   return {
     output: outputQueue,
-    summary: awaitSummary(),
+    summary,
   };
 };

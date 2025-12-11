@@ -5,6 +5,7 @@ export type PercentageValue = `${number}%`;
 
 export type ParallelMaxValue = number | "auto" | "unbounded" | PercentageValue;
 
+/** Should always return at least 1 */
 export const determineParallelMax = (value: ParallelMaxValue) => {
   if (typeof value === "number") {
     if (value < 1 || isNaN(value)) {
