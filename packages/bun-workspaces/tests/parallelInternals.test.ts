@@ -7,7 +7,7 @@ describe("Parallelism core logic", () => {
     expect(determineParallelMax("auto")).toBe(availableParallelism());
     expect(determineParallelMax("unbounded")).toBe(Infinity);
     expect(determineParallelMax("10%")).toBe(
-      Math.floor((availableParallelism() * 10) / 100),
+      Math.max(1, Math.floor((availableParallelism() * 10) / 100)),
     );
     expect(determineParallelMax("0.0001%")).toBe(1);
     expect(determineParallelMax(10)).toBe(10);
