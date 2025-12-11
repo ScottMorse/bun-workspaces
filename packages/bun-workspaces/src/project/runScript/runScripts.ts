@@ -1,4 +1,5 @@
 import { createAsyncIterableQueue } from "../../internal/asyncIterableQueue";
+import { RUNTIME_MODE } from "../../internal/env";
 import { logger } from "../../internal/logger";
 import type { SimpleAsyncIterable } from "../../internal/types";
 import type { OutputChunk } from "./outputChunk";
@@ -102,7 +103,11 @@ export const runScripts = <ScriptMetadata extends object = object>({
 
   const parallelBatchSize = Math.min(parallelMax, scripts.length);
   const recommendedParallelMax = determineParallelMax("auto");
-  if (parallel && parallelBatchSize > recommendedParallelMax) {
+  if (
+    parallel &&
+    parallelBatchSize > recommendedParallelMax &&
+    process.env._BW_IS_INTERNAL_TEST !== "true"
+  ) {
     logger.warn(
       `Number of scripts to run in parallel (${parallelBatchSize}) is greater than the available CPUs (${recommendedParallelMax})`,
     );
