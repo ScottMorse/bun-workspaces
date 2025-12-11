@@ -1,8 +1,5 @@
 import { availableParallelism } from "node:os";
-import {
-  getUserEnvVarName,
-  getUserEnvVarNumber,
-} from "../../config/userEnvVars";
+import { getUserEnvVar, getUserEnvVarName } from "../../config/userEnvVars";
 import { BunWorkspacesError } from "../../internal/error";
 
 export type PercentageValue = `${number}%`;
@@ -23,6 +20,10 @@ export const determineParallelMax = (
     ? ` (set by env var ${getUserEnvVarName("parallelMaxDefault")})`
     : "";
 
+  if (!isNaN(Number(value))) {
+    value = Math.floor(Number(value));
+  }
+
   if (typeof value === "number") {
     if (value < 1 || isNaN(value)) {
       throw new BunWorkspacesError(
@@ -33,8 +34,12 @@ export const determineParallelMax = (
   }
 
   if (value === "default") {
-    const defaultMax = getUserEnvVarNumber("parallelMaxDefault");
-    return determineParallelMax(defaultMax ?? "auto", true);
+    const defaultMax = getUserEnvVar("parallelMaxDefault")?.trim();
+    if (defaultMax === "default") return determineParallelMax("auto");
+    return determineParallelMax(
+      (defaultMax as ParallelMaxValue) ?? "auto",
+      true,
+    );
   }
 
   if (value === "unbounded") {
