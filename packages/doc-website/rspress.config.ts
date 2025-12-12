@@ -9,7 +9,7 @@ const CHANGELOG_URL = `${GITHUB_REPO_URL}/releases`;
 const LICENSE_URL = GITHUB_REPO_URL + "/blob/main/LICENSE.md";
 const NPM_PACKAGE_URL = "https://www.npmjs.com/package/bun-workspaces";
 
-const TITLE = "bun-workspaces — Bun Workspaces CLI | Documentation";
+const TITLE = "bun-workspaces — Bun Workspaces CLI and API | Documentation";
 const DESCRIPTION =
   "Documentation for bun-workspaces: A CLI and TypeScript API for developers using the Bun runtime to manage monorepos and run scripts across their workspaces.";
 
@@ -196,10 +196,11 @@ export default defineConfig({
             text: "Commands",
             link: "/cli/commands",
           },
-          {
-            text: "Examples",
-            link: "/cli/examples",
-          },
+          // TODO enable when needed
+          // {
+          //   text: "Examples",
+          //   link: "/cli/examples",
+          // },
         ],
       },
       {
@@ -214,13 +215,14 @@ export default defineConfig({
             activeMatch: "/api$",
           },
           {
-            text: "Utilities",
-            link: "/api/utilities",
+            text: "Reference",
+            link: "/api/reference",
           },
-          {
-            text: "Examples",
-            link: "/api/examples",
-          },
+          // TODO enable when needed
+          // {
+          //   text: "Examples",
+          //   link: "/api/examples",
+          // },
         ],
       },
       {
@@ -237,11 +239,15 @@ export default defineConfig({
         items: [
           {
             text: "Workspace Aliases",
-            link: "/concepts#workspace-aliases",
+            link: "/concepts/workspace-aliases",
           },
           {
             text: "Script Runtime Metadata",
-            link: "/concepts#script-runtime-metadata",
+            link: "/concepts/script-runtime-metadata",
+          },
+          {
+            text: "Script Execution Order",
+            link: "/concepts/script-execution-order",
           },
         ],
       },

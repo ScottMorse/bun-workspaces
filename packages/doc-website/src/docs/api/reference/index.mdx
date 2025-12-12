@@ -13,13 +13,13 @@ import { ApiHeader } from "../../../content/api/ApiHeader";
 import { CREATE_FS_PROJECT_EXAMPLE, CREATE_SCRIPT_COMMAND_EXAMPLE, FIND_WORKSPACE_BY_ALIAS_EXAMPLE, FIND_WORKSPACE_BY_NAME_EXAMPLE, FIND_WORKSPACE_BY_NAME_OR_ALIAS_EXAMPLE, FIND_WORKSPACES_BY_PATTERN_EXAMPLE, LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE, MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE, RUN_INLINE_SCRIPTS_EXAMPLE, RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE, RUN_WORKSPACE_SCRIPT_EXAMPLE, SET_LOG_LEVEL_EXAMPLE, WORKSPACE_EXAMPLE } from '../../../content/api/apiExamples';
 import { CREATE_MEMORY_PROJECT_EXAMPLE } from '../../../content/api/apiExamples';
 
-<ApiHeader activeHref="utilities" />
+<ApiHeader activeHref="reference" />
 
 ## `Workspace`
 
-An object representing a workspace in a [Project](/api#project).
+An object representing a workspace in a [Project](/api/reference#project).
 
-Set [workspace aliases](/concepts#workspace-aliases) in the [workspace configuration](/config#workspace-configuration) to make it easier to reference workspaces.
+Set [workspace aliases](/concepts/workspace-aliases) in the [workspace configuration](/config) to make it easier to reference workspaces.
 
 <SyntaxHighlighter language="typescript">
 {WORKSPACE_EXAMPLE}
@@ -28,11 +28,11 @@ Set [workspace aliases](/concepts#workspace-aliases) in the [workspace configura
 ## `Project`
 
 The core of `bun-workspaces`'s functionality. 
-It contains a list of [Workspaces](/api#workspace) and provides 
+It contains a list of [Workspaces](/api/reference#workspace) and provides 
 several useful methods for working with them. A Project is typically initialized at a git repository's root directory.
 The Project root should contain the `package.json` file in which `"workspaces"` are defined.
 
-Usually created via [createFileSystemProject](/api#createfilesystemproject).
+Usually created via [createFileSystemProject](/api/reference#createfilesystemproject).
 
 ### `.name`
 `type: string`
@@ -47,12 +47,12 @@ The given root directory of the project.
 ### `.workspaces`
 `type: Workspace[]`
 
-The list of all [Workspaces](/api#workspace) in the project.
+The list of all [Workspaces](/api/reference#workspace) in the project.
 
 ### `.findWorkspaceByName`
 `findWorkspaceByName(workspaceName: string): Workspace | null`
 
-Find a [Workspace](/api#workspace) by its package.json name.
+Find a [Workspace](/api/reference#workspace) by its package.json name.
 <SyntaxHighlighter language="typescript">
 {FIND_WORKSPACE_BY_NAME_EXAMPLE}
 </SyntaxHighlighter>
@@ -60,7 +60,7 @@ Find a [Workspace](/api#workspace) by its package.json name.
 ### `.findWorkspaceByAlias`
 `findWorkspaceByAlias(alias: string): Workspace | null`
 
-Find a [Workspace](/api#workspace) by its [alias](/concepts#workspace-aliases), if set in its [workspace configuration](/config#workspace-configuration).
+Find a [Workspace](/api/reference#workspace) by its [alias](/concepts/workspace-aliases), if set in its [workspace configuration](/config).
 <SyntaxHighlighter language="typescript">
 {FIND_WORKSPACE_BY_ALIAS_EXAMPLE}
 </SyntaxHighlighter>
@@ -68,9 +68,9 @@ Find a [Workspace](/api#workspace) by its [alias](/concepts#workspace-aliases), 
 ### `.findWorkspaceByNameOrAlias`
 `findWorkspaceByNameOrAlias(nameOrAlias: string): Workspace | null`
 
-Find a [Workspace](/api#workspace) by its package.json name or [alias](/concepts#workspace-aliases), if set in its [workspace configuration](/config#workspace-configuration).
+Find a [Workspace](/api/reference#workspace) by its package.json name or [alias](/concepts/workspace-aliases), if set in its [workspace configuration](/config).
 
-Since [aliases](/concepts#workspace-aliases) are validated to be unique to each workspace
+Since [aliases](/concepts/workspace-aliases) are validated to be unique to each workspace
 and not clash with other workspaces' package.json names,
 this method can still unambiguously find a workspace.
 
@@ -81,9 +81,9 @@ this method can still unambiguously find a workspace.
 ### `.findWorkspacesByPattern`
 `findWorkspacesByPattern(workspacePattern: string): Workspace[]`
 
-Find a list of [Workspaces](/api#workspace) by their name, using a wildcard pattern.
+Find a list of [Workspaces](/api/reference#workspace) by their name, using a wildcard pattern.
 
-To prevent ambiguity, this method does not match workspace [aliases](/concepts#workspace-aliases).
+To prevent ambiguity, this method does not match workspace [aliases](/concepts/workspace-aliases).
 <SyntaxHighlighter language="typescript">
 {FIND_WORKSPACES_BY_PATTERN_EXAMPLE}
 </SyntaxHighlighter>
@@ -92,7 +92,7 @@ To prevent ambiguity, this method does not match workspace [aliases](/concepts#w
 ### `.listWorkspacesWithScript`
 `listWorkspacesWithScript(scriptName: string): Workspace[]`
 
-Get an array of all [Workspaces](/api#workspace) that have a given script in their package.json "scripts" field.
+Get an array of all [Workspaces](/api/reference#workspace) that have a given script in their package.json "scripts" field.
 <SyntaxHighlighter language="typescript">
 {LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE}
 </SyntaxHighlighter>
@@ -100,7 +100,7 @@ Get an array of all [Workspaces](/api#workspace) that have a given script in the
 ### `.mapScriptsToWorkspaces`
 `mapScriptsToWorkspaces(): Record<string, WorkspaceScriptMetadata>`
 
-Get a mapping of all project script names to the [Workspaces](/api#workspace) that have them in their package.json "scripts" field.
+Get a mapping of all project script names to the [Workspaces](/api/reference#workspace) that have them in their package.json "scripts" field.
 <SyntaxHighlighter language="typescript">
 {MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE}
 </SyntaxHighlighter>
@@ -108,7 +108,7 @@ Get a mapping of all project script names to the [Workspaces](/api#workspace) th
 ### `.createScriptCommand`
 `createScriptCommand(options: CreateProjectScriptCommandOptions): CreateProjectScriptCommandResult`
 
-Create metadata that can be used to run a [Workspace](/api#workspace)'s script.
+Create metadata that can be used to run a [Workspace](/api/reference#workspace)'s script.
 
 The `"method"` option changes what kind of `bun` command is implemented to run the script.
 `"cd"` (the default) is generally recommended over `"filter"` in order to get full stdout/stderr output from the script.
@@ -118,7 +118,7 @@ The `"method"` option changes what kind of `bun` command is implemented to run t
 
 ## `FileSystemProject`
 
-Inherits from [Project](/api#project). Used to represent a project in the file system. Created via [createFileSystemProject](/api#createfilesystemproject).
+Inherits from [Project](/api/reference#project). Used to represent a project in the file system. Created via [createFileSystemProject](/api/reference#createfilesystemproject).
 
 Includes methods for running scripts in the workspaces of the project.
 
@@ -146,7 +146,7 @@ When passing `inline: true` to `.runWorkspaceScript` or `.runScriptAcrossWorkspa
 instead of looking up the script from the workspace's `package.json` `"scripts"` field.
 
 When `<workspaceName>` is used in an inline script or args, it will be replaced with the workspace name. 
-See [Script Runtime Metadata](/concepts#script-runtime-metadata) for more details and other available metadata.
+See [Script Runtime Metadata](/concepts/script-runtime-metadata) for more details and other available metadata.
 
 <SyntaxHighlighter language="typescript">
 {RUN_INLINE_SCRIPTS_EXAMPLE}
@@ -155,10 +155,10 @@ See [Script Runtime Metadata](/concepts#script-runtime-metadata) for more detail
 ## `createFileSystemProject`
 `createFileSystemProject(options: CreateFileSystemProjectOptions): FileSystemProject`
 
-Create a [Project](/api#project), the core of `bun-workspaces`'s functionality, based on a given root directory.
+Create a [Project](/api/reference#project), the core of `bun-workspaces`'s functionality, based on a given root directory.
 
-This finds [Workspaces](/api#workspace) based on the `"workspaces"` field in the root package.json.
-It will also detect and utilize any [workspace configuration](/config#workspace-configuration) found.
+This finds [Workspaces](/api/reference#workspace) based on the `"workspaces"` field in the root package.json.
+It will also detect and utilize any [workspace configuration](/config) found.
 
 <SyntaxHighlighter language="typescript">
 {CREATE_FS_PROJECT_EXAMPLE}
@@ -168,13 +168,13 @@ It will also detect and utilize any [workspace configuration](/config#workspace-
 ## `createMemoryProject`
 `createMemoryProject(options: CreateMemoryProjectOptions): MemoryProject`
 
-Create a [Project](/api#project) from a given array of [Workspaces](/api#workspace). 
+Create a [Project](/api/reference#project) from a given array of [Workspaces](/api/reference#workspace). 
 
 Usually used  only for testing purposes to do without the need for a real project
 in the file system.
 
 Since it doesn't read anything from the file system,
-it isn't affected by [workspace configuration](/config#workspace-configuration).
+it isn't affected by [workspace configuration](/config).
 
 A `MemoryProject` currently does not support running scripts directly, though a means of mocking script execution may be added later, considering demand.
 

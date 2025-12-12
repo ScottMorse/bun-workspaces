@@ -1,6 +1,6 @@
 const LINKS = {
   home: "/api",
-  utilities: "/api/utilities",
+  reference: "/api/reference",
   examples: "/api/examples",
 } as const;
 
@@ -10,26 +10,26 @@ export interface ApiHeaderProps {
 }
 
 export const ApiHeader = ({ activeHref, divider }: ApiHeaderProps) => {
-  const activeLink = LINKS[activeHref];
   return (
     <div className="sub-header">
       <div className="sub-header-links">
-        <div>Go To:</div>
+        <div className="sub-header-links-title">Go To:</div>
         <a href={LINKS.home} className={activeHref === "home" ? "active" : ""}>
           Quick Start
         </a>
         <a
-          href={LINKS.utilities}
-          className={activeHref === "utilities" ? "active" : ""}
+          href={LINKS.reference}
+          className={activeHref === "reference" ? "active" : ""}
         >
-          Utilities
+          Reference
         </a>
-        <a
+        {/* // TODO enable when needed
+         <a
           href={LINKS.examples}
           className={activeHref === "examples" ? "active" : ""}
         >
           Examples
-        </a>
+        </a> */}
       </div>
       <p className="note">
         Install the package via <code>bun add --dev bun-workspaces</code> to use

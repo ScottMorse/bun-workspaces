@@ -199,6 +199,18 @@ li {
   .brag-ticker {
     animation: brag-ticker-animation 90s linear infinite;
   }
+
+  .sub-header-links {
+    overflow-x: scroll;
+  }
+
+  .sub-header-links-title {
+    display: none;
+  }
+
+  .sub-header-links a {
+    min-width: 9rem;
+  }
 }
 
 @media (min-width: 769px) {
@@ -229,14 +241,34 @@ li {
   align-items: center;
   gap: 1rem;
   margin-bottom: 1rem;
+  max-width: 100vw;
+  overflow-x: auto;
 }
 
 .sub-header-links a {
   color: var(--rp-c-link);
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
+  text-align: center;
 }
 
 .sub-header-links a.active {
   background-color: var(--rp-c-bg-soft);
+}
+
+.rspress-doc {
+  min-height: calc(100dvh - 120px);
+  padding-bottom: 2rem !important;
+}
+
+.footer {
+  position: absolute;
+  bottom: 2rem;
+  z-index: -1;
+  left: 0;
+  color: var(--rp-c-text-2);
+  text-align: center;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }

@@ -15,13 +15,13 @@ export type CliProjectCommandContent = Omit<
 
 const defineOptionContent = (
   optionName: CliProjectCommandName,
-  factory: (optionConfig: CliProjectCommandConfig) => CliOptionContent,
+  factory: (optionConfig: CliProjectCommandConfig) => CliOptionContent
 ): CliProjectCommandContent => {
   const config = getProjectCommandConfig(optionName);
   const content = factory(config);
 
   const exampleLines = content.examples.filter(
-    (example) => example.trim() && !example.match(/^\s*#/),
+    (example) => example.trim() && !example.match(/^\s*#/)
   );
 
   const getMainFlag = (flag: string) => {
@@ -33,7 +33,7 @@ const defineOptionContent = (
       !exampleLines.find((line) => line.includes(getMainFlag(option.flags)))
     ) {
       throw new Error(
-        `Expected an example to include ${getMainFlag(option.flags)}`,
+        `Expected an example to include ${getMainFlag(option.flags)}`
       );
     }
   }
@@ -42,7 +42,7 @@ const defineOptionContent = (
     !exampleLines.find((line) => {
       // line that uses no flags
       return Object.values(config.options).every(
-        (option) => !line.includes(getMainFlag(option.flags)),
+        (option) => !line.includes(getMainFlag(option.flags))
       );
     })
   ) {
@@ -126,15 +126,15 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
   runScript: defineOptionContent("runScript", () => ({
     title: "Run Script",
     description:
-      'Run a script in all workspaces that have it in their "scripts" field in their respective package.json.',
+      'Run a script in all workspaces that have it in their "scripts" field in their respective package.json, or run an inline script.',
     examples: [
-      "# Run a script for all workspaces that have it in their `scripts` field",
+      '# Run my-script for all workspaces with it in their package.json "scripts" field',
       `bw run my-script`,
       "",
-      "# Run a scripts in parallel (logs are prefixed by default)",
+      "# Run a scripts in parallel (logs are prefixed with the workspace name by default)",
       `bw run my-script --parallel`,
       "",
-      "# By default, a prefix is added to the script output with the workspace name",
+      "# Disable the workspace name prefix in the script output",
       `bw run my-script --no-prefix`,
       "",
       "# Run a script for a specific workspace",
@@ -166,7 +166,7 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
 } as const satisfies Record<CliProjectCommandName, CliProjectCommandContent>;
 
 export const getCliProjectCommandContent = (
-  commandName: CliProjectCommandName,
+  commandName: CliProjectCommandName
 ) => CLI_PROJECT_COMMAND_OPTIONS_CONTENT[commandName];
 
 export const getCliProjectCommandsContent = () =>

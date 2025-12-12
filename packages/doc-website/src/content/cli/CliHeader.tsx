@@ -10,11 +10,10 @@ export interface CliHeaderProps {
 }
 
 export const CliHeader = ({ activeHref }: CliHeaderProps) => {
-  const activeLink = LINKS[activeHref];
   return (
     <div className="sub-header">
       <div className="sub-header-links">
-        <div>Go To:</div>
+        <div className="sub-header-links-title">Go To:</div>
         <a href={LINKS.home} className={activeHref === "home" ? "active" : ""}>
           Quick Start
         </a>
@@ -30,18 +29,21 @@ export const CliHeader = ({ activeHref }: CliHeaderProps) => {
         >
           Commands
         </a>
+        {/*  // TODO enable when needed
         <a
           href={LINKS.examples}
           className={activeHref === "examples" ? "active" : ""}
         >
           Examples
-        </a>
+        </a> */}
       </div>
-      <div className="note">
-        Note: Examples use `bw` instead of `bunx bun-workspaces`, which works
-        assuming you have either ran `alias bw="bunx bun-workspaces"` or placed
-        it in your shell configuration file.
-      </div>
+      <p className="note">
+        Note: Examples use <code>bw</code> instead of{" "}
+        <code>bunx bun-workspaces</code>, which works assuming you have either
+        ran <code>alias bw="bunx bun-workspaces"</code> or placed this line in
+        your shell configuration file, like <code>.bashrc</code>,{" "}
+        <code>.zshrc</code>, or similar.
+      </p>
       <hr />
     </div>
   );
