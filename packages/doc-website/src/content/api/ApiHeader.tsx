@@ -1,3 +1,5 @@
+import { Link } from "rspress/theme";
+
 const LINKS = {
   home: "/api",
   reference: "/api/reference",
@@ -14,22 +16,25 @@ export const ApiHeader = ({ activeHref, divider }: ApiHeaderProps) => {
     <div className="sub-header">
       <div className="sub-header-links">
         <div className="sub-header-links-title">Go To:</div>
-        <a href={LINKS.home} className={activeHref === "home" ? "active" : ""}>
+        <Link
+          href={LINKS.home}
+          className={activeHref === "home" ? "active" : ""}
+        >
           Quick Start
-        </a>
-        <a
+        </Link>
+        <Link
           href={LINKS.reference}
           className={activeHref === "reference" ? "active" : ""}
         >
           Reference
-        </a>
+        </Link>
         {/* // TODO enable when needed
-         <a
+         <Link
           href={LINKS.examples}
           className={activeHref === "examples" ? "active" : ""}
         >
           Examples
-        </a> */}
+        </Link> */}
       </div>
       <p className="note">
         Install the package via <code>bun add --dev bun-workspaces</code> to use

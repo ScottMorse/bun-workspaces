@@ -1,3 +1,5 @@
+import { Link } from "rspress/theme";
+
 const LINKS = {
   home: "/cli",
   globalOptions: "/cli/global-options",
@@ -14,28 +16,31 @@ export const CliHeader = ({ activeHref }: CliHeaderProps) => {
     <div className="sub-header">
       <div className="sub-header-links">
         <div className="sub-header-links-title">Go To:</div>
-        <a href={LINKS.home} className={activeHref === "home" ? "active" : ""}>
+        <Link
+          href={LINKS.home}
+          className={activeHref === "home" ? "active" : ""}
+        >
           Quick Start
-        </a>
-        <a
+        </Link>
+        <Link
           href={LINKS.globalOptions}
           className={activeHref === "globalOptions" ? "active" : ""}
         >
           Global Options
-        </a>
-        <a
+        </Link>
+        <Link
           href={LINKS.commands}
           className={activeHref === "commands" ? "active" : ""}
         >
           Commands
-        </a>
+        </Link>
         {/*  // TODO enable when needed
-        <a
+        <Link
           href={LINKS.examples}
           className={activeHref === "examples" ? "active" : ""}
         >
           Examples
-        </a> */}
+        </Link> */}
       </div>
       <p className="note">
         Note: Examples use <code>bw</code> instead of{" "}

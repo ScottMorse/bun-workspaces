@@ -1,3 +1,4 @@
+import { Link } from "rspress/theme";
 const LINKS = {
   workspaceAliases: "/concepts/workspace-aliases",
   scriptRuntimeMetadata: "/concepts/script-runtime-metadata",
@@ -17,24 +18,24 @@ export const ConceptsHeader = ({
     <div className="sub-header">
       <div className="sub-header-links">
         <div className="sub-header-links-title">Go To:</div>
-        <a
+        <Link
           href={LINKS.workspaceAliases}
           className={activeHref === "workspaceAliases" ? "active" : ""}
         >
           Workspace Aliases
-        </a>
-        <a
+        </Link>
+        <Link
           href={LINKS.scriptRuntimeMetadata}
           className={activeHref === "scriptRuntimeMetadata" ? "active" : ""}
         >
           Script Runtime Metadata
-        </a>
-        <a
+        </Link>
+        <Link
           href={LINKS.scriptExecutionOrder}
           className={activeHref === "scriptExecutionOrder" ? "active" : ""}
         >
           Script Execution Order
-        </a>
+        </Link>
       </div>
       {divider && <hr />}
     </div>
