@@ -2,7 +2,6 @@
 pageType: doc
 sidebar: false
 outline: false
-footer: false
 ---
 
 import packageJson from "../../../bun-workspaces/package.json";
@@ -10,20 +9,22 @@ import { Bwunster } from "../content/Bwunster";
 import { SyntaxHighlighter } from "../content/highlight";
 import { BragTicker } from "../content/BragTicker";
 import { API_QUICKSTART } from '../content/api/apiExamples';
-import { CLI_QUICKSTART } from '../content/cli/quickstart';
+import { CLI_QUICKSTART } from '../content/cli/cliExamples';
+import { Footer } from "../content/Footer";
 
 <Bwunster />
 
-<h1 className="home-title">bun-workspaces<br/><span className="home-subtitle">
+<h1 className="home-title"><span className="home-title-main">bun-workspaces</span><br/><span className="home-subtitle">
   A CLI and API on top of native [Bun
   workspaces](https://bun.sh/docs/install/workspaces)</span></h1>
 <p className="home-version">v{packageJson.version}</p>
 
 <div className="home-list-container">
   <ul className="home-list">
-    <li>Get metadata about your project 🤖</li>
-    <li>Run scripts across your workspaces flexibly 🧾</li>
     <li>Works right away, with no boilerplate required 🍔🍴</li>
+    <li>Get metadata about your monorepo 🤖</li>
+    <li>Run `package.json` scripts across workspaces 📋</li>
+    <li>Supports running inline scripts as well ⌨️</li>
   </ul>
 </div>
 
@@ -33,17 +34,15 @@ import { CLI_QUICKSTART } from '../content/cli/quickstart';
 
 <h2 className="whats-new-subtitle">Notable recent updates 📦</h2>
 <div className="whats-new-list">
-- Running scripts: Added a way to set the execution order of scripts per workspace via the [workspace configuration](/config#script-order).
-- Running scripts: New [script runtime metadata](/concepts#script-runtime-metadata ) can be read from environment vars or used in inline scripts and args
-- Running scripts: Added `--inline` option to run a one-off commands (See [API](/api#inline-scripts) and [CLI](/cli#run-script) docs)
-- API: Added methods for directly running scripts in series or parallel in workspaces via [FileSystemProject](/api#filesystemproject).
-- An API has been made official! 🛠️️ [Go see the documentation here](/api)
-- New [workspace configuration](/config) is supported in either package.json or a separate config file.
-  - The root `bw.json` file is now <span className="deprecated">deprecated</span> ([more info](/config#config-file-bwjson))
-- Added
-  `--json-outfile` option to `run-script` to output results ([more
-  info](/cli#json-output))
+- Added a way to set the [execution order of scripts](/concepts/script-execution-order) per workspace via the [workspace configuration](/config).
+- New [script runtime metadata](/concepts/script-runtime-metadata ) can be read from environment vars or used in inline scripts and args
+- Added `--inline` option to run a one-off commands (See [API](/api/reference#inline-scripts) and [CLI](/cli/commands#run-script) docs)
 </div>
+
+## Quick Start
+
+See the [CLI Quick Start](/cli) and [API Quick Start](/api) for starting examples.
+
 
 ## Installation
 
@@ -68,26 +67,10 @@ alias bw="bunx bun-workspaces"`}
 
 Examples in these docs will use the alias `bw` for `bunx bun-workspaces` for brevity.
 
-## Quick Start
-
-#### CLI
-
-[See the full CLI documentation](/cli) or continue for some quick examples.
-
-<SyntaxHighlighter language="bash">
-{CLI_QUICKSTART}
-
-</SyntaxHighlighter>
-
-#### API
-
-[See the full API documentation](/api) or continue for some quick examples.
-
-<SyntaxHighlighter language="typescript">
-{API_QUICKSTART}
-</SyntaxHighlighter>
 
 <br/>
-_`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Oven. This project aims to enhance enhance the experience of Bun for its users._
+<br/>
+_`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Anthropic. This project aims to enhance enhance the experience of Bun for its users._
 
+<Footer />
 <BragTicker />

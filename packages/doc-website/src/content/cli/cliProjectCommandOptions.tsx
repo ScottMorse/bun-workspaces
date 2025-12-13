@@ -126,15 +126,15 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
   runScript: defineOptionContent("runScript", () => ({
     title: "Run Script",
     description:
-      'Run a script in all workspaces that have it in their "scripts" field in their respective package.json.',
+      'Run a script in all workspaces that have it in their "scripts" field in their respective package.json, or run an inline script.',
     examples: [
-      "# Run a script for all workspaces that have it in their `scripts` field",
+      '# Run my-script for all workspaces with it in their package.json "scripts" field',
       `bw run my-script`,
       "",
-      "# Run a scripts in parallel (logs are prefixed by default)",
+      "# Run a scripts in parallel (logs are prefixed with the workspace name by default)",
       `bw run my-script --parallel`,
       "",
-      "# By default, a prefix is added to the script output with the workspace name",
+      "# Disable the workspace name prefix in the script output",
       `bw run my-script --no-prefix`,
       "",
       "# Run a script for a specific workspace",

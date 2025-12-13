@@ -37,7 +37,7 @@ bw list-workspaces
 bw ls --json --pretty # Output as formatted JSON
 
 # Run the lint script for all workspaces
-# that have it in their "scripts" field
+# that have it in their package.json "scripts" field
 bw run-script lint
 
 # run is an alias for run-script
@@ -47,13 +47,14 @@ bw run lint "my-workspace-*" # Run for matching workspace names
 bw run lint --parallel # Run at the same time
 bw run lint --args="--my-appended-args" # Add args to each script call
 bw run lint --args="--my-arg=<workspaceName>" # Use the workspace name in args
-
-# Run an inline command from the workspace directory
-bw run "echo 'this is my inline script for <workspaceName>'" --inline
+bw run "bun build" --inline --inline-name=build # Run an inline command
 
 # Show usage (you can pass --help to any command)
 bw help
 bw --help
+
+# Show version
+bw --version
 
 # Pass --cwd to any command
 bw --cwd=/path/to/your/project ls
@@ -157,4 +158,4 @@ const runManyScripts = async () => {
 };
 ```
 
-_`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Oven. This project aims to enhance enhance the experience of Bun for its users._
+_`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Anthropic. This project aims to enhance enhance the experience of Bun for its users._

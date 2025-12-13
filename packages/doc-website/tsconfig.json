@@ -3,7 +3,7 @@
   "compilerOptions": {
     // All directly from recommended config in rspress docs
     "target": "ES2020",
-    "lib": ["DOM", "ES2020"],
+    "lib": ["DOM", "ES2020", "DOM.AsyncIterable", "DOM.Iterable"],
     "module": "ESNext",
     "jsx": "react-jsx",
     "noEmit": true,

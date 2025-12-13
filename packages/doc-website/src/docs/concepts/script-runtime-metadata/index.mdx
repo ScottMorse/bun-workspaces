@@ -1,0 +1,96 @@
+---
+title: Script Runtime Metadata
+titleSuffix: " | Concepts | bun-workspaces"
+description: "Script Runtime Metadata | Concepts | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
+pageType: doc
+sidebar: false
+outline: true
+footer: false
+---
+
+import { getScriptRuntimeMetadataConfig } from 'bun-workspaces/src/project/runScript/scriptRuntimeMetadata';
+import { SyntaxHighlighter } from '../../../content/highlight';
+import { Footer } from "../../../content/Footer";
+import { ConceptsHeader } from "../../../content/concepts/ConceptsHeader";
+
+<ConceptsHeader activeHref="scriptRuntimeMetadata" />
+
+When running scripts via the API or CLI, runtime metadata is available to be used in the script, which can be interpolated in an inline script or appended args, or it can be read from environment variables.
+
+## Examples
+
+This example shows various uses of the runtime metadata to run the same file from all workspaces, while having a means of distinguishing the workspace and script running the file, thanks to the metadata.
+
+<SyntaxHighlighter language="typescript">
+{`// Contents of my-script.ts (in project root)
+
+// All metadata is available as environment variables for use within a script
+console.log(process.env.${getScriptRuntimeMetadataConfig("projectPath").envVarName});
+console.log(process.env.${getScriptRuntimeMetadataConfig("projectName").envVarName});
+console.log(process.env.${getScriptRuntimeMetadataConfig("workspaceName").envVarName});
+console.log(process.env.${getScriptRuntimeMetadataConfig("workspacePath").envVarName});
+console.log(process.env.${getScriptRuntimeMetadataConfig("workspaceRelativePath").envVarName});
+console.log(process.env.${getScriptRuntimeMetadataConfig("scriptName").envVarName});`}
+</SyntaxHighlighter>
+
+#### CLI:
+<SyntaxHighlighter language="bash">
+{`bw run "bun run <projectPath>/my-script.ts" --inline --args="<scriptName>"`}
+</SyntaxHighlighter>
+
+#### API:
+<SyntaxHighlighter language="typescript">
+{`
+import { createFileSystemProject } from 'bun-workspaces';
+
+const project = createFileSystemProject({
+${"  "}rootDirectory: ".",
+});
+
+project.runScriptAcrossWorkspaces({
+${"  "}workspacePatterns: ["*"],
+${"  "}script: "bun run <projectPath>/my-script.ts",
+${"  "}args: "<scriptName>",
+${"  "}inline: true,
+});`}
+</SyntaxHighlighter>
+
+## Available Metadata
+
+#### Project Path
+The absolute path to the project root.<br/>
+
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("projectPath").inlineName[0]}</code><br/>
+Environment variable: <code>{getScriptRuntimeMetadataConfig("projectPath").envVarName}</code>
+
+#### Project Name
+The name of the project (as in its `package.json` `"name"` field).<br/>
+
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("projectName").inlineName[0]}</code><br/>
+Environment variable: <code>{getScriptRuntimeMetadataConfig("projectName").envVarName}</code>
+
+#### Workspace Name
+The name of the workspace (as in its `package.json` `"name"` field).<br/>
+
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("workspaceName").inlineName[0]}</code><br/>
+Environment variable: <code>{getScriptRuntimeMetadataConfig("workspaceName").envVarName}</code>
+
+#### Workspace Path
+The absolute path to the workspace.<br/>
+
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("workspacePath").inlineName[0]}</code><br/>
+Environment variable: <code>{getScriptRuntimeMetadataConfig("workspacePath").envVarName}</code>
+
+#### Workspace Relative Path
+The relative path to the workspace from the project root.<br/>
+
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("workspaceRelativePath").inlineName[0]}</code><br/>
+Environment variable: <code>{getScriptRuntimeMetadataConfig("workspaceRelativePath").envVarName}</code>
+
+#### Script Name
+The name of the script. This is an empty string when running as an inline script.<br/>
+
+In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("scriptName").inlineName[0]}</code><br/>
+Environment variable: <code>{getScriptRuntimeMetadataConfig("scriptName").envVarName}</code>
+
+<Footer />

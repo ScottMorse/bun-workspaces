@@ -1,0 +1,31 @@
+---
+title: Script Execution Order
+titleSuffix: " | Concepts | bun-workspaces"
+description: "Script Execution Order | Concepts | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
+pageType: doc
+sidebar: false
+outline: true
+footer: false
+---
+import { exampleWorkspaceConfigSimple } from '../../../content/cli/exampleConfig'
+import { SyntaxHighlighter } from '../../../content/highlight';
+import { Footer } from "../../../content/Footer";
+import { ConceptsHeader } from "../../../content/concepts/ConceptsHeader";
+
+<ConceptsHeader activeHref="scriptExecutionOrder" />
+
+Using the [workspace configuration](/config), you can set an `"order"` value to sort the execution order of a script per workspace. 
+By default, workspaces are sorted in alphabetical order of their relative path from the project root. 
+
+Workspace scripts with
+an `"order"` value will be executed before workspaces with no `"order"` set for the same script, falling back to the default order.
+
+In this example, any other workspaces in the project with an `"order"` for the `"start"` script less than `10` will be executed before this workspace, 
+and any workspaces with an `"order"` for the `"start"` script greater than `10` will be executed after this workspace.
+
+
+<SyntaxHighlighter language="json">
+  {JSON.stringify(exampleWorkspaceConfigSimple, null, 2)}
+</SyntaxHighlighter>
+
+<Footer />

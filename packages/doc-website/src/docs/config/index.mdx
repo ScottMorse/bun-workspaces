@@ -1,7 +1,7 @@
 ---
 title: Configuration
 titleSuffix: " | bun-workspaces"
-description: "Configuration documentation for bun-workspaces, such as the bw.json config file | Documentation for bun-workspaces: A CLI to help manage Bun monorepos"
+description: "Configuration documentation for bun-workspaces, such as the bw.json config file | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
 pageType: doc
 sidebar: false
 outline: true
@@ -11,6 +11,7 @@ footer: false
 import { exampleDeprecatedConfig, exampleWorkspaceConfigArray, exampleWorkspaceConfigSimple, createPackageJsonExample } from "../../content/cli/exampleConfig";
 import { SyntaxHighlighter } from "../../content/highlight";
 import { WORKSPACE_CONFIG_FILE_PATH, WORKSPACE_CONFIG_PACKAGE_JSON_KEY} from 'bun-workspaces/src/config/workspaceConfig/workspaceConfigLocation'
+import { Footer } from "../../content/Footer";
 
 # Configuration
 ## Workspace Configuration
@@ -18,32 +19,17 @@ import { WORKSPACE_CONFIG_FILE_PATH, WORKSPACE_CONFIG_PACKAGE_JSON_KEY} from 'bu
 You can add optional configuration to a workspace in its `package.json` file in  <code>"{WORKSPACE_CONFIG_PACKAGE_JSON_KEY}"</code> 
 or in a separate <code>{WORKSPACE_CONFIG_FILE_PATH}</code> file.
 
+See [workspace aliases](/concepts/workspace-aliases) and [script execution order](/concepts/script-execution-order) for more information on the fields available.
+
 ### Examples:
-In the below examples, `"myApp"` may make a simpler reference to a workspace named `"@my-organization/my-application"`.  See more on [workspace aliases](/concepts#workspace-aliases).
-
-#### Script Order
-
-You can set an `"order"` value to sort the execution order of a script per workspace. 
-By default, workspaces are sorted in alphabetical order of their relative path from the project root. 
-
-Workspace scripts with
-an `"order"` value will be executed before workspaces with no `"order"` set for the same script, falling back to the default alphabetical order.
-
-In this example, any other workspaces in the project with an `"order"` for the `"start"` script less than `10` will be executed before this workspace, 
-and any workspaces with an `"order"` for the `"start"` script greater than `10` will be executed after this workspace.
-
 #### 1. Separate Config File
 <p className="workspace-config-path"><code>path/to/your/workspace/{WORKSPACE_CONFIG_FILE_PATH}</code></p>
 
 <SyntaxHighlighter language="json">
   {JSON.stringify(exampleWorkspaceConfigSimple, null, 2)}
 </SyntaxHighlighter>
-A workspace can have multiple aliases:
-<SyntaxHighlighter language="json">
-  {JSON.stringify(exampleWorkspaceConfigArray, null, 2)}
-</SyntaxHighlighter>
 
-#### 2. Package.json Configuration
+#### 2. Within package.json
 <p className="workspace-config-path"><code>path/to/your/workspace/package.json</code></p>
 
 The same configuration can be added to the workspace's `package.json` file in <code>"{WORKSPACE_CONFIG_PACKAGE_JSON_KEY}"</code>.
@@ -78,3 +64,5 @@ The default
 <SyntaxHighlighter language="json">
   {JSON.stringify(exampleDeprecatedConfig, null, 2)}
 </SyntaxHighlighter>
+
+<Footer />
