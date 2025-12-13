@@ -1,15 +1,25 @@
 <img src="./packages/doc-website/src/docs/public/bw-eye.png" alt="bun-workspaces" width="50" />
 
+### [📖 **See Full Documentation Here**: _https://bunworkspaces.com_](https://bunworkspaces.com)
+
 # bun-workspaces
 
-### [**See Full Documentation Here:** _https://bunworkspaces.com_](https://bunworkspaces.com)
+A CLI and API to enhance your monorepo development with Bun's [native workspaces](https://bun.sh/docs/install/workspaces) feature for nested JavaScript/TypeScript packages.
 
-**_New: [An API is now officially released!](https://bunworkspaces.com/api)_**
+- Works right away, with no boilerplate required 🍔🍴
+- Get metadata about your monorepo 🤖
+- Run package.json scripts across workspaces 📋
+- Supports running inline scripts as well ⌨️
 
-This is a CLI and API that help you manage your monorepo on top of native [Bun workspaces](https://bun.sh/docs/install/workspaces), with no additional setup required. Get metadata about your workspaces and scripts, and run scripts across your workspaces.
+This tool lets you decide the complexity of how you use it.
+To get started, all you need is a normal project using [Bun's native workspaces](https://bun.sh/docs/install/workspaces) feature for nested JavaScript/TypeScript packages.
 
+Think of this as a power suit you can snap onto native workspaces, rather than another monorepo framework.
+
+Start running some [CLI commands](https://bunworkspaces.com/cli) right away in your repo, or take full advantage of the [scripting API](https://bunworkspaces.com/api) and its features.
+<br/><br/>
 <a href="https://buymeacoffee.com/scottmorse">
-<img src="./packages/doc-website/src/docs/public/bmac-logo-circle.png" alt="Link to Buy Me A Coffee" width="60" />
+<img src="./packages/doc-website/src/docs/public/bmac-logo-circle.png" alt="Link to Buy Me A Coffee" width="50" />
 </a>
 
 ## Quick Start
