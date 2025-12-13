@@ -57,6 +57,7 @@ const LD_JSON = {
 
 export default defineConfig({
   root: "src/docs",
+
   themeDir: path.join(__dirname, "src/theme"),
   title: TITLE,
   globalStyles: path.resolve("src/theme/css/global.css"),
@@ -85,6 +86,9 @@ export default defineConfig({
   builderConfig: {
     output: {
       cleanDistPath: true,
+    },
+    source: {
+      define: { "process.env.YEAR": JSON.stringify(new Date().getFullYear()) },
     },
     html: {
       tags: [

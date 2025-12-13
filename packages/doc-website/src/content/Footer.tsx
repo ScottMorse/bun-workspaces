@@ -2,9 +2,7 @@
 export const Footer = () => {
   return (
     <footer className="footer">
-      <p>
-        © {new Date().getFullYear()} Smorsic Labs, LLC. All rights reserved.
-      </p>
+      <p>© {process.env.YEAR} Smorsic Labs, LLC. All rights reserved.</p>
     </footer>
   );
 };
