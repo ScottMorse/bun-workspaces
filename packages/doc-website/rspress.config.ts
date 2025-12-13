@@ -57,7 +57,7 @@ const LD_JSON = {
 
 export default defineConfig({
   root: "src/docs",
-  themeDir: "src/theme",
+  themeDir: path.join(__dirname, "src/theme"),
   title: TITLE,
   globalStyles: path.resolve("src/theme/css/global.css"),
   description: DESCRIPTION,
