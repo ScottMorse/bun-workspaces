@@ -1,10 +1,9 @@
 ---
 title: CLI Usage
 titleSuffix: " | bun-workspaces"
-description: "CLI usage documentation for bun-workspaces, including global options and all commands | Documentation for bun-workspaces: A CLI to help manage Bun monorepos"
+description: "CLI usage documentation for bun-workspaces, including global options and all commands | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
 pageType: doc
 sidebar: false
-outline: true
 footer: false
 ---
 
@@ -12,62 +11,18 @@ import { CliCommandDoc } from "../../content/cli/CliCommandDoc";
 import { CliGlobalOptionDoc } from "../../content/cli/CliGlobalOptionDoc";
 import { RUN_SCRIPT_EXAMPLE_JSON_OUTPUT } from "../../content/runScriptJson";
 import { SyntaxHighlighter } from "../../content/highlight";
+import { CLI_QUICKSTART } from "../../content/cli/cliExamples";
+import { CliHeader } from "../../content/cli/CliHeader";
+import { Footer } from "../../content/Footer";
 
-# CLI Usage
+# CLI
 
-<div className="note">
-Note: Examples use `bw` instead of `bunx bun-workspaces`, which works assuming you have either ran `alias bw="bunx bun-workspaces"` or placed it in your shell configuration file.
+<CliHeader activeHref="home" />
 
-</div>
+# Quick Start
 
-## Global Options:
-
-Global options should come before any commands.
-
-### Working Directory
-<CliGlobalOptionDoc option={"cwd"} />
-<hr />
-### Log Level
-<CliGlobalOptionDoc option={"logLevel"} />
-<hr />
-### Config File
-<CliGlobalOptionDoc 
-  option={"configFile"} 
-  deprecationText="Use the new workspace configuration instead to configure workspace aliases."
-/>
-
-## Commands:
-
-### List Workspaces
-
-<CliCommandDoc command={"listWorkspaces"} />
-<hr />
-### Workspace Info
-<CliCommandDoc command={"workspaceInfo"} />
-<hr />
-### List Scripts
-<CliCommandDoc command={"listScripts"} />
-<hr />
-### Script Info
-<CliCommandDoc command={"scriptInfo"} />
-<hr />
-### Run Script
-<CliCommandDoc command={"runScript"} />
-
-### More Info
-
-See more on [script runtime metadata](/concepts#script-runtime-metadata), such as environment variables available in scripts and interpolating values in inline scripts and args such as `<workspaceName>`.<br/>
-
-See more on [workspace aliases](/concepts#workspace-aliases) for referencing workspaces via shorthands.
-
-#### JSON Output
-
-Using the `--json-outfile=path/to/results.json` option will output the results of all script runs to a JSON file.
-The file will be written relative to the project root, so it is affected by the [`--cwd` global option](/cli#working-directory).
-This is the same data as would be returned by the equivalent [API](/api#runscriptacrossworkspaces).
-
-##### Example Output:
-
-<SyntaxHighlighter language="json">
-  {JSON.stringify(RUN_SCRIPT_EXAMPLE_JSON_OUTPUT, null, 2)}
+<SyntaxHighlighter language="bash">
+{CLI_QUICKSTART}
 </SyntaxHighlighter>
+
+<Footer />

@@ -9,7 +9,7 @@ const CHANGELOG_URL = `${GITHUB_REPO_URL}/releases`;
 const LICENSE_URL = GITHUB_REPO_URL + "/blob/main/LICENSE.md";
 const NPM_PACKAGE_URL = "https://www.npmjs.com/package/bun-workspaces";
 
-const TITLE = "bun-workspaces — Bun Workspaces CLI | Documentation";
+const TITLE = "bun-workspaces — Bun monorepo tool | Documentation";
 const DESCRIPTION =
   "Documentation for bun-workspaces: A CLI and TypeScript API for developers using the Bun runtime to manage monorepos and run scripts across their workspaces.";
 
@@ -57,7 +57,8 @@ const LD_JSON = {
 
 export default defineConfig({
   root: "src/docs",
-  themeDir: "src/theme",
+
+  themeDir: path.join(__dirname, "src/theme"),
   title: TITLE,
   globalStyles: path.resolve("src/theme/css/global.css"),
   description: DESCRIPTION,
@@ -85,6 +86,9 @@ export default defineConfig({
   builderConfig: {
     output: {
       cleanDistPath: true,
+    },
+    source: {
+      define: { "process.env.YEAR": JSON.stringify(new Date().getFullYear()) },
     },
     html: {
       tags: [
@@ -184,13 +188,23 @@ export default defineConfig({
         activeMatch: "/cli",
         items: [
           {
+            text: "Quick Start",
+            link: "/cli",
+            activeMatch: "/cli$",
+          },
+          {
             text: "Global Options",
-            link: "/cli#global-options",
+            link: "/cli/global-options",
           },
           {
             text: "Commands",
-            link: "/cli#commands",
+            link: "/cli/commands",
           },
+          // TODO enable when needed
+          // {
+          //   text: "Examples",
+          //   link: "/cli/examples",
+          // },
         ],
       },
       {
@@ -200,17 +214,19 @@ export default defineConfig({
         activeMatch: "/api",
         items: [
           {
-            text: "Workspace",
-            link: "/api#workspace",
+            text: "Quick Start",
+            link: "/api",
+            activeMatch: "/api$",
           },
           {
-            text: "Project",
-            link: "/api#project",
+            text: "Reference",
+            link: "/api/reference",
           },
-          {
-            text: "FileSystemProject",
-            link: "/api#filesystemproject",
-          },
+          // TODO enable when needed
+          // {
+          //   text: "Examples",
+          //   link: "/api/examples",
+          // },
         ],
       },
       {
@@ -227,11 +243,15 @@ export default defineConfig({
         items: [
           {
             text: "Workspace Aliases",
-            link: "/concepts#workspace-aliases",
+            link: "/concepts/workspace-aliases",
           },
           {
             text: "Script Runtime Metadata",
-            link: "/concepts#script-runtime-metadata",
+            link: "/concepts/script-runtime-metadata",
+          },
+          {
+            text: "Script Execution Order",
+            link: "/concepts/script-execution-order",
           },
         ],
       },

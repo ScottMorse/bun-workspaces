@@ -1,198 +1,28 @@
 ---
-title: Library API
+title: API
 titleSuffix: " | bun-workspaces"
-description: "API documentation for bun-workspaces | Documentation for bun-workspaces: A CLI to help manage Bun monorepos"
+description: "API documentation for bun-workspaces | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
 pageType: doc
 sidebar: false
-outline: true
+outline: false
 footer: false
 ---
 
 import { SyntaxHighlighter } from "../../content/highlight";
-import { CREATE_FS_PROJECT_EXAMPLE, CREATE_SCRIPT_COMMAND_EXAMPLE, FIND_WORKSPACE_BY_ALIAS_EXAMPLE, FIND_WORKSPACE_BY_NAME_EXAMPLE, FIND_WORKSPACE_BY_NAME_OR_ALIAS_EXAMPLE, FIND_WORKSPACES_BY_PATTERN_EXAMPLE, LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE, MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE, RUN_INLINE_SCRIPTS_EXAMPLE, RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE, RUN_WORKSPACE_SCRIPT_EXAMPLE, SET_LOG_LEVEL_EXAMPLE, WORKSPACE_EXAMPLE } from '../../content/api/apiExamples';
-import { CREATE_MEMORY_PROJECT_EXAMPLE } from '../../content/api/apiExamples';
+import { ApiHeader } from '../../content/api/ApiHeader';
+import { API_QUICKSTART } from "../../content/api/apiExamples";
+import { Footer } from "../../content/Footer";
 
-# Library API
-
-Install the package via `bun add --dev bun-workspaces` to use the API.
+<ApiHeader activeHref="home" />
 
 ### TypeScript
 
 Ensure you have `@types/bun` installed for accurate types. Your `"lib"` field in `tsconfig.json` should ideally include `"ESNext"`.
 
-See the [Quick Start](/#api) for an example showcasing several API features in action.
-
-## `Workspace`
-
-An object representing a workspace in a [Project](/api#project).
-
-Set [workspace aliases](/concepts#workspace-aliases) in the [workspace configuration](/config#workspace-configuration) to make it easier to reference workspaces.
+### Quick Start
 
 <SyntaxHighlighter language="typescript">
-{WORKSPACE_EXAMPLE}
+{API_QUICKSTART}
 </SyntaxHighlighter>
 
-## `Project`
-
-The core of `bun-workspaces`'s functionality. 
-It contains a list of [Workspaces](/api#workspace) and provides 
-several useful methods for working with them. A Project is typically initialized at a git repository's root directory.
-The Project root should contain the `package.json` file in which `"workspaces"` are defined.
-
-Usually created via [createFileSystemProject](/api#createfilesystemproject).
-
-### `.name`
-`type: string`
-
-The name of the project. This is typically the name found in the root `package.json` unless otherwise provided.
-
-### `.rootDirectory`
-`type: string`
-
-The given root directory of the project.
-
-### `.workspaces`
-`type: Workspace[]`
-
-The list of all [Workspaces](/api#workspace) in the project.
-
-### `.findWorkspaceByName`
-`findWorkspaceByName(workspaceName: string): Workspace | null`
-
-Find a [Workspace](/api#workspace) by its package.json name.
-<SyntaxHighlighter language="typescript">
-{FIND_WORKSPACE_BY_NAME_EXAMPLE}
-</SyntaxHighlighter>
-
-### `.findWorkspaceByAlias`
-`findWorkspaceByAlias(alias: string): Workspace | null`
-
-Find a [Workspace](/api#workspace) by its [alias](/concepts#workspace-aliases), if set in its [workspace configuration](/config#workspace-configuration).
-<SyntaxHighlighter language="typescript">
-{FIND_WORKSPACE_BY_ALIAS_EXAMPLE}
-</SyntaxHighlighter>
-
-### `.findWorkspaceByNameOrAlias`
-`findWorkspaceByNameOrAlias(nameOrAlias: string): Workspace | null`
-
-Find a [Workspace](/api#workspace) by its package.json name or [alias](/concepts#workspace-aliases), if set in its [workspace configuration](/config#workspace-configuration).
-
-Since [aliases](/concepts#workspace-aliases) are validated to be unique to each workspace
-and not clash with other workspaces' package.json names,
-this method can still unambiguously find a workspace.
-
-<SyntaxHighlighter language="typescript">
-{FIND_WORKSPACE_BY_NAME_OR_ALIAS_EXAMPLE}
-</SyntaxHighlighter>
-
-### `.findWorkspacesByPattern`
-`findWorkspacesByPattern(workspacePattern: string): Workspace[]`
-
-Find a list of [Workspaces](/api#workspace) by their name, using a wildcard pattern.
-
-To prevent ambiguity, this method does not match workspace [aliases](/concepts#workspace-aliases).
-<SyntaxHighlighter language="typescript">
-{FIND_WORKSPACES_BY_PATTERN_EXAMPLE}
-</SyntaxHighlighter>
-
-
-### `.listWorkspacesWithScript`
-`listWorkspacesWithScript(scriptName: string): Workspace[]`
-
-Get an array of all [Workspaces](/api#workspace) that have a given script in their package.json "scripts" field.
-<SyntaxHighlighter language="typescript">
-{LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE}
-</SyntaxHighlighter>
-
-### `.mapScriptsToWorkspaces`
-`mapScriptsToWorkspaces(): Record<string, WorkspaceScriptMetadata>`
-
-Get a mapping of all project script names to the [Workspaces](/api#workspace) that have them in their package.json "scripts" field.
-<SyntaxHighlighter language="typescript">
-{MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE}
-</SyntaxHighlighter>
-
-### `.createScriptCommand`
-`createScriptCommand(options: CreateProjectScriptCommandOptions): CreateProjectScriptCommandResult`
-
-Create metadata that can be used to run a [Workspace](/api#workspace)'s script.
-
-The `"method"` option changes what kind of `bun` command is implemented to run the script.
-`"cd"` (the default) is generally recommended over `"filter"` in order to get full stdout/stderr output from the script.
-<SyntaxHighlighter language="typescript">
-{CREATE_SCRIPT_COMMAND_EXAMPLE  }
-</SyntaxHighlighter>
-
-## `FileSystemProject`
-
-Inherits from [Project](/api#project). Used to represent a project in the file system. Created via [createFileSystemProject](/api#createfilesystemproject).
-
-Includes methods for running scripts in the workspaces of the project.
-
-
-### `.runWorkspaceScript`
-`runWorkspaceScript(options: RunWorkspaceScriptOptions): RunWorkspaceScriptResult`
-
-Run a script in a given workspace.
-
-<SyntaxHighlighter language="typescript">
-{RUN_WORKSPACE_SCRIPT_EXAMPLE}
-</SyntaxHighlighter>
-
-### `.runScriptAcrossWorkspaces`
-`runScriptAcrossWorkspaces(options: RunScriptAcrossWorkspacesOptions): RunScriptAcrossWorkspacesResult`
-
-Run a script in all workspaces that have it in their package.json "scripts" field.
-
-<SyntaxHighlighter language="typescript">
-{RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE}
-</SyntaxHighlighter>
-
-### Inline scripts
-When passing `inline: true` to `.runWorkspaceScript` or `.runScriptAcrossWorkspaces`, `script` is ran as an inline command from the workspace directory,
-instead of looking up the script from the workspace's `package.json` `"scripts"` field.
-
-When `<workspaceName>` is used in an inline script or args, it will be replaced with the workspace name. 
-See [Script Runtime Metadata](/concepts#script-runtime-metadata) for more details and other available metadata.
-
-<SyntaxHighlighter language="typescript">
-{RUN_INLINE_SCRIPTS_EXAMPLE}
-</SyntaxHighlighter>
-
-## `createFileSystemProject`
-`createFileSystemProject(options: CreateFileSystemProjectOptions): FileSystemProject`
-
-Create a [Project](/api#project), the core of `bun-workspaces`'s functionality, based on a given root directory.
-
-This finds [Workspaces](/api#workspace) based on the `"workspaces"` field in the root package.json.
-It will also detect and utilize any [workspace configuration](/config#workspace-configuration) found.
-
-<SyntaxHighlighter language="typescript">
-{CREATE_FS_PROJECT_EXAMPLE}
-</SyntaxHighlighter>
-
-
-## `createMemoryProject`
-`createMemoryProject(options: CreateMemoryProjectOptions): MemoryProject`
-
-Create a [Project](/api#project) from a given array of [Workspaces](/api#workspace). 
-
-Usually used  only for testing purposes to do without the need for a real project
-in the file system.
-
-Since it doesn't read anything from the file system,
-it isn't affected by [workspace configuration](/config#workspace-configuration).
-
-A `MemoryProject` currently does not support running scripts directly, though a means of mocking script execution may be added later, considering demand.
-
-<SyntaxHighlighter language="typescript">
-{CREATE_MEMORY_PROJECT_EXAMPLE}
-</SyntaxHighlighter>
-
-## `setLogLevel`
-`setLogLevel(level: LogLevelSetting)`
-
-Set the global logging level. Defaults to "info" or "error" when `NODE_ENV` is "test".
-<SyntaxHighlighter language="typescript">
-{SET_LOG_LEVEL_EXAMPLE}
-</SyntaxHighlighter>
+<Footer />

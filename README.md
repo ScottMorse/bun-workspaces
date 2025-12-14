@@ -1,15 +1,25 @@
 <img src="./packages/doc-website/src/docs/public/bw-eye.png" alt="bun-workspaces" width="50" />
 
+### [📖 **See Full Documentation Here**: _https://bunworkspaces.com_](https://bunworkspaces.com)
+
 # bun-workspaces
 
-### [**See Full Documentation Here:** _https://bunworkspaces.com_](https://bunworkspaces.com)
+A CLI and API to enhance your monorepo development with Bun's [native workspaces](https://bun.sh/docs/install/workspaces) feature for nested JavaScript/TypeScript packages.
 
-**_New: [An API is now officially released!](https://bunworkspaces.com/api)_**
+- Works right away, with no boilerplate required 🍔🍴
+- Get metadata about your monorepo 🤖
+- Run package.json scripts across workspaces 📋
+- Supports running inline scripts as well ⌨️
 
-This is a CLI and API that help you manage your monorepo on top of native [Bun workspaces](https://bun.sh/docs/install/workspaces), with no additional setup required. Get metadata about your workspaces and scripts, and run scripts across your workspaces.
+This tool lets you decide the complexity of how you use it.
+To get started, all you need is a normal project using [Bun's native workspaces](https://bun.sh/docs/install/workspaces) feature for nested JavaScript/TypeScript packages.
 
+Think of this as a power suit you can snap onto native workspaces, rather than another monorepo framework.
+
+Start running some [CLI commands](https://bunworkspaces.com/cli) right away in your repo, or take full advantage of the [scripting API](https://bunworkspaces.com/api) and its features.
+<br/><br/>
 <a href="https://buymeacoffee.com/scottmorse">
-<img src="./packages/doc-website/src/docs/public/bmac-logo-circle.png" alt="Link to Buy Me A Coffee" width="60" />
+<img src="./packages/doc-website/src/docs/public/bmac-logo-circle.png" alt="Link to Buy Me A Coffee" width="50" />
 </a>
 
 ## Quick Start
@@ -37,7 +47,7 @@ bw list-workspaces
 bw ls --json --pretty # Output as formatted JSON
 
 # Run the lint script for all workspaces
-# that have it in their "scripts" field
+# that have it in their package.json "scripts" field
 bw run-script lint
 
 # run is an alias for run-script
@@ -47,13 +57,14 @@ bw run lint "my-workspace-*" # Run for matching workspace names
 bw run lint --parallel # Run at the same time
 bw run lint --args="--my-appended-args" # Add args to each script call
 bw run lint --args="--my-arg=<workspaceName>" # Use the workspace name in args
-
-# Run an inline command from the workspace directory
-bw run "echo 'this is my inline script for <workspaceName>'" --inline
+bw run "bun build" --inline --inline-name=build # Run an inline command
 
 # Show usage (you can pass --help to any command)
 bw help
 bw --help
+
+# Show version
+bw --version
 
 # Pass --cwd to any command
 bw --cwd=/path/to/your/project ls
@@ -157,4 +168,4 @@ const runManyScripts = async () => {
 };
 ```
 
-_`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Oven. This project aims to enhance enhance the experience of Bun for its users._
+_`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Anthropic. This project aims to enhance enhance the experience of Bun for its users._
