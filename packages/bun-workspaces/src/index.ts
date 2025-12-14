@@ -20,6 +20,8 @@ export {
   type OutputStreamName,
   type PercentageValue,
   type ParallelMaxValue,
+  type ParallelOption,
+  type RunScriptsParallelOptions,
 } from "./project";
 export { type Workspace } from "./workspaces";
 export { type SimpleAsyncIterable } from "./internal/types";

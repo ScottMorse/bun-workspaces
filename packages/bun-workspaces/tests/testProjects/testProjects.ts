@@ -32,6 +32,7 @@ const TEST_PROJECTS = {
   runScriptWithRuntimeMetadataDebug: "forRunScript/withRuntimeMetadataDebug",
   runScriptWithDelaysAndSequenceConfig:
     "forRunScript/withDelaysAndSequenceConfig",
+  runScriptWithDebugParallelMax: "forRunScript/withDebugParallelMax",
   runScriptWithSequenceConfig: "forRunScript/withSequenceConfig",
   runScriptWithSequenceConfigPartial: "forRunScript/withSequenceConfigPartial",
   workspaceConfigPackageOnly: "workspaceConfig/packageOnly",

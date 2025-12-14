@@ -88,7 +88,15 @@ export const runScript = handleCommand(
           : true
         : undefined,
       args: options.args,
-      parallel: !!options.parallel,
+      parallel:
+        typeof options.parallel === "boolean" ||
+        typeof options.parallel === "undefined"
+          ? options.parallel
+          : options.parallel === "true"
+            ? true
+            : options.parallel === "false"
+              ? false
+              : { max: options.parallel },
     });
 
     const scriptName = options.inline

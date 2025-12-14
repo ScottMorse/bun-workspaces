@@ -10,6 +10,7 @@ import {
   runScript,
   runScripts,
   type RunScriptResult,
+  type RunScriptsParallelOptions,
   type RunScriptsResult,
 } from "../runScript";
 import {
@@ -58,6 +59,8 @@ export type RunWorkspaceScriptResult = Simplify<
   RunScriptResult<RunWorkspaceScriptMetadata>
 >;
 
+export type ParallelOption = boolean | RunScriptsParallelOptions;
+
 /** Arguments for `FileSystemProject.runScriptAcrossWorkspaces` */
 export type RunScriptAcrossWorkspacesOptions = {
   /** Workspace names, aliases, or patterns including a wildcard */
@@ -69,7 +72,7 @@ export type RunScriptAcrossWorkspacesOptions = {
   /** The arguments to append to the script command. `<workspaceName>` will be replaced with the workspace name */
   args?: string;
   /** Whether to run the scripts in parallel (series by default) */
-  parallel?: boolean;
+  parallel?: ParallelOption;
 };
 
 /** Result of `FileSystemProject.runScriptAcrossWorkspaces` */
@@ -279,7 +282,7 @@ class _FileSystemProject extends ProjectBase implements Project {
           env: createScriptRuntimeEnvVars(scriptRuntimeMetadata),
         };
       }),
-      parallel: !!options.parallel,
+      parallel: options.parallel ?? false,
     });
   }
 }

@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import { availableParallelism } from "node:os";
 import path from "node:path";
-import { test, expect, describe, afterEach } from "bun:test";
+import { test, expect, describe, afterAll } from "bun:test";
 import { getUserEnvVarName } from "../src/config/userEnvVars";
 import { runScript, runScripts } from "../src/project/runScript";
 
@@ -12,7 +12,7 @@ const originalParallelMaxDefault =
   process.env[getUserEnvVarName("parallelMaxDefault")];
 
 describe("Run Single Script", () => {
-  afterEach(() => {
+  afterAll(() => {
     process.env[getUserEnvVarName("parallelMaxDefault")] =
       originalParallelMaxDefault;
   });
