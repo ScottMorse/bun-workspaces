@@ -1,12 +1,22 @@
 import { randomUUID } from "node:crypto";
 import fs from "node:fs";
+import { availableParallelism } from "node:os";
 import path from "node:path";
-import { test, expect, describe } from "bun:test";
+import { test, expect, describe, afterEach } from "bun:test";
+import { getUserEnvVarName } from "../src/config/userEnvVars";
 import { runScript, runScripts } from "../src/project/runScript";
 
 // Sanity tests for lower level runScript and runScripts functions
 
+const originalParallelMaxDefault =
+  process.env[getUserEnvVarName("parallelMaxDefault")];
+
 describe("Run Single Script", () => {
+  afterEach(() => {
+    process.env[getUserEnvVarName("parallelMaxDefault")] =
+      originalParallelMaxDefault;
+  });
+
   test("Simple success", async () => {
     const result = await runScript({
       scriptCommand: {
@@ -576,4 +586,118 @@ describe("Run Multiple Scripts", () => {
       });
     },
   );
+
+  test.each([3, "auto", "default", "unbounded", "100%", "50%"])(
+    "Run Scripts - confirm parallel max arg types (%p)",
+    async (max) => {
+      const result = await runScripts({
+        parallel: {
+          max,
+        },
+        scripts: [
+          {
+            scriptCommand: {
+              command: "echo $_BW_PARALLEL_MAX",
+              workingDirectory: "",
+            },
+            metadata: {},
+            env: {
+              _BW_PARALLEL_MAX: max.toString(),
+            },
+          },
+        ],
+      });
+
+      for await (const { outputChunk } of result.output) {
+        const envMax = outputChunk.decode().trim();
+        if (typeof max === "number") {
+          expect(envMax).toBe(max.toString());
+        } else if (max === "default") {
+          expect(envMax).toBe(
+            process.env[getUserEnvVarName("parallelMaxDefault")]?.trim() ??
+              availableParallelism().toString(),
+          );
+        } else if (max === "auto") {
+          expect(envMax).toBe(availableParallelism().toString());
+        } else if (max === "unbounded") {
+          expect(envMax).toBe("Infinity");
+        } else if (max === "100%") {
+          expect(envMax).toBe(availableParallelism().toString());
+        } else if (max === "50%") {
+          expect(envMax).toBe(
+            Math.floor(availableParallelism() * 0.5).toString(),
+          );
+        }
+      }
+    },
+  );
+
+  test.each([1, 2, 3])(
+    "Run Scripts - uses default parallel max (%d)",
+    async (max) => {
+      process.env[getUserEnvVarName("parallelMaxDefault")] = max.toString();
+
+      const defaultResult = await runScripts({
+        parallel: true,
+        scripts: [
+          {
+            scriptCommand: {
+              command: "echo $_BW_PARALLEL_MAX",
+              workingDirectory: "",
+            },
+            metadata: {},
+            env: {},
+          },
+        ],
+      });
+
+      for await (const { outputChunk } of defaultResult.output) {
+        expect(outputChunk.decode().trim()).toBe(max.toString());
+      }
+
+      const explicitResult = await runScripts({
+        parallel: {
+          max: "default",
+        },
+        scripts: [
+          {
+            scriptCommand: {
+              command: "echo $_BW_PARALLEL_MAX",
+              workingDirectory: "",
+            },
+            metadata: {},
+            env: {},
+          },
+        ],
+      });
+
+      for await (const { outputChunk } of explicitResult.output) {
+        expect(outputChunk.decode().trim()).toBe(max.toString());
+      }
+    },
+  );
+
+  test("Run Scripts - cyclical default parallel max as 'default' handled as 'auto'", async () => {
+    process.env[getUserEnvVarName("parallelMaxDefault")] = "default";
+
+    const result = await runScripts({
+      parallel: true,
+      scripts: [
+        {
+          scriptCommand: {
+            command: "echo $_BW_PARALLEL_MAX",
+            workingDirectory: "",
+          },
+          metadata: {},
+          env: {},
+        },
+      ],
+    });
+
+    for await (const { outputChunk } of result.output) {
+      expect(outputChunk.decode().trim()).toBe(
+        availableParallelism().toString(),
+      );
+    }
+  });
 });

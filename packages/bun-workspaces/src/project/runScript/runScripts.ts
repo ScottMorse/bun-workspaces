@@ -1,5 +1,4 @@
 import { createAsyncIterableQueue } from "../../internal/asyncIterableQueue";
-import { RUNTIME_MODE } from "../../internal/env";
 import { logger } from "../../internal/logger";
 import type { SimpleAsyncIterable } from "../../internal/types";
 import type { OutputChunk } from "./outputChunk";
@@ -122,7 +121,13 @@ export const runScripts = <ScriptMetadata extends object = object>({
 
     const scriptResult = {
       ...scripts[index],
-      result: runScript(scripts[index]),
+      result: runScript({
+        ...scripts[index],
+        env: {
+          ...scripts[index].env,
+          _BW_PARALLEL_MAX: parallelMax.toString(),
+        },
+      }),
     };
 
     scriptResults[index] = scriptResult;
