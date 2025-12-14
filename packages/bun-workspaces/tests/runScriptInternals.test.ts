@@ -1,3 +1,6 @@
+import { randomUUID } from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
 import { test, expect, describe } from "bun:test";
 import { runScript, runScripts } from "../src/project/runScript";
 
@@ -459,4 +462,118 @@ describe("Run Multiple Scripts", () => {
       ],
     });
   });
+
+  test.each([1, 2, 3, 4, 5])(
+    `Run Scripts - parallel max count %d`,
+    async (max) => {
+      const runId = randomUUID();
+
+      const outputDir = path.join(
+        __dirname,
+        "test-output",
+        "run-script-internals-parallel-max",
+        runId,
+      );
+      if (fs.existsSync(outputDir)) {
+        fs.rmSync(outputDir, { recursive: true });
+      }
+      fs.mkdirSync(outputDir, { recursive: true });
+
+      const getRunningFile = (scriptName: string) =>
+        path.join(outputDir, `${scriptName}.txt`);
+
+      const getRandomSleepTime = () => Math.random() + 0.25;
+
+      const createScript = (scriptName: string) => ({
+        metadata: { name: scriptName },
+        scriptCommand: {
+          command: `echo 'test-script ${scriptName}' > ${getRunningFile(scriptName)} && ls ${outputDir} | wc -l && sleep ${getRandomSleepTime()} && rm ${getRunningFile(scriptName)}`,
+          workingDirectory: "",
+        },
+        env: {},
+      });
+
+      const result = await runScripts({
+        parallel: {
+          max,
+        },
+        scripts: [
+          createScript("test-script-1"),
+          createScript("test-script-2"),
+          createScript("test-script-3"),
+          createScript("test-script-4"),
+          createScript("test-script-5"),
+        ],
+      });
+
+      let didMaxRun = false;
+      for await (const { outputChunk } of result.output) {
+        const count = parseInt(outputChunk.decode().trim());
+        if (count === max) {
+          didMaxRun = true;
+        }
+        expect(count).toBeLessThanOrEqual(max);
+      }
+
+      expect(didMaxRun).toBe(true);
+
+      const summary = await result.summary;
+      expect(summary).toEqual({
+        totalCount: 5,
+        allSuccess: true,
+        failureCount: 0,
+        successCount: 5,
+        startTimeISO: expect.any(String),
+        endTimeISO: expect.any(String),
+        durationMs: expect.any(Number),
+        scriptResults: [
+          {
+            exitCode: 0,
+            success: true,
+            startTimeISO: expect.any(String),
+            endTimeISO: expect.any(String),
+            durationMs: expect.any(Number),
+            signal: null,
+            metadata: { name: "test-script-1" },
+          },
+          {
+            exitCode: 0,
+            success: true,
+            startTimeISO: expect.any(String),
+            endTimeISO: expect.any(String),
+            durationMs: expect.any(Number),
+            signal: null,
+            metadata: { name: "test-script-2" },
+          },
+          {
+            exitCode: 0,
+            success: true,
+            startTimeISO: expect.any(String),
+            endTimeISO: expect.any(String),
+            durationMs: expect.any(Number),
+            signal: null,
+            metadata: { name: "test-script-3" },
+          },
+          {
+            exitCode: 0,
+            success: true,
+            startTimeISO: expect.any(String),
+            endTimeISO: expect.any(String),
+            durationMs: expect.any(Number),
+            signal: null,
+            metadata: { name: "test-script-4" },
+          },
+          {
+            exitCode: 0,
+            success: true,
+            startTimeISO: expect.any(String),
+            endTimeISO: expect.any(String),
+            durationMs: expect.any(Number),
+            signal: null,
+            metadata: { name: "test-script-5" },
+          },
+        ],
+      });
+    },
+  );
 });
