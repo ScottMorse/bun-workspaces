@@ -11,12 +11,12 @@ import { runScript, runScripts } from "../src/project/runScript";
 const originalParallelMaxDefault =
   process.env[getUserEnvVarName("parallelMaxDefault")];
 
-describe("Run Single Script", () => {
-  afterAll(() => {
-    process.env[getUserEnvVarName("parallelMaxDefault")] =
-      originalParallelMaxDefault;
-  });
+afterAll(() => {
+  process.env[getUserEnvVarName("parallelMaxDefault")] =
+    originalParallelMaxDefault;
+});
 
+describe("Run Single Script", () => {
   test("Simple success", async () => {
     const result = await runScript({
       scriptCommand: {
