@@ -235,3 +235,47 @@ const runManyScripts = async () => {
   ${RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE.split("\n").join("\n  ")}
 }
 `.trim();
+
+export const API_PARALLEL_SCRIPTS_EXAMPLE = `
+// Run in parallel with the default limit ("auto" or value of BW_PARALLEL_MAX env var)
+project.runScriptAcrossWorkspaces({
+  workspacePatterns: ["*"],
+  script: "my-script",
+  parallel: true,
+});
+
+// Same result as above
+project.runScriptAcrossWorkspaces({
+  workspacePatterns: ["*"],
+  script: "my-script",
+  parallel: { max: "default" },
+});
+
+// Run in parallel with the number of available CPUs
+project.runScriptAcrossWorkspaces({
+  workspacePatterns: ["*"],
+  script: "my-script",
+  parallel: { max: "auto" },
+});
+
+// Run in parallel with a max of 50% of the available CPUs
+project.runScriptAcrossWorkspaces({
+  workspacePatterns: ["*"],
+  script: "my-script",
+  parallel: { max: "50%" },
+});
+
+// Run in parallel with no concurrency limit (use with caution)
+project.runScriptAcrossWorkspaces({
+  workspacePatterns: ["*"],
+  script: "my-script",
+  parallel: { max: "unbounded" },
+});
+
+// Run in parallel with a max of 2 concurrent scripts
+project.runScriptAcrossWorkspaces({
+  workspacePatterns: ["*"],
+  script: "my-script",
+  parallel: { max: 2 },
+});
+`.trim();

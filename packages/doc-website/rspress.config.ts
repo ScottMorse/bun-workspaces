@@ -246,6 +246,10 @@ export default defineConfig({
             link: "/concepts/workspace-aliases",
           },
           {
+            text: "Parallel Scripts",
+            link: "/concepts/parallel-scripts",
+          },
+          {
             text: "Script Runtime Metadata",
             link: "/concepts/script-runtime-metadata",
           },

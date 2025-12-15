@@ -15,13 +15,13 @@ export type CliProjectCommandContent = Omit<
 
 const defineOptionContent = (
   optionName: CliProjectCommandName,
-  factory: (optionConfig: CliProjectCommandConfig) => CliOptionContent,
+  factory: (optionConfig: CliProjectCommandConfig) => CliOptionContent
 ): CliProjectCommandContent => {
   const config = getProjectCommandConfig(optionName);
   const content = factory(config);
 
   const exampleLines = content.examples.filter(
-    (example) => example.trim() && !example.match(/^\s*#/),
+    (example) => example.trim() && !example.match(/^\s*#/)
   );
 
   const getMainFlag = (flag: string) => {
@@ -33,7 +33,7 @@ const defineOptionContent = (
       !exampleLines.find((line) => line.includes(getMainFlag(option.flags)))
     ) {
       throw new Error(
-        `Expected an example to include ${getMainFlag(option.flags)}`,
+        `Expected an example to include ${getMainFlag(option.flags)}`
       );
     }
   }
@@ -42,7 +42,7 @@ const defineOptionContent = (
     !exampleLines.find((line) => {
       // line that uses no flags
       return Object.values(config.options).every(
-        (option) => !line.includes(getMainFlag(option.flags)),
+        (option) => !line.includes(getMainFlag(option.flags))
       );
     })
   ) {
@@ -134,6 +134,15 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
       "# Run a scripts in parallel (logs are prefixed with the workspace name by default)",
       `bw run my-script --parallel`,
       "",
+      "# Run a scripts in parallel with a max of 2 concurrent scripts",
+      `bw run my-script --parallel=2`,
+      "",
+      "# Run a scripts in parallel with a max of 50% of the available CPUs",
+      `bw run my-script --parallel=50%`,
+      "",
+      "# Run a scripts in parallel with no concurrency limit (use with caution)",
+      `bw run my-script --parallel=unbounded`,
+      "",
       "# Disable the workspace name prefix in the script output",
       `bw run my-script --no-prefix`,
       "",
@@ -166,7 +175,7 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
 } as const satisfies Record<CliProjectCommandName, CliProjectCommandContent>;
 
 export const getCliProjectCommandContent = (
-  commandName: CliProjectCommandName,
+  commandName: CliProjectCommandName
 ) => CLI_PROJECT_COMMAND_OPTIONS_CONTENT[commandName];
 
 export const getCliProjectCommandsContent = () =>
