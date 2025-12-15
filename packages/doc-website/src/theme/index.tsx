@@ -27,11 +27,7 @@ const HomeLink = () => {
   );
 };
 
-const Layout = () => {
-  useEffect(() => {}, []);
-
-  <Theme.Layout navTitle={<HomeLink />} />;
-};
+const Layout = () => <Theme.Layout navTitle={<HomeLink />} />;
 
 export default {
   ...Theme,
