@@ -247,7 +247,7 @@ li {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   max-width: 100vw;
   overflow-x: auto;
 }
