@@ -1,0 +1,6 @@
+{
+  "name": "parallel-max-e",
+  "scripts": {
+    "test": "echo 'parallel-max-e start' && sleep 0.1 && echo 'parallel-max-e end'"
+  }
+}
