@@ -24,7 +24,7 @@ export const RUNTIME_MODE = RUNTIME_MODE_VALUES.includes(_RUNTIME_MODE)
 if (RUNTIME_MODE !== _RUNTIME_MODE) {
   // eslint-disable-next-line no-console
   console.error(
-    `Env var RUNTIME_MODE has an invalid value: "${_RUNTIME_MODE}". Defaulting to "${RUNTIME_MODE}". Accepted values: ${RUNTIME_MODE_VALUES.join(", ")}.`,
+    `Env var _BW_RUNTIME_MODE has an invalid value: "${_RUNTIME_MODE}". Defaulting to "${RUNTIME_MODE}". Accepted values: ${RUNTIME_MODE_VALUES.join(", ")}.`,
   );
 }
 

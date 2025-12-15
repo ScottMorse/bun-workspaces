@@ -1,6 +1,8 @@
 import fs from "fs";
+import { availableParallelism } from "os";
 import path from "path";
 import { test, expect, describe, beforeAll } from "bun:test";
+import { getUserEnvVar } from "../src/config/userEnvVars";
 import { getProjectRoot, type TestProjectName } from "./testProjects";
 import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
 
@@ -693,6 +695,53 @@ this is my inline script for library-1b test-args-library-1b
     );
   });
 
+  test.each([1, 2, 3, "default", "auto", "unbounded", "100%", "50%"])(
+    "runScriptAcrossWorkspaces: parallel with max (%p)",
+    async (max) => {
+      const { run } = setupCliTest({
+        testProject: "runScriptWithDebugParallelMax",
+      });
+      const { stdout } = await run(
+        "run-script",
+        "test-debug",
+        "--parallel",
+        max.toString(),
+      );
+
+      const createOutput = (max: number | string) => `[a:test-debug] ${max}`;
+
+      if (typeof max === "number") {
+        expect(stdout.sanitizedCompactLines).toStartWith(createOutput(max));
+      } else if (max === "default") {
+        expect(stdout.sanitizedCompactLines).toStartWith(
+          createOutput(
+            getUserEnvVar("parallelMaxDefault")?.trim() ??
+              availableParallelism().toString(),
+          ),
+        );
+      } else if (max === "auto") {
+        expect(stdout.sanitizedCompactLines).toStartWith(
+          createOutput(availableParallelism().toString()),
+        );
+      } else if (max === "unbounded") {
+        expect(stdout.sanitizedCompactLines).toStartWith(
+          createOutput("Infinity"),
+        );
+      } else if (max.endsWith("%")) {
+        expect(stdout.sanitizedCompactLines).toStartWith(
+          createOutput(
+            Math.max(
+              1,
+              Math.floor(
+                (availableParallelism() * parseFloat(max.slice(0, -1))) / 100,
+              ),
+            ).toString(),
+          ),
+        );
+      }
+    },
+  );
+
   test("JSON output file - all success", async () => {
     const { json: jsonOutput1 } = await runAndGetJsonOutput(
       "simple1",
@@ -857,8 +906,8 @@ this is my inline script for library-1b test-args-library-1b
       "simple1",
       "test-simple3.json",
       "b-workspaces",
-      "--parallel",
       "library*",
+      "--parallel",
     );
     expect(jsonOutput3).toEqual({
       totalCount: 1,

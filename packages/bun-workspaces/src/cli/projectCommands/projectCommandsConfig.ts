@@ -87,8 +87,9 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
       'Run a script in all workspaces that have it in their "scripts" field in package.json',
     options: {
       parallel: {
-        flags: "--parallel",
-        description: "Run the scripts in parallel",
+        flags: "--parallel [max]",
+        description:
+          "Run the scripts in parallel. Pass an optional number, percentage, or keyword: 'default', 'auto', 'unbounded'",
       },
       args: {
         flags: "--args <args>",

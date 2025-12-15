@@ -1,6 +1,8 @@
 import { createAsyncIterableQueue } from "../../internal/asyncIterableQueue";
+import { logger } from "../../internal/logger";
 import type { SimpleAsyncIterable } from "../../internal/types";
 import type { OutputChunk } from "./outputChunk";
+import { determineParallelMax, type ParallelMaxValue } from "./parallel";
 import {
   runScript,
   type RunScriptExit,
@@ -44,9 +46,13 @@ export type RunScriptsResult<ScriptMetadata extends object = object> = {
   summary: Promise<RunScriptsSummary<ScriptMetadata>>;
 };
 
+export type RunScriptsParallelOptions = {
+  max: ParallelMaxValue;
+};
+
 export type RunScriptsOptions<ScriptMetadata extends object = object> = {
   scripts: RunScriptsScript<ScriptMetadata>[];
-  parallel: boolean;
+  parallel: boolean | RunScriptsParallelOptions;
 };
 
 /** Run a list of scripts */
@@ -56,25 +62,28 @@ export const runScripts = <ScriptMetadata extends object = object>({
 }: RunScriptsOptions<ScriptMetadata>): RunScriptsResult<ScriptMetadata> => {
   const startTime = new Date();
 
-  type ScriptStartTrigger = {
-    promise: Promise<ScriptStartTrigger>;
+  type ScriptTrigger = {
+    promise: Promise<ScriptTrigger>;
     trigger: () => void;
     index: number;
   };
 
-  const scriptStartTriggers: ScriptStartTrigger[] = scripts.map((_, index) => {
+  const scriptTriggers: ScriptTrigger[] = scripts.map((_, index) => {
     let trigger: () => void = () => {
       void 0;
     };
 
-    let result = {} as ScriptStartTrigger;
-    const promise = new Promise<ScriptStartTrigger>((res) => {
+    const promise = new Promise<ScriptTrigger>((res) => {
       trigger = () => res(result);
     });
 
-    result = { promise, trigger, index };
+    const result: ScriptTrigger = {
+      promise,
+      trigger,
+      index,
+    };
 
-    return { promise, trigger, index };
+    return result;
   });
 
   const outputQueue =
@@ -84,31 +93,73 @@ export const runScripts = <ScriptMetadata extends object = object>({
     () => null as never as RunScriptsScriptResult<ScriptMetadata>,
   );
 
-  function triggerScript(index: number) {
+  const parallelMax =
+    parallel === false
+      ? 1
+      : determineParallelMax(
+          typeof parallel === "boolean" ? "default" : parallel.max,
+        );
+
+  const parallelBatchSize = Math.min(parallelMax, scripts.length);
+  const recommendedParallelMax = determineParallelMax("auto");
+  if (
+    parallel &&
+    parallelBatchSize > recommendedParallelMax &&
+    process.env._BW_IS_INTERNAL_TEST !== "true"
+  ) {
+    logger.warn(
+      `Number of scripts to run in parallel (${parallelBatchSize}) is greater than the available CPUs (${recommendedParallelMax})`,
+    );
+  }
+
+  let runningScriptCount = 0;
+  let nextScriptIndex = 0;
+  const queueScript = (index: number) => {
+    if (runningScriptCount >= parallelMax) {
+      return;
+    }
+
     const scriptResult = {
       ...scripts[index],
-      result: runScript(scripts[index]),
+      result: runScript({
+        ...scripts[index],
+        env: {
+          ...scripts[index].env,
+          _BW_PARALLEL_MAX: parallelMax.toString(),
+        },
+      }),
     };
 
     scriptResults[index] = scriptResult;
 
-    scriptStartTriggers[index].trigger();
+    scriptTriggers[index].trigger();
+
+    runningScriptCount++;
+    nextScriptIndex++;
+
+    scriptResults[index].result.exit.then(() => {
+      runningScriptCount--;
+      if (nextScriptIndex < scripts.length) {
+        queueScript(nextScriptIndex);
+      }
+    });
 
     return scriptResult;
-  }
+  };
 
-  const awaitScriptResults = async () => {
+  const handleScriptProcesses = async () => {
     const outputReaders: Promise<void>[] = [];
+    const scriptExits: Promise<void>[] = [];
 
     let pendingScriptCount = scripts.length;
     while (pendingScriptCount > 0) {
       const { index } = await Promise.race(
-        scriptStartTriggers.map((trigger) => trigger.promise),
+        scriptTriggers.map((trigger) => trigger.promise),
       );
 
       pendingScriptCount--;
 
-      scriptStartTriggers[index].promise = new Promise<never>(() => {
+      scriptTriggers[index].promise = new Promise<never>(() => {
         void 0;
       });
 
@@ -125,19 +176,14 @@ export const runScripts = <ScriptMetadata extends object = object>({
     }
 
     await Promise.all(outputReaders);
+    await Promise.all(scriptExits);
     outputQueue.close();
   };
 
   const awaitSummary = async () => {
-    if (parallel) {
-      await Promise.all(
-        scripts.map((_, index) => triggerScript(index).result.exit),
-      );
-    } else {
-      for (let index = 0; index < scripts.length; index++) {
-        await triggerScript(index).result.exit;
-      }
-    }
+    scripts.forEach((_, index) => queueScript(index));
+
+    await handleScriptProcesses();
 
     const scriptExitResults = await Promise.all(
       scripts.map((_, index) => scriptResults[index].result.exit),
@@ -156,8 +202,6 @@ export const runScripts = <ScriptMetadata extends object = object>({
       scriptResults: scriptExitResults,
     };
   };
-
-  awaitScriptResults();
 
   return {
     output: outputQueue,

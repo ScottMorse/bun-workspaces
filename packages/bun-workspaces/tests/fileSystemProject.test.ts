@@ -1,4 +1,6 @@
+import { availableParallelism } from "node:os";
 import { expect, test, describe } from "bun:test";
+import { getUserEnvVar } from "../src/config/userEnvVars";
 import { createFileSystemProject, PROJECT_ERRORS } from "../src/project";
 import { getProjectRoot } from "./testProjects";
 
@@ -1166,4 +1168,44 @@ test-script-metadata-env-b
       ],
     });
   });
+
+  test.each([1, 2, 3, "default", "auto", "unbounded", "100%", "50%"])(
+    "runScriptAcrossWorkspaces: parallel with max (%p)",
+    async (max) => {
+      const project = createFileSystemProject({
+        rootDirectory: getProjectRoot("runScriptWithDebugParallelMax"),
+      });
+
+      const { output } = project.runScriptAcrossWorkspaces({
+        workspacePatterns: ["*"],
+        script: "test-debug",
+        parallel: { max },
+      });
+
+      for await (const { outputChunk } of output) {
+        const maxValue = outputChunk.decode().trim();
+        if (typeof max === "number") {
+          expect(maxValue).toBe(max.toString());
+        } else if (max === "default") {
+          expect(maxValue).toBe(
+            getUserEnvVar("parallelMaxDefault")?.trim() ??
+              availableParallelism().toString(),
+          );
+        } else if (max === "auto") {
+          expect(maxValue).toBe(availableParallelism().toString());
+        } else if (max === "unbounded") {
+          expect(maxValue).toBe("Infinity");
+        } else if (max.endsWith("%")) {
+          expect(maxValue).toBe(
+            Math.max(
+              1,
+              Math.floor(
+                (availableParallelism() * parseFloat(max.slice(0, -1))) / 100,
+              ),
+            ).toString(),
+          );
+        }
+      }
+    },
+  );
 });

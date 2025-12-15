@@ -35,3 +35,5 @@ export default {
 };
 
 export * from "rspress/theme";
+
+console.log("bun-workspaces Documentation:", process.env.BUILD_ID);

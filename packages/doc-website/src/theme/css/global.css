@@ -247,7 +247,7 @@ li {
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   max-width: 100vw;
   overflow-x: auto;
 }
@@ -290,5 +290,5 @@ li {
 }
 
 .nav-title-container img {
-  margin-top: -0.25rem;
+  margin-top: -0.1rem;
 }

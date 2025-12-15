@@ -1,7 +1,20 @@
-import { test, expect, describe } from "bun:test";
+import { randomUUID } from "node:crypto";
+import fs from "node:fs";
+import { availableParallelism } from "node:os";
+import path from "node:path";
+import { test, expect, describe, afterAll } from "bun:test";
+import { getUserEnvVarName } from "../src/config/userEnvVars";
 import { runScript, runScripts } from "../src/project/runScript";
 
 // Sanity tests for lower level runScript and runScripts functions
+
+const originalParallelMaxDefault =
+  process.env[getUserEnvVarName("parallelMaxDefault")];
+
+afterAll(() => {
+  process.env[getUserEnvVarName("parallelMaxDefault")] =
+    originalParallelMaxDefault;
+});
 
 describe("Run Single Script", () => {
   test("Simple success", async () => {
@@ -458,5 +471,233 @@ describe("Run Multiple Scripts", () => {
         },
       ],
     });
+  });
+
+  test.each([1, 2, 3, 4, 5])(
+    `Run Scripts - parallel max count %d`,
+    async (max) => {
+      const runId = randomUUID();
+
+      const outputDir = path.join(
+        __dirname,
+        "test-output",
+        "run-script-internals-parallel-max",
+        runId,
+      );
+      if (fs.existsSync(outputDir)) {
+        fs.rmSync(outputDir, { recursive: true });
+      }
+      fs.mkdirSync(outputDir, { recursive: true });
+
+      const getRunningFile = (scriptName: string) =>
+        path.join(outputDir, `${scriptName}.txt`);
+
+      const getRandomSleepTime = () => Math.random() + 0.25;
+
+      const createScript = (scriptName: string) => ({
+        metadata: { name: scriptName },
+        scriptCommand: {
+          command: `echo 'test-script ${scriptName}' > ${getRunningFile(scriptName)} && ls ${outputDir} | wc -l && sleep ${getRandomSleepTime()} && rm ${getRunningFile(scriptName)}`,
+          workingDirectory: "",
+        },
+        env: {},
+      });
+
+      const result = await runScripts({
+        parallel: {
+          max,
+        },
+        scripts: [
+          createScript("test-script-1"),
+          createScript("test-script-2"),
+          createScript("test-script-3"),
+          createScript("test-script-4"),
+          createScript("test-script-5"),
+        ],
+      });
+
+      let didMaxRun = false;
+      for await (const { outputChunk } of result.output) {
+        const count = parseInt(outputChunk.decode().trim());
+        if (count === max) {
+          didMaxRun = true;
+        }
+        expect(count).toBeLessThanOrEqual(max);
+      }
+
+      expect(didMaxRun).toBe(true);
+
+      const summary = await result.summary;
+      expect(summary).toEqual({
+        totalCount: 5,
+        allSuccess: true,
+        failureCount: 0,
+        successCount: 5,
+        startTimeISO: expect.any(String),
+        endTimeISO: expect.any(String),
+        durationMs: expect.any(Number),
+        scriptResults: [
+          {
+            exitCode: 0,
+            success: true,
+            startTimeISO: expect.any(String),
+            endTimeISO: expect.any(String),
+            durationMs: expect.any(Number),
+            signal: null,
+            metadata: { name: "test-script-1" },
+          },
+          {
+            exitCode: 0,
+            success: true,
+            startTimeISO: expect.any(String),
+            endTimeISO: expect.any(String),
+            durationMs: expect.any(Number),
+            signal: null,
+            metadata: { name: "test-script-2" },
+          },
+          {
+            exitCode: 0,
+            success: true,
+            startTimeISO: expect.any(String),
+            endTimeISO: expect.any(String),
+            durationMs: expect.any(Number),
+            signal: null,
+            metadata: { name: "test-script-3" },
+          },
+          {
+            exitCode: 0,
+            success: true,
+            startTimeISO: expect.any(String),
+            endTimeISO: expect.any(String),
+            durationMs: expect.any(Number),
+            signal: null,
+            metadata: { name: "test-script-4" },
+          },
+          {
+            exitCode: 0,
+            success: true,
+            startTimeISO: expect.any(String),
+            endTimeISO: expect.any(String),
+            durationMs: expect.any(Number),
+            signal: null,
+            metadata: { name: "test-script-5" },
+          },
+        ],
+      });
+    },
+  );
+
+  test.each([3, "auto", "default", "unbounded", "100%", "50%"])(
+    "Run Scripts - confirm parallel max arg types (%p)",
+    async (max) => {
+      const result = await runScripts({
+        parallel: {
+          max,
+        },
+        scripts: [
+          {
+            scriptCommand: {
+              command: "echo $_BW_PARALLEL_MAX",
+              workingDirectory: "",
+            },
+            metadata: {},
+            env: {
+              _BW_PARALLEL_MAX: max.toString(),
+            },
+          },
+        ],
+      });
+
+      for await (const { outputChunk } of result.output) {
+        const envMax = outputChunk.decode().trim();
+        if (typeof max === "number") {
+          expect(envMax).toBe(max.toString());
+        } else if (max === "default") {
+          expect(envMax).toBe(
+            process.env[getUserEnvVarName("parallelMaxDefault")]?.trim() ??
+              availableParallelism().toString(),
+          );
+        } else if (max === "auto") {
+          expect(envMax).toBe(availableParallelism().toString());
+        } else if (max === "unbounded") {
+          expect(envMax).toBe("Infinity");
+        } else if (max === "100%") {
+          expect(envMax).toBe(availableParallelism().toString());
+        } else if (max === "50%") {
+          expect(envMax).toBe(
+            Math.floor(availableParallelism() * 0.5).toString(),
+          );
+        }
+      }
+    },
+  );
+
+  test.each([1, 2, 3])(
+    "Run Scripts - uses default parallel max (%d)",
+    async (max) => {
+      process.env[getUserEnvVarName("parallelMaxDefault")] = max.toString();
+
+      const defaultResult = await runScripts({
+        parallel: true,
+        scripts: [
+          {
+            scriptCommand: {
+              command: "echo $_BW_PARALLEL_MAX",
+              workingDirectory: "",
+            },
+            metadata: {},
+            env: {},
+          },
+        ],
+      });
+
+      for await (const { outputChunk } of defaultResult.output) {
+        expect(outputChunk.decode().trim()).toBe(max.toString());
+      }
+
+      const explicitResult = await runScripts({
+        parallel: {
+          max: "default",
+        },
+        scripts: [
+          {
+            scriptCommand: {
+              command: "echo $_BW_PARALLEL_MAX",
+              workingDirectory: "",
+            },
+            metadata: {},
+            env: {},
+          },
+        ],
+      });
+
+      for await (const { outputChunk } of explicitResult.output) {
+        expect(outputChunk.decode().trim()).toBe(max.toString());
+      }
+    },
+  );
+
+  test("Run Scripts - cyclical default parallel max as 'default' handled as 'auto'", async () => {
+    process.env[getUserEnvVarName("parallelMaxDefault")] = "default";
+
+    const result = await runScripts({
+      parallel: true,
+      scripts: [
+        {
+          scriptCommand: {
+            command: "echo $_BW_PARALLEL_MAX",
+            workingDirectory: "",
+          },
+          metadata: {},
+          env: {},
+        },
+      ],
+    });
+
+    for await (const { outputChunk } of result.output) {
+      expect(outputChunk.decode().trim()).toBe(
+        availableParallelism().toString(),
+      );
+    }
   });
 });
