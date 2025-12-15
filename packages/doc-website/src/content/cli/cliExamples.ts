@@ -1,3 +1,5 @@
+import { getUserEnvVarName } from "bun-workspaces/src/config/userEnvVars";
+
 export const CLI_QUICKSTART = `
 # List all workspaces in your project
 bw list-workspaces
@@ -45,19 +47,19 @@ bw run "bun run build" --inline
 `.trim();
 
 export const CLI_PARALLEL_SCRIPTS_EXAMPLE = `
-# Run in parallel (default is "auto" or value of BW_PARALLEL_MAX env var)
+# Run in parallel (default is "auto" or value of ${getUserEnvVarName("parallelMaxDefault")} env var)
 bw run my-script --parallel
 
 # Same as the above command
 bw run my-script --parallel=default
 
-# Run in parallel with a max of the available CPUs
+# Run in parallel with a max of the available logical CPUs
 bw run my-script --parallel=auto
 
 # Run in parallel with a max of 2 concurrent scripts
 bw run my-script --parallel=2
 
-# Run in parallel with a max of 50% of the available CPUs
+# Run in parallel with a max of 50% of the available logical CPUs
 bw run my-script --parallel=50%
 
 # Run every script in parallel (use with caution)

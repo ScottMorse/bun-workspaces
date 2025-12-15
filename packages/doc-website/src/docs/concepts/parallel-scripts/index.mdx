@@ -28,18 +28,19 @@ to the parallel max option.
 
 * A plain number sets the limit to the exact number of concurrent scripts. Setting the max to `2` then only allows two scripts to run at the same time.
 
-* A value of `"auto"` (default value) sets the limit to the number of available CPUs, derived from [`os.availableParallelism()`](https://bun.com/reference/node/os/availableParallelism).
+* A value of `"auto"` sets the limit to [`os.availableParallelism()`](https://bun.com/reference/node/os/availableParallelism), which generally corresponds to the number of available logical CPUs.
 
 * A value of `"unbounded"` allows all scripts to run in parallel, but use this with caution, as it can overwhelm a machine and cause instability.
 
-* A percentage value sets the limit to the percentage of the available CPUs. Setting the max to `50%` then sets the limit to half of the available CPUs.
+* A percentage value sets the limit to the percentage of [`os.availableParallelism()`](https://bun.com/reference/node/os/availableParallelism). Setting the max to `50%` then sets the limit to roughly half of the available logical CPUs. Note that the limit is floored to the nearest integer.
 
 #### Default Limit
 
-A value of `"default"` explicitly references the default limit, which is equal to `"auto"`.
+A value of `"default"` explicitly references the default limit.
 
-You can override the default with the environment variable <code>{getUserEnvVarName("parallelMaxDefault")}</code>,
-which can be set to any of the valid values listed here.
+When the environment variable <code>{getUserEnvVarName("parallelMaxDefault")}</code> is not set, it is equal to `"auto"`.
+
+You can set <code>{getUserEnvVarName("parallelMaxDefault")}</code> to any of the valid values listed above.
 
 ## Examples
 

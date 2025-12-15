@@ -1,3 +1,5 @@
+import { getUserEnvVarName } from "bun-workspaces/src/config/userEnvVars";
+
 export const CREATE_FS_PROJECT_EXAMPLE = `
 import { createFileSystemProject } from "bun-workspaces";
 
@@ -237,7 +239,8 @@ const runManyScripts = async () => {
 `.trim();
 
 export const API_PARALLEL_SCRIPTS_EXAMPLE = `
-// Run in parallel with the default limit ("auto" or value of BW_PARALLEL_MAX env var)
+// Run in parallel with the default limit 
+// Equal to "auto" or value of process.env.${getUserEnvVarName("parallelMaxDefault")}
 project.runScriptAcrossWorkspaces({
   workspacePatterns: ["*"],
   script: "my-script",
@@ -251,14 +254,14 @@ project.runScriptAcrossWorkspaces({
   parallel: { max: "default" },
 });
 
-// Run in parallel with the number of available CPUs
+// Run in parallel with the number of available logical CPUs
 project.runScriptAcrossWorkspaces({
   workspacePatterns: ["*"],
   script: "my-script",
   parallel: { max: "auto" },
 });
 
-// Run in parallel with a max of 50% of the available CPUs
+// Run in parallel with a max of 50% of the available logical CPUs
 project.runScriptAcrossWorkspaces({
   workspacePatterns: ["*"],
   script: "my-script",
