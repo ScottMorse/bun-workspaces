@@ -27,7 +27,11 @@ const HomeLink = () => {
   );
 };
 
-const Layout = () => <Theme.Layout navTitle={<HomeLink />} />;
+const Layout = () => {
+  useEffect(() => {}, []);
+
+  <Theme.Layout navTitle={<HomeLink />} />;
+};
 
 export default {
   ...Theme,
@@ -36,6 +40,4 @@ export default {
 
 export * from "rspress/theme";
 
-console.log(
-  `bun-workspaces Documentation: ${process.env.BUILD_ID ?? "(no build ID)"}`
-);
+console.log("bun-workspaces Documentation:", process.env.BUILD_ID);

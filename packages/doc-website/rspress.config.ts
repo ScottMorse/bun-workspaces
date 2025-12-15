@@ -88,7 +88,12 @@ export default defineConfig({
       cleanDistPath: true,
     },
     source: {
-      define: { "process.env.YEAR": JSON.stringify(new Date().getFullYear()) },
+      define: {
+        "process.env.YEAR": JSON.stringify(new Date().getFullYear()),
+        "process.env.BUILD_ID": JSON.stringify(
+          process.env.BUILD_ID ?? "(no build ID)",
+        ),
+      },
     },
     html: {
       tags: [
