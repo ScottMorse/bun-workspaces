@@ -33,21 +33,28 @@ export const CliCommandDoc = ({
         ""
       )}
       <p style={{ marginBottom: "0" }}>{content.description}</p>
+
       {Object.values(content.options)?.length ? (
         <div style={{ marginTop: "1rem" }}>
           <h5>
             <em>Options:</em>
           </h5>
-          <div style={{ marginTop: "0.25rem", marginBottom: "0.75rem" }}>
+          <div className="cli-command-options-container">
             {Object.values(content.options).map((option) => (
               <div
                 key={
-                  "cli-command-option-" + content.command + "-" + option.flags
+                  "cli-command-option-" +
+                  content.command +
+                  "-" +
+                  option.flags.join(", ")
                 }
               >
-                <p style={{ margin: "0" }}>
-                  <code>{option.flags}</code> {option.description}
-                </p>
+                <div className="cli-command-option-flags">
+                  <p>
+                    <code>{option.flags.join(" | ")}</code>
+                  </p>
+                  <p>{option.description}</p>
+                </div>
               </div>
             ))}
           </div>

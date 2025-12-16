@@ -51,7 +51,7 @@ export const handleCommand = <T extends unknown[]>(
       .aliases(config.aliases)
       .description(config.description);
     for (const option of Object.values(config.options)) {
-      program.option(option.flags, option.description);
+      program.option(option.flags.join(", "), option.description);
     }
     if (!projectError) {
       program = program.action((...actionArgs) =>
