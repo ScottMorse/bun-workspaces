@@ -92,6 +92,14 @@ library-1b`,
       expect(jsonResult.exitCode).toBe(0);
       assertOutputMatches(jsonResult.stdout.raw, JSON.stringify(expectedJson));
 
+      const jsonShortResult = await run(command, "-j");
+      expect(jsonShortResult.stderr.raw).toBeEmpty();
+      expect(jsonShortResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonShortResult.stdout.raw,
+        JSON.stringify(expectedJson),
+      );
+
       const jsonPrettyResult = await run(command, "--json", "--pretty");
       expect(jsonPrettyResult.stderr.raw).toBeEmpty();
       expect(jsonPrettyResult.exitCode).toBe(0);
@@ -100,11 +108,27 @@ library-1b`,
         JSON.stringify(expectedJson, null, 2),
       );
 
+      const jsonPrettyShortResult = await run(command, "-j", "--pretty");
+      expect(jsonPrettyShortResult.stderr.raw).toBeEmpty();
+      expect(jsonPrettyShortResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonPrettyShortResult.stdout.raw,
+        JSON.stringify(expectedJson, null, 2),
+      );
+
       const jsonNameOnlyResult = await run(command, "--name-only", "--json");
       expect(jsonNameOnlyResult.stderr.raw).toBeEmpty();
       expect(jsonNameOnlyResult.exitCode).toBe(0);
       assertOutputMatches(
         jsonNameOnlyResult.stdout.raw,
+        JSON.stringify(expectedJson.map(({ name }) => name)),
+      );
+
+      const jsonNameOnlyShortResult = await run(command, "-n", "--json");
+      expect(jsonNameOnlyShortResult.stderr.raw).toBeEmpty();
+      expect(jsonNameOnlyShortResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonNameOnlyShortResult.stdout.raw,
         JSON.stringify(expectedJson.map(({ name }) => name)),
       );
 
@@ -247,6 +271,14 @@ Script: library-b
       expect(jsonResult.exitCode).toBe(0);
       assertOutputMatches(jsonResult.stdout.raw, JSON.stringify(expectedJson));
 
+      const jsonShortResult = await run(command, "-j");
+      expect(jsonShortResult.stderr.raw).toBeEmpty();
+      expect(jsonShortResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonShortResult.stdout.raw,
+        JSON.stringify(expectedJson),
+      );
+
       const jsonPrettyResult = await run(command, "--json", "--pretty");
       expect(jsonPrettyResult.stderr.raw).toBeEmpty();
       expect(jsonPrettyResult.exitCode).toBe(0);
@@ -255,11 +287,27 @@ Script: library-b
         JSON.stringify(expectedJson, null, 2),
       );
 
+      const jsonPrettyShortResult = await run(command, "-j", "-p");
+      expect(jsonPrettyShortResult.stderr.raw).toBeEmpty();
+      expect(jsonPrettyShortResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonPrettyShortResult.stdout.raw,
+        JSON.stringify(expectedJson, null, 2),
+      );
+
       const jsonNameOnlyResult = await run(command, "--name-only", "--json");
       expect(jsonNameOnlyResult.stderr.raw).toBeEmpty();
       expect(jsonNameOnlyResult.exitCode).toBe(0);
       assertOutputMatches(
         jsonNameOnlyResult.stdout.raw,
+        JSON.stringify(expectedJson.map(({ name }) => name)),
+      );
+
+      const jsonNameOnlyShortResult = await run(command, "-n", "-j");
+      expect(jsonNameOnlyShortResult.stderr.raw).toBeEmpty();
+      expect(jsonNameOnlyShortResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonNameOnlyShortResult.stdout.raw,
         JSON.stringify(expectedJson.map(({ name }) => name)),
       );
 
@@ -273,6 +321,23 @@ Script: library-b
       expect(jsonNameOnlyPrettyResult.exitCode).toBe(0);
       assertOutputMatches(
         jsonNameOnlyPrettyResult.stdout.raw,
+        JSON.stringify(
+          expectedJson.map(({ name }) => name),
+          null,
+          2,
+        ),
+      );
+
+      const jsonNameOnlyPrettyShortResult = await run(
+        command,
+        "-n",
+        "-j",
+        "-p",
+      );
+      expect(jsonNameOnlyPrettyShortResult.stderr.raw).toBeEmpty();
+      expect(jsonNameOnlyPrettyShortResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonNameOnlyPrettyShortResult.stdout.raw,
         JSON.stringify(
           expectedJson.map(({ name }) => name),
           null,
@@ -359,6 +424,20 @@ Script: library-b
         }),
       );
 
+      const jsonShortResult = await run(command, "application-1a", "-j");
+      expect(jsonShortResult.stderr.raw).toBeEmpty();
+      expect(jsonShortResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonShortResult.stdout.raw,
+        JSON.stringify({
+          name: "application-1a",
+          matchPattern: "applications/*",
+          path: "applications/applicationA",
+          scripts: ["a-workspaces", "all-workspaces", "application-a"],
+          aliases: ["deprecated_appA"],
+        }),
+      );
+
       const jsonPrettyResult = await run(
         command,
         "application-1a",
@@ -369,6 +448,29 @@ Script: library-b
       expect(jsonPrettyResult.exitCode).toBe(0);
       assertOutputMatches(
         jsonPrettyResult.stdout.raw,
+        JSON.stringify(
+          {
+            name: "application-1a",
+            matchPattern: "applications/*",
+            path: "applications/applicationA",
+            scripts: ["a-workspaces", "all-workspaces", "application-a"],
+            aliases: ["deprecated_appA"],
+          },
+          null,
+          2,
+        ),
+      );
+
+      const jsonPrettyShortResult = await run(
+        command,
+        "application-1a",
+        "-j",
+        "-p",
+      );
+      expect(jsonPrettyShortResult.stderr.raw).toBeEmpty();
+      expect(jsonPrettyShortResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonPrettyShortResult.stdout.raw,
         JSON.stringify(
           {
             name: "application-1a",
@@ -436,6 +538,22 @@ Script: library-b
         }),
       );
 
+      const jsonShortResult = await run(command, "all-workspaces", "-j");
+      expect(jsonShortResult.stderr.raw).toBeEmpty();
+      expect(jsonShortResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonShortResult.stdout.raw,
+        JSON.stringify({
+          name: "all-workspaces",
+          workspaces: [
+            "application-1a",
+            "application-1b",
+            "library-1a",
+            "library-1b",
+          ],
+        }),
+      );
+
       const jsonPrettyResult = await run(
         command,
         "all-workspaces",
@@ -446,6 +564,31 @@ Script: library-b
       expect(jsonPrettyResult.exitCode).toBe(0);
       assertOutputMatches(
         jsonPrettyResult.stdout.raw,
+        JSON.stringify(
+          {
+            name: "all-workspaces",
+            workspaces: [
+              "application-1a",
+              "application-1b",
+              "library-1a",
+              "library-1b",
+            ],
+          },
+          null,
+          2,
+        ),
+      );
+
+      const jsonPrettyShortResult = await run(
+        command,
+        "all-workspaces",
+        "-j",
+        "-p",
+      );
+      expect(jsonPrettyShortResult.stderr.raw).toBeEmpty();
+      expect(jsonPrettyShortResult.exitCode).toBe(0);
+      assertOutputMatches(
+        jsonPrettyShortResult.stdout.raw,
         JSON.stringify(
           {
             name: "all-workspaces",

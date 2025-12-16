@@ -19,6 +19,10 @@ export const runScript = handleCommand(
       jsonOutfile: string | undefined;
     },
   ) => {
+    options.inlineName = options.inlineName?.trim();
+    options.args = options.args?.trim();
+    options.jsonOutfile = options.jsonOutfile?.trim();
+
     logger.debug(
       `Command: Run script ${JSON.stringify(script)} for ${
         _workspaces.length

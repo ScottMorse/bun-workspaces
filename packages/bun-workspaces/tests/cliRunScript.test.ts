@@ -11,7 +11,7 @@ const TEST_OUTPUT_DIR = path.resolve(__dirname, "test-output");
 describe("CLI Run Script", () => {
   beforeAll(() => {
     if (fs.existsSync(TEST_OUTPUT_DIR)) {
-      fs.rmdirSync(TEST_OUTPUT_DIR, { recursive: true });
+      fs.rmSync(TEST_OUTPUT_DIR, { recursive: true });
     }
   });
 
@@ -114,6 +114,23 @@ describe("CLI Run Script", () => {
       expect(resultParallel.exitCode).toBe(0);
       assertOutputMatches(
         resultParallel.stdout.sanitizedCompactLines,
+        `[first:test-delay] first
+[second:test-delay] second
+[third:test-delay] third
+[fourth:test-delay] fourth
+[fifth:test-delay] fifth
+✅ fifth: test-delay
+✅ first: test-delay
+✅ fourth: test-delay
+✅ second: test-delay
+✅ third: test-delay
+5 scripts ran successfully`,
+      );
+
+      const resultParallelShort = await run("run-script", "test-delay", "-P");
+      expect(resultParallelShort.exitCode).toBe(0);
+      assertOutputMatches(
+        resultParallelShort.stdout.sanitizedCompactLines,
         `[first:test-delay] first
 [second:test-delay] second
 [third:test-delay] third
@@ -241,6 +258,21 @@ describe("CLI Run Script", () => {
 4 scripts ran successfully`,
     );
 
+    const resultShort = await run("run-script", "test-echo", "-a test-args");
+    expect(resultShort.exitCode).toBe(0);
+    assertOutputMatches(
+      resultShort.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:test-echo] passed args: test-args
+[application-1b:test-echo] passed args: test-args
+[library-1a:test-echo] passed args: test-args
+[library-1b:test-echo] passed args: test-args
+✅ application-1a: test-echo
+✅ application-1b: test-echo
+✅ library-1a: test-echo
+✅ library-1b: test-echo
+4 scripts ran successfully`,
+    );
+
     const result2 = await run(
       "run-script",
       "test-echo",
@@ -355,6 +387,23 @@ script for all workspaces
 4 scripts ran successfully`,
     );
 
+    const resultShort = await setupCliTest({
+      testProject: "simple1",
+    }).run("run-script", "all-workspaces", "-N");
+    expect(resultShort.exitCode).toBe(0);
+    assertOutputMatches(
+      resultShort.stdoutAndErr.sanitizedCompactLines,
+      `script for all workspaces
+script for all workspaces
+script for all workspaces
+script for all workspaces
+✅ application-1a: all-workspaces
+✅ application-1b: all-workspaces
+✅ library-1a: all-workspaces
+✅ library-1b: all-workspaces
+4 scripts ran successfully`,
+    );
+
     const resultFailures = await setupCliTest({
       testProject: "runScriptWithFailures",
     }).run("run-script", "test-exit", "--no-prefix");
@@ -387,6 +436,25 @@ success2
     expect(resultSimple.exitCode).toBe(0);
     assertOutputMatches(
       resultSimple.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:(inline)] this is my inline script for application-1a
+[application-1b:(inline)] this is my inline script for application-1b
+[library-1a:(inline)] this is my inline script for library-1a
+[library-1b:(inline)] this is my inline script for library-1b
+✅ application-1a: (inline)
+✅ application-1b: (inline)
+✅ library-1a: (inline)
+✅ library-1b: (inline)
+4 scripts ran successfully`,
+    );
+
+    const resultSimpleShort = await run(
+      "run-script",
+      "echo 'this is my inline script for <workspaceName>'",
+      "-i",
+    );
+    expect(resultSimpleShort.exitCode).toBe(0);
+    assertOutputMatches(
+      resultSimpleShort.stdoutAndErr.sanitizedCompactLines,
       `[application-1a:(inline)] this is my inline script for application-1a
 [application-1b:(inline)] this is my inline script for application-1b
 [library-1a:(inline)] this is my inline script for library-1a
@@ -453,6 +521,26 @@ this is my inline script for library-1b test-args-library-1b
     expect(result.exitCode).toBe(0);
     assertOutputMatches(
       result.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:test-echo-inline] this is my inline script for application-1a
+[application-1b:test-echo-inline] this is my inline script for application-1b
+[library-1a:test-echo-inline] this is my inline script for library-1a
+[library-1b:test-echo-inline] this is my inline script for library-1b
+✅ application-1a: test-echo-inline
+✅ application-1b: test-echo-inline
+✅ library-1a: test-echo-inline
+✅ library-1b: test-echo-inline
+4 scripts ran successfully`,
+    );
+
+    const resultShort = await run(
+      "run-script",
+      "echo 'this is my inline script for <workspaceName>'",
+      "-i",
+      "-I test-echo-inline",
+    );
+    expect(resultShort.exitCode).toBe(0);
+    assertOutputMatches(
+      resultShort.stdoutAndErr.sanitizedCompactLines,
       `[application-1a:test-echo-inline] this is my inline script for application-1a
 [application-1b:test-echo-inline] this is my inline script for application-1b
 [library-1a:test-echo-inline] this is my inline script for library-1a
@@ -1070,6 +1158,56 @@ this is my inline script for library-1b test-args-library-1b
       JSON.parse(
         fs.readFileSync(
           path.resolve(getProjectRoot("simple1"), "test-output/results.json"),
+          "utf8",
+        ),
+      ),
+    ).toEqual({
+      totalCount: 1,
+      successCount: 1,
+      failureCount: 0,
+      allSuccess: true,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      scriptResults: [
+        {
+          metadata: {
+            workspace: {
+              name: "application-1a",
+              matchPattern: "applications/*",
+              path: "applications/applicationA",
+              aliases: ["deprecated_appA"],
+              scripts: ["a-workspaces", "all-workspaces", "application-a"],
+            },
+          },
+          success: true,
+          signal: null,
+          exitCode: 0,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+        },
+      ],
+    });
+
+    const resultShort = await run(
+      "--cwd",
+      getProjectRoot("simple1"),
+      "run-script",
+      "application-a",
+      "-a test-args",
+      "-j",
+      "test-output/results-short.json", // for gitignore
+    );
+
+    expect(resultShort.exitCode).toBe(0);
+    expect(
+      JSON.parse(
+        fs.readFileSync(
+          path.resolve(
+            getProjectRoot("simple1"),
+            "test-output/results-short.json",
+          ),
           "utf8",
         ),
       ),
