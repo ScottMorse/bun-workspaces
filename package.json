@@ -9,6 +9,7 @@
     "bw": "bun --silent --cwd=./packages/bun-workspaces",
     "docs": "bun --silent --cwd=./packages/doc-website",
     "sandbox": "bun --silent --cwd=./packages/sandbox",
+    "cli:local": "bun --silent --cwd=./packages/bun-workspaces run cli --cwd=../..",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",

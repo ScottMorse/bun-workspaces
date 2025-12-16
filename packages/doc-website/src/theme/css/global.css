@@ -160,6 +160,23 @@ hr {
   line-height: 1.1;
 }
 
+.cli-command-options-container {
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.cli-command-option-flags :nth-child(2) {
+  margin-left: 0.3rem;
+}
+
+.cli-command-option-flags > * {
+  display: inline-block;
+}
+
+.cli-command-option-flags code {
+  white-space: nowrap;
+}
+
 .workspace-config-path {
   margin-top: 0.5rem;
 }

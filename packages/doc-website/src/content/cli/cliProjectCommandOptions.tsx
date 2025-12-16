@@ -24,8 +24,9 @@ const defineOptionContent = (
     (example) => example.trim() && !example.match(/^\s*#/),
   );
 
-  const getMainFlag = (flag: string) => {
-    return flag.trim().split(" ")[0];
+  const getMainFlag = (flags: string[]) => {
+    const longFlag = flags[flags.length - 1];
+    return longFlag.trim().split(" ")[0];
   };
 
   for (const option of Object.values(config.options)) {

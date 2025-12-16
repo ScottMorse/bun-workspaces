@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { logger } from "../../internal/logger";
+import type { ParallelMaxValue } from "../../project";
 import type { Workspace } from "../../workspaces";
 import { commandOutputLogger, handleCommand } from "./commandHandlerUtils";
 
@@ -11,7 +12,7 @@ export const runScript = handleCommand(
     script: string,
     _workspaces: string[],
     options: {
-      parallel: boolean;
+      parallel: boolean | string;
       args: string;
       prefix: boolean;
       inline: boolean;
@@ -19,6 +20,14 @@ export const runScript = handleCommand(
       jsonOutfile: string | undefined;
     },
   ) => {
+    options.inlineName = options.inlineName?.trim();
+    options.args = options.args?.trim();
+    options.jsonOutfile = options.jsonOutfile?.trim();
+    options.parallel =
+      typeof options.parallel === "string"
+        ? options.parallel.trim()
+        : options.parallel;
+
     logger.debug(
       `Command: Run script ${JSON.stringify(script)} for ${
         _workspaces.length
@@ -96,7 +105,7 @@ export const runScript = handleCommand(
             ? true
             : options.parallel === "false"
               ? false
-              : { max: options.parallel },
+              : { max: options.parallel as ParallelMaxValue },
     });
 
     const scriptName = options.inline

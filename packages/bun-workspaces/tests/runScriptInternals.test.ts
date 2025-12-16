@@ -492,7 +492,7 @@ describe("Run Multiple Scripts", () => {
       const getRunningFile = (scriptName: string) =>
         path.join(outputDir, `${scriptName}.txt`);
 
-      const getRandomSleepTime = () => Math.random() + 0.25;
+      const getRandomSleepTime = () => Math.random() + 0.05;
 
       const createScript = (scriptName: string) => ({
         metadata: { name: scriptName },
