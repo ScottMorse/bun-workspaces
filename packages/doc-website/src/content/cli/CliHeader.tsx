@@ -15,7 +15,6 @@ export const CliHeader = ({ activeHref }: CliHeaderProps) => {
   return (
     <div className="sub-header">
       <div className="sub-header-links">
-        <div className="sub-header-links-title">Go To:</div>
         <Link
           href={LINKS.home}
           className={activeHref === "home" ? "active" : ""}
@@ -42,12 +41,15 @@ export const CliHeader = ({ activeHref }: CliHeaderProps) => {
           Examples
         </Link> */}
       </div>
-      <p className="note">
-        Note: Examples use <code>bw</code> instead of{" "}
-        <code>bunx bun-workspaces</code>, which works assuming you have either
-        ran <code>alias bw="bunx bun-workspaces"</code> or placed this line in
-        your shell configuration file, like <code>.bashrc</code>,{" "}
-        <code>.zshrc</code>, or similar.
+      <p className="note" style={{ marginTop: "1rem" }}>
+        Run the CLI via <code>bunx bun-workspaces</code> or alias it to{" "}
+        <code>bw</code>, such as via <code>alias bw="bunx bun-workspaces"</code>
+        , which can be placed in your shell configuration file, like{" "}
+        <code>.bashrc</code>, <code>.zshrc</code>, or similar.
+      </p>
+      <p className="note" style={{ marginTop: "1rem" }}>
+        Examples use an implied <code>bw</code> alias for brevity instead of{" "}
+        <code>bunx bun-workspaces</code>.
       </p>
       <hr />
     </div>

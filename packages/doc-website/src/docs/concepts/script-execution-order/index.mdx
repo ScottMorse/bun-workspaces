@@ -15,10 +15,17 @@ import { ConceptsHeader } from "../../../content/concepts/ConceptsHeader";
 <ConceptsHeader activeHref="scriptExecutionOrder" />
 
 Using the [workspace configuration](/config), you can set an `"order"` value to sort the execution order of a script per workspace. 
+
+#### Default Order
+
 By default, workspaces are sorted in alphabetical order of their relative path from the project root. 
+
+#### Configured vs. Default Order
 
 Workspace scripts with
 an `"order"` value will be executed before workspaces with no `"order"` set for the same script, falling back to the default order.
+
+#### Example
 
 In this example, any other workspaces in the project with an `"order"` for the `"start"` script less than `10` will be executed before this workspace, 
 and any workspaces with an `"order"` for the `"start"` script greater than `10` will be executed after this workspace.

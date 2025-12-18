@@ -18,7 +18,6 @@ export const ConceptsHeader = ({
   return (
     <div className="sub-header">
       <div className="sub-header-links">
-        <div className="sub-header-links-title">Go To:</div>
         <Link
           href={LINKS.workspaceAliases}
           className={activeHref === "workspaceAliases" ? "active" : ""}

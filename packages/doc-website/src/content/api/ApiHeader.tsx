@@ -15,7 +15,6 @@ export const ApiHeader = ({ activeHref, divider }: ApiHeaderProps) => {
   return (
     <div className="sub-header">
       <div className="sub-header-links">
-        <div className="sub-header-links-title">Go To:</div>
         <Link
           href={LINKS.home}
           className={activeHref === "home" ? "active" : ""}
@@ -36,7 +35,7 @@ export const ApiHeader = ({ activeHref, divider }: ApiHeaderProps) => {
           Examples
         </Link> */}
       </div>
-      <p className="note">
+      <p className="note" style={{ marginTop: "1rem" }}>
         Install the package via <code>bun add --dev bun-workspaces</code> to use
         the API.
       </p>
