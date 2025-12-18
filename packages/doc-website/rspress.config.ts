@@ -265,9 +265,18 @@ export default defineConfig({
         ],
       },
       {
-        text: "Changelog",
-        link: CHANGELOG_URL,
+        text: "More",
         position: "left",
+        items: [
+          {
+            text: "Roadmap",
+            link: "/roadmap",
+          },
+          {
+            text: "Changelog",
+            link: CHANGELOG_URL,
+          },
+        ],
       },
     ],
   },
