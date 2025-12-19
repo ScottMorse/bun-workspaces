@@ -39,6 +39,13 @@ export const ApiHeader = ({ activeHref, divider }: ApiHeaderProps) => {
         Install the package via <code>bun add --dev bun-workspaces</code> to use
         the API.
       </p>
+      <p className="note" style={{ marginTop: "1rem" }}>
+        See the{" "}
+        <Link href="/concepts/glossary" style={{ color: "var(--rp-c-link)" }}>
+          Glossary
+        </Link>{" "}
+        for more fundamental concepts.
+      </p>
       {divider && <hr />}
     </div>
   );

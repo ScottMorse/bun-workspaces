@@ -248,10 +248,14 @@ export default defineConfig({
       },
       {
         text: "Concepts",
-        link: "/concepts",
+        link: "/concepts/glossary",
         position: "left",
         activeMatch: "/concepts",
         items: [
+          {
+            text: "Glossary",
+            link: "/concepts/glossary",
+          },
           {
             text: "Workspace Aliases",
             link: "/concepts/workspace-aliases",

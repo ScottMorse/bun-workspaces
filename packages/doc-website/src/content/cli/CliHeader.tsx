@@ -51,6 +51,13 @@ export const CliHeader = ({ activeHref }: CliHeaderProps) => {
         Examples use an implied <code>bw</code> alias for brevity instead of{" "}
         <code>bunx bun-workspaces</code>.
       </p>
+      <p className="note" style={{ marginTop: "1rem" }}>
+        See the{" "}
+        <Link href="/concepts/glossary" style={{ color: "var(--rp-c-link)" }}>
+          Glossary
+        </Link>{" "}
+        for more fundamental concepts.
+      </p>
       <hr />
     </div>
   );
