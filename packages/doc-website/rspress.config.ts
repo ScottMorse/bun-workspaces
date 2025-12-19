@@ -235,10 +235,16 @@ export default defineConfig({
         ],
       },
       {
-        text: "Configuration",
+        text: "Config",
         link: "/config",
         position: "left",
         activeMatch: "/config",
+        items: [
+          {
+            text: "Workspace Configuration",
+            link: "/config",
+          },
+        ],
       },
       {
         text: "Concepts",

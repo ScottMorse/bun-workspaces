@@ -1,0 +1,48 @@
+---
+title: Roadmap
+titleSuffix: " | bun-workspaces"
+description: "Roadmap | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
+pageType: doc
+sidebar: false
+outline: true
+footer: false
+---
+
+## Guiding Principles
+
+We aim to preserve these goals and values for the life of this project.
+
+#### Easy integration
+* No special configuration files required to get started
+* Simple, straightforward package structure
+* Anti-lock-in philosophy: No complexity for the sake of user retention
+#### Parity between the CLI and API
+* What is possible with the CLI should be possible with the API, and vice versa
+#### Thorough documentation
+* All functionality accounted for in this website
+* Intellisense for API features
+* CLI usage/help documentation for all commands
+#### Aggressive defense against regression
+* Features aren't added without test additions
+* Bugs aren't fixed without test additions
+#### Core features remain free
+* No artificial paywalls for the local features of the package
+
+## Short Term Goals
+
+### A workspace dependency graph
+  * Making bun-workspaces aware of how workspaces depend on each other is core to several other future features
+### Parity with Bun's `--filter`
+  * This depends on the workspace dependency graph being implemented to allow workspaces to run in the order of how they depend on each other
+  * Matching workspaces by path must be supported
+
+## Medium/Long Term Goals
+### An "affected workspaces" feature
+  * This refers to the ability to detect which workspaces are affected by code changes
+  * This feature will likely be released as experimental
+  * The workspace dependency graph will be used to determine which workspaces are implicitly affected by another's change
+  * It should be possible to pass git refs as the basis of comparison for changes or a simple list of files
+### A type generation feature
+  * The ability to generate TypeScript types specific to your project, similar to [Chakra UI's](https://www.chakra-ui.com/docs/get-started/cli#chakra-typegen) typegen feature, such as for workspace and script names
+### A local cache
+  * The ability to cache the outputs of scripts based on given inputs, for performance
