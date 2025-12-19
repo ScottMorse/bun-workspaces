@@ -8,6 +8,8 @@ outline: true
 footer: false
 ---
 
+import { Footer } from "../../content/Footer";
+
 ## Guiding Principles
 
 We aim to preserve these goals and values for the life of this project.
@@ -17,10 +19,10 @@ We aim to preserve these goals and values for the life of this project.
 * Simple, straightforward package structure
 * Anti-lock-in philosophy: No complexity for the sake of user retention
 #### Parity between the CLI and API
-* What is possible with the CLI should be possible with the API, and vice versa
+* What is possible with the CLI should be possible with the API, and vice versa, with minimal exception
 #### Thorough documentation
 * All functionality accounted for in this website
-* Intellisense for API features
+* Intellisense for all API features
 * CLI usage/help documentation for all commands
 #### Aggressive defense against regression
 * Features aren't added without test additions
@@ -30,19 +32,23 @@ We aim to preserve these goals and values for the life of this project.
 
 ## Short Term Goals
 
-### A workspace dependency graph
+#### A workspace dependency graph
   * Making bun-workspaces aware of how workspaces depend on each other is core to several other future features
-### Parity with Bun's `--filter`
+#### Parity with Bun's `--filter`
   * This depends on the workspace dependency graph being implemented to allow workspaces to run in the order of how they depend on each other
   * Matching workspaces by path must be supported
 
 ## Medium/Long Term Goals
-### An "affected workspaces" feature
+#### An "affected workspaces" feature
   * This refers to the ability to detect which workspaces are affected by code changes
   * This feature will likely be released as experimental
   * The workspace dependency graph will be used to determine which workspaces are implicitly affected by another's change
   * It should be possible to pass git refs as the basis of comparison for changes or a simple list of files
-### A type generation feature
+#### A type generation feature
   * The ability to generate TypeScript types specific to your project, similar to [Chakra UI's](https://www.chakra-ui.com/docs/get-started/cli#chakra-typegen) typegen feature, such as for workspace and script names
-### A local cache
+#### A local cache
   * The ability to cache the outputs of scripts based on given inputs, for performance
+
+<br/>
+<br/>
+<Footer />
