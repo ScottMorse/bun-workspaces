@@ -221,7 +221,7 @@ li {
 
 @media (max-width: 768px) {
   .brag-ticker {
-    animation: brag-ticker-animation 90s linear infinite;
+    animation: brag-ticker-animation 100s linear infinite;
   }
 
   .sub-header-links {
@@ -239,7 +239,7 @@ li {
 
 @media (min-width: 769px) {
   .brag-ticker {
-    animation: brag-ticker-animation 165s linear infinite;
+    animation: brag-ticker-animation 190s linear infinite;
   }
 }
 
