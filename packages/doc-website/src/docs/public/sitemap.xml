@@ -41,6 +41,16 @@
     <changefreq>weekly</changefreq>
   </url>
   <url>
+    <loc>https://bunworkspaces.com/concepts/glossary</loc>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://bunworkspaces.com/concepts/parallel-scripts</loc>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
     <loc>https://bunworkspaces.com/concepts/workspace-aliases</loc>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
@@ -52,6 +62,11 @@
   </url>
   <url>
     <loc>https://bunworkspaces.com/concepts/script-execution-order</loc>
+    <priority>0.8</priority>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://bunworkspaces.com/roadmap</loc>
     <priority>0.8</priority>
     <changefreq>weekly</changefreq>
   </url>

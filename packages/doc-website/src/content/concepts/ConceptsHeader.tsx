@@ -1,5 +1,6 @@
 import { Link } from "rspress/theme";
 const LINKS = {
+  glossary: "/concepts/glossary",
   workspaceAliases: "/concepts/workspace-aliases",
   parallelScripts: "/concepts/parallel-scripts",
   scriptRuntimeMetadata: "/concepts/script-runtime-metadata",
@@ -18,7 +19,12 @@ export const ConceptsHeader = ({
   return (
     <div className="sub-header">
       <div className="sub-header-links">
-        <div className="sub-header-links-title">Go To:</div>
+        <Link
+          href={LINKS.glossary}
+          className={activeHref === "glossary" ? "active" : ""}
+        >
+          Glossary
+        </Link>
         <Link
           href={LINKS.workspaceAliases}
           className={activeHref === "workspaceAliases" ? "active" : ""}

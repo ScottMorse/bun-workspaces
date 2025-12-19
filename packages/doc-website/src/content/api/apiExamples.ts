@@ -4,7 +4,7 @@ export const CREATE_FS_PROJECT_EXAMPLE = `
 import { createFileSystemProject } from "bun-workspaces";
 
 const project = createFileSystemProject({
-  rootDirectory: "./path/to/project/root"
+  rootDirectory: "./path/to/project/root" // relative from process.cwd()
 });
 
 console.log(project.name); // The name from the root package.json
@@ -215,7 +215,7 @@ import { createFileSystemProject } from "bun-workspaces";
 
 // A Project contains the core functionality of bun-workspaces.
 const project = createFileSystemProject({
-  rootDirectory: "path/to/your/project",
+  rootDirectory: "path/to/your/project", // relative from process.cwd()
 });
 
 // A Workspace that matches the name or alias "my-workspace"

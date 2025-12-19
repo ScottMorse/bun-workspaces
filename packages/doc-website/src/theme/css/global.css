@@ -221,7 +221,7 @@ li {
 
 @media (max-width: 768px) {
   .brag-ticker {
-    animation: brag-ticker-animation 90s linear infinite;
+    animation: brag-ticker-animation 100s linear infinite;
   }
 
   .sub-header-links {
@@ -239,7 +239,7 @@ li {
 
 @media (min-width: 769px) {
   .brag-ticker {
-    animation: brag-ticker-animation 165s linear infinite;
+    animation: brag-ticker-animation 190s linear infinite;
   }
 }
 
@@ -262,11 +262,14 @@ li {
 
 .sub-header-links {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
-  max-width: 100vw;
-  overflow-x: auto;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.sub-header-links-title {
+  margin-right: 0.5rem;
 }
 
 .sub-header-links a {
@@ -274,10 +277,12 @@ li {
   padding: 0.25rem 0.75rem;
   border-radius: 1rem;
   text-align: center;
+  border: 1px solid var(--rp-c-divider);
 }
 
 .sub-header-links a.active {
   background-color: var(--rp-c-bg-soft);
+  color: var(--rp-c-text-1);
 }
 
 .rspress-doc {

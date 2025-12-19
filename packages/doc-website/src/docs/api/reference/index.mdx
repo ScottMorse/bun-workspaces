@@ -15,6 +15,20 @@ import { CREATE_MEMORY_PROJECT_EXAMPLE } from '../../../content/api/apiExamples'
 
 <ApiHeader activeHref="reference" />
 
+
+## `createFileSystemProject`
+`createFileSystemProject(options: CreateFileSystemProjectOptions): FileSystemProject`
+
+Create a [FileSystemProject](/api/reference#filesystemproject), the core of `bun-workspaces`'s functionality, based on a given root directory.
+
+This finds [Workspaces](/api/reference#workspace) based on the `"workspaces"` field in the root package.json.
+It will also detect and utilize any [workspace configuration](/config) found.
+
+<SyntaxHighlighter language="typescript">
+{CREATE_FS_PROJECT_EXAMPLE}
+</SyntaxHighlighter>
+
+
 ## `Workspace`
 
 An object representing a workspace in a [Project](/api/reference#project).
@@ -156,19 +170,6 @@ See [Script Runtime Metadata](/concepts/script-runtime-metadata) for more detail
 
 * See more on running [parallel scripts](/concepts/parallel-scripts).
 * See more on [script runtime metadata](/concepts/script-runtime-metadata), such as environment variables available in scripts and interpolating values in inline scripts and args such as `<workspaceName>`.<br/>
-
-## `createFileSystemProject`
-`createFileSystemProject(options: CreateFileSystemProjectOptions): FileSystemProject`
-
-Create a [Project](/api/reference#project), the core of `bun-workspaces`'s functionality, based on a given root directory.
-
-This finds [Workspaces](/api/reference#workspace) based on the `"workspaces"` field in the root package.json.
-It will also detect and utilize any [workspace configuration](/config) found.
-
-<SyntaxHighlighter language="typescript">
-{CREATE_FS_PROJECT_EXAMPLE}
-</SyntaxHighlighter>
-
 
 ## `createMemoryProject`
 `createMemoryProject(options: CreateMemoryProjectOptions): MemoryProject`

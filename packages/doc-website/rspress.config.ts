@@ -235,17 +235,27 @@ export default defineConfig({
         ],
       },
       {
-        text: "Configuration",
+        text: "Config",
         link: "/config",
         position: "left",
         activeMatch: "/config",
+        items: [
+          {
+            text: "Workspace Configuration",
+            link: "/config",
+          },
+        ],
       },
       {
         text: "Concepts",
-        link: "/concepts",
+        link: "/concepts/glossary",
         position: "left",
         activeMatch: "/concepts",
         items: [
+          {
+            text: "Glossary",
+            link: "/concepts/glossary",
+          },
           {
             text: "Workspace Aliases",
             link: "/concepts/workspace-aliases",
@@ -265,9 +275,18 @@ export default defineConfig({
         ],
       },
       {
-        text: "Changelog",
-        link: CHANGELOG_URL,
+        text: "More",
         position: "left",
+        items: [
+          {
+            text: "Roadmap",
+            link: "/roadmap",
+          },
+          {
+            text: "Changelog",
+            link: CHANGELOG_URL,
+          },
+        ],
       },
     ],
   },
