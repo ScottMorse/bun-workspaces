@@ -6,6 +6,18 @@
   --rp-c-code-block-bg: #101014;
 }
 
+.dark .light-only {
+  display: none;
+}
+
+.light .dark-only {
+  display: none;
+}
+
+.pixel-art-image {
+  image-rendering: pixelated
+}
+
 .home-logo-container {
   display: flex;
   justify-content: center;
