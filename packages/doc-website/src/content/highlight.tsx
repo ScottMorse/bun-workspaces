@@ -14,7 +14,7 @@ SyntaxHighlighterLight.registerLanguage("typescript", typescript);
  * to use a core rspress API instead in the future
  */
 export const SyntaxHighlighter = (
-  props: ComponentProps<typeof SyntaxHighlighterLight>,
+  props: ComponentProps<typeof SyntaxHighlighterLight>
 ) => {
   return (
     <SyntaxHighlighterLight
@@ -22,7 +22,7 @@ export const SyntaxHighlighter = (
       customStyle={{
         borderRadius: "0.5rem",
         padding: "0.75rem 1rem",
-        backgroundColor: "#16191f",
+        backgroundColor: "var(--rp-c-code-block-bg)",
         border: "1px solid rgba(40, 44, 52, 0.52)",
         lineHeight: "1.4",
         color: "#EAEAEA",

@@ -1,0 +1,42 @@
+{ "frames": {
+   "bwunster-blink_animation 0.aseprite": {
+    "frame": { "x": 0, "y": 0, "w": 64, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 70 },
+    "sourceSize": { "w": 64, "h": 70 },
+    "duration": 100
+   },
+   "bwunster-blink_animation 1.aseprite": {
+    "frame": { "x": 64, "y": 0, "w": 64, "h": 70 },
+    "rotated": false,
+    "trimmed": false,
+    "spriteSourceSize": { "x": 0, "y": 0, "w": 64, "h": 70 },
+    "sourceSize": { "w": 64, "h": 70 },
+    "duration": 100
+   }
+ },
+ "meta": {
+  "app": "http://www.aseprite.org/",
+  "version": "1.3.16.1-dev",
+  "image": "bwunster-blink_animation_64x70.png",
+  "format": "RGBA8888",
+  "size": { "w": 128, "h": 70 },
+  "scale": "1",
+  "frameTags": [
+  ],
+  "layers": [
+   { "name": "BURGUER" },
+   { "name": "BURGUER bottom", "group": "BURGUER", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 3 Copy", "group": "BURGUER", "opacity": 255, "blendMode": "normal" },
+   { "name": "Layer 3", "group": "BURGUER", "opacity": 255, "blendMode": "normal" },
+   { "name": "Burguers Copy", "group": "BURGUER", "opacity": 255, "blendMode": "normal" },
+   { "name": "Burguers", "group": "BURGUER", "opacity": 255, "blendMode": "normal" },
+   { "name": "BURGUER TOP", "group": "BURGUER", "opacity": 255, "blendMode": "normal" },
+   { "name": "texto Copy", "group": "BURGUER", "opacity": 255, "blendMode": "normal" },
+   { "name": "EYE Copy", "group": "BURGUER", "opacity": 255, "blendMode": "normal" }
+  ],
+  "slices": [
+  ]
+ }
+}

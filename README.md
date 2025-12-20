@@ -17,10 +17,6 @@ To get started, all you need is a normal project using [Bun's native workspaces]
 Think of this as a power suit you can snap onto native workspaces, rather than another monorepo framework.
 
 Start running some [CLI commands](https://bunworkspaces.com/cli) right away in your repo, or take full advantage of the [scripting API](https://bunworkspaces.com/api) and its features.
-<br/><br/>
-<a href="https://buymeacoffee.com/scottmorse">
-<img src="./packages/doc-website/src/docs/public/bmac-logo-circle.png" alt="Link to Buy Me A Coffee" width="50" />
-</a>
 
 ## Quick Start
 
