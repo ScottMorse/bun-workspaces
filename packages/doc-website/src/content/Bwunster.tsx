@@ -1,45 +1,65 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { AnimatedSprite } from "../util/pixelArt";
 
 export const Bwunster = () => {
-  const [isBlinked, setIsBlinked] = useState(false);
-
-  useEffect(() => {
-    let unmounted = false;
-    (async () => {
-      while (!unmounted) {
-        await new Promise((resolve) =>
-          setTimeout(
-            () => {
-              setIsBlinked(true);
-              setTimeout(() => {
-                setIsBlinked(false);
-              }, 250);
-              resolve(void 0);
-            },
-            Math.round(Math.random() * 7_000) + 5_000,
-          ),
-        );
-      }
-    })();
-    return () => {
-      unmounted = true;
-    };
-  }, []);
+  const [isIdle, setIsIdle] = useState(false);
 
   return (
-    <div className="home-logo-container">
-      <img
-        src="/bw-eye.png"
-        alt="bun-workspaces"
-        className="home-logo"
-        width={100}
-      />
-      <img
-        src="/bw-eye-blink.png"
-        className="home-logo blink"
-        width={100}
-        style={isBlinked ? undefined : { display: "none" }}
-      />
+    <div className="bwunster-container">
+      <div className="bwunster-top">
+        <AnimatedSprite
+          spritesheetFileName="bwunster-intro_animation_compact_64x106"
+          width={128}
+          fps={10}
+          onFinish={() => {
+            setIsIdle(true);
+          }}
+        />
+        {isIdle && (
+          <div className="bwunster-idle">
+            <AnimatedSprite
+              spritesheetFileName="bwunster-blink_animation_64x70"
+              width={128}
+              fps={10}
+              loop
+              frameLengths={{
+                0: () => Math.round(Math.random() * 80),
+                1: 2,
+              }}
+            />
+          </div>
+        )}
+      </div>
+      <div className="bwunster-bottom">
+        <div className="dark-only">
+          <AnimatedSprite
+            spritesheetFileName="bw-title_animation--dark_99x10"
+            width={256}
+            fps={10}
+            frameLengths={{
+              16: 100,
+            }}
+            loop
+            canvasProps={{
+              "aria-labelledby": "home-title",
+            }}
+          />
+        </div>
+        <div className="light-only">
+          <AnimatedSprite
+            spritesheetFileName="bw-title_animation--light_99x10"
+            width={256}
+            fps={10}
+            frameLengths={{
+              16: 100,
+            }}
+            loop
+            canvasProps={{
+              "aria-labelledby": "home-title",
+            }}
+          />
+        </div>
+      </div>
     </div>
   );
 };

@@ -1,3 +1,5 @@
+import { loadSpritesheet } from "./animate/spritesheet";
+
 export interface PixelArtImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   path: string;
 }

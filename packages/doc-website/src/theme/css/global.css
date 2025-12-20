@@ -31,31 +31,22 @@
 }
 
 .home-title {
-  font-size: 2rem;
-  text-align: center;
-  margin-bottom: 0.75rem;
-  line-height: 1.3;
-}
-
-.home-title-main {
-  font-family: var(--rp-font-family-mono);
-  font-weight: bold;
-  display: inline-block;
-  margin-bottom: 0.75rem;
-}
-
-.home-version {
-  font-size: 1rem;
-  margin: 0.25rem 0;
-  text-align: center;
-  color: var(--rp-c-text-2);
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .home-subtitle {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   text-align: center;
   display: block;
-  margin-top: -0.25rem;
+  margin-top: 1.25rem;
 }
 
 .home-list-container {
@@ -334,4 +325,37 @@ li {
 
 .nav-title-container img {
   margin-top: -0.1rem;
+}
+
+.animated-sprite-container {
+  width: fit-content;
+  height: fit-content;
+}
+
+.bwunster-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.bwunster-top {
+  width: 128px;
+  height: 140px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.bwunster-bottom {
+  margin-top: 0.75rem;
+}
+
+.bwunster-bottom .light-only {
+  margin-top: -25px;
+}
+
+.bwunster-idle {
+  position: absolute;
 }
