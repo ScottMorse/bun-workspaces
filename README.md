@@ -1,6 +1,6 @@
-<img src="./packages/doc-website/src/docs/public/bw-eye.png" alt="bun-workspaces" width="50" />
+<img src="./packages/doc-website/src/docs/public/images/png/bwunster_64x70.png" alt="bun-workspaces" width="45" />
 
-### [📖 **See Full Documentation Here**: _https://bunworkspaces.com_](https://bunworkspaces.com)
+### [**See Full Documentation Here**: _https://bunworkspaces.com_](https://bunworkspaces.com)
 
 # bun-workspaces
 
@@ -17,10 +17,6 @@ To get started, all you need is a normal project using [Bun's native workspaces]
 Think of this as a power suit you can snap onto native workspaces, rather than another monorepo framework.
 
 Start running some [CLI commands](https://bunworkspaces.com/cli) right away in your repo, or take full advantage of the [scripting API](https://bunworkspaces.com/api) and its features.
-<br/><br/>
-<a href="https://buymeacoffee.com/scottmorse">
-<img src="./packages/doc-website/src/docs/public/bmac-logo-circle.png" alt="Link to Buy Me A Coffee" width="50" />
-</a>
 
 ## Quick Start
 

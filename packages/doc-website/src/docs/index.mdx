@@ -4,20 +4,24 @@ sidebar: false
 outline: false
 ---
 
-import packageJson from "../../../bun-workspaces/package.json";
 import { Bwunster } from "../content/Bwunster";
 import { SyntaxHighlighter } from "../content/highlight";
 import { BragTicker } from "../content/BragTicker";
 import { API_QUICKSTART } from '../content/api/apiExamples';
 import { CLI_QUICKSTART } from '../content/cli/cliExamples';
 import { Footer } from "../content/Footer";
+import { AnimatedSprite, PixelArtImage } from "../util/pixelArt";
 
-<Bwunster />
+<Bwunster/>
 
-<h1 className="home-title"><span className="home-title-main">bun-workspaces</span><br/><span className="home-subtitle">
+<h1 className="home-title" id="home-title">
+  bun-workspaces
+</h1>
+
+<h2 className="home-subtitle">
   A [monorepo](http://sonarsource.com/resources/library/monorepo/) management tool on top <br/>of native [Bun
-  workspaces](https://bun.sh/docs/install/workspaces)</span></h1>
-<p className="home-version">v{packageJson.version}</p>
+  workspaces](https://bun.sh/docs/install/workspaces)
+</h2>
 
 <div className="home-list-container">
   <ul className="home-list">
@@ -82,4 +86,3 @@ Examples in these docs will use the alias `bw` for `bunx bun-workspaces` for bre
 _`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Anthropic. This project aims to enhance enhance the experience of Bun for its users._
 
 <Footer />
-<BragTicker />
