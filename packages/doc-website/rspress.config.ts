@@ -28,7 +28,7 @@ const LD_JSON = {
   sameAs: [GITHUB_REPO_URL, NPM_PACKAGE_URL],
   downloadUrl: NPM_PACKAGE_URL,
   license: LICENSE_URL,
-  thumbnailUrl: `${DOMAIN}/bw-eye-og.png`,
+  thumbnailUrl: `${DOMAIN}/images/png/bwunster-bg-square_300x300.png`,
   accessMode: "textual",
   author: {
     "@type": "Person",

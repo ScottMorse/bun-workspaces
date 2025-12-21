@@ -1,4 +1,4 @@
-<img src="./packages/doc-website/src/docs/public/images/png/bwunster_64x70.png" alt="bun-workspaces" width="50" />
+<img src="./packages/doc-website/src/docs/public/images/png/bwunster_64x70.png" alt="bun-workspaces" width="45" />
 
 ### [**See Full Documentation Here**: _https://bunworkspaces.com_](https://bunworkspaces.com)
 
