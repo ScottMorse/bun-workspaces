@@ -9,6 +9,7 @@ export interface AnimatedSpriteProps {
   fps: number;
   frameLengths?: Record<number, number | (() => number)>;
   canvasProps?: React.CanvasHTMLAttributes<HTMLCanvasElement>;
+  reducedMotionFrame: number;
 }
 
 export const AnimatedSprite = ({
@@ -19,6 +20,7 @@ export const AnimatedSprite = ({
   fps,
   frameLengths,
   canvasProps,
+  reducedMotionFrame,
 }: AnimatedSpriteProps) => {
   const [spritesheetData, setSpritesheetData] = useState<Spritesheet | null>(
     null
@@ -50,6 +52,25 @@ export const AnimatedSprite = ({
     if (!ctx) return;
 
     ctx.imageSmoothingEnabled = false;
+
+    const isReducedMotion = window.matchMedia(
+      `(prefers-reduced-motion: reduce)`
+    ).matches;
+
+    if (isReducedMotion) {
+      ctx.drawImage(
+        spritesheetData.frameBitmaps[reducedMotionFrame],
+        0,
+        0,
+        spritesheetData.metadata.frames[reducedMotionFrame].w,
+        spritesheetData.metadata.frames[reducedMotionFrame].h,
+        0,
+        0,
+        width,
+        canvasHeight
+      );
+      return;
+    }
 
     const frameDurationMs = 1000 / fps;
 

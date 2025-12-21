@@ -14,6 +14,7 @@ export const Bwunster = () => {
           onFinish={() => {
             setTimeout(() => setIsIdle(true), 250);
           }}
+          reducedMotionFrame={10}
         />
         {isIdle && (
           <div className="bwunster-idle">
@@ -26,6 +27,7 @@ export const Bwunster = () => {
                 0: () => Math.round(Math.random() * 80),
                 1: 2,
               }}
+              reducedMotionFrame={0}
             />
           </div>
         )}
@@ -43,6 +45,7 @@ export const Bwunster = () => {
             canvasProps={{
               "aria-labelledby": "home-title",
             }}
+            reducedMotionFrame={16}
           />
         </div>
         <div className="light-only">
@@ -57,6 +60,7 @@ export const Bwunster = () => {
             canvasProps={{
               "aria-labelledby": "home-title",
             }}
+            reducedMotionFrame={16}
           />
         </div>
       </div>
