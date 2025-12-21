@@ -60,14 +60,18 @@ export const loadSpritesheet = async (
     console.error(`Failed to load spritesheet data for ${fileName}`, error);
     return Promise.reject(error);
   }
-  const imageBitmap = await createImageBitmap(imageBlob);
+  const imageBitmap = await createImageBitmap(imageBlob, {
+    resizeQuality: "pixelated",
+  });
 
   const frameBitmaps: ImageBitmap[] = [];
 
   for (let i = 0; i < metadata.frames.length; i++) {
     const frame = metadata.frames[i];
     frameBitmaps.push(
-      await createImageBitmap(imageBitmap, frame.x, frame.y, frame.w, frame.h)
+      await createImageBitmap(imageBitmap, frame.x, frame.y, frame.w, frame.h, {
+        resizeQuality: "pixelated",
+      })
     );
   }
 
