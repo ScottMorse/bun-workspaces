@@ -12,7 +12,7 @@ export const Bwunster = () => {
           width={128}
           fps={10}
           onFinish={() => {
-            setIsIdle(true);
+            setTimeout(() => setIsIdle(true), 250);
           }}
         />
         {isIdle && (
