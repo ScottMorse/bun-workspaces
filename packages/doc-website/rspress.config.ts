@@ -28,7 +28,7 @@ const LD_JSON = {
   sameAs: [GITHUB_REPO_URL, NPM_PACKAGE_URL],
   downloadUrl: NPM_PACKAGE_URL,
   license: LICENSE_URL,
-  thumbnailUrl: `${DOMAIN}/bw-eye-og.png`,
+  thumbnailUrl: `${DOMAIN}/images/png/bwunster-bg-square_300x300.png`,
   accessMode: "textual",
   author: {
     "@type": "Person",
@@ -57,13 +57,12 @@ const LD_JSON = {
 
 export default defineConfig({
   root: "src/docs",
-
   themeDir: path.join(__dirname, "src/theme"),
   title: TITLE,
   globalStyles: path.resolve("src/theme/css/global.css"),
   description: DESCRIPTION,
   icon: "/favicon.ico",
-  logo: "/bw-eye-square.png",
+  logo: "/images/png/bwunster_64x70.png",
   logoText: `bun-workspaces`,
   search: {
     searchHooks: path.join(__dirname, "src/search/search.tsx"),
@@ -151,7 +150,7 @@ export default defineConfig({
           tag: "meta",
           attrs: {
             name: "og:image",
-            content: `${DOMAIN}/bw-eye-og.png`,
+            content: `${DOMAIN}/images/png/bwunster-og-title_1200x630.png`,
           },
         },
       ],
@@ -177,7 +176,10 @@ export default defineConfig({
       {
         icon: {
           svg: fs.readFileSync(
-            path.resolve(__dirname, "src/docs/public/npm-logo.svg"),
+            path.resolve(
+              __dirname,
+              "src/docs/public/images/external/npm-logo.svg",
+            ),
             "utf8",
           ),
         },
