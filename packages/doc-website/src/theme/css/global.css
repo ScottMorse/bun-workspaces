@@ -1,5 +1,5 @@
 .dark {
-  --rp-c-bg: #16151C;
+  --rp-c-bg: #16151c;
   --rp-c-bg-soft: rgb(31, 31, 40);
   --rp-c-bg-mute: rgb(32, 32, 43);
   --rp-c-link: rgb(128, 162, 255);
@@ -17,14 +17,13 @@
 }
 
 .pixel-art-image {
-  image-rendering: pixelated
+  image-rendering: pixelated;
 }
 
 .pixel-art-image.small {
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
 }
-
 
 .nav-title-container {
   display: flex;
