@@ -20,7 +20,7 @@ const createDesiredPackageJson = () => {
     homepage,
     repository,
     bin,
-    custom,
+    _bwInternal,
     dependencies,
   } = JSON.parse(readFileSync(path.resolve(PACKAGE_JSON_PATH)).toString());
 
@@ -37,7 +37,7 @@ const createDesiredPackageJson = () => {
     homepage,
     repository,
     bin,
-    custom,
+    _bwInternal,
     dependencies,
   };
 };

@@ -1,9 +1,9 @@
 import rootPackageJson from "../../../package.json";
 
 export const LIBRARY_CONSUMER_BUN_VERSION =
-  rootPackageJson.custom.bunVersion.libraryConsumer;
+  rootPackageJson._bwInternal.bunVersion.libraryConsumer;
 
-export const BUILD_BUN_VERSION = rootPackageJson.custom.bunVersion.build;
+export const BUILD_BUN_VERSION = rootPackageJson._bwInternal.bunVersion.build;
 
 export const getRequiredBunVersion = (build?: boolean) =>
   build ? BUILD_BUN_VERSION : LIBRARY_CONSUMER_BUN_VERSION;
