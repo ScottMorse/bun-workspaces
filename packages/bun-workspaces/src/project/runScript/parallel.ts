@@ -1,6 +1,6 @@
 import { availableParallelism } from "node:os";
 import { getUserEnvVar, getUserEnvVarName } from "../../config/userEnvVars";
-import { BunWorkspacesError } from "../../internal/error";
+import { BunWorkspacesError } from "../../internal/core";
 
 export type PercentageValue = `${number}%`;
 

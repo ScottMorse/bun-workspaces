@@ -1,6 +1,8 @@
-import { mergeAsyncIterables } from "../../internal/mergeAsyncIterables";
-import { IS_WINDOWS } from "../../internal/os";
-import type { SimpleAsyncIterable } from "../../internal/types";
+import {
+  type SimpleAsyncIterable,
+  mergeAsyncIterables,
+} from "../../internal/core";
+import { IS_WINDOWS } from "../../internal/runtime";
 import { createOutputChunk, type OutputChunk } from "./outputChunk";
 import type { ScriptCommand } from "./scriptCommand";
 

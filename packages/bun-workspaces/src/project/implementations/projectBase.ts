@@ -1,5 +1,5 @@
 import path from "path";
-import { createWildcardRegex } from "../../internal/regex";
+import { createWildcardRegex } from "../../internal/core";
 import { type Workspace } from "../../workspaces";
 import { PROJECT_ERRORS } from "../errors";
 import type {

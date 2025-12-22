@@ -1,4 +1,4 @@
-import type { SimpleAsyncIterable } from "./types";
+import type { SimpleAsyncIterable } from "../core/types";
 
 export type AsyncQueueItem<T> = { type: "value"; value: T } | { type: "done" };
 

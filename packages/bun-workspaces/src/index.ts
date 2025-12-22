@@ -24,5 +24,5 @@ export {
   type RunScriptsParallelOptions,
 } from "./project";
 export { type Workspace } from "./workspaces";
-export { type SimpleAsyncIterable } from "./internal/types";
+export { type SimpleAsyncIterable } from "./internal/core";
 export { setLogLevel, type LogLevelSetting } from "./internal/logger";

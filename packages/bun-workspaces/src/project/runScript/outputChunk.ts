@@ -1,4 +1,4 @@
-import { sanitizeAnsi } from "../../internal/regex";
+import { sanitizeAnsi } from "../../internal/core";
 import type { OutputStreamName } from "./runScript";
 
 export interface DecodeOptions {

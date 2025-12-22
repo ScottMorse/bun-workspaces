@@ -23,7 +23,7 @@
     "cli:dev": "_BW_RUNTIME_MODE=development bun --silent run bin/cli.js",
     "lint": "eslint src",
     "build": "bun run scripts/build.ts",
-    "build:test": "BUILD_INCLUDE_TESTS=true bun run scripts/build.ts && chmod +x dist.test/bin/cli.js && cd dist.test && bun install && bun test && cd .. && rm -rf dist.test",
+    "build:test": "BUILD_INCLUDE_TESTS=true bun run scripts/build.ts && chmod +x dist.test/bin/cli.js && cd dist.test && bun install && IS_BUILD=true bun test && cd .. && rm -rf dist.test",
     "build:rslib-only": "rslib build",
     "type-check": "tsc --noEmit"
   },
@@ -32,7 +32,6 @@
     "bun-workspaces": "file:."
   },
   "dependencies": {
-    "commander": "^12.1.0",
-    "glob": "^11.1.0"
+    "commander": "^12.1.0"
   }
 }

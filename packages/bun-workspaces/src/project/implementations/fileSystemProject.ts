@@ -1,8 +1,8 @@
 import fs from "fs";
 import path from "path";
 import { type ResolvedWorkspaceConfig } from "../../config";
+import type { Simplify } from "../../internal/core";
 import { logger } from "../../internal/logger";
-import type { Simplify } from "../../internal/types";
 import { findWorkspaces, type Workspace } from "../../workspaces";
 import { PROJECT_ERRORS } from "../errors";
 import type { Project } from "../project";

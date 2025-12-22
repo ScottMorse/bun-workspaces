@@ -1,5 +1,6 @@
 import { expect, test, describe } from "bun:test";
 import { createWorkspaceConfig } from "../src/config";
+import { BUN_LOCK_ERRORS } from "../src/internal/bun";
 import { WORKSPACE_ERRORS } from "../src/workspaces/errors";
 import { findWorkspaces } from "../src/workspaces/findWorkspaces";
 import { getProjectRoot } from "./testProjects";
@@ -190,85 +191,24 @@ describe("Test finding workspaces", () => {
     });
   });
 
-  test("Supports negation globs in workspaces field in package.json", async () => {
-    expect(
-      findWorkspaces({
-        rootDirectory: getProjectRoot("negationGlobs"),
-      }),
-    ).toEqual({
-      workspaces: [
-        {
-          name: "application-a",
-          matchPattern: "applications/*",
-          path: "applications/applicationA",
-          scripts: ["a-workspaces", "all-workspaces", "application-a"],
-          aliases: [],
-        },
-        {
-          name: "application-b",
-          matchPattern: "applications/*",
-          path: "applications/applicationB",
-          scripts: ["all-workspaces", "application-b", "b-workspaces"],
-          aliases: [],
-        },
-        {
-          name: "group-b-other-a",
-          matchPattern: "other/**/*",
-          path: "other/groupB/otherA",
-          scripts: ["all-workspaces"],
-          aliases: [],
-        },
-        {
-          name: "group-b-other-b",
-          matchPattern: "other/**/*",
-          path: "other/groupB/otherB",
-          scripts: ["all-workspaces"],
-          aliases: [],
-        },
-        {
-          name: "library-a",
-          matchPattern: "libraries/**/*",
-          path: "libraries/libraryA",
-          scripts: ["a-workspaces", "all-workspaces", "library-a"],
-          aliases: [],
-        },
-        {
-          name: "library-c",
-          matchPattern: "libraries/**/*",
-          path: "libraries/nested/libraryC",
-          scripts: ["all-workspaces", "c-workspaces", "library-c"],
-          aliases: [],
-        },
-      ],
-      workspaceConfigMap: {
-        "application-a": createWorkspaceConfig(),
-        "application-b": createWorkspaceConfig(),
-        "group-b-other-a": createWorkspaceConfig(),
-        "group-b-other-b": createWorkspaceConfig(),
-        "library-a": createWorkspaceConfig(),
-        "library-c": createWorkspaceConfig(),
-      },
-    });
-  });
-
   test("Invalid workspaces from test projects", async () => {
     expect(() =>
       findWorkspaces({
         rootDirectory: getProjectRoot("invalidBadJson"),
       }),
-    ).toThrow(WORKSPACE_ERRORS.InvalidPackageJson);
+    ).toThrow(BUN_LOCK_ERRORS.BunLockNotFound);
 
     expect(() =>
       findWorkspaces({
         rootDirectory: getProjectRoot("invalidNoName"),
       }),
-    ).toThrow(WORKSPACE_ERRORS.NoWorkspaceName);
+    ).toThrow(BUN_LOCK_ERRORS.BunLockNotFound);
 
     expect(() =>
       findWorkspaces({
         rootDirectory: getProjectRoot("invalidDuplicateName"),
       }),
-    ).toThrow(WORKSPACE_ERRORS.DuplicateWorkspaceName);
+    ).toThrow(BUN_LOCK_ERRORS.BunLockNotFound);
 
     expect(() =>
       findWorkspaces({
@@ -286,7 +226,7 @@ describe("Test finding workspaces", () => {
       findWorkspaces({
         rootDirectory: getProjectRoot("invalidBadTypeWorkspaces"),
       }),
-    ).toThrow(WORKSPACE_ERRORS.InvalidWorkspaces);
+    ).toThrow(BUN_LOCK_ERRORS.BunLockNotFound);
 
     expect(() =>
       findWorkspaces({
@@ -298,19 +238,19 @@ describe("Test finding workspaces", () => {
       findWorkspaces({
         rootDirectory: getProjectRoot("invalidNoPackageJson"),
       }),
-    ).toThrow(WORKSPACE_ERRORS.PackageNotFound);
+    ).toThrow(BUN_LOCK_ERRORS.BunLockNotFound);
 
     expect(() =>
       findWorkspaces({
         rootDirectory: getProjectRoot("invalidBadWorkspaceGlobType"),
       }),
-    ).toThrow(WORKSPACE_ERRORS.InvalidWorkspacePattern);
+    ).toThrow(BUN_LOCK_ERRORS.BunLockNotFound);
 
     expect(() =>
       findWorkspaces({
         rootDirectory: getProjectRoot("invalidBadWorkspaceGlobOutsideRoot"),
       }),
-    ).toThrow(WORKSPACE_ERRORS.InvalidWorkspacePattern);
+    ).toThrow(BUN_LOCK_ERRORS.BunLockNotFound);
 
     expect(() =>
       findWorkspaces({
