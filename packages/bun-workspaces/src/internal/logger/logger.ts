@@ -1,5 +1,5 @@
-import { IS_TEST } from "./env";
-import { defineErrors } from "./error";
+import { IS_TEST } from "./runtime/env";
+import { defineErrors } from "./core/error";
 
 export const LOG_LEVELS = ["debug", "info", "warn", "error"] as const;
 

@@ -1,4 +1,4 @@
-import type { Simplify } from "../../internal/types";
+import type { Simplify } from "../../internal/core";
 import {
   validateWorkspaceAliases,
   WORKSPACE_ERRORS,

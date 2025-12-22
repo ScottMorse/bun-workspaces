@@ -1,4 +1,4 @@
-import rootPackageJson from "../../package.json";
+import rootPackageJson from "../../../package.json";
 
 export const LIBRARY_CONSUMER_BUN_VERSION =
   rootPackageJson.custom.bunVersion.libraryConsumer;

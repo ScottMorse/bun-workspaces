@@ -1,9 +1,9 @@
-import type { BunWorkspacesError } from "../../internal/error";
-import { isJsonObject } from "../../internal/json";
 import {
-  resolveOptionalArray,
+  isJsonObject,
   type OptionalArray,
-} from "../../internal/optionalArray";
+  type BunWorkspacesError,
+  resolveOptionalArray,
+} from "../../internal/core";
 import { WORKSPACE_CONFIG_ERRORS } from "./errors";
 
 export interface ScriptConfig {

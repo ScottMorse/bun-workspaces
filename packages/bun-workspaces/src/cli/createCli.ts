@@ -3,8 +3,8 @@ import packageJson from "../../package.json";
 import {
   getRequiredBunVersion,
   validateCurrentBunVersion,
-} from "../internal/bunVersion";
-import { BunWorkspacesError } from "../internal/error";
+} from "../internal/bun";
+import { BunWorkspacesError } from "../internal/core";
 import { logger } from "../internal/logger";
 import { fatalErrorLogger } from "./fatalErrorLogger";
 import { initializeWithGlobalOptions } from "./globalOptions";

@@ -1,4 +1,4 @@
-import { defineErrors } from "../internal/error";
+import { defineErrors } from "../internal/core";
 
 export const ERRORS = defineErrors(
   "ConfigFileNotFound",
