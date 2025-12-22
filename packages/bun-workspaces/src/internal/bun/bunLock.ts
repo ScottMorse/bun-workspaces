@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { BunWorkspacesError, defineErrors, isJsonObject } from "../core";
+import { type BunWorkspacesError, defineErrors, isJsonObject } from "../core";
 import { parseJsonc } from "../core/json";
 
 export const BUN_LOCK_ERRORS = defineErrors(
@@ -77,24 +77,20 @@ export const parseBunLock = (
   };
 };
 
-export const readBunLockfile = (directory: string): RelevantBunLock => {
+export const readBunLockfile = (
+  directory: string,
+): RelevantBunLock | BunWorkspacesError => {
   const bunLockPath = path.join(
     directory.replace(/(\/*)?bun.lock$/, ""),
     "bun.lock",
   );
   if (!fs.existsSync(bunLockPath)) {
-    throw new BUN_LOCK_ERRORS.BunLockNotFound(
+    return new BUN_LOCK_ERRORS.BunLockNotFound(
       `Did not find bun lockfile at "${bunLockPath}"`,
     );
   }
 
   const jsonString = fs.readFileSync(bunLockPath, "utf8");
 
-  const bunLock = parseBunLock(jsonString, bunLockPath);
-
-  if (bunLock instanceof BunWorkspacesError) {
-    throw bunLock;
-  }
-
-  return bunLock;
+  return parseBunLock(jsonString, bunLockPath);
 };

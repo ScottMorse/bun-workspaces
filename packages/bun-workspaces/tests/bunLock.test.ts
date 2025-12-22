@@ -4,6 +4,7 @@ import {
   BUN_LOCK_ERRORS,
   parseBunLock,
   readBunLockfile,
+  type RelevantBunLock,
 } from "../src/internal/bun/bunLock";
 
 const rootDirectory = path.join(
@@ -89,10 +90,11 @@ describe("bun.lock utilities", () => {
   });
 
   test("readBunLockfile", () => {
-    expect(() => readBunLockfile("does-not-exist")).toThrow(
+    expect(readBunLockfile("does-not-exist")).toBeInstanceOf(
       BUN_LOCK_ERRORS.BunLockNotFound,
     );
-    const projectBunLock = readBunLockfile(rootDirectory);
+
+    const projectBunLock = readBunLockfile(rootDirectory) as RelevantBunLock;
 
     expect(projectBunLock).toEqual({
       lockfileVersion: 1,
