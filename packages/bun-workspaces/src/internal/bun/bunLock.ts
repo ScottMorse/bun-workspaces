@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { type BunWorkspacesError, defineErrors, isJsonObject } from "../core";
+import { BunWorkspacesError, defineErrors, isJsonObject } from "../core";
 import { parseJsonc } from "../core/json";
 
 export const BUN_LOCK_ERRORS = defineErrors(
@@ -15,42 +15,86 @@ export type RelevantBunLockWorkspace = {
 
 export type RelevantBunLock = {
   lockfileVersion: number;
-  configVersion: number;
-  workspaces?: Record<string, RelevantBunLockWorkspace>;
+  workspaces: Record<string, RelevantBunLockWorkspace>;
 };
 
 export const SUPPORTED_BUN_LOCK_VERSIONS = [1] as const;
 
-export const readBunLock = (
-  directory: string,
+export const parseBunLock = (
+  jsonString: string,
+  /** Only for error message */
+  bunLockPath?: string,
 ): RelevantBunLock | BunWorkspacesError => {
-  const bunLockPath = path.join(directory, "bun.lock");
-  if (!fs.existsSync(bunLockPath)) {
-    return new BUN_LOCK_ERRORS.BunLockNotFound(
-      `Did not find bun lockfile at "${bunLockPath}"`,
-    );
-  }
-
   let bunLockJson: RelevantBunLock | null = null;
   try {
-    bunLockJson = parseJsonc(fs.readFileSync(bunLockPath, "utf8"));
+    bunLockJson = parseJsonc(jsonString);
   } catch (error) {
     return new BUN_LOCK_ERRORS.MalformedBunLock(
-      `Failed to parse bun lockfile at "${bunLockPath}": ${(error as Error).message}`,
+      `Failed to parse bun lockfile ${bunLockPath ? `at "${bunLockPath}"` : ""}: ${
+        (error as Error).message
+      }`,
     );
   }
 
   if (!isJsonObject(bunLockJson)) {
     return new BUN_LOCK_ERRORS.MalformedBunLock(
-      `Bun lockfile at "${bunLockPath}" is not a valid JSON object`,
+      `Bun lockfile ${bunLockPath ? `at "${bunLockPath}"` : ""} is not a valid JSON object`,
     );
   }
 
   if (bunLockJson.lockfileVersion !== SUPPORTED_BUN_LOCK_VERSIONS[0]) {
     return new BUN_LOCK_ERRORS.UnsupportedBunLockVersion(
-      `Unsupported bun lockfile version: ${bunLockJson.lockfileVersion} (Supported: ${SUPPORTED_BUN_LOCK_VERSIONS.join(", ")})`,
+      `Unsupported bun lockfile version ${bunLockPath ? `at "${bunLockPath}"` : ""}: ${
+        bunLockJson.lockfileVersion ??
+        "(could not find property lockfileVersion)"
+      } (Supported: ${SUPPORTED_BUN_LOCK_VERSIONS.join(", ")})`,
     );
   }
 
-  return bunLockJson;
+  if (typeof bunLockJson.lockfileVersion !== "number") {
+    return new BUN_LOCK_ERRORS.MalformedBunLock(
+      `Bun lockfile ${
+        bunLockPath ? `at "${bunLockPath}"` : ""
+      } has an invalid lockfileVersion field of type ${typeof bunLockJson.lockfileVersion}: ${
+        bunLockJson.lockfileVersion
+      }`,
+    );
+  }
+
+  if (bunLockJson.workspaces && typeof bunLockJson.workspaces !== "object") {
+    return new BUN_LOCK_ERRORS.MalformedBunLock(
+      `Bun lockfile ${
+        bunLockPath ? `at "${bunLockPath}"` : ""
+      } has an invalid workspaces field of type ${typeof bunLockJson.workspaces}: ${
+        bunLockJson.workspaces
+      }`,
+    );
+  }
+
+  return {
+    lockfileVersion: bunLockJson.lockfileVersion,
+    workspaces: bunLockJson.workspaces ?? {},
+  };
+};
+
+export const readBunLockfile = (directory: string): RelevantBunLock => {
+  const bunLockPath = path.join(
+    directory.replace(/(\/*)?bun.lock$/, ""),
+    "bun.lock",
+  );
+  if (!fs.existsSync(bunLockPath)) {
+    throw new BUN_LOCK_ERRORS.BunLockNotFound(
+      `Did not find bun lockfile at "${bunLockPath}"`,
+    );
+  }
+
+  const jsonString = fs.readFileSync(bunLockPath, "utf8");
+
+  const bunLock = parseBunLock(jsonString, bunLockPath);
+
+  if (bunLock instanceof BunWorkspacesError) {
+    throw bunLock;
+  }
+
+  return bunLock;
 };
