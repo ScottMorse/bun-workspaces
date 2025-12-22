@@ -32,7 +32,6 @@
     "bun-workspaces": "file:."
   },
   "dependencies": {
-    "commander": "^12.1.0",
-    "glob": "^11.1.0"
+    "commander": "^12.1.0"
   }
 }
