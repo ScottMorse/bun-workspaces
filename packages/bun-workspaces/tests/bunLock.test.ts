@@ -6,6 +6,11 @@ import {
   readBunLockfile,
 } from "../src/internal/bun/bunLock";
 
+const rootDirectory = path.join(
+  __dirname,
+  "../../.." + (process.env.IS_BUILD === "true" ? "/../" : ""),
+);
+
 describe("bun.lock utilities", () => {
   test("parseBunLock", () => {
     expect(
@@ -87,8 +92,7 @@ describe("bun.lock utilities", () => {
     expect(() => readBunLockfile("does-not-exist")).toThrow(
       BUN_LOCK_ERRORS.BunLockNotFound,
     );
-
-    const projectBunLock = readBunLockfile(path.join(__dirname, "../../.."));
+    const projectBunLock = readBunLockfile(rootDirectory);
 
     expect(projectBunLock).toEqual({
       lockfileVersion: 1,
@@ -110,7 +114,7 @@ describe("bun.lock utilities", () => {
       "@bw/sandbox",
     );
 
-    expect(readBunLockfile(path.join(__dirname, "../../../bun.lock"))).toEqual(
+    expect(readBunLockfile(path.join(rootDirectory, "bun.lock"))).toEqual(
       projectBunLock,
     );
   });

@@ -96,7 +96,14 @@ describe("JSONC parser works", () => {
       isJsonObject(
         parseJsonc(
           fs.readFileSync(
-            path.join(__dirname, "..", "..", "..", "bun.lock"),
+            path.join(
+              __dirname,
+              "..",
+              "..",
+              "..",
+              process.env.IS_BUILD === "true" ? "../" : "",
+              "bun.lock",
+            ),
             "utf8",
           ),
         ),
