@@ -88,10 +88,10 @@ export default defineConfig({
     },
     source: {
       define: {
-        "process.env.YEAR": JSON.stringify(new Date().getFullYear()),
-        "process.env.BUILD_ID": JSON.stringify(
-          process.env.BUILD_ID ?? "(no build ID)",
-        ),
+        process: `({ env: {
+          YEAR: ${JSON.stringify(new Date().getFullYear())},
+          BUILD_ID: ${JSON.stringify(process.env.BUILD_ID ?? "(no build ID)")},
+        }})`,
       },
     },
     html: {
