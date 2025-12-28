@@ -164,12 +164,15 @@ export default defineConfig({
       {
         icon: {
           svg: fs.readFileSync(
-            path.resolve(__dirname, "src/docs/public/buy-me-a-coffee-icon.svg"),
+            path.resolve(
+              __dirname,
+              "src/docs/public/images/external/gh-sponsors.svg",
+            ),
             "utf8",
           ),
         },
         mode: "link",
-        content: "https://buymeacoffee.com/scottmorse",
+        content: "https://github.com/sponsors/bun-workspaces",
       },
       {
         icon: "github",
