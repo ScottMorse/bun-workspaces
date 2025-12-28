@@ -25,6 +25,21 @@
   image-rendering: crisp-edges;
 }
 
+.bun-version {
+  font-size: 1rem;
+  color: var(--rp-c-text-2);
+}
+
+.bun-version.home-bun-version {
+  margin-top: -1rem;
+}
+
+.sub-header-bun-version {
+  margin-top: 1rem;
+  margin-bottom: -1rem;
+  font-size: 0.9rem;
+}
+
 .nav-title-container {
   display: flex;
   align-items: center;
