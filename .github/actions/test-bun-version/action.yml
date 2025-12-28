@@ -17,14 +17,13 @@ runs:
         echo "Installing Bun version: $bun_version"
         export BUN_INSTALL="$HOME/.bun"
         curl -fsSL https://bun.com/install | bash -s "bun-v$bun_version"
-        export PATH="$HOME/.bun/bin:$PATH"
+        echo "$HOME/.bun/bin:$PATH" >> $GITHUB_PATH
         echo "Bun version: $(bun --version)"
 
     - name: Install Dependencies
       id: install-deps
       shell: bash
       run: |
-        export PATH="$HOME/.bun/bin:$PATH"
         echo "Bun version: $(bun --version)"
         bun install
 
@@ -32,7 +31,6 @@ runs:
       id: run-tests
       shell: bash
       run: |
-        export PATH="$HOME/.bun/bin:$PATH"
         echo "Bun version: $(bun --version)"
         bun bw test --reporter=junit --reporter-outfile=../../junit.xml
         if grep -q "<skipped" junit.xml; then
@@ -44,6 +42,5 @@ runs:
       id: run-tests-against-build
       shell: bash
       run: |
-        export PATH="$HOME/.bun/bin:$PATH"
         echo "Bun version: $(bun --version)"
         bun bw build:test

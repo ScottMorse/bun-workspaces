@@ -17,9 +17,9 @@ runs:
       shell: bash
       run: |
         echo "Installing Bun version: $BUN_VERSION"
-        export BUN_INSTALL="$HOME/.bun"
+        BUN_INSTALL="$HOME/.bun"
         curl -fsSL https://bun.com/install | bash -s "bun-v$BUN_VERSION"
-        export PATH="$HOME/.bun/bin:$PATH"
+        echo "$HOME/.bun/bin:$PATH" >> $GITHUB_PATH
         echo "Bun version: $(bun --version)"
 
     - name: Bun Cache
