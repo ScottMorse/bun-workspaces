@@ -24,7 +24,7 @@ class _MemoryProject extends ProjectBase implements Project {
   public readonly sourceType = "memory";
 
   constructor(options: CreateMemoryProjectOptions) {
-    super();
+    super(true);
     this.name = options.name ?? "";
     this.rootDirectory = options.rootDirectory ?? "";
     this.workspaces = options.workspaces;

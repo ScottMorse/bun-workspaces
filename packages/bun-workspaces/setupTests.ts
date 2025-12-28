@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import path from "node:path";
-import { Glob, $ } from "bun";
+import { Glob } from "bun";
 import { setLogLevel } from "./src";
 import { runScript } from "./src/project";
 

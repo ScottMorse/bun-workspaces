@@ -1,9 +1,6 @@
 import { createCommand, type Command } from "commander";
 import packageJson from "../../package.json";
-import {
-  getRequiredBunVersion,
-  validateCurrentBunVersion,
-} from "../internal/bun";
+import { validateCurrentBunVersion } from "../internal/bun";
 import { BunWorkspacesError } from "../internal/core";
 import { logger } from "../internal/logger";
 import { fatalErrorLogger } from "./fatalErrorLogger";
@@ -52,15 +49,6 @@ export const createCli = ({
 
       postInit?.(program);
 
-      if (!validateCurrentBunVersion()) {
-        fatalErrorLogger.error(
-          `Bun version mismatch. Required: ${getRequiredBunVersion()}, Found: ${
-            Bun.version
-          }`,
-        );
-        process.exit(1);
-      }
-
       const args = tempFixCamelCaseOptions(
         typeof argv === "string" ? argv.split(/s+/) : argv,
       );
@@ -70,6 +58,13 @@ export const createCli = ({
         args,
         defaultCwd,
       );
+
+      const bunVersionError = validateCurrentBunVersion();
+
+      if (bunVersionError) {
+        fatalErrorLogger.error(bunVersionError.message);
+        process.exit(1);
+      }
 
       defineProjectCommands({
         program,
