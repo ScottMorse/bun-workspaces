@@ -22,6 +22,7 @@ const createDesiredPackageJson = () => {
     bin,
     _bwInternal,
     dependencies,
+    keywords,
   } = JSON.parse(readFileSync(path.resolve(PACKAGE_JSON_PATH)).toString());
 
   const { license } = JSON.parse(
@@ -36,6 +37,7 @@ const createDesiredPackageJson = () => {
     types: main.replace(".ts", ".d.ts"),
     homepage,
     repository,
+    keywords,
     bin,
     _bwInternal,
     dependencies,

@@ -1,9 +1,17 @@
 import path from "path";
 import { defineConfig } from "@rslib/core";
+import { validateCurrentBunVersion } from "./src/internal/bun";
 
 export const IS_TEST_BUILD = process.env.BUILD_INCLUDE_TESTS === "true";
 
 const DIST_PATH = IS_TEST_BUILD ? "dist.test/src" : "dist/src";
+
+const bunVersionError = validateCurrentBunVersion(true);
+
+if (bunVersionError) {
+  // eslint-disable-next-line no-console
+  console.error(bunVersionError);
+}
 
 export default defineConfig({
   lib: [

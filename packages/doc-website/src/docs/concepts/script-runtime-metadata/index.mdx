@@ -88,7 +88,7 @@ In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("workspaceRela
 Environment variable: <code>{getScriptRuntimeMetadataConfig("workspaceRelativePath").envVarName}</code>
 
 #### Script Name
-The name of the script. This is an empty string when running as an inline script.<br/>
+The name of the script. This is an empty string when running as an inline script, unless a script name is explicitly provided via the [CLI](/cli/commands#run-script) or [API](/api/reference#inline-scripts).<br/>
 
 In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("scriptName").inlineName[0]}</code><br/>
 Environment variable: <code>{getScriptRuntimeMetadataConfig("scriptName").envVarName}</code>

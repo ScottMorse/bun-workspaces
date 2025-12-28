@@ -1,4 +1,5 @@
 import { Link } from "rspress/theme";
+import { RequiredBunVersion } from "../RequiredBunVersion";
 
 const LINKS = {
   home: "/api",
@@ -46,6 +47,7 @@ export const ApiHeader = ({ activeHref, divider }: ApiHeaderProps) => {
         </Link>{" "}
         for more fundamental concepts.
       </p>
+      <RequiredBunVersion className="bun-version sub-header-bun-version" />
       {divider && <hr />}
     </div>
   );
