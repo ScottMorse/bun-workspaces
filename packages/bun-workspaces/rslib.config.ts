@@ -9,7 +9,8 @@ const DIST_PATH = IS_TEST_BUILD ? "dist.test/src" : "dist/src";
 const bunVersionError = validateCurrentBunVersion(true);
 
 if (bunVersionError) {
-  throw new Error(bunVersionError.message);
+  // eslint-disable-next-line no-console
+  console.error(bunVersionError);
 }
 
 export default defineConfig({

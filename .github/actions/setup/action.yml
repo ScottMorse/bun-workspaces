@@ -10,13 +10,17 @@ runs:
       run: |
         BUN_VERSION=$(cat packages/bun-workspaces/package.json | jq '._bwInternal.bunVersion.build')
         echo BUN_VERSION=$BUN_VERSION >> $GITHUB_ENV
-        echo "Bun lock version to be installed: $BUN_VERSION"
+        echo "Bun version to be installed: $BUN_VERSION"
 
     - name: Install Bun
       id: install-bun
-      uses: oven-sh/setup-bun@v2
-      with:
-        bun-version: ${{ env.BUN_VERSION }}
+      shell: bash
+      run: |
+        echo "Installing Bun version: $BUN_VERSION"
+        export BUN_INSTALL="$HOME/.bun"
+        curl -fsSL https://bun.com/install | bash -s "bun-v$BUN_VERSION"
+        export PATH="$HOME/.bun/bin:$PATH"
+        echo "Bun version: $(bun --version)"
 
     - name: Bun Cache
       id: bun-cache
