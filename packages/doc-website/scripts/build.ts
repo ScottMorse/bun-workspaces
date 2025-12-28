@@ -2,6 +2,7 @@ import { writeFileSync, rmSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { $ } from "bun";
 import { globSync } from "glob";
+import packageJson from "../../bun-workspaces/package.json";
 
 export const runBuild = async () => {
   const outputPath = path.resolve("__dirname", "..", "doc_build");
@@ -18,6 +19,8 @@ export const runBuild = async () => {
       "User-agent: *\nDisallow: /\n",
     );
   }
+
+  writeFileSync(path.resolve(outputPath, "version.txt"), packageJson.version);
 
   const outputHtmlFiles = globSync(path.resolve(outputPath, "**/*.html"));
   for (const htmlFile of outputHtmlFiles) {
