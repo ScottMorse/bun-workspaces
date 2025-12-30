@@ -5,6 +5,7 @@ import {
 } from "../src/cli/projectCommands";
 import { getProjectRoot } from "./testProjects";
 import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
+import { withWindowsPath } from "./util/windows";
 
 const listCommandAndAliases = (commandName: CliProjectCommandName) => {
   const config = getProjectCommandConfig(commandName);
@@ -26,22 +27,22 @@ describe("Test CLI commands", () => {
         plainResult.stdout.raw,
         `Workspace: application-1a
  - Aliases: deprecated_appA
- - Path: applications/applicationA
+ - Path: ${withWindowsPath("applications/applicationA")}
  - Glob Match: applications/*
  - Scripts: a-workspaces, all-workspaces, application-a
 Workspace: application-1b
  - Aliases: deprecated_appB
- - Path: applications/applicationB
+ - Path: ${withWindowsPath("applications/applicationB")}
  - Glob Match: applications/*
  - Scripts: all-workspaces, application-b, b-workspaces
 Workspace: library-1a
  - Aliases: deprecated_libA
- - Path: libraries/libraryA
+ - Path: ${withWindowsPath("libraries/libraryA")}
  - Glob Match: libraries/*
  - Scripts: a-workspaces, all-workspaces, library-a
 Workspace: library-1b
  - Aliases: deprecated_libB
- - Path: libraries/libraryB
+ - Path: ${withWindowsPath("libraries/libraryB")}
  - Glob Match: libraries/*
  - Scripts: all-workspaces, b-workspaces, library-b`,
       );
@@ -61,28 +62,28 @@ library-1b`,
         {
           name: "application-1a",
           matchPattern: "applications/*",
-          path: "applications/applicationA",
+          path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
           aliases: ["deprecated_appA"],
         },
         {
           name: "application-1b",
           matchPattern: "applications/*",
-          path: "applications/applicationB",
+          path: withWindowsPath("applications/applicationB"),
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
           aliases: ["deprecated_appB"],
         },
         {
           name: "library-1a",
           matchPattern: "libraries/*",
-          path: "libraries/libraryA",
+          path: withWindowsPath("libraries/libraryA"),
           scripts: ["a-workspaces", "all-workspaces", "library-a"],
           aliases: ["deprecated_libA"],
         },
         {
           name: "library-1b",
           matchPattern: "libraries/*",
-          path: "libraries/libraryB",
+          path: withWindowsPath("libraries/libraryB"),
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
           aliases: ["deprecated_libB"],
         },
@@ -157,7 +158,7 @@ library-1b`,
       expect(emptyWorkspacesResult.exitCode).toBe(1);
       assertOutputMatches(
         emptyWorkspacesResult.stderr.sanitizedCompactLines,
-        `No bun.lock found at ${getProjectRoot("emptyWorkspaces")}. Check that this is the directory of your project and that you've ran 'bun install'.` +
+        `No bun.lock found at ${withWindowsPath(getProjectRoot("emptyWorkspaces"))}. Check that this is the directory of your project and that you've ran 'bun install'.` +
           "If you have ran 'bun install', you may simply have no workspaces or dependencies in your project.",
       );
     },
@@ -318,7 +319,7 @@ Script: library-b
       expect(emptyWorkspacesResult.exitCode).toBe(1);
       assertOutputMatches(
         emptyWorkspacesResult.stderr.sanitizedCompactLines,
-        `No bun.lock found at ${getProjectRoot("emptyWorkspaces")}. Check that this is the directory of your project and that you've ran 'bun install'.` +
+        `No bun.lock found at ${withWindowsPath(getProjectRoot("emptyWorkspaces"))}. Check that this is the directory of your project and that you've ran 'bun install'.` +
           "If you have ran 'bun install', you may simply have no workspaces or dependencies in your project.",
       );
 
@@ -345,7 +346,7 @@ Script: library-b
         plainResult.stdout.raw,
         `Workspace: application-1a
  - Aliases: deprecated_appA
- - Path: applications/applicationA
+ - Path: ${withWindowsPath("applications/applicationA")}
  - Glob Match: applications/*
  - Scripts: a-workspaces, all-workspaces, application-a`,
       );
@@ -358,7 +359,7 @@ Script: library-b
         JSON.stringify({
           name: "application-1a",
           matchPattern: "applications/*",
-          path: "applications/applicationA",
+          path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
           aliases: ["deprecated_appA"],
         }),
@@ -372,7 +373,7 @@ Script: library-b
         JSON.stringify({
           name: "application-1a",
           matchPattern: "applications/*",
-          path: "applications/applicationA",
+          path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
           aliases: ["deprecated_appA"],
         }),
@@ -392,7 +393,7 @@ Script: library-b
           {
             name: "application-1a",
             matchPattern: "applications/*",
-            path: "applications/applicationA",
+            path: withWindowsPath("applications/applicationA"),
             scripts: ["a-workspaces", "all-workspaces", "application-a"],
             aliases: ["deprecated_appA"],
           },
@@ -415,7 +416,7 @@ Script: library-b
           {
             name: "application-1a",
             matchPattern: "applications/*",
-            path: "applications/applicationA",
+            path: withWindowsPath("applications/applicationA"),
             scripts: ["a-workspaces", "all-workspaces", "application-a"],
             aliases: ["deprecated_appA"],
           },
