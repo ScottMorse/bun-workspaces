@@ -44,6 +44,8 @@ const createWindowsBatchFile = (command: string) => {
   // IMPORTANT: CRLF helps with cmd/batch consistency
   const content = `@echo off\r\n${command}\r\n`;
 
+  console.log(content);
+
   fs.writeFileSync(filePath, content, { encoding: "utf8" });
 
   const cleanup = () => {
