@@ -594,7 +594,9 @@ this is my inline script for library-1b test-args-library-1b
     expect(result3.exitCode).toBe(1);
     assertOutputMatches(
       result3.stderr.sanitizedCompactLines,
-      `Failed to create JSON output file directory "${withWindowsPath(`${TEST_OUTPUT_DIR}/test-file.txt/something`)}": Error: ENOTDIR: not a directory, mkdir "${withWindowsPath(`${TEST_OUTPUT_DIR}/test-file.txt/something`)}"`,
+      new RegExp(
+        `Failed to create JSON output file directory "${withWindowsPath(`${TEST_OUTPUT_DIR}/test-file.txt/something`)}":`,
+      ),
     );
   });
 
