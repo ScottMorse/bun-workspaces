@@ -131,7 +131,7 @@ describe("Run Single Script", () => {
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      signal: "SIGKILL",
+      signal: IS_WINDOWS ? null : "SIGKILL",
       metadata: {},
     });
   });
