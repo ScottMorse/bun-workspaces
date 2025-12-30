@@ -518,6 +518,15 @@ describe("Run Multiple Scripts", () => {
 
       const getRandomSleepTime = () => Math.random() + 0.05;
 
+      const _ = "test-script-1";
+
+      console.log(
+        `echo test-script ${_} > "${getRunningFile(_)}" && ` +
+          `dir /b "${outputDir}" | find /c /v "" && ` +
+          `ping 127.0.0.1 -n ${Math.floor(getRandomSleepTime() * 1000)} >nul && ` +
+          `del "${getRunningFile(_)}"`,
+      );
+
       const createScript = (scriptName: string) => ({
         metadata: { name: scriptName },
         scriptCommand: {
@@ -551,7 +560,6 @@ describe("Run Multiple Scripts", () => {
 
       let didMaxRun = false;
       for await (const { outputChunk } of result.output) {
-        console.log(outputChunk.decode({ stripAnsi: true }).trim());
         const count = parseInt(outputChunk.decode().trim());
         if (count === max) {
           didMaxRun = true;
