@@ -29,7 +29,7 @@ jobs:
       - name: Run Tests
         shell: pwsh
         run: |
-          bun bw test fileSystemProject
+          bun bw test cliRunScript
         env:
           # ! REMOVE ME
           CI: false
