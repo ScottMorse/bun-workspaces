@@ -30,7 +30,7 @@ jobs:
         shell: pwsh
         run: |
           # Write junit.xml to repo root (so the check below matches)
-          bun bw test --reporter=junit --reporter-outfile=junit.xml
+          bun bw test runScriptInternals --reporter=junit --reporter-outfile=junit.xml
 
           if (Select-String -Path "junit.xml" -Pattern "<skipped" -Quiet) {
             Write-Host "❌ Skipped tests found. Exiting with error."

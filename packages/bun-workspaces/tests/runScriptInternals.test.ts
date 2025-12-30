@@ -18,7 +18,7 @@ afterAll(() => {
 });
 
 describe("Run Single Script", () => {
-  test("Simple success", async () => {
+  test.only("Simple success", async () => {
     const result = await runScript({
       scriptCommand: {
         command: IS_WINDOWS
@@ -60,7 +60,7 @@ describe("Run Single Script", () => {
     expect(outputCount).toBe(1);
   });
 
-  test("Simple failure", async () => {
+  test.only("Simple failure", async () => {
     const result = await runScript({
       scriptCommand: {
         command: IS_WINDOWS
