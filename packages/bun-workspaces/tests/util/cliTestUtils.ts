@@ -2,6 +2,7 @@ import path from "node:path";
 import { expect } from "bun:test";
 import packageJson from "../../package.json";
 import { createRawPattern } from "../../src/internal/core";
+import { IS_WINDOWS } from "../../src/internal/runtime";
 import { getProjectRoot, type TestProjectName } from "../testProjects";
 
 export const USAGE_OUTPUT_PATTERN = new RegExp(
@@ -68,8 +69,11 @@ export const setupCliTest = (
   const run = async (...argv: string[]) => {
     const subprocess = Bun.spawn(
       [
-        path.resolve(__dirname, "../../", packageJson.bin["bun-workspaces"]),
-        ...argv,
+        ...(IS_WINDOWS ? ["cmd", "/c"] : ["sh", "-c"]),
+        [
+          path.resolve(__dirname, "../../", packageJson.bin["bun-workspaces"]),
+          ...argv,
+        ].join(" "),
       ],
       {
         cwd: testProjectRoot,

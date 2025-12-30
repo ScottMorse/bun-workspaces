@@ -6,9 +6,13 @@ on:
   - pull_request
 
 jobs:
-  validate_code:
-    name: Validate Code
-    uses: ./.github/workflows/validate_code.yml
-  test_bun_versions:
-    name: Test Bun Versions
-    uses: ./.github/workflows/test_bun_versions.yml
+  # !UNDO BEFORE MERGE
+  # validate_code:
+  #   name: Validate Code
+  #   uses: ./.github/workflows/validate_code.yml
+  # test_bun_versions:
+  #   name: Test Bun Versions
+  #   uses: ./.github/workflows/test_bun_versions.yml
+  test_windows:
+    name: Test on Windows
+    uses: ./.github/workflows/test_windows.yml

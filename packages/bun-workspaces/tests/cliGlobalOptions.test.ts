@@ -11,6 +11,8 @@ describe("Test CLI Global Options", () => {
   test("Usage shows", async () => {
     const { run } = setupCliTest();
 
+    console.log("Set up CLI test");
+
     const helpResult = await run("--help");
     expect(helpResult.stderr.raw).toBeEmpty();
     expect(helpResult.exitCode).toBe(0);
