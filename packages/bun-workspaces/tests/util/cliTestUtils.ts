@@ -69,11 +69,9 @@ export const setupCliTest = (
   const run = async (...argv: string[]) => {
     const subprocess = Bun.spawn(
       [
-        ...(IS_WINDOWS ? ["cmd", "/c"] : ["sh", "-c"]),
-        [
-          path.resolve(__dirname, "../../", packageJson.bin["bun-workspaces"]),
-          ...argv,
-        ].join(" "),
+        "bun",
+        path.resolve(__dirname, "../../", packageJson.bin["bun-workspaces"]),
+        ...argv,
       ],
       {
         cwd: testProjectRoot,
