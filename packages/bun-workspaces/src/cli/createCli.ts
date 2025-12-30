@@ -53,18 +53,18 @@ export const createCli = ({
         typeof argv === "string" ? argv.split(/s+/) : argv,
       );
 
-      const { project, error } = initializeWithGlobalOptions(
-        program,
-        args,
-        defaultCwd,
-      );
-
       const bunVersionError = validateCurrentBunVersion();
 
       if (bunVersionError) {
         fatalErrorLogger.error(bunVersionError.message);
         process.exit(1);
       }
+
+      const { project, error } = initializeWithGlobalOptions(
+        program,
+        args,
+        defaultCwd,
+      );
 
       defineProjectCommands({
         program,
