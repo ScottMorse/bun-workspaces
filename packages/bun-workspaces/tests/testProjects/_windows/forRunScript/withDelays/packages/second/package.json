@@ -1,6 +1,0 @@
-{
-  "name": "second",
-  "scripts": {
-    "test-delay": "powershell -Command \"Start-Sleep -Seconds 0.05\" && echo second"
-  }
-}
