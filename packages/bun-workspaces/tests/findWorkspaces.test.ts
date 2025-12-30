@@ -4,6 +4,7 @@ import { BUN_LOCK_ERRORS } from "../src/internal/bun";
 import { WORKSPACE_ERRORS } from "../src/workspaces/errors";
 import { findWorkspaces } from "../src/workspaces/findWorkspaces";
 import { getProjectRoot } from "./testProjects";
+import { withWindowsPath } from "./util/windows";
 
 describe("Test finding workspaces", () => {
   test("Find workspaces basic behavior", async () => {
@@ -16,35 +17,35 @@ describe("Test finding workspaces", () => {
         {
           name: "application-a",
           matchPattern: "applications/*",
-          path: "applications/applicationA",
+          path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
           aliases: [],
         },
         {
           name: "application-b",
           matchPattern: "applications/*",
-          path: "applications/applicationB",
+          path: withWindowsPath("applications/applicationB"),
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
           aliases: [],
         },
         {
           name: "library-a",
           matchPattern: "libraries/**/*",
-          path: "libraries/libraryA",
+          path: withWindowsPath("libraries/libraryA"),
           scripts: ["a-workspaces", "all-workspaces", "library-a"],
           aliases: [],
         },
         {
           name: "library-b",
           matchPattern: "libraries/**/*",
-          path: "libraries/libraryB",
+          path: withWindowsPath("libraries/libraryB"),
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
           aliases: [],
         },
         {
           name: "library-c",
           matchPattern: "libraries/**/*",
-          path: "libraries/nested/libraryC",
+          path: withWindowsPath("libraries/nested/libraryC"),
           scripts: ["all-workspaces", "c-workspaces", "library-c"],
           aliases: [],
         },
@@ -75,28 +76,28 @@ describe("Test finding workspaces", () => {
         {
           name: "application-a",
           matchPattern: "applications/*",
-          path: "applications/applicationA",
+          path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
           aliases: [],
         },
         {
           name: "application-b",
           matchPattern: "applications/*",
-          path: "applications/applicationB",
+          path: withWindowsPath("applications/applicationB"),
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
           aliases: [],
         },
         {
           name: "library-a",
           matchPattern: "libraries/*",
-          path: "libraries/libraryA",
+          path: withWindowsPath("libraries/libraryA"),
           scripts: ["a-workspaces", "all-workspaces", "library-a"],
           aliases: [],
         },
         {
           name: "library-b",
           matchPattern: "libraries/*",
-          path: "libraries/libraryB",
+          path: withWindowsPath("libraries/libraryB"),
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
           aliases: [],
         },
@@ -119,14 +120,14 @@ describe("Test finding workspaces", () => {
         {
           name: "application-a",
           matchPattern: "applications/*",
-          path: "applications/applicationA",
+          path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
           aliases: [],
         },
         {
           name: "application-b",
           matchPattern: "applications/*",
-          path: "applications/applicationB",
+          path: withWindowsPath("applications/applicationB"),
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
           aliases: [],
         },
@@ -148,35 +149,35 @@ describe("Test finding workspaces", () => {
         {
           name: "application-a",
           matchPattern: "applications/*",
-          path: "applications/applicationA",
+          path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
           aliases: [],
         },
         {
           name: "application-b",
           matchPattern: "applications/*",
-          path: "applications/applicationB",
+          path: withWindowsPath("applications/applicationB"),
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
           aliases: [],
         },
         {
           name: "library-a",
           matchPattern: "libraries/**/*",
-          path: "libraries/libraryA",
+          path: withWindowsPath("libraries/libraryA"),
           scripts: ["a-workspaces", "all-workspaces", "library-a"],
           aliases: [],
         },
         {
           name: "library-b",
           matchPattern: "libraries/**/*",
-          path: "libraries/libraryB",
+          path: withWindowsPath("libraries/libraryB"),
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
           aliases: [],
         },
         {
           name: "library-c",
           matchPattern: "libraries/**/*",
-          path: "libraries/nested/libraryC",
+          path: withWindowsPath("libraries/nested/libraryC"),
           scripts: ["all-workspaces", "c-workspaces", "library-c"],
           aliases: [],
         },

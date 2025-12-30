@@ -461,7 +461,7 @@ describe("Test workspace config", () => {
     });
 
     expect(warnSpy).toHaveBeenCalledWith(
-      `Found config for workspace at path "${getProjectRoot("workspaceConfigDeprecatedConfigMix")}/${withWindowsPath("libraries/library-a")}" in both package.json and bw.workspace.json. The config in bw.workspace.json will be used.`,
+      `Found config for workspace at path "${withWindowsPath(getProjectRoot("workspaceConfigDeprecatedConfigMix") + "/libraries/library-a")}" in both package.json and bw.workspace.json. The config in bw.workspace.json will be used.`,
     );
 
     expect(project.workspaces).toEqual([
