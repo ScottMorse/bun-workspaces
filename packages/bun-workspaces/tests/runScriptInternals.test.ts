@@ -516,7 +516,7 @@ describe("Run Multiple Scripts", () => {
       const getRunningFile = (scriptName: string) =>
         path.join(outputDir, `${scriptName}.txt`);
 
-      const getRandomSleepTime = () => Math.random() + 0.05;
+      const getRandomSleepTime = () => Math.max(0.075, Math.random() + 0.025);
 
       const createScript = (scriptName: string) => ({
         metadata: { name: scriptName },
@@ -551,7 +551,6 @@ describe("Run Multiple Scripts", () => {
 
       let didMaxRun = false;
       for await (const { outputChunk } of result.output) {
-        console.log(outputChunk.decode({ stripAnsi: true }).trim());
         const count = parseInt(outputChunk.decode().trim());
         if (count === max) {
           didMaxRun = true;
