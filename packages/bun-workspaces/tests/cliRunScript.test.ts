@@ -582,7 +582,7 @@ this is my inline script for library-1b test-args-library-1b
     expect(result2.exitCode).toBe(1);
     assertOutputMatches(
       result2.stderr.sanitizedCompactLines,
-      `Given JSON output file directory ${withWindowsPath(`${TEST_OUTPUT_DIR}/test-file.txt`)} is an existing file`,
+      `Given JSON output file directory "${withWindowsPath(`${TEST_OUTPUT_DIR}/test-file.txt`)}" is an existing file`,
     );
 
     const result3 = await run(
@@ -594,7 +594,7 @@ this is my inline script for library-1b test-args-library-1b
     expect(result3.exitCode).toBe(1);
     assertOutputMatches(
       result3.stderr.sanitizedCompactLines,
-      `Failed to create JSON output file directory ${withWindowsPath(`${TEST_OUTPUT_DIR}/test-file.txt/something`)}: Error: ENOTDIR: not a directory, mkdir ${withWindowsPath(`${TEST_OUTPUT_DIR}/test-file.txt/something`)}`,
+      `Failed to create JSON output file directory "${withWindowsPath(`${TEST_OUTPUT_DIR}/test-file.txt/something`)}": Error: ENOTDIR: not a directory, mkdir "${withWindowsPath(`${TEST_OUTPUT_DIR}/test-file.txt/something`)}"`,
     );
   });
 
