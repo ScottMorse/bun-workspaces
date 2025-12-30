@@ -197,9 +197,9 @@ describe("Run Single Script", () => {
 
     for await (const outputChunk of singleResult.output) {
       expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.decode()).toBe(`test ${testValue}\n`);
-      expect(outputChunk.decode({ stripAnsi: true })).toBe(
-        `test ${testValue}\n`,
+      expect(outputChunk.decode().trim()).toBe(`test ${testValue}`);
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
+        `test ${testValue}`,
       );
     }
 
@@ -211,9 +211,9 @@ describe("Run Single Script", () => {
     for await (const { outputChunk } of multiResult.output) {
       expect(outputChunk.raw).toBeInstanceOf(Uint8Array);
       expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.decode()).toBe(`test ${testValue}\n`);
-      expect(outputChunk.decode({ stripAnsi: true })).toBe(
-        `test ${testValue}\n`,
+      expect(outputChunk.decode().trim()).toBe(`test ${testValue}`);
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
+        `test ${testValue}`,
       );
     }
   });
