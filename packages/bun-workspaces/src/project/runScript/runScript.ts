@@ -51,6 +51,7 @@ export const runScript = <ScriptMetadata extends object = object>({
       env: { ...process.env, ...env, FORCE_COLOR: "1" },
       stdout: "pipe",
       stderr: "pipe",
+      stdin: "ignore",
     },
   );
 
