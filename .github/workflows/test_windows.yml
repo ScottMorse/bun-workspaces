@@ -29,7 +29,7 @@ jobs:
       - name: Run Tests
         shell: pwsh
         run: |
-          bun bw test cliProjectCommands
+          bun bw test project
         env:
           # ! REMOVE ME
           CI: false
