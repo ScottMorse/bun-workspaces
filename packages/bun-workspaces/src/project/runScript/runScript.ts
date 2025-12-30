@@ -74,11 +74,9 @@ export const runScript = <ScriptMetadata extends object = object>({
     : null;
 
   const proc = Bun.spawn(
-    [
-      ...(windowsBatchFile
-        ? ["cmd", "/d", "/s", "/c", "call", windowsBatchFile.filePath]
-        : ["sh", "-c", scriptCommand.command]),
-    ],
+    windowsBatchFile
+      ? ["cmd", "/d", "/s", "/c", "call", windowsBatchFile.filePath]
+      : ["sh", "-c", scriptCommand.command],
     {
       cwd: scriptCommand.workingDirectory || process.cwd(),
       env: { ...process.env, ...env, FORCE_COLOR: "1" },
@@ -88,9 +86,9 @@ export const runScript = <ScriptMetadata extends object = object>({
     },
   );
 
-  proc.exited.finally(() => {
-    windowsBatchFile?.cleanup();
-  });
+  if (windowsBatchFile) {
+    proc.exited.finally(windowsBatchFile.cleanup);
+  }
 
   async function* pipeOutput(
     streamName: OutputStreamName,
