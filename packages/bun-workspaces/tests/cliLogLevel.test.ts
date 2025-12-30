@@ -10,7 +10,7 @@ describe("CLI Log Level", () => {
       (await run("--log-level=silent", "ls")).stdoutAndErr.raw,
       `Workspace: application-a
  - Aliases: 
- - Path: applications/applicationA
+ - Path: ${withWindowsPath("applications/applicationA")}
  - Glob Match: applications/*
  - Scripts: a-workspaces, all-workspaces, application-a`,
     );
@@ -38,7 +38,7 @@ describe("CLI Log Level", () => {
         .raw,
       `Workspace: application-a
  - Aliases: 
- - Path: applications/applicationA
+ - Path: ${withWindowsPath("applications/applicationA")}
  - Glob Match: applications/*
  - Scripts: a-workspaces, all-workspaces, application-a`,
     );
