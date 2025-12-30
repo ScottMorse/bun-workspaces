@@ -401,7 +401,7 @@ describe("Run Multiple Scripts", () => {
         },
         scriptCommand: {
           command: IS_WINDOWS
-            ? "ping 127.0.0.1 -n 2 -w 100 >nul && echo test-script 1"
+            ? "ping 127.0.0.1 -n 2 -w 250 >nul && echo test-script 1"
             : "sleep 0.5 && echo test-script 1",
           workingDirectory: "",
         },
@@ -425,7 +425,7 @@ describe("Run Multiple Scripts", () => {
         },
         scriptCommand: {
           command: IS_WINDOWS
-            ? "ping 127.0.0.1 -n 2 -w 250 >nul && echo test-script 3"
+            ? "ping 127.0.0.1 -n 2 -w 100 >nul && echo test-script 3"
             : "sleep 0.25 && echo test-script 3",
           workingDirectory: "",
         },
