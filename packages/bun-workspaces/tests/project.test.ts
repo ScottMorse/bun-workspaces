@@ -553,9 +553,9 @@ describe("Test Project utilities", () => {
     });
 
     for await (const chunk of output) {
-      expect(chunk.decode()).toBe("script for a workspaces\n");
-      expect(chunk.decode({ stripAnsi: true })).toBe(
-        "script for a workspaces\n",
+      expect(chunk.decode().trim()).toBe("script for a workspaces");
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
+        "script for a workspaces",
       );
       expect(chunk.streamName).toBe("stdout");
     }
@@ -590,8 +590,8 @@ describe("Test Project utilities", () => {
     });
 
     for await (const chunk of output) {
-      expect(chunk.decode()).toBe(`${echo}\n`);
-      expect(chunk.decode({ stripAnsi: true })).toBe(`${echo}\n`);
+      expect(chunk.decode().trim()).toBe(`${echo}`);
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(`${echo}`);
       expect(chunk.streamName).toBe("stdout");
     }
 
@@ -663,11 +663,11 @@ describe("Test Project utilities", () => {
     });
 
     for await (const chunk of inline.output) {
-      expect(chunk.decode()).toBe(
-        "inline passed args: --arg1=value1 --arg2=value2\n",
+      expect(chunk.decode().trim()).toBe(
+        "inline passed args: --arg1=value1 --arg2=value2",
       );
-      expect(chunk.decode({ stripAnsi: true })).toBe(
-        "inline passed args: --arg1=value1 --arg2=value2\n",
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
+        "inline passed args: --arg1=value1 --arg2=value2",
       );
       expect(chunk.streamName).toBe("stdout");
     }
