@@ -102,7 +102,7 @@ describe("Run Single Script", () => {
     expect(outputCount).toBe(1);
   });
 
-  test.only("Simple failure with signal", async () => {
+  test("Simple failure with signal", async () => {
     const result = await runScript({
       scriptCommand: {
         command: IS_WINDOWS
@@ -136,7 +136,7 @@ describe("Run Single Script", () => {
     });
   });
 
-  test.only("With stdout and stderr", async () => {
+  test("With stdout and stderr", async () => {
     const result = await runScript({
       scriptCommand: {
         command: IS_WINDOWS
@@ -177,10 +177,12 @@ describe("Run Single Script", () => {
     });
   });
 
-  test("Env vars are passed", async () => {
+  test.only("Env vars are passed", async () => {
     const testValue = `test value ${Math.round(Math.random() * 1000000)}`;
     const scriptCommand = {
-      command: "echo $NODE_ENV $TEST_ENV_VAR",
+      command: IS_WINDOWS
+        ? `echo %NODE_ENV% %TEST_ENV_VAR%`
+        : "echo $NODE_ENV $TEST_ENV_VAR",
       workingDirectory: ".",
       env: { TEST_ENV_VAR: testValue },
     };
@@ -216,7 +218,7 @@ describe("Run Single Script", () => {
     }
   });
 
-  test("With ANSI escape codes", async () => {
+  test.only("With ANSI escape codes", async () => {
     const result = await runScript({
       scriptCommand: {
         command: "echo '\x1b[31mtest-script 1\x1b[0m'",
