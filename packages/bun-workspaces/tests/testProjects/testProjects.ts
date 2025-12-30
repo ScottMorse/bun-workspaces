@@ -1,4 +1,6 @@
+import fs from "node:fs";
 import path from "path";
+import { IS_WINDOWS } from "../../src/internal/runtime";
 import { withWindowsPath } from "../util/windows";
 
 const TEST_PROJECTS = {
@@ -46,5 +48,16 @@ const TEST_PROJECTS = {
 
 export type TestProjectName = keyof typeof TEST_PROJECTS;
 
-export const getProjectRoot = (testProjectName: TestProjectName) =>
-  withWindowsPath(path.join(__dirname, TEST_PROJECTS[testProjectName]));
+export const getProjectRoot = (testProjectName: TestProjectName) => {
+  const windowsProject = path.join(
+    __dirname,
+    "_windows",
+    TEST_PROJECTS[testProjectName],
+  );
+
+  if (IS_WINDOWS && fs.existsSync(windowsProject)) {
+    return windowsProject;
+  }
+
+  return withWindowsPath(path.join(__dirname, TEST_PROJECTS[testProjectName]));
+};

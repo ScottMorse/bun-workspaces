@@ -1,0 +1,6 @@
+{
+  "name": "success1",
+  "scripts": {
+    "test-exit": "echo success1"
+  }
+}

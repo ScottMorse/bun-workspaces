@@ -1,0 +1,13 @@
+{
+  "name": "fifth",
+  "bw": {
+    "scripts": {
+      "test-delay": {
+        "order": 5
+      }
+    }
+  },
+  "scripts": {
+    "test-delay": "powershell -Command \"Start-Sleep -Seconds 1\" && echo fifth"
+  }
+}

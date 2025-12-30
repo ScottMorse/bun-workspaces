@@ -1,0 +1,13 @@
+{
+  "name": "second",
+  "bw": {
+    "scripts": {
+      "test-echo": {
+        "order": 200
+      }
+    }
+  },
+  "scripts": {
+    "test-echo": "echo second"
+  }
+}
