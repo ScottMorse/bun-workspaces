@@ -17,3 +17,6 @@ jobs:
       - uses: ./.github/actions/test-bun-version
         with:
           bun_version: ${{ matrix.bun_version }}
+
+  windows:
+    uses: ./.github/workflows/test_windows.yml

@@ -29,8 +29,6 @@ jobs:
       - name: Run Tests
         shell: pwsh
         run: |
-          bun --version
-
           # Write junit.xml to repo root (so the check below matches)
           bun bw test --reporter=junit --reporter-outfile=junit.xml
 
@@ -42,5 +40,4 @@ jobs:
       - name: Run Tests Against Build
         shell: pwsh
         run: |
-          bun --version
           bun bw build:test
