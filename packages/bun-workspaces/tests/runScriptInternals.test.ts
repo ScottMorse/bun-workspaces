@@ -177,7 +177,7 @@ describe("Run Single Script", () => {
     });
   });
 
-  test.only("Env vars are passed", async () => {
+  test("Env vars are passed", async () => {
     const testValue = `test value ${Math.round(Math.random() * 1000000)}`;
     const scriptCommand = {
       command: IS_WINDOWS
@@ -218,7 +218,7 @@ describe("Run Single Script", () => {
     }
   });
 
-  test.only("With ANSI escape codes", async () => {
+  test("With ANSI escape codes", async () => {
     const result = await runScript({
       scriptCommand: {
         command: "echo \x1b[31mtest-script 1\x1b[0m",
@@ -247,7 +247,7 @@ describe("Run Multiple Scripts", () => {
             name: "test-script name 1",
           },
           scriptCommand: {
-            command: "echo 'test-script 1'",
+            command: "echo test-script 1",
             workingDirectory: "",
           },
           env: {},
@@ -257,7 +257,7 @@ describe("Run Multiple Scripts", () => {
             name: "test-script name 2",
           },
           scriptCommand: {
-            command: "echo 'test-script 2'",
+            command: "echo test-script 2",
             workingDirectory: "",
           },
           env: {},
@@ -323,7 +323,9 @@ describe("Run Multiple Scripts", () => {
             name: "test-script name 1",
           },
           scriptCommand: {
-            command: "echo 'test-script 1' && exit 1",
+            command: IS_WINDOWS
+              ? "echo test-script 1 && exit /b 1"
+              : "echo 'test-script 1' && exit 1",
             workingDirectory: "",
           },
           env: {},
@@ -333,7 +335,7 @@ describe("Run Multiple Scripts", () => {
             name: "test-script name 2",
           },
           scriptCommand: {
-            command: "echo 'test-script 2'",
+            command: "echo test-script 2",
             workingDirectory: "",
           },
           env: {},
@@ -398,7 +400,9 @@ describe("Run Multiple Scripts", () => {
           name: "test-script name 1",
         },
         scriptCommand: {
-          command: "sleep 0.5 && echo 'test-script 1'",
+          command: IS_WINDOWS
+            ? "timeout /t 5 /nobreak >nul && echo test-script 1"
+            : "sleep 0.5 && echo test-script 1",
           workingDirectory: "",
         },
         env: {},
@@ -408,7 +412,9 @@ describe("Run Multiple Scripts", () => {
           name: "test-script name 2",
         },
         scriptCommand: {
-          command: "echo 'test-script 2' && exit 2",
+          command: IS_WINDOWS
+            ? "echo test-script 2 && exit /b 2"
+            : "echo 'test-script 2' && exit 2",
           workingDirectory: "",
         },
         env: {},
@@ -418,7 +424,9 @@ describe("Run Multiple Scripts", () => {
           name: "test-script name 3",
         },
         scriptCommand: {
-          command: "sleep 0.25 && echo 'test-script 3'",
+          command: IS_WINDOWS
+            ? "timeout /t 250 /nobreak >nul && echo test-script 3"
+            : "sleep 0.25 && echo test-script 3",
           workingDirectory: "",
         },
         env: {},
@@ -514,16 +522,10 @@ describe("Run Multiple Scripts", () => {
         metadata: { name: scriptName },
         scriptCommand: {
           command: IS_WINDOWS
-            ? `powershell -NoProfile -Command "Write-Output 'test-script ${
+            ? `echo test-script ${scriptName} > ${getRunningFile(scriptName)} && dir ${
                 scriptName
-              }' > ${getRunningFile(scriptName)} && ls ${
-                outputDir
-              } | wc -l && sleep ${getRandomSleepTime()} && rm ${getRunningFile(
-                scriptName,
-              )}"`
-            : `echo 'test-script ${scriptName}' > ${getRunningFile(scriptName)} && ls ${
-                outputDir
-              } | wc -l && sleep ${getRandomSleepTime()} && rm ${getRunningFile(scriptName)}`,
+              }' > ${getRunningFile(scriptName)} && dir ${outputDir} | findstr /c:"${scriptName}" && timeout /t 1 /nobreak >nul && del ${getRunningFile(scriptName)}`
+            : `echo 'test-script ${scriptName}' > ${getRunningFile(scriptName)} && ls ${outputDir} | wc -l && sleep ${getRandomSleepTime()} && rm ${getRunningFile(scriptName)}`,
           workingDirectory: "",
         },
         env: {},
@@ -624,7 +626,7 @@ describe("Run Multiple Scripts", () => {
           {
             scriptCommand: {
               command: IS_WINDOWS
-                ? `powershell -NoProfile -Command "Write-Output $_BW_PARALLEL_MAX"`
+                ? `echo %_BW_PARALLEL_MAX%`
                 : "echo $_BW_PARALLEL_MAX",
               workingDirectory: "",
             },
@@ -671,7 +673,7 @@ describe("Run Multiple Scripts", () => {
           {
             scriptCommand: {
               command: IS_WINDOWS
-                ? `powershell -NoProfile -Command "Write-Output $_BW_PARALLEL_MAX"`
+                ? `echo %_BW_PARALLEL_MAX%`
                 : "echo $_BW_PARALLEL_MAX",
               workingDirectory: "",
             },
@@ -693,7 +695,7 @@ describe("Run Multiple Scripts", () => {
           {
             scriptCommand: {
               command: IS_WINDOWS
-                ? `powershell -NoProfile -Command "Write-Output $_BW_PARALLEL_MAX"`
+                ? `echo %_BW_PARALLEL_MAX%`
                 : "echo $_BW_PARALLEL_MAX",
               workingDirectory: "",
             },
@@ -718,7 +720,7 @@ describe("Run Multiple Scripts", () => {
         {
           scriptCommand: {
             command: IS_WINDOWS
-              ? `powershell -NoProfile -Command "Write-Output $_BW_PARALLEL_MAX"`
+              ? `echo %_BW_PARALLEL_MAX%`
               : "echo $_BW_PARALLEL_MAX",
             workingDirectory: "",
           },
