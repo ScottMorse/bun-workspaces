@@ -167,11 +167,11 @@ describe("Test FileSystemProject", () => {
     });
 
     for await (const chunk of plainResult.output) {
-      expect(chunk.decode()).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo\n`,
+      expect(chunk.decode().trim()).toBe(
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo`,
       );
-      expect(chunk.decode({ stripAnsi: true })).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo\n`,
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo`,
       );
       expect(chunk.streamName).toBe("stdout");
     }
@@ -183,11 +183,11 @@ describe("Test FileSystemProject", () => {
     });
 
     for await (const chunk of argsResult.output) {
-      expect(chunk.decode()).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-a --arg4=${project.rootDirectory}/${withWindowsPath("applications/application-a")} --arg5=${withWindowsPath("applications/application-a")} --arg6=test-echo\n`,
+      expect(chunk.decode().trim()).toBe(
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-a --arg4=${project.rootDirectory}/${withWindowsPath("applications/application-a")} --arg5=${withWindowsPath("applications/application-a")} --arg6=test-echo`,
       );
-      expect(chunk.decode({ stripAnsi: true })).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-a --arg4=${project.rootDirectory}/${withWindowsPath("applications/application-a")} --arg5=${withWindowsPath("applications/application-a")} --arg6=test-echo\n`,
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-a --arg4=${project.rootDirectory}/${withWindowsPath("applications/application-a")} --arg5=${withWindowsPath("applications/application-a")} --arg6=test-echo`,
       );
       expect(chunk.streamName).toBe("stdout");
     }
