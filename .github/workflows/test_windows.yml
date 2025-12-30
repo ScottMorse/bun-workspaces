@@ -40,6 +40,7 @@ jobs:
         run: |
           bun bw test runScriptInternals
         env:
+          # ! REMOVE ME
           CI: false
 
       - name: Run Tests Against Build
