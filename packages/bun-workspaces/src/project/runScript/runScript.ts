@@ -45,7 +45,10 @@ export const runScript = <ScriptMetadata extends object = object>({
   const startTime = new Date();
 
   const proc = Bun.spawn(
-    [...(IS_WINDOWS ? ["cmd", "/c"] : ["sh", "-c"]), scriptCommand.command],
+    [
+      ...(IS_WINDOWS ? ["cmd", "/d", "/s", "/c"] : ["sh", "-c"]),
+      scriptCommand.command,
+    ],
     {
       cwd: scriptCommand.workingDirectory,
       env: { ...process.env, ...env, FORCE_COLOR: "1" },
