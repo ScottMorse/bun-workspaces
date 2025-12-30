@@ -47,7 +47,9 @@ export const runScript = <ScriptMetadata extends object = object>({
   const proc = Bun.spawn(
     [
       ...(IS_WINDOWS ? ["cmd", "/d", "/s", "/c"] : ["sh", "-c"]),
-      IS_WINDOWS ? `"${scriptCommand.command}"` : scriptCommand.command,
+      IS_WINDOWS
+        ? `"${scriptCommand.command.replace(/"/g, '""')}"`
+        : scriptCommand.command,
     ],
     {
       cwd: scriptCommand.workingDirectory,
