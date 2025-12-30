@@ -1,4 +1,5 @@
 import path from "path";
+import { withWindowsPath } from "../util/windows";
 
 const TEST_PROJECTS = {
   default: "fullProject",
@@ -46,4 +47,4 @@ const TEST_PROJECTS = {
 export type TestProjectName = keyof typeof TEST_PROJECTS;
 
 export const getProjectRoot = (testProjectName: TestProjectName) =>
-  path.join(__dirname, TEST_PROJECTS[testProjectName]);
+  withWindowsPath(path.join(__dirname, TEST_PROJECTS[testProjectName]));
