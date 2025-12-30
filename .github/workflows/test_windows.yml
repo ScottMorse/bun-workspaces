@@ -20,7 +20,11 @@ jobs:
         with:
           bun-version: ${{ matrix.bun_version }}
 
-      - uses: ./.github/actions/install-bun-deps
+      - name: Install Dependencies
+        id: install-deps
+        shell: pwsh
+        run: |
+          bun install --frozen-lockfile
 
       - name: Run Tests
         shell: pwsh

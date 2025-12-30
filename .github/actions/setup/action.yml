@@ -22,4 +22,8 @@ runs:
         echo "$HOME/.bun/bin:$PATH" >> $GITHUB_PATH
         echo "Bun version: $(bun --version)"
 
-    - uses: ./.github/actions/install-bun-deps
+    - name: Install Dependencies
+      id: install-deps
+      shell: bash
+      run: |
+        bun install --frozen-lockfile
