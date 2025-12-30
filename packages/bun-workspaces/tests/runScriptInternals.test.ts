@@ -393,7 +393,7 @@ describe("Run Multiple Scripts", () => {
     });
   });
 
-  test.only("Run Scripts - simple parallel", async () => {
+  test("Run Scripts - simple parallel", async () => {
     const scripts = [
       {
         metadata: {
@@ -401,7 +401,7 @@ describe("Run Multiple Scripts", () => {
         },
         scriptCommand: {
           command: IS_WINDOWS
-            ? "timeout /t 5 /nobreak >nul; echo test-script 1"
+            ? "timeout /t 5 /nobreak >nul && echo test-script 1"
             : "sleep 0.5 && echo test-script 1",
           workingDirectory: "",
         },
@@ -413,7 +413,7 @@ describe("Run Multiple Scripts", () => {
         },
         scriptCommand: {
           command: IS_WINDOWS
-            ? "echo test-script 2; exit /b 2"
+            ? "echo test-script 2 && exit /b 2"
             : "echo 'test-script 2' && exit 2",
           workingDirectory: "",
         },
@@ -425,7 +425,7 @@ describe("Run Multiple Scripts", () => {
         },
         scriptCommand: {
           command: IS_WINDOWS
-            ? "timeout /t 250 /nobreak >nul; echo test-script 3"
+            ? "timeout /t 250 /nobreak >nul && echo test-script 3"
             : "sleep 0.25 && echo test-script 3",
           workingDirectory: "",
         },
@@ -440,6 +440,7 @@ describe("Run Multiple Scripts", () => {
 
     let i = 0;
     for await (const { outputChunk, scriptMetadata } of result.output) {
+      console.log(outputChunk.decode({ stripAnsi: true }).trim());
       expect(outputChunk.streamName).toBe("stdout");
       const scriptNum = i === 0 ? 2 : i === 1 ? 3 : 1;
       expect(scriptMetadata.name).toBe(`test-script name ${scriptNum}`);
