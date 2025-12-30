@@ -530,11 +530,11 @@ describe("Run Multiple Scripts", () => {
         metadata: { name: scriptName },
         scriptCommand: {
           command: IS_WINDOWS
-            ? `echo test-script ${scriptName} > ${getRunningFile(_scriptName)}` // && ` +
-            : // `dir /b "${outputDir}" | find /c /v "" && ` +
-              // `ping 127.0.0.1 -n 2 -w ${Math.floor(getRandomSleepTime() * 1000)} >nul && ` +
-              // `del "${getRunningFile(scriptName)}"`
-              `echo 'test-script ${scriptName}' > ${getRunningFile(
+            ? `echo test-script ${scriptName} > ${getRunningFile(_scriptName)} && ` +
+              `dir /b ${outputDir} | find /c /v "" && ` +
+              `ping 127.0.0.1 -n 2 -w ${Math.floor(getRandomSleepTime() * 1000)} >nul && ` +
+              `del ${getRunningFile(scriptName)}`
+            : `echo 'test-script ${scriptName}' > ${getRunningFile(
                 scriptName,
               )} && ls ${outputDir} | wc -l && sleep ${getRandomSleepTime()} && rm ${getRunningFile(
                 scriptName,
