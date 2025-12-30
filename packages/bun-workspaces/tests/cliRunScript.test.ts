@@ -5,6 +5,7 @@ import { test, expect, describe, beforeAll } from "bun:test";
 import { getUserEnvVar } from "../src/config/userEnvVars";
 import { getProjectRoot, type TestProjectName } from "./testProjects";
 import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
+import { withWindowsPath } from "./util/windows";
 
 const TEST_OUTPUT_DIR = path.resolve(__dirname, "test-output");
 
@@ -581,7 +582,7 @@ this is my inline script for library-1b test-args-library-1b
     expect(result2.exitCode).toBe(1);
     assertOutputMatches(
       result2.stderr.sanitizedCompactLines,
-      `Given JSON output file directory "${TEST_OUTPUT_DIR}/test-file.txt" is an existing file`,
+      `Given JSON output file directory ${withWindowsPath(`${TEST_OUTPUT_DIR}/test-file.txt`)} is an existing file`,
     );
 
     const result3 = await run(
@@ -593,7 +594,7 @@ this is my inline script for library-1b test-args-library-1b
     expect(result3.exitCode).toBe(1);
     assertOutputMatches(
       result3.stderr.sanitizedCompactLines,
-      `Failed to create JSON output file directory "${TEST_OUTPUT_DIR}/test-file.txt/something": Error: ENOTDIR: not a directory, mkdir ${TEST_OUTPUT_DIR}/test-file.txt/something`,
+      `Failed to create JSON output file directory ${withWindowsPath(`${TEST_OUTPUT_DIR}/test-file.txt/something`)}: Error: ENOTDIR: not a directory, mkdir ${withWindowsPath(`${TEST_OUTPUT_DIR}/test-file.txt/something`)}`,
     );
   });
 
@@ -641,8 +642,8 @@ this is my inline script for library-1b test-args-library-1b
     );
     assertOutputMatches(
       argsResult.stdoutAndErr.sanitizedCompactLines,
-      `[application-a:test-echo] ${projectRoot} test-root application-a ${projectRoot}/applications/application-a applications/application-a test-echo --arg1=${projectRoot} --arg2=test-root --arg3=application-a --arg4=${projectRoot}/applications/application-a --arg5=applications/application-a --arg6=test-echo
-[application-b:test-echo] ${projectRoot} test-root application-b ${projectRoot}/applications/application-b applications/application-b test-echo --arg1=${projectRoot} --arg2=test-root --arg3=application-b --arg4=${projectRoot}/applications/application-b --arg5=applications/application-b --arg6=test-echo
+      `[application-a:test-echo] ${projectRoot} test-root application-a ${withWindowsPath(projectRoot + "/applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo --arg1=${projectRoot} --arg2=test-root --arg3=application-a --arg4=${projectRoot}/applications/application-a --arg5=applications/application-a --arg6=test-echo
+[application-b:test-echo] ${projectRoot} test-root application-b ${withWindowsPath(projectRoot + "/applications/application-b")} ${withWindowsPath("applications/application-b")} test-echo --arg1=${projectRoot} --arg2=test-root --arg3=application-b --arg4=${projectRoot}/applications/application-b --arg5=applications/application-b --arg6=test-echo
 ✅ application-a: test-echo
 ✅ application-b: test-echo
 2 scripts ran successfully`,
@@ -656,8 +657,8 @@ this is my inline script for library-1b test-args-library-1b
     expect(inlineResult.exitCode).toBe(0);
     assertOutputMatches(
       inlineResult.stdoutAndErr.sanitizedCompactLines,
-      `[application-a:(inline)] ${projectRoot} test-root application-a ${projectRoot}/applications/application-a applications/application-a
-[application-b:(inline)] ${projectRoot} test-root application-b ${projectRoot}/applications/application-b applications/application-b
+      `[application-a:(inline)] ${projectRoot} test-root application-a ${withWindowsPath(projectRoot + "/applications/application-a")} ${withWindowsPath("applications/application-a")}
+[application-b:(inline)] ${projectRoot} test-root application-b ${withWindowsPath(projectRoot + "/applications/application-b")} ${withWindowsPath("applications/application-b")}
 ✅ application-a: (inline)
 ✅ application-b: (inline)
 2 scripts ran successfully`,
