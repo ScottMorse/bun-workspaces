@@ -43,7 +43,8 @@ jobs:
           # ! REMOVE ME
           CI: false
 
-      - name: Run Tests Against Build
-        shell: pwsh
-        run: |
-          bun bw build:test
+      # ! UNCOMMENT BEFORE MERGE
+      # - name: Run Tests Against Build
+      #   shell: pwsh
+      #   run: |
+      #     bun bw build:test

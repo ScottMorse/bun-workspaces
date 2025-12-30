@@ -18,7 +18,7 @@ afterAll(() => {
 });
 
 describe("Run Single Script", () => {
-  test.only("Simple success", async () => {
+  test("Simple success", async () => {
     const result = await runScript({
       scriptCommand: {
         command: IS_WINDOWS
@@ -60,7 +60,7 @@ describe("Run Single Script", () => {
     expect(outputCount).toBe(1);
   });
 
-  test.only("Simple failure", async () => {
+  test("Simple failure", async () => {
     const result = await runScript({
       scriptCommand: {
         command: IS_WINDOWS
@@ -102,11 +102,11 @@ describe("Run Single Script", () => {
     expect(outputCount).toBe(1);
   });
 
-  test("Simple failure with signal", async () => {
+  test.only("Simple failure with signal", async () => {
     const result = await runScript({
       scriptCommand: {
         command: IS_WINDOWS
-          ? `powershell -NoProfile -Command "Write-Output 'test-script 1'; exit 137"`
+          ? `echo test-script 1 && exit /b 137`
           : "echo 'test-script 1' && kill -9 $$",
         workingDirectory: ".",
       },
@@ -136,11 +136,15 @@ describe("Run Single Script", () => {
     });
   });
 
-  test("With stdout and stderr", async () => {
+  test.only("With stdout and stderr", async () => {
     const result = await runScript({
       scriptCommand: {
         command: IS_WINDOWS
-          ? `powershell -NoProfile -Command "Write-Output 'test-script 1'; exit 137"`
+          ? `echo test-script 1 ^
+&& timeout /t 1 /nobreak >nul ^
+&& echo test-script 2 1>&2 ^
+&& timeout /t 1 /nobreak >nul ^
+&& echo test-script 3`
           : "echo 'test-script 1' && sleep 0.1 && echo 'test-script 2' >&2 && sleep 0.1 && echo 'test-script 3'",
         workingDirectory: ".",
       },
