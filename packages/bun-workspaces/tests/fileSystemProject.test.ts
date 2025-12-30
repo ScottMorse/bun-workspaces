@@ -17,8 +17,8 @@ describe("Test FileSystemProject", () => {
     });
 
     for await (const chunk of output) {
-      expect(chunk.decode()).toMatch("script for a workspaces");
-      expect(chunk.decode({ stripAnsi: true })).toMatch(
+      expect(chunk.decode().trim()).toMatch("script for a workspaces");
+      expect(chunk.decode({ stripAnsi: true }).trim()).toMatch(
         "script for a workspaces",
       );
       expect(chunk.streamName).toBe("stdout");
@@ -56,8 +56,8 @@ describe("Test FileSystemProject", () => {
     });
 
     for await (const chunk of output) {
-      expect(chunk.decode()).toMatch("script for a workspaces");
-      expect(chunk.decode({ stripAnsi: true })).toMatch(
+      expect(chunk.decode().trim()).toMatch("script for a workspaces");
+      expect(chunk.decode({ stripAnsi: true }).trim()).toMatch(
         "script for a workspaces",
       );
       expect(chunk.streamName).toBe("stdout");
@@ -130,8 +130,10 @@ describe("Test FileSystemProject", () => {
     let i = 0;
     for await (const chunk of output) {
       const expected = expectedOutput[i];
-      expect(chunk.decode()).toMatch(expected.text);
-      expect(chunk.decode({ stripAnsi: true })).toMatch(expected.textNoAnsi);
+      expect(chunk.decode().trim()).toMatch(expected.text);
+      expect(chunk.decode({ stripAnsi: true }).trim()).toMatch(
+        expected.textNoAnsi,
+      );
       expect(chunk.streamName).toBe(expected.streamName);
       i++;
     }
@@ -206,11 +208,11 @@ describe("Test FileSystemProject", () => {
     });
 
     for await (const chunk of anonymousScriptResult.output) {
-      expect(chunk.decode()).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")} \n`,
+      expect(chunk.decode().trim()).toBe(
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")}`,
       );
-      expect(chunk.decode({ stripAnsi: true })).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")} \n`,
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")}`,
       );
       expect(chunk.streamName).toBe("stdout");
     }
@@ -223,11 +225,11 @@ describe("Test FileSystemProject", () => {
     });
 
     for await (const chunk of namedScriptResult.output) {
-      expect(chunk.decode()).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")} my-named-script\n`,
+      expect(chunk.decode().trim()).toBe(
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")} my-named-script`,
       );
-      expect(chunk.decode({ stripAnsi: true })).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")} my-named-script\n`,
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")} my-named-script`,
       );
       expect(chunk.streamName).toBe("stdout");
     }
@@ -244,8 +246,8 @@ describe("Test FileSystemProject", () => {
     });
 
     for await (const { outputChunk, scriptMetadata } of output) {
-      expect(outputChunk.decode()).toMatch("script for b workspaces");
-      expect(outputChunk.decode({ stripAnsi: true })).toMatch(
+      expect(outputChunk.decode().trim()).toMatch("script for b workspaces");
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toMatch(
         "script for b workspaces",
       );
       expect(outputChunk.streamName).toBe("stdout");
@@ -303,8 +305,8 @@ describe("Test FileSystemProject", () => {
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "script for b workspaces\n",
-          textNoAnsi: "script for b workspaces\n",
+          text: "script for b workspaces",
+          textNoAnsi: "script for b workspaces",
         },
         scriptMetadata: {
           workspace: {
@@ -319,8 +321,8 @@ describe("Test FileSystemProject", () => {
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "script for b workspaces\n",
-          textNoAnsi: "script for b workspaces\n",
+          text: "script for b workspaces",
+          textNoAnsi: "script for b workspaces",
         },
         scriptMetadata: {
           workspace: {
@@ -336,8 +338,10 @@ describe("Test FileSystemProject", () => {
 
     let i = 0;
     for await (const { outputChunk } of output) {
-      expect(outputChunk.decode()).toBe(expectedOutput[i].outputChunk.text);
-      expect(outputChunk.decode({ stripAnsi: true })).toBe(
+      expect(outputChunk.decode().trim()).toBe(
+        expectedOutput[i].outputChunk.text,
+      );
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
         expectedOutput[i].outputChunk.textNoAnsi,
       );
       expect(outputChunk.streamName).toBe(
@@ -439,8 +443,8 @@ describe("Test FileSystemProject", () => {
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "script for all workspaces\n",
-          textNoAnsi: "script for all workspaces\n",
+          text: "script for all workspaces",
+          textNoAnsi: "script for all workspaces",
         },
         scriptMetadata: {
           workspace: {
@@ -455,8 +459,8 @@ describe("Test FileSystemProject", () => {
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "script for all workspaces\n",
-          textNoAnsi: "script for all workspaces\n",
+          text: "script for all workspaces",
+          textNoAnsi: "script for all workspaces",
         },
         scriptMetadata: {
           workspace: {
@@ -471,8 +475,8 @@ describe("Test FileSystemProject", () => {
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "script for all workspaces\n",
-          textNoAnsi: "script for all workspaces\n",
+          text: "script for all workspaces",
+          textNoAnsi: "script for all workspaces",
         },
         scriptMetadata: {
           workspace: {
@@ -487,8 +491,8 @@ describe("Test FileSystemProject", () => {
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "script for all workspaces\n",
-          textNoAnsi: "script for all workspaces\n",
+          text: "script for all workspaces",
+          textNoAnsi: "script for all workspaces",
         },
         scriptMetadata: {
           workspace: {
@@ -504,8 +508,10 @@ describe("Test FileSystemProject", () => {
 
     let i = 0;
     for await (const { outputChunk } of output) {
-      expect(outputChunk.decode()).toBe(expectedOutput[i].outputChunk.text);
-      expect(outputChunk.decode({ stripAnsi: true })).toBe(
+      expect(outputChunk.decode().trim()).toBe(
+        expectedOutput[i].outputChunk.text,
+      );
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
         expectedOutput[i].outputChunk.textNoAnsi,
       );
       expect(outputChunk.streamName).toBe(
@@ -612,8 +618,8 @@ describe("Test FileSystemProject", () => {
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "passed args: --arg1=value1 --arg2=value2\n",
-          textNoAnsi: "passed args: --arg1=value1 --arg2=value2\n",
+          text: "passed args: --arg1=value1 --arg2=value2",
+          textNoAnsi: "passed args: --arg1=value1 --arg2=value2",
         },
         scriptMetadata: {
           workspace: {
@@ -628,8 +634,8 @@ describe("Test FileSystemProject", () => {
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "passed args: --arg1=value1 --arg2=value2\n",
-          textNoAnsi: "passed args: --arg1=value1 --arg2=value2\n",
+          text: "passed args: --arg1=value1 --arg2=value2",
+          textNoAnsi: "passed args: --arg1=value1 --arg2=value2",
         },
         scriptMetadata: {
           workspace: {
@@ -645,8 +651,10 @@ describe("Test FileSystemProject", () => {
 
     let i = 0;
     for await (const { outputChunk } of output) {
-      expect(outputChunk.decode()).toBe(expectedOutput[i].outputChunk.text);
-      expect(outputChunk.decode({ stripAnsi: true })).toBe(
+      expect(outputChunk.decode().trim()).toBe(
+        expectedOutput[i].outputChunk.text,
+      );
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
         expectedOutput[i].outputChunk.textNoAnsi,
       );
       expect(outputChunk.streamName).toBe(
@@ -669,11 +677,11 @@ describe("Test FileSystemProject", () => {
     let i = 0;
     for await (const { outputChunk: chunk } of plainResult.output) {
       const appLetter = i === 0 ? "a" : "b";
-      expect(chunk.decode()).toBe(
-        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo\n`,
+      expect(chunk.decode().trim()).toBe(
+        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo`,
       );
-      expect(chunk.decode({ stripAnsi: true })).toBe(
-        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo\n`,
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
+        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo`,
       );
       expect(chunk.streamName).toBe("stdout");
       i++;
@@ -688,11 +696,11 @@ describe("Test FileSystemProject", () => {
     let j = 0;
     for await (const { outputChunk: chunk } of argsResult.output) {
       const appLetter = j === 0 ? "a" : "b";
-      expect(chunk.decode()).toBe(
-        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-${appLetter} --arg4=${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} --arg5=${withWindowsPath(`applications/application-${appLetter}`)} --arg6=test-echo\n`,
+      expect(chunk.decode().trim()).toBe(
+        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-${appLetter} --arg4=${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} --arg5=${withWindowsPath(`applications/application-${appLetter}`)} --arg6=test-echo`,
       );
-      expect(chunk.decode({ stripAnsi: true })).toBe(
-        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-${appLetter} --arg4=${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} --arg5=${withWindowsPath(`applications/application-${appLetter}`)} --arg6=test-echo\n`,
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
+        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-${appLetter} --arg4=${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} --arg5=${withWindowsPath(`applications/application-${appLetter}`)} --arg6=test-echo`,
       );
       expect(chunk.streamName).toBe("stdout");
       j++;
@@ -714,11 +722,11 @@ describe("Test FileSystemProject", () => {
     let k = 0;
     for await (const { outputChunk: chunk } of anonymousScriptResult.output) {
       const appLetter = k === 0 ? "a" : "b";
-      expect(chunk.decode()).toBe(
-        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} \n`,
+      expect(chunk.decode().trim()).toBe(
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} `,
       );
-      expect(chunk.decode({ stripAnsi: true })).toBe(
-        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} \n`,
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} `,
       );
       expect(chunk.streamName).toBe("stdout");
       k++;
@@ -735,11 +743,11 @@ describe("Test FileSystemProject", () => {
     for await (const { outputChunk: chunk } of namedScriptResult.output) {
       const appLetter = l === 0 ? "a" : "b";
 
-      expect(chunk.decode()).toBe(
-        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} my-named-script\n`,
+      expect(chunk.decode().trim()).toBe(
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} my-named-script`,
       );
-      expect(chunk.decode({ stripAnsi: true })).toBe(
-        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} my-named-script\n`,
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} my-named-script`,
       );
       expect(chunk.streamName).toBe("stdout");
       l++;
@@ -803,8 +811,8 @@ test-script-metadata-env-b
       {
         outputChunk: {
           streamName: "stderr" as const,
-          text: "fail1\n",
-          textNoAnsi: "fail1\n",
+          text: "fail1",
+          textNoAnsi: "fail1",
         },
         scriptMetadata: {
           workspace: {
@@ -819,8 +827,8 @@ test-script-metadata-env-b
       {
         outputChunk: {
           streamName: "stderr" as const,
-          text: "fail2\n",
-          textNoAnsi: "fail2\n",
+          text: "fail2",
+          textNoAnsi: "fail2",
         },
         scriptMetadata: {
           workspace: {
@@ -835,8 +843,8 @@ test-script-metadata-env-b
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "success1\n",
-          textNoAnsi: "success1\n",
+          text: "success1",
+          textNoAnsi: "success1",
         },
         scriptMetadata: {
           workspace: {
@@ -851,8 +859,8 @@ test-script-metadata-env-b
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "success2\n",
-          textNoAnsi: "success2\n",
+          text: "success2",
+          textNoAnsi: "success2",
         },
         scriptMetadata: {
           workspace: {
@@ -868,8 +876,10 @@ test-script-metadata-env-b
 
     let i = 0;
     for await (const { outputChunk } of output) {
-      expect(outputChunk.decode()).toBe(expectedOutput[i].outputChunk.text);
-      expect(outputChunk.decode({ stripAnsi: true })).toBe(
+      expect(outputChunk.decode().trim()).toBe(
+        expectedOutput[i].outputChunk.text,
+      );
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
         expectedOutput[i].outputChunk.textNoAnsi,
       );
       expect(outputChunk.streamName).toBe(
@@ -976,8 +986,8 @@ test-script-metadata-env-b
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "first\n",
-          textNoAnsi: "first\n",
+          text: "first",
+          textNoAnsi: "first",
         },
         scriptMetadata: {
           workspace: {
@@ -992,8 +1002,8 @@ test-script-metadata-env-b
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "second\n",
-          textNoAnsi: "second\n",
+          text: "second",
+          textNoAnsi: "second",
         },
         scriptMetadata: {
           workspace: {
@@ -1008,8 +1018,8 @@ test-script-metadata-env-b
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "third\n",
-          textNoAnsi: "third\n",
+          text: "third",
+          textNoAnsi: "third",
         },
         scriptMetadata: {
           workspace: {
@@ -1024,8 +1034,8 @@ test-script-metadata-env-b
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "fourth\n",
-          textNoAnsi: "fourth\n",
+          text: "fourth",
+          textNoAnsi: "fourth",
         },
         scriptMetadata: {
           workspace: {
@@ -1040,8 +1050,8 @@ test-script-metadata-env-b
       {
         outputChunk: {
           streamName: "stdout" as const,
-          text: "fifth\n",
-          textNoAnsi: "fifth\n",
+          text: "fifth",
+          textNoAnsi: "fifth",
         },
         scriptMetadata: {
           workspace: {
@@ -1057,8 +1067,10 @@ test-script-metadata-env-b
 
     let i = 0;
     for await (const { outputChunk } of output) {
-      expect(outputChunk.decode()).toBe(expectedOutput[i].outputChunk.text);
-      expect(outputChunk.decode({ stripAnsi: true })).toBe(
+      expect(outputChunk.decode().trim()).toBe(
+        expectedOutput[i].outputChunk.text,
+      );
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
         expectedOutput[i].outputChunk.textNoAnsi,
       );
       expect(outputChunk.streamName).toBe(
