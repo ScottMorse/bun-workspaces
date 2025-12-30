@@ -29,7 +29,9 @@ jobs:
       - name: Run Tests
         shell: pwsh
         run: |
-          CI=false bun bw test runScriptInternals
+          bun bw test runScriptInternals
+        env:
+          CI: false
 
       - name: Run Tests Against Build
         shell: pwsh
