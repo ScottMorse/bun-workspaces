@@ -168,10 +168,10 @@ describe("Test FileSystemProject", () => {
 
     for await (const chunk of plainResult.output) {
       expect(chunk.decode().trim()).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo`,
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo`,
       );
       expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo`,
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo`,
       );
       expect(chunk.streamName).toBe("stdout");
     }
@@ -184,10 +184,10 @@ describe("Test FileSystemProject", () => {
 
     for await (const chunk of argsResult.output) {
       expect(chunk.decode().trim()).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-a --arg4=${project.rootDirectory}/${withWindowsPath("applications/application-a")} --arg5=${withWindowsPath("applications/application-a")} --arg6=test-echo`,
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-a --arg4=${project.rootDirectory}${withWindowsPath("/applications/application-a")} --arg5=${withWindowsPath("applications/application-a")} --arg6=test-echo`,
       );
       expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-a --arg4=${project.rootDirectory}/${withWindowsPath("applications/application-a")} --arg5=${withWindowsPath("applications/application-a")} --arg6=test-echo`,
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-a --arg4=${project.rootDirectory}${withWindowsPath("/applications/application-a")} --arg5=${withWindowsPath("applications/application-a")} --arg6=test-echo`,
       );
       expect(chunk.streamName).toBe("stdout");
     }
@@ -207,10 +207,10 @@ describe("Test FileSystemProject", () => {
 
     for await (const chunk of anonymousScriptResult.output) {
       expect(chunk.decode()).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} \n`,
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")} \n`,
       );
       expect(chunk.decode({ stripAnsi: true })).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} \n`,
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")} \n`,
       );
       expect(chunk.streamName).toBe("stdout");
     }
@@ -224,10 +224,10 @@ describe("Test FileSystemProject", () => {
 
     for await (const chunk of namedScriptResult.output) {
       expect(chunk.decode()).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} my-named-script\n`,
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")} my-named-script\n`,
       );
       expect(chunk.decode({ stripAnsi: true })).toBe(
-        `${project.rootDirectory} test-root application-a ${project.rootDirectory}/${withWindowsPath("applications/application-a")} ${withWindowsPath("applications/application-a")} my-named-script\n`,
+        `${project.rootDirectory} test-root application-a ${project.rootDirectory}${withWindowsPath("/applications/application-a")} ${withWindowsPath("applications/application-a")} my-named-script\n`,
       );
       expect(chunk.streamName).toBe("stdout");
     }
@@ -670,10 +670,10 @@ describe("Test FileSystemProject", () => {
     for await (const { outputChunk: chunk } of plainResult.output) {
       const appLetter = i === 0 ? "a" : "b";
       expect(chunk.decode()).toBe(
-        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}/${withWindowsPath(`applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo\n`,
+        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo\n`,
       );
       expect(chunk.decode({ stripAnsi: true })).toBe(
-        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}/${withWindowsPath(`applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo\n`,
+        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo\n`,
       );
       expect(chunk.streamName).toBe("stdout");
       i++;
@@ -689,10 +689,10 @@ describe("Test FileSystemProject", () => {
     for await (const { outputChunk: chunk } of argsResult.output) {
       const appLetter = j === 0 ? "a" : "b";
       expect(chunk.decode()).toBe(
-        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}/${withWindowsPath(`applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-${appLetter} --arg4=${project.rootDirectory}/${withWindowsPath(`applications/application-${appLetter}`)} --arg5=${withWindowsPath(`applications/application-${appLetter}`)} --arg6=test-echo\n`,
+        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-${appLetter} --arg4=${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} --arg5=${withWindowsPath(`applications/application-${appLetter}`)} --arg6=test-echo\n`,
       );
       expect(chunk.decode({ stripAnsi: true })).toBe(
-        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}/${withWindowsPath(`applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-${appLetter} --arg4=${project.rootDirectory}/${withWindowsPath(`applications/application-${appLetter}`)} --arg5=${withWindowsPath(`applications/application-${appLetter}`)} --arg6=test-echo\n`,
+        `${project.rootDirectory} test-root application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} test-echo --arg1=${project.rootDirectory} --arg2=test-root --arg3=application-${appLetter} --arg4=${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} --arg5=${withWindowsPath(`applications/application-${appLetter}`)} --arg6=test-echo\n`,
       );
       expect(chunk.streamName).toBe("stdout");
       j++;
@@ -715,10 +715,10 @@ describe("Test FileSystemProject", () => {
     for await (const { outputChunk: chunk } of anonymousScriptResult.output) {
       const appLetter = k === 0 ? "a" : "b";
       expect(chunk.decode()).toBe(
-        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/${withWindowsPath(`applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} \n`,
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} \n`,
       );
       expect(chunk.decode({ stripAnsi: true })).toBe(
-        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/${withWindowsPath(`applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} \n`,
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} \n`,
       );
       expect(chunk.streamName).toBe("stdout");
       k++;
@@ -736,10 +736,10 @@ describe("Test FileSystemProject", () => {
       const appLetter = l === 0 ? "a" : "b";
 
       expect(chunk.decode()).toBe(
-        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/${withWindowsPath(`applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} my-named-script\n`,
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} my-named-script\n`,
       );
       expect(chunk.decode({ stripAnsi: true })).toBe(
-        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}/${withWindowsPath(`applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} my-named-script\n`,
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} my-named-script\n`,
       );
       expect(chunk.streamName).toBe("stdout");
       l++;
@@ -765,7 +765,7 @@ describe("Test FileSystemProject", () => {
     expect(output).toBe(`${project.rootDirectory}
 test-root
 application-a
-${project.rootDirectory}/${withWindowsPath("applications/applicationA")}
+${project.rootDirectory}${withWindowsPath("/applications/applicationA")}
 ${withWindowsPath("applications/applicationA")}
 test-script-metadata-env
 `);
@@ -783,7 +783,7 @@ test-script-metadata-env
     expect(output).toBe(`${project.rootDirectory}
 test-root
 application-b
-${project.rootDirectory}/${withWindowsPath("applications/applicationB")}
+${project.rootDirectory}${withWindowsPath("/applications/applicationB")}
 ${withWindowsPath("applications/applicationB")}
 test-script-metadata-env-b
 `);
