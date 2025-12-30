@@ -203,7 +203,7 @@ describe("Test FileSystemProject", () => {
     const anonymousScriptResult = project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script:
-        "echo '<projectPath> <projectName> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>'",
+        "echo <projectPath> <projectName> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>",
       inline: true,
     });
 
@@ -220,7 +220,7 @@ describe("Test FileSystemProject", () => {
     const namedScriptResult = project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script:
-        "echo '<projectPath> <projectName> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>'",
+        "echo <projectPath> <projectName> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>",
       inline: { scriptName: "my-named-script" },
     });
 
@@ -715,7 +715,7 @@ describe("Test FileSystemProject", () => {
     const anonymousScriptResult = project.runScriptAcrossWorkspaces({
       workspacePatterns: ["application-*"],
       script:
-        "echo '<projectPath> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>'",
+        "echo <projectPath> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>",
       inline: true,
     });
 
@@ -735,7 +735,7 @@ describe("Test FileSystemProject", () => {
     const namedScriptResult = project.runScriptAcrossWorkspaces({
       workspacePatterns: ["application-*"],
       script:
-        "echo '<projectPath> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>'",
+        "echo <projectPath> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>",
       inline: { scriptName: "my-named-script" },
     });
 
