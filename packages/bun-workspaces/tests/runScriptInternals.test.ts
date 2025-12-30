@@ -551,6 +551,7 @@ describe("Run Multiple Scripts", () => {
 
       let didMaxRun = false;
       for await (const { outputChunk } of result.output) {
+        console.log(outputChunk.decode({ stripAnsi: true }).trim());
         const count = parseInt(outputChunk.decode().trim());
         if (count === max) {
           didMaxRun = true;
