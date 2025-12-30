@@ -141,9 +141,9 @@ describe("Run Single Script", () => {
       scriptCommand: {
         command: IS_WINDOWS
           ? `echo test-script 1 ^
-&& timeout /t 1 /nobreak >nul ^
+&& ping -n 2 -w 100 >nul ^
 && echo test-script 2 1>&2 ^
-&& timeout /t 1 /nobreak >nul ^
+&& ping -n 2 -w 100 >nul ^
 && echo test-script 3`
           : "echo 'test-script 1' && sleep 0.1 && echo 'test-script 2' >&2 && sleep 0.1 && echo 'test-script 3'",
         workingDirectory: ".",
@@ -401,7 +401,7 @@ describe("Run Multiple Scripts", () => {
         },
         scriptCommand: {
           command: IS_WINDOWS
-            ? "timeout /t 5 /nobreak >nul && echo test-script 1"
+            ? "ping -n 2 -w 100 >nul && echo test-script 1"
             : "sleep 0.5 && echo test-script 1",
           workingDirectory: "",
         },
@@ -425,7 +425,7 @@ describe("Run Multiple Scripts", () => {
         },
         scriptCommand: {
           command: IS_WINDOWS
-            ? "timeout /t 250 /nobreak >nul && echo test-script 3"
+            ? "ping -n 2 -w 250 >nul && echo test-script 3"
             : "sleep 0.25 && echo test-script 3",
           workingDirectory: "",
         },
@@ -525,7 +525,7 @@ describe("Run Multiple Scripts", () => {
           command: IS_WINDOWS
             ? `echo test-script ${scriptName} > ${getRunningFile(scriptName)} && dir ${
                 scriptName
-              }' > ${getRunningFile(scriptName)} && dir ${outputDir} | findstr /c:"${scriptName}" && timeout /t 1 /nobreak >nul && del ${getRunningFile(scriptName)}`
+              }' > ${getRunningFile(scriptName)} && dir ${outputDir} | findstr /c:"${scriptName}" && ping -n 2 -w 100 >nul && del ${getRunningFile(scriptName)}`
             : `echo 'test-script ${scriptName}' > ${getRunningFile(scriptName)} && ls ${outputDir} | wc -l && sleep ${getRandomSleepTime()} && rm ${getRunningFile(scriptName)}`,
           workingDirectory: "",
         },
