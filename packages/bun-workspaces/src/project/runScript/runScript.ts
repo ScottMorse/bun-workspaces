@@ -44,19 +44,21 @@ export const runScript = <ScriptMetadata extends object = object>({
 }: RunScriptOptions<ScriptMetadata>): RunScriptResult<ScriptMetadata> => {
   const startTime = new Date();
 
-  console.log(
-    [
-      ...(IS_WINDOWS ? ["cmd", "/d", "/s", "/c"] : ["sh", "-c"]),
-      scriptCommand.command,
-    ],
-    {
-      cwd: scriptCommand.workingDirectory || process.cwd(),
-      env: { ...env, FORCE_COLOR: "1" },
-      stdout: "pipe",
-      stderr: "pipe",
-      stdin: "ignore",
-    },
-  );
+  if (!scriptCommand.command.includes("bun install")) {
+    console.log(
+      [
+        ...(IS_WINDOWS ? ["cmd", "/d", "/s", "/c"] : ["sh", "-c"]),
+        scriptCommand.command,
+      ],
+      {
+        cwd: scriptCommand.workingDirectory || process.cwd(),
+        env: { ...env, FORCE_COLOR: "1" },
+        stdout: "pipe",
+        stderr: "pipe",
+        stdin: "ignore",
+      },
+    );
+  }
 
   const proc = Bun.spawn(
     [
