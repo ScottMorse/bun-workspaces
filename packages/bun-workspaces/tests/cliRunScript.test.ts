@@ -430,7 +430,7 @@ success2
 
     const resultSimple = await run(
       "run-script",
-      "echo 'this is my inline script for <workspaceName>'",
+      "echo this is my inline script for <workspaceName>",
       "--inline",
     );
     expect(resultSimple.exitCode).toBe(0);
@@ -449,7 +449,7 @@ success2
 
     const resultSimpleShort = await run(
       "run-script",
-      "echo 'this is my inline script for <workspaceName>'",
+      "echo this is my inline script for <workspaceName>",
       "-i",
     );
     expect(resultSimpleShort.exitCode).toBe(0);
@@ -468,7 +468,7 @@ success2
 
     const resultWithArgs = await run(
       "run-script",
-      "echo 'this is my inline script for <workspaceName>'",
+      "echo this is my inline script for <workspaceName>",
       "--inline",
       "--args=test-args-<workspaceName>",
     );
@@ -488,7 +488,7 @@ success2
 
     const resultWithArgsNoPrefix = await run(
       "run-script",
-      "echo 'this is my inline script for <workspaceName>'",
+      "echo this is my inline script for <workspaceName>",
       "--inline",
       "--args=test-args-<workspaceName>",
       "--no-prefix",
@@ -514,7 +514,7 @@ this is my inline script for library-1b test-args-library-1b
     });
     const result = await run(
       "run-script",
-      "echo 'this is my inline script for <workspaceName>'",
+      "echo this is my inline script for <workspaceName>",
       "--inline",
       "--inline-name=test-echo-inline",
     );
@@ -534,7 +534,7 @@ this is my inline script for library-1b test-args-library-1b
 
     const resultShort = await run(
       "run-script",
-      "echo 'this is my inline script for <workspaceName>'",
+      "echo this is my inline script for <workspaceName>",
       "-i",
       "-I test-echo-inline",
     );
@@ -593,7 +593,7 @@ this is my inline script for library-1b test-args-library-1b
     expect(result3.exitCode).toBe(1);
     assertOutputMatches(
       result3.stderr.sanitizedCompactLines,
-      `Failed to create JSON output file directory "${TEST_OUTPUT_DIR}/test-file.txt/something": Error: ENOTDIR: not a directory, mkdir '${TEST_OUTPUT_DIR}/test-file.txt/something'`,
+      `Failed to create JSON output file directory "${TEST_OUTPUT_DIR}/test-file.txt/something": Error: ENOTDIR: not a directory, mkdir ${TEST_OUTPUT_DIR}/test-file.txt/something`,
     );
   });
 
@@ -650,7 +650,7 @@ this is my inline script for library-1b test-args-library-1b
 
     const inlineResult = await run(
       "run-script",
-      "echo '<projectPath> <projectName> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>'",
+      "echo <projectPath> <projectName> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>",
       "--inline",
     );
     expect(inlineResult.exitCode).toBe(0);
