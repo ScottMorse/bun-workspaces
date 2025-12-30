@@ -75,8 +75,9 @@ export const runScript = <ScriptMetadata extends object = object>({
 
   const proc = Bun.spawn(
     [
-      ...(IS_WINDOWS ? ["cmd", "/d", "/s", "/c"] : ["sh", "-c"]),
-      scriptCommand.command,
+      ...(windowsBatchFile
+        ? ["cmd", "/d", "/s", "/c", "call", windowsBatchFile.filePath]
+        : ["sh", "-c", scriptCommand.command]),
     ],
     {
       cwd: scriptCommand.workingDirectory || process.cwd(),
