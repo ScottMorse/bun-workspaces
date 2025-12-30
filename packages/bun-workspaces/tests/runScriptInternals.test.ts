@@ -518,19 +518,11 @@ describe("Run Multiple Scripts", () => {
 
       const getRandomSleepTime = () => Math.random() + 0.05;
 
-      const _scriptName = "test-script-1";
-      console.log(
-        `echo test-script ${_scriptName} > "${getRunningFile(_scriptName)}" && ` +
-          `dir /b "${outputDir}" | find /c /v "" && ` +
-          `ping 127.0.0.1 -n 2 -w ${Math.floor(getRandomSleepTime() * 1000)} >nul && ` +
-          `del "${getRunningFile(_scriptName)}"`,
-      );
-
       const createScript = (scriptName: string) => ({
         metadata: { name: scriptName },
         scriptCommand: {
           command: IS_WINDOWS
-            ? `echo test-script ${scriptName} > ${getRunningFile(_scriptName)} && ` +
+            ? `echo test-script ${scriptName} > ${getRunningFile(scriptName)} && ` +
               `dir /b ${outputDir} | find /c /v "" && ` +
               `ping 127.0.0.1 -n 2 -w ${Math.floor(getRandomSleepTime() * 1000)} >nul && ` +
               `del ${getRunningFile(scriptName)}`
