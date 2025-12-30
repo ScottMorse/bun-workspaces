@@ -497,7 +497,7 @@ describe("Run Multiple Scripts", () => {
     });
   });
 
-  test.only.each([1, 2, 3, 4, 5])(
+  test.each([1, 2, 3, 4, 5])(
     `Run Scripts - parallel max count %d`,
     async (max) => {
       const runId = randomUUID();

@@ -10,7 +10,7 @@ runs:
         path: ~/.bun/install/cache
         key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
         restore-keys: |
-          ${{ runner.os }} Bun Cache
+          ${{ runner.os }}-bun-bache
       id: bun-cache
 
     - name: Install Dependencies
