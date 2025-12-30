@@ -23,7 +23,7 @@
   "_bwInternal": {
     "bunVersion": {
       "build": "1.3.4",
-      "libraryConsumer": "^1.2.x"
+      "libraryConsumer": "^1.2.0"
     }
   },
   "scripts": {

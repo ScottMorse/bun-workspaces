@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, copyFileSync, rmSync } from "node:fs";
+import { readFileSync, writeFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import { build } from "@rslib/core";
 import { $ } from "bun";
@@ -38,6 +38,9 @@ const createDesiredPackageJson = () => {
     homepage,
     repository,
     keywords,
+    engines: {
+      bun: _bwInternal.bunVersion.libraryConsumer,
+    },
     bin,
     _bwInternal,
     dependencies,
