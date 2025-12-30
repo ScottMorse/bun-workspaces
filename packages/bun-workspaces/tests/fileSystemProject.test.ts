@@ -723,10 +723,10 @@ describe("Test FileSystemProject", () => {
     for await (const { outputChunk: chunk } of anonymousScriptResult.output) {
       const appLetter = k === 0 ? "a" : "b";
       expect(chunk.decode().trim()).toBe(
-        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} `,
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)}`,
       );
       expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
-        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)} `,
+        `${project.rootDirectory} application-${appLetter} ${project.rootDirectory}${withWindowsPath(`/applications/application-${appLetter}`)} ${withWindowsPath(`applications/application-${appLetter}`)}`,
       );
       expect(chunk.streamName).toBe("stdout");
       k++;
