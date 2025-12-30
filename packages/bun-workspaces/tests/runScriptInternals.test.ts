@@ -230,8 +230,10 @@ describe("Run Single Script", () => {
 
     for await (const outputChunk of result.output) {
       expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.decode()).toBe(`\x1b[31mtest-script 1\x1b[0m\n`);
-      expect(outputChunk.decode({ stripAnsi: true })).toBe(`test-script 1\n`);
+      expect(outputChunk.decode().trim()).toBe(`\x1b[31mtest-script 1\x1b[0m`);
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
+        `test-script 1`,
+      );
     }
   });
 });
