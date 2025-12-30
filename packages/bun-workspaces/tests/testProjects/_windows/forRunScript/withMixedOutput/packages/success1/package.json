@@ -1,6 +1,6 @@
 {
   "name": "success1",
   "scripts": {
-    "test-exit": "echo 'success1 stdout 1' && powershell -Command \"Start-Sleep -Seconds 0.025\" && echo 'success1 stderr 1' >&2 && powershell -Command \"Start-Sleep -Seconds 0.025\" && echo 'success1 stdout 2' && powershell -Command \"Start-Sleep -Seconds 0.025\" && echo 'success1 stderr 2' >&2"
+    "test-exit": "echo success1 stdout 1 && powershell -Command \"Start-Sleep -Seconds 0.025\" && echo success1 stderr 1 1>&2 && powershell -Command \"Start-Sleep -Seconds 0.025\" && echo success1 stdout 2 && powershell -Command \"Start-Sleep -Seconds 0.025\" && echo success1 stderr 2 1>&2"
   }
 }

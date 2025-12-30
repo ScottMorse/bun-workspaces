@@ -1,6 +1,6 @@
 {
   "name": "fail1",
   "scripts": {
-    "test-exit": "echo fail1 >&2 && exit 1"
+    "test-exit": "echo fail1 1>&2 && exit 1"
   }
 }
