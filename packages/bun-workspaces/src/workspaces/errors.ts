@@ -1,4 +1,4 @@
-import { defineErrors } from "../internal/error";
+import { defineErrors } from "../internal/core";
 
 export const WORKSPACE_ERRORS = defineErrors(
   "PackageNotFound",

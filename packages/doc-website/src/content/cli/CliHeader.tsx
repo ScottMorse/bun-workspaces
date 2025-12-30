@@ -1,4 +1,5 @@
 import { Link } from "rspress/theme";
+import { RequiredBunVersion } from "../RequiredBunVersion";
 
 const LINKS = {
   home: "/cli",
@@ -58,6 +59,7 @@ export const CliHeader = ({ activeHref }: CliHeaderProps) => {
         </Link>{" "}
         for more fundamental concepts.
       </p>
+      <RequiredBunVersion className="bun-version sub-header-bun-version" />
       <hr />
     </div>
   );

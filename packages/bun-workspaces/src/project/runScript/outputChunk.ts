@@ -1,5 +1,6 @@
-import { sanitizeAnsi } from "../../internal/regex";
-import type { OutputStreamName } from "./runScript";
+import { sanitizeAnsi } from "../../internal/core";
+
+export type OutputStreamName = "stdout" | "stderr";
 
 export interface DecodeOptions {
   /** Whether to strip ANSI escape codes */
@@ -40,7 +41,7 @@ class _OutputChunk implements OutputChunk {
     return this.decode();
   }
 
-  /** @deprecated Use `decode(true)` instead */
+  /** @deprecated Use `decode({ stripAnsi: true })` instead */
   get textNoAnsi(): string {
     // TODO remove in future major release
     return this.decode({ stripAnsi: true });

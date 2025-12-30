@@ -1,6 +1,6 @@
 {
   "name": "bun-workspaces",
-  "version": "1.0.0-alpha.24",
+  "version": "1.0.0-alpha.27",
   "main": "src/index.ts",
   "private": true,
   "homepage": "https://bunworkspaces.com",
@@ -8,22 +8,31 @@
     "type": "git",
     "url": "https://github.com/bun-workspaces/bun-workspaces.git"
   },
+  "keywords": [
+    "bun",
+    "workspace",
+    "workspaces",
+    "monorepo",
+    "cli",
+    "api"
+  ],
   "bin": {
     "bun-workspaces": "bin/cli.js",
     "bw": "bin/cli.js"
   },
-  "custom": {
+  "_bwInternal": {
     "bunVersion": {
       "build": "1.3.4",
-      "libraryConsumer": "^1.1.x"
+      "libraryConsumer": "^1.2.x"
     }
   },
   "scripts": {
     "cli": "bun --silent run bin/cli.js",
     "cli:dev": "_BW_RUNTIME_MODE=development bun --silent run bin/cli.js",
     "lint": "eslint src",
+    "test": "rm -rf dist.test && bun test",
     "build": "bun run scripts/build.ts",
-    "build:test": "BUILD_INCLUDE_TESTS=true bun run scripts/build.ts && chmod +x dist.test/bin/cli.js && cd dist.test && bun install && bun test && cd .. && rm -rf dist.test",
+    "build:test": "BUILD_INCLUDE_TESTS=true bun run scripts/build.ts && chmod +x dist.test/bin/cli.js && cd dist.test && bun install && IS_BUILD=true bun test && cd .. && rm -rf dist.test",
     "build:rslib-only": "rslib build",
     "type-check": "tsc --noEmit"
   },

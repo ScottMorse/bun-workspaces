@@ -1,7 +1,7 @@
 import path from "node:path";
 import { expect } from "bun:test";
 import packageJson from "../../package.json";
-import { createRawPattern } from "../../src/internal/regex";
+import { createRawPattern } from "../../src/internal/core";
 import { getProjectRoot, type TestProjectName } from "../testProjects";
 
 export const USAGE_OUTPUT_PATTERN = new RegExp(

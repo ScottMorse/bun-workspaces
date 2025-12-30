@@ -1,4 +1,4 @@
-import type { Simplify } from "../../internal/types";
+import type { Simplify } from "../../internal/core";
 import {
   validateWorkspaceAliases,
   WORKSPACE_ERRORS,
@@ -24,7 +24,7 @@ class _MemoryProject extends ProjectBase implements Project {
   public readonly sourceType = "memory";
 
   constructor(options: CreateMemoryProjectOptions) {
-    super();
+    super(true);
     this.name = options.name ?? "";
     this.rootDirectory = options.rootDirectory ?? "";
     this.workspaces = options.workspaces;

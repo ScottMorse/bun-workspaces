@@ -3,6 +3,7 @@ import {
   getProjectCommandConfig,
   type CliProjectCommandName,
 } from "../src/cli/projectCommands";
+import { getProjectRoot } from "./testProjects";
 import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
 
 const listCommandAndAliases = (commandName: CliProjectCommandName) => {
@@ -152,48 +153,12 @@ library-1b`,
       const emptyWorkspacesResult = await setupCliTest({
         testProject: "emptyWorkspaces",
       }).run(command);
-      expect(emptyWorkspacesResult.stderr.raw).toBeEmpty();
-      expect(emptyWorkspacesResult.exitCode).toBe(0);
+      expect(emptyWorkspacesResult.stdout.raw).toBeEmpty();
+      expect(emptyWorkspacesResult.exitCode).toBe(1);
       assertOutputMatches(
-        emptyWorkspacesResult.stdout.raw,
-        "No workspaces found",
-      );
-
-      const emptyWorkspacesJsonResult = await setupCliTest({
-        testProject: "emptyWorkspaces",
-      }).run(command, "--json");
-      expect(emptyWorkspacesJsonResult.stderr.raw).toBeEmpty();
-      expect(emptyWorkspacesJsonResult.exitCode).toBe(0);
-      assertOutputMatches(
-        emptyWorkspacesJsonResult.stdout.raw,
-        JSON.stringify([]),
-      );
-
-      const emptyWorkspacesJsonPrettyResult = await setupCliTest({
-        testProject: "emptyWorkspaces",
-      }).run(command, "--json", "--pretty");
-      expect(emptyWorkspacesJsonPrettyResult.stderr.raw).toBeEmpty();
-      expect(emptyWorkspacesJsonPrettyResult.exitCode).toBe(0);
-      assertOutputMatches(
-        emptyWorkspacesJsonPrettyResult.stdout.raw,
-        JSON.stringify([], null, 2),
-      );
-
-      const emptyWorkspacesNameOnlyResult = await setupCliTest({
-        testProject: "emptyWorkspaces",
-      }).run(command, "--name-only");
-      expect(emptyWorkspacesNameOnlyResult.stderr.raw).toBeEmpty();
-      expect(emptyWorkspacesNameOnlyResult.exitCode).toBe(0);
-      assertOutputMatches(emptyWorkspacesNameOnlyResult.stdout.raw, "");
-
-      const emptyWorkspacesNameOnlyJsonResult = await setupCliTest({
-        testProject: "emptyWorkspaces",
-      }).run(command, "--name-only", "--json");
-      expect(emptyWorkspacesNameOnlyJsonResult.stderr.raw).toBeEmpty();
-      expect(emptyWorkspacesNameOnlyJsonResult.exitCode).toBe(0);
-      assertOutputMatches(
-        emptyWorkspacesNameOnlyJsonResult.stdout.raw,
-        JSON.stringify([]),
+        emptyWorkspacesResult.stderr.sanitizedCompactLines,
+        `No bun.lock found at ${getProjectRoot("emptyWorkspaces")}. Check that this is the directory of your project and that you've ran 'bun install'.` +
+          "If you have ran 'bun install', you may simply have no workspaces or dependencies in your project.",
       );
     },
   );
@@ -348,11 +313,13 @@ Script: library-b
       const emptyWorkspacesResult = await setupCliTest({
         testProject: "emptyWorkspaces",
       }).run(command);
-      expect(emptyWorkspacesResult.stderr.raw).toBeEmpty();
-      expect(emptyWorkspacesResult.exitCode).toBe(0);
+
+      expect(emptyWorkspacesResult.stdout.raw).toBeEmpty();
+      expect(emptyWorkspacesResult.exitCode).toBe(1);
       assertOutputMatches(
-        emptyWorkspacesResult.stdout.raw,
-        "No workspaces found",
+        emptyWorkspacesResult.stderr.sanitizedCompactLines,
+        `No bun.lock found at ${getProjectRoot("emptyWorkspaces")}. Check that this is the directory of your project and that you've ran 'bun install'.` +
+          "If you have ran 'bun install', you may simply have no workspaces or dependencies in your project.",
       );
 
       const emptyScriptsResult = await setupCliTest({
@@ -361,33 +328,6 @@ Script: library-b
       expect(emptyScriptsResult.stderr.raw).toBeEmpty();
       expect(emptyScriptsResult.exitCode).toBe(0);
       assertOutputMatches(emptyScriptsResult.stdout.raw, "No scripts found");
-
-      const emptyWorkspacesNameOnlyResult = await setupCliTest({
-        testProject: "emptyWorkspaces",
-      }).run(command, "--name-only");
-      expect(emptyWorkspacesNameOnlyResult.stderr.raw).toBeEmpty();
-      expect(emptyWorkspacesNameOnlyResult.exitCode).toBe(0);
-      assertOutputMatches(emptyWorkspacesNameOnlyResult.stdout.raw, "");
-
-      const emptyWorkspacesNameOnlyJsonResult = await setupCliTest({
-        testProject: "emptyWorkspaces",
-      }).run(command, "--name-only", "--json");
-      expect(emptyWorkspacesNameOnlyJsonResult.stderr.raw).toBeEmpty();
-      expect(emptyWorkspacesNameOnlyJsonResult.exitCode).toBe(0);
-      assertOutputMatches(
-        emptyWorkspacesNameOnlyJsonResult.stdout.raw,
-        JSON.stringify([]),
-      );
-
-      const emptyWorkspacesNameOnlyPrettyResult = await setupCliTest({
-        testProject: "emptyWorkspaces",
-      }).run(command, "--name-only", "--json", "--pretty");
-      expect(emptyWorkspacesNameOnlyPrettyResult.stderr.raw).toBeEmpty();
-      expect(emptyWorkspacesNameOnlyPrettyResult.exitCode).toBe(0);
-      assertOutputMatches(
-        emptyWorkspacesNameOnlyPrettyResult.stdout.raw,
-        JSON.stringify([], null, 2),
-      );
     },
   );
 

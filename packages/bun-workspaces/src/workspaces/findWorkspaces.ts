@@ -1,22 +1,24 @@
 import fs from "fs";
 import path from "path";
+import { Glob } from "bun";
 import {
   createWorkspaceConfig,
   loadWorkspaceConfig,
   type ProjectConfig,
   type ResolvedWorkspaceConfig,
 } from "../config";
+import { BUN_LOCK_ERRORS, readBunLockfile } from "../internal/bun";
+import { BunWorkspacesError } from "../internal/core";
 import { WORKSPACE_ERRORS } from "./errors";
 import {
   resolvePackageJsonContent,
   resolvePackageJsonPath,
-  scanWorkspaceGlob,
 } from "./packageJson";
 import type { Workspace } from "./workspace";
 
 export interface FindWorkspacesOptions {
   rootDirectory: string;
-  /** If provided, will override the workspaces found in the package.json */
+  /** If provided, will override the workspaces found in the package.json. Mainly for testing purposes */
   workspaceGlobs?: string[];
   /** @deprecated due to config file changes */
   workspaceAliases?: ProjectConfig["workspaceAliases"];
@@ -30,7 +32,7 @@ const getWorkspaceGlobsFromRoot = ({
   const packageJsonPath = path.join(rootDirectory, "package.json");
   if (!fs.existsSync(packageJsonPath)) {
     throw new WORKSPACE_ERRORS.PackageNotFound(
-      `No package.json found at ${packageJsonPath}`,
+      `No package.json found for project root at ${packageJsonPath}`,
     );
   }
 
@@ -67,78 +69,79 @@ export const findWorkspaces = ({
   const workspaces: Workspace[] = [];
   const excludedWorkspacePaths: string[] = [];
 
+  const workspaceConfigMap: Record<string, ResolvedWorkspaceConfig> = {};
+
+  const bunLock = readBunLockfile(rootDirectory);
+
+  if (bunLock instanceof BunWorkspacesError) {
+    if (bunLock instanceof BUN_LOCK_ERRORS.BunLockNotFound) {
+      bunLock.message =
+        `No bun.lock found at ${rootDirectory}. Check that this is the directory of your project and that you've ran 'bun install'.` +
+        "If you have ran 'bun install', you may simply have no workspaces or dependencies in your project.";
+    }
+    throw bunLock;
+  }
+
   const workspaceGlobs =
     _workspaceGlobs ?? getWorkspaceGlobsFromRoot({ rootDirectory });
 
-  const negativePatterns = workspaceGlobs
-    .filter((pattern) => pattern.startsWith("!"))
-    .concat(["!**/node_modules/**/*"]);
-
-  const positivePatterns = workspaceGlobs.filter(
-    (pattern) => !pattern.startsWith("!"),
-  );
-
-  for (const pattern of negativePatterns) {
-    for (const item of scanWorkspaceGlob(
-      pattern.replace(/^!/, ""),
-      rootDirectory,
-    )) {
-      const packageJsonPath = resolvePackageJsonPath(item);
-      if (packageJsonPath) {
-        excludedWorkspacePaths.push(
-          path.relative(rootDirectory, path.dirname(packageJsonPath)),
-        );
-      }
+  for (const workspacePath of Object.keys(bunLock.workspaces).map((p) =>
+    path.join(rootDirectory, p),
+  )) {
+    if (workspacePath === rootDirectory) {
+      continue;
     }
-  }
 
-  const workspaceConfigMap: Record<string, ResolvedWorkspaceConfig> = {};
+    const packageJsonPath = resolvePackageJsonPath(workspacePath);
+    if (packageJsonPath) {
+      const packageJsonContent = resolvePackageJsonContent(
+        packageJsonPath,
+        rootDirectory,
+        ["name", "scripts"],
+      );
 
-  for (const pattern of positivePatterns) {
-    for (const item of scanWorkspaceGlob(
-      pattern.replace(/^!/, ""),
-      rootDirectory,
-    )) {
-      const packageJsonPath = resolvePackageJsonPath(item);
-      if (packageJsonPath) {
-        const packageJsonContent = resolvePackageJsonContent(
-          packageJsonPath,
-          rootDirectory,
-          ["name", "scripts"],
-        );
+      const workspaceConfig = loadWorkspaceConfig(
+        path.dirname(packageJsonPath),
+      );
 
-        const workspaceConfig = loadWorkspaceConfig(
-          path.dirname(packageJsonPath),
-        );
-
-        if (workspaceConfig) {
-          for (const alias of workspaceConfig.aliases) {
-            workspaceAliases[alias] = packageJsonContent.name;
-          }
+      if (workspaceConfig) {
+        for (const alias of workspaceConfig.aliases) {
+          workspaceAliases[alias] = packageJsonContent.name;
         }
+      }
+      const relativePath = path.relative(
+        rootDirectory,
+        path.dirname(packageJsonPath),
+      );
 
-        const workspace: Workspace = {
-          name: packageJsonContent.name ?? "",
-          matchPattern: pattern,
-          path: path.relative(rootDirectory, path.dirname(packageJsonPath)),
-          scripts: Object.keys(packageJsonContent.scripts ?? {}).sort(),
-          aliases: [
-            ...new Set(
-              Object.entries(workspaceAliases ?? {})
-                .filter(([_, value]) => value === packageJsonContent.name)
-                .map(([key]) => key)
-                .concat(workspaceConfig?.aliases ?? []),
-            ),
-          ],
-        };
-        if (
-          !excludedWorkspacePaths.includes(workspace.path) &&
-          validateWorkspace(workspace, workspaces)
-        ) {
-          workspaces.push(workspace);
-          workspaceConfigMap[workspace.name] =
-            workspaceConfig ?? createWorkspaceConfig();
-        }
+      const matchPattern =
+        workspaceGlobs.find((glob) => new Glob(glob).match(relativePath)) ?? "";
+
+      if (_workspaceGlobs && !matchPattern) {
+        continue;
+      }
+
+      const workspace: Workspace = {
+        name: packageJsonContent.name ?? "",
+        matchPattern,
+        path: path.relative(rootDirectory, path.dirname(packageJsonPath)),
+        scripts: Object.keys(packageJsonContent.scripts ?? {}).sort(),
+        aliases: [
+          ...new Set(
+            Object.entries(workspaceAliases ?? {})
+              .filter(([_, value]) => value === packageJsonContent.name)
+              .map(([key]) => key)
+              .concat(workspaceConfig?.aliases ?? []),
+          ),
+        ],
+      };
+      if (
+        !excludedWorkspacePaths.includes(workspace.path) &&
+        validateWorkspace(workspace, workspaces)
+      ) {
+        workspaces.push(workspace);
+        workspaceConfigMap[workspace.name] =
+          workspaceConfig ?? createWorkspaceConfig();
       }
     }
   }

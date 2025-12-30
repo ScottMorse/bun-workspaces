@@ -1,0 +1,45 @@
+{
+  "lockfileVersion": 1,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "sandbox-test-project",
+    },
+    "workspaces/parallel-max-a": {
+      "name": "parallel-max-a",
+    },
+    "workspaces/parallel-max-b": {
+      "name": "parallel-max-b",
+    },
+    "workspaces/parallel-max-c": {
+      "name": "parallel-max-c",
+    },
+    "workspaces/parallel-max-d": {
+      "name": "parallel-max-d",
+    },
+    "workspaces/parallel-max-e": {
+      "name": "parallel-max-e",
+    },
+    "workspaces/workspace-a": {
+      "name": "workspace-a",
+    },
+    "workspaces/workspace-b": {
+      "name": "workspace-b",
+    },
+  },
+  "packages": {
+    "parallel-max-a": ["parallel-max-a@workspace:workspaces/parallel-max-a"],
+
+    "parallel-max-b": ["parallel-max-b@workspace:workspaces/parallel-max-b"],
+
+    "parallel-max-c": ["parallel-max-c@workspace:workspaces/parallel-max-c"],
+
+    "parallel-max-d": ["parallel-max-d@workspace:workspaces/parallel-max-d"],
+
+    "parallel-max-e": ["parallel-max-e@workspace:workspaces/parallel-max-e"],
+
+    "workspace-a": ["workspace-a@workspace:workspaces/workspace-a"],
+
+    "workspace-b": ["workspace-b@workspace:workspaces/workspace-b"],
+  }
+}

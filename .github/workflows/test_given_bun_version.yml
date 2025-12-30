@@ -1,0 +1,19 @@
+name: Test Given Bun version
+
+on:
+  workflow_dispatch:
+    inputs:
+      bun_version:
+        description: The Bun version to test
+        required: true
+        type: string
+
+jobs:
+  run_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ./.github/actions/test-bun-version
+        with:
+          bun_version: ${{ inputs.bun_version }}

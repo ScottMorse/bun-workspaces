@@ -3,6 +3,8 @@ import path from "node:path";
 import { defineConfig } from "rspress/config";
 import packageJson from "../bun-workspaces/package.json";
 
+const REQUIRED_BUN_VERSION = packageJson._bwInternal.bunVersion.libraryConsumer;
+
 const DOMAIN = "https://bunworkspaces.com";
 const GITHUB_REPO_URL = packageJson.repository.url.replace(".git", "");
 const CHANGELOG_URL = `${GITHUB_REPO_URL}/releases`;
@@ -88,10 +90,11 @@ export default defineConfig({
     },
     source: {
       define: {
-        "process.env.YEAR": JSON.stringify(new Date().getFullYear()),
-        "process.env.BUILD_ID": JSON.stringify(
-          process.env.BUILD_ID ?? "(no build ID)",
-        ),
+        process: `({ env: {
+          YEAR: ${JSON.stringify(new Date().getFullYear())},
+          BUILD_ID: ${JSON.stringify(process.env.BUILD_ID ?? "(no build ID)")},
+          REQUIRED_BUN_VERSION: ${JSON.stringify(REQUIRED_BUN_VERSION)},
+        }})`,
       },
     },
     html: {
@@ -161,12 +164,15 @@ export default defineConfig({
       {
         icon: {
           svg: fs.readFileSync(
-            path.resolve(__dirname, "src/docs/public/buy-me-a-coffee-icon.svg"),
+            path.resolve(
+              __dirname,
+              "src/docs/public/images/external/gh-sponsors.svg",
+            ),
             "utf8",
           ),
         },
         mode: "link",
-        content: "https://buymeacoffee.com/scottmorse",
+        content: "https://github.com/sponsors/bun-workspaces",
       },
       {
         icon: "github",

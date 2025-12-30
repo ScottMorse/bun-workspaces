@@ -6,7 +6,7 @@ import {
   loadConfigFile,
   type BunWorkspacesConfig,
 } from "../../config";
-import { defineErrors } from "../../internal/error";
+import { defineErrors } from "../../internal/core";
 import { logger } from "../../internal/logger";
 import {
   _internalCreateFileSystemProject,

@@ -1,3 +1,35 @@
+/* eslint-disable no-console */
+import path from "node:path";
+import { Glob } from "bun";
 import { setLogLevel } from "./src";
+import { runScript } from "./src/project";
 
 setLogLevel("silent");
+
+const testProjectsDir = path.join(__dirname, "tests", "testProjects");
+
+const promises: Promise<unknown>[] = [];
+
+for (const file of new Glob("**/*/package.json").scanSync({
+  cwd: testProjectsDir,
+  absolute: true,
+})) {
+  promises.push(
+    (async () => {
+      try {
+        await runScript({
+          env: {},
+          metadata: {},
+          scriptCommand: {
+            command: "bun install",
+            workingDirectory: path.dirname(file),
+          },
+        }).exit;
+      } catch (error) {
+        console.error(`Error installing dependencies for ${file}:`, error);
+      }
+    })(),
+  );
+}
+
+await Promise.all(promises);

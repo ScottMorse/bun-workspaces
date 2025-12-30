@@ -1,5 +1,7 @@
 import path from "path";
-import { createWildcardRegex } from "../../internal/regex";
+import { validateCurrentBunVersion } from "../../internal/bun";
+import { createWildcardRegex } from "../../internal/core";
+import { logger } from "../../internal/logger";
 import { type Workspace } from "../../workspaces";
 import { PROJECT_ERRORS } from "../errors";
 import type {
@@ -18,6 +20,15 @@ export abstract class ProjectBase implements Project {
   public abstract readonly rootDirectory: string;
   public abstract readonly workspaces: Workspace[];
   public abstract readonly sourceType: "fileSystem" | "memory";
+
+  constructor(_ignoreBunVersion = false) {
+    const bunVersionError = validateCurrentBunVersion();
+    if (bunVersionError && !_ignoreBunVersion) {
+      logger.error(
+        bunVersionError.message + " (Features may not work as expected)",
+      );
+    }
+  }
 
   listWorkspacesWithScript(scriptName: string): Workspace[] {
     return this.workspaces.filter((workspace) =>
