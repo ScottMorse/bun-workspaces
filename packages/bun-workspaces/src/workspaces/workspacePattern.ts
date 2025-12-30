@@ -1,5 +1,5 @@
-import { defineErrors } from "../internal/error";
-import { createWildcardRegex } from "../internal/regex";
+import { Glob } from "bun";
+import { defineErrors, createWildcardRegex } from "../internal/core";
 import type { Workspace } from "./workspace";
 
 const TARGETS = ["path", "alias", "name"] as const;
@@ -46,7 +46,6 @@ export const stringifyWorkspacePattern = (
 export const matchWorkspacesByPattern = (
   pattern: WorkspacePattern,
   workspaces: Workspace[],
-  rootDirectory: string,
 ) => {
   const hasWildcard = pattern.value.includes("*");
   const wildcardRegex = createWildcardRegex(pattern.value);
@@ -77,11 +76,9 @@ export const matchWorkspacesByPattern = (
   }
 
   if (pattern.target === "path") {
-    return workspaces.filter((workspace) => {
-      return hasWildcard
-        ? wildcardRegex.test(workspace.path)
-        : workspace.path === pattern.value;
-    });
+    return workspaces.filter((workspace) =>
+      new Glob(pattern.value).match(workspace.path),
+    );
   }
 
   return [];
