@@ -854,7 +854,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "application-1a",
               matchPattern: "applications/*",
-              path: "applications/applicationA",
+              path: withWindowsPath("applications/applicationA"),
               aliases: ["deprecated_appA"],
               scripts: ["a-workspaces", "all-workspaces", "application-a"],
             },
@@ -871,7 +871,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "application-1b",
               matchPattern: "applications/*",
-              path: "applications/applicationB",
+              path: withWindowsPath("applications/applicationB"),
               aliases: ["deprecated_appB"],
               scripts: ["all-workspaces", "application-b", "b-workspaces"],
             },
@@ -888,7 +888,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "library-1a",
               matchPattern: "libraries/*",
-              path: "libraries/libraryA",
+              path: withWindowsPath("libraries/libraryA"),
               aliases: ["deprecated_libA"],
               scripts: ["a-workspaces", "all-workspaces", "library-a"],
             },
@@ -905,7 +905,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "library-1b",
               matchPattern: "libraries/*",
-              path: "libraries/libraryB",
+              path: withWindowsPath("libraries/libraryB"),
               aliases: ["deprecated_libB"],
               scripts: ["all-workspaces", "b-workspaces", "library-b"],
             },
@@ -950,7 +950,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "application-1a",
               matchPattern: "applications/*",
-              path: "applications/applicationA",
+              path: withWindowsPath("applications/applicationA"),
               aliases: ["deprecated_appA"],
               scripts: ["a-workspaces", "all-workspaces", "application-a"],
             },
@@ -967,7 +967,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "library-1a",
               matchPattern: "libraries/*",
-              path: "libraries/libraryA",
+              path: withWindowsPath("libraries/libraryA"),
               aliases: ["deprecated_libA"],
               scripts: ["a-workspaces", "all-workspaces", "library-a"],
             },
@@ -1014,7 +1014,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "library-1b",
               matchPattern: "libraries/*",
-              path: "libraries/libraryB",
+              path: withWindowsPath("libraries/libraryB"),
               scripts: ["all-workspaces", "b-workspaces", "library-b"],
               aliases: ["deprecated_libB"],
             },
@@ -1063,7 +1063,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "fail1",
               matchPattern: "packages/**/*",
-              path: "packages/fail1",
+              path: withWindowsPath("packages/fail1"),
               aliases: [],
               scripts: ["test-exit"],
             },
@@ -1080,7 +1080,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "fail2",
               matchPattern: "packages/**/*",
-              path: "packages/fail2",
+              path: withWindowsPath("packages/fail2"),
               aliases: [],
               scripts: ["test-exit"],
             },
@@ -1097,7 +1097,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "success1",
               matchPattern: "packages/**/*",
-              path: "packages/success1",
+              path: withWindowsPath("packages/success1"),
               aliases: [],
               scripts: ["test-exit"],
             },
@@ -1114,7 +1114,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "success2",
               matchPattern: "packages/**/*",
-              path: "packages/success2",
+              path: withWindowsPath("packages/success2"),
               aliases: [],
               scripts: ["test-exit"],
             },
@@ -1178,7 +1178,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "application-1a",
               matchPattern: "applications/*",
-              path: "applications/applicationA",
+              path: withWindowsPath("applications/applicationA"),
               aliases: ["deprecated_appA"],
               scripts: ["a-workspaces", "all-workspaces", "application-a"],
             },
@@ -1228,7 +1228,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "application-1a",
               matchPattern: "applications/*",
-              path: "applications/applicationA",
+              path: withWindowsPath("applications/applicationA"),
               aliases: ["deprecated_appA"],
               scripts: ["a-workspaces", "all-workspaces", "application-a"],
             },
