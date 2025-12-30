@@ -20,6 +20,15 @@ jobs:
         with:
           bun-version: ${{ matrix.bun_version }}
 
+      - name: Bun Cache
+        id: bun-cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.bun
+          key: node-modules-${{ hashFiles('**/bun.lock') }}
+          restore-keys: |
+            node-modules-
+
       - name: Install Dependencies
         shell: pwsh
         run: |
