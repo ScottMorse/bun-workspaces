@@ -29,13 +29,9 @@ jobs:
       - name: Run Tests
         shell: pwsh
         run: |
-          bun bw test cliRunScript
-        env:
-          # ! REMOVE ME
-          CI: false
+          bun bw test
 
-      # ! UNCOMMENT BEFORE MERGE
-      # - name: Run Tests Against Build
-      #   shell: pwsh
-      #   run: |
-      #     bun bw build:test
+      - name: Run Tests Against Build
+        shell: pwsh
+        run: |
+          bun bw build:test
