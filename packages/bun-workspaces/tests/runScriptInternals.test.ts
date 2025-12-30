@@ -141,9 +141,9 @@ describe("Run Single Script", () => {
       scriptCommand: {
         command: IS_WINDOWS
           ? `echo test-script 1 ^
-&& ping -n 2 -w 100 >nul ^
+&& ping 127.0.0.1 -n 2 -w 100 >nul ^
 && echo test-script 2 1>&2 ^
-&& ping -n 2 -w 100 >nul ^
+&& ping 127.0.0.1 -n 2 -w 100 >nul ^
 && echo test-script 3`
           : "echo 'test-script 1' && sleep 0.1 && echo 'test-script 2' >&2 && sleep 0.1 && echo 'test-script 3'",
         workingDirectory: ".",
@@ -401,7 +401,7 @@ describe("Run Multiple Scripts", () => {
         },
         scriptCommand: {
           command: IS_WINDOWS
-            ? "ping -n 2 -w 100 >nul && echo test-script 1"
+            ? "ping 127.0.0.1 -n 2 -w 100 >nul && echo test-script 1"
             : "sleep 0.5 && echo test-script 1",
           workingDirectory: "",
         },
@@ -425,7 +425,7 @@ describe("Run Multiple Scripts", () => {
         },
         scriptCommand: {
           command: IS_WINDOWS
-            ? "ping -n 2 -w 250 >nul && echo test-script 3"
+            ? "ping 127.0.0.1 -n 2 -w 250 >nul && echo test-script 3"
             : "sleep 0.25 && echo test-script 3",
           workingDirectory: "",
         },
@@ -440,7 +440,6 @@ describe("Run Multiple Scripts", () => {
 
     let i = 0;
     for await (const { outputChunk, scriptMetadata } of result.output) {
-      console.log(outputChunk.decode({ stripAnsi: true }).trim());
       expect(outputChunk.streamName).toBe("stdout");
       const scriptNum = i === 0 ? 2 : i === 1 ? 3 : 1;
       expect(scriptMetadata.name).toBe(`test-script name ${scriptNum}`);
@@ -525,7 +524,7 @@ describe("Run Multiple Scripts", () => {
           command: IS_WINDOWS
             ? `echo test-script ${scriptName} > ${getRunningFile(scriptName)} && dir ${
                 scriptName
-              }' > ${getRunningFile(scriptName)} && dir ${outputDir} | findstr /c:"${scriptName}" && ping -n 2 -w 100 >nul && del ${getRunningFile(scriptName)}`
+              }' > ${getRunningFile(scriptName)} && dir ${outputDir} | findstr /c:"${scriptName}" && ping 127.0.0.1 -n 2 -w 100 >nul && del ${getRunningFile(scriptName)}`
             : `echo 'test-script ${scriptName}' > ${getRunningFile(scriptName)} && ls ${outputDir} | wc -l && sleep ${getRandomSleepTime()} && rm ${getRunningFile(scriptName)}`,
           workingDirectory: "",
         },
