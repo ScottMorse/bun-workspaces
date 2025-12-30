@@ -585,7 +585,7 @@ describe("Test Project utilities", () => {
 
     const { output, exit } = project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
-      script: `echo "${echo}"`,
+      script: `echo ${echo}`,
       inline: true,
     });
 
@@ -627,9 +627,11 @@ describe("Test Project utilities", () => {
     });
 
     for await (const chunk of packageScript.output) {
-      expect(chunk.decode()).toBe("passed args: --arg1=value1 --arg2=value2\n");
-      expect(chunk.decode({ stripAnsi: true })).toBe(
-        "passed args: --arg1=value1 --arg2=value2\n",
+      expect(chunk.decode().trim()).toBe(
+        "passed args: --arg1=value1 --arg2=value2",
+      );
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
+        "passed args: --arg1=value1 --arg2=value2",
       );
       expect(chunk.streamName).toBe("stdout");
     }
