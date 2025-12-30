@@ -24,7 +24,7 @@ jobs:
         id: bun-cache
         uses: actions/cache@v3
         with:
-          path: ~/.bun
+          path: ${{ env.USERPROFILE }}\.bun
           key: node-modules-${{ hashFiles('**/bun.lock') }}
           restore-keys: |
             node-modules-

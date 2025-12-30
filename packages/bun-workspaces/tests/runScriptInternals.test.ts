@@ -64,7 +64,7 @@ describe("Run Single Script", () => {
     const result = await runScript({
       scriptCommand: {
         command: IS_WINDOWS
-          ? `powershell -NoProfile -Command "Write-Output 'test-script 1'; exit 2"`
+          ? "echo test-script 1 && exit /b 2"
           : "echo 'test-script 1' && exit 2",
         workingDirectory: ".",
       },
