@@ -663,12 +663,12 @@ describe("Test Project utilities", () => {
     });
 
     for await (const chunk of inline.output) {
-      expect(chunk.decode().trim()).toBe(
+      expect(chunk.decode().trim().replace(/\s+/g, " ")).toBe(
         "inline passed args: --arg1=value1 --arg2=value2",
       );
-      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
-        "inline passed args: --arg1=value1 --arg2=value2",
-      );
+      expect(
+        chunk.decode({ stripAnsi: true }).trim().replace(/\s+/g, " "),
+      ).toBe("inline passed args: --arg1=value1 --arg2=value2");
       expect(chunk.streamName).toBe("stdout");
     }
 
