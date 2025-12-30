@@ -20,21 +20,8 @@ runs:
         echo "$HOME/.bun/bin:$PATH" >> $GITHUB_PATH
         echo "Bun version: $(bun --version)"
     
-    - name: Bun Cache
-      id: bun-cache
-      uses: actions/cache@v3
-      with:
-        path: ~/.bun
-        key: node-modules-${{ hashFiles('**/bun.lock') }}
-        restore-keys: |
-          node-modules-
-
-    - name: Install Dependencies
-      id: install-deps
-      shell: bash
-      run: |
-        echo "Bun version: $(bun --version)"
-        bun install
+    - name: Install Bun Dependencies
+      uses: ./.github/actions/install-bun-deps
 
     - name: Run Tests
       id: run-tests
