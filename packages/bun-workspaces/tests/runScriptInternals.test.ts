@@ -4,6 +4,7 @@ import { availableParallelism } from "node:os";
 import path from "node:path";
 import { test, expect, describe, afterAll } from "bun:test";
 import { getUserEnvVarName } from "../src/config/userEnvVars";
+import { IS_WINDOWS } from "../src/internal/runtime";
 import { runScript, runScripts } from "../src/project/runScript";
 
 // Sanity tests for lower level runScript and runScripts functions
@@ -20,7 +21,9 @@ describe("Run Single Script", () => {
   test("Simple success", async () => {
     const result = await runScript({
       scriptCommand: {
-        command: "echo 'test-script 1'",
+        command: IS_WINDOWS
+          ? `powershell -NoProfile -Command "Write-Output 'test-script 1'"`
+          : "echo 'test-script 1'",
         workingDirectory: ".",
       },
       metadata: {},
@@ -60,7 +63,9 @@ describe("Run Single Script", () => {
   test("Simple failure", async () => {
     const result = await runScript({
       scriptCommand: {
-        command: "echo 'test-script 1' && exit 2",
+        command: IS_WINDOWS
+          ? `powershell -NoProfile -Command "Write-Output 'test-script 1' && exit 2"`
+          : "echo 'test-script 1' && exit 2",
         workingDirectory: ".",
       },
       metadata: {},
@@ -100,7 +105,9 @@ describe("Run Single Script", () => {
   test("Simple failure with signal", async () => {
     const result = await runScript({
       scriptCommand: {
-        command: "echo 'test-script 1' && kill -9 $$",
+        command: IS_WINDOWS
+          ? `powershell -NoProfile -Command "Write-Output 'test-script 1'; exit 137"`
+          : "echo 'test-script 1' && kill -9 $$",
         workingDirectory: ".",
       },
       metadata: {},
@@ -132,8 +139,9 @@ describe("Run Single Script", () => {
   test("With stdout and stderr", async () => {
     const result = await runScript({
       scriptCommand: {
-        command:
-          "echo 'test-script 1' && sleep 0.1 && echo 'test-script 2' >&2 && sleep 0.1 && echo 'test-script 3'",
+        command: IS_WINDOWS
+          ? `powershell -NoProfile -Command "Write-Output 'test-script 1'; exit 137"`
+          : "echo 'test-script 1' && sleep 0.1 && echo 'test-script 2' >&2 && sleep 0.1 && echo 'test-script 3'",
         workingDirectory: ".",
       },
       metadata: {},
@@ -497,7 +505,17 @@ describe("Run Multiple Scripts", () => {
       const createScript = (scriptName: string) => ({
         metadata: { name: scriptName },
         scriptCommand: {
-          command: `echo 'test-script ${scriptName}' > ${getRunningFile(scriptName)} && ls ${outputDir} | wc -l && sleep ${getRandomSleepTime()} && rm ${getRunningFile(scriptName)}`,
+          command: IS_WINDOWS
+            ? `powershell -NoProfile -Command "Write-Output 'test-script ${
+                scriptName
+              }' > ${getRunningFile(scriptName)} && ls ${
+                outputDir
+              } | wc -l && sleep ${getRandomSleepTime()} && rm ${getRunningFile(
+                scriptName,
+              )}"`
+            : `echo 'test-script ${scriptName}' > ${getRunningFile(scriptName)} && ls ${
+                outputDir
+              } | wc -l && sleep ${getRandomSleepTime()} && rm ${getRunningFile(scriptName)}`,
           workingDirectory: "",
         },
         env: {},
@@ -597,7 +615,9 @@ describe("Run Multiple Scripts", () => {
         scripts: [
           {
             scriptCommand: {
-              command: "echo $_BW_PARALLEL_MAX",
+              command: IS_WINDOWS
+                ? `powershell -NoProfile -Command "Write-Output $_BW_PARALLEL_MAX"`
+                : "echo $_BW_PARALLEL_MAX",
               workingDirectory: "",
             },
             metadata: {},
@@ -642,7 +662,9 @@ describe("Run Multiple Scripts", () => {
         scripts: [
           {
             scriptCommand: {
-              command: "echo $_BW_PARALLEL_MAX",
+              command: IS_WINDOWS
+                ? `powershell -NoProfile -Command "Write-Output $_BW_PARALLEL_MAX"`
+                : "echo $_BW_PARALLEL_MAX",
               workingDirectory: "",
             },
             metadata: {},
@@ -662,7 +684,9 @@ describe("Run Multiple Scripts", () => {
         scripts: [
           {
             scriptCommand: {
-              command: "echo $_BW_PARALLEL_MAX",
+              command: IS_WINDOWS
+                ? `powershell -NoProfile -Command "Write-Output $_BW_PARALLEL_MAX"`
+                : "echo $_BW_PARALLEL_MAX",
               workingDirectory: "",
             },
             metadata: {},
@@ -685,7 +709,9 @@ describe("Run Multiple Scripts", () => {
       scripts: [
         {
           scriptCommand: {
-            command: "echo $_BW_PARALLEL_MAX",
+            command: IS_WINDOWS
+              ? `powershell -NoProfile -Command "Write-Output $_BW_PARALLEL_MAX"`
+              : "echo $_BW_PARALLEL_MAX",
             workingDirectory: "",
           },
           metadata: {},
