@@ -20,14 +20,14 @@ jobs:
         with:
           bun-version: ${{ matrix.bun_version }}
 
-      - name: Bun Cache
-        id: bun-cache
-        uses: actions/cache@v3
+      - name: Cache Bun dependencies
+        uses: actions/cache@v4
         with:
           path: C:\Users\runneradmin\.bun
-          key: node-modules-${{ hashFiles('bun.lock') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
           restore-keys: |
-            node-modules-
+            ${{ runner.os }} Bun Cache
+        id: bun-cache
 
       - name: Install Dependencies
         shell: pwsh
