@@ -156,8 +156,10 @@ class _FileSystemProject extends ProjectBase implements Project {
       );
     }
 
+    const shell = resolveScriptShell(options.shell);
+
     logger.debug(
-      `Running script ${options.script} in workspace: ${workspace.name}`,
+      `Running script ${options.script} in workspace ${workspace.name} using the ${shell} shell`,
     );
 
     const inlineScriptName =
@@ -177,12 +179,14 @@ class _FileSystemProject extends ProjectBase implements Project {
     const args = interpolateScriptRuntimeMetadata(
       options.args ?? "",
       scriptRuntimeMetadata,
+      shell,
     );
 
     const script = options.inline
       ? interpolateScriptRuntimeMetadata(
           options.script,
           scriptRuntimeMetadata,
+          shell,
         ) + (args ? " " + args : "")
       : options.script;
 
@@ -196,8 +200,6 @@ class _FileSystemProject extends ProjectBase implements Project {
           scriptName: script,
           args,
         }).commandDetails;
-
-    const shell = resolveScriptShell(options.shell);
 
     const result = runScript({
       scriptCommand,
@@ -253,11 +255,11 @@ class _FileSystemProject extends ProjectBase implements Project {
         return (aScriptConfig.order ?? 0) - (bScriptConfig.order ?? 0);
       });
 
-    logger.debug(
-      `Running script ${options.script} across workspaces: ${workspaces.map((workspace) => workspace.name).join(", ")}`,
-    );
-
     const shell = resolveScriptShell(options.shell);
+
+    logger.debug(
+      `Running script ${options.script} across workspaces using the ${shell} shell: ${workspaces.map((workspace) => workspace.name).join(", ")}`,
+    );
 
     const result = runScripts({
       scripts: workspaces.map((workspace) => {
@@ -278,12 +280,14 @@ class _FileSystemProject extends ProjectBase implements Project {
         const args = interpolateScriptRuntimeMetadata(
           options.args ?? "",
           scriptRuntimeMetadata,
+          shell,
         );
 
         const script = options.inline
           ? interpolateScriptRuntimeMetadata(
               options.script,
               scriptRuntimeMetadata,
+              shell,
             ) + (args ? " " + args : "")
           : options.script;
 

@@ -1,3 +1,6 @@
+import { IS_WINDOWS } from "../internal/runtime";
+import type { ScriptShellOption } from "./scriptExecution";
+
 export interface ScriptRuntimeMetadata {
   projectPath: string;
   projectName: string;
@@ -53,6 +56,7 @@ export const createScriptRuntimeEnvVars = (metadata: ScriptRuntimeMetadata) =>
 export const interpolateScriptRuntimeMetadata = (
   text: string,
   metadata: ScriptRuntimeMetadata,
+  shell: ScriptShellOption,
 ) =>
   text.replace(
     new RegExp(
@@ -65,6 +69,10 @@ export const interpolateScriptRuntimeMetadata = (
       const key = Object.entries(SCRIPT_RUNTIME_METADATA_CONFIG).find(
         ([_, value]) => (value.inlineName as readonly string[]).includes(match),
       )?.[0];
-      return metadata[key as keyof ScriptRuntimeMetadata];
+      const value = metadata[key as keyof ScriptRuntimeMetadata];
+      if (IS_WINDOWS && shell === "bun") {
+        return value.replace(/\\/g, "/");
+      }
+      return value;
     },
   );
