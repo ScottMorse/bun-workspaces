@@ -1,8 +1,18 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { runOnExit } from "../runtime/onExit";
 
 const TEMP_DIR = path.join(os.tmpdir(), "bun-workspaces");
+
+export const createTempDir = () => {
+  fs.mkdirSync(TEMP_DIR, { recursive: true });
+};
+
+export const cleanTempDir = () => {
+  fs.rmSync(TEMP_DIR, { force: true, recursive: true });
+  createTempDir();
+};
 
 export const createTempFilePath = (fileName: string) =>
   path.join(TEMP_DIR, fileName);
@@ -10,7 +20,7 @@ export const createTempFilePath = (fileName: string) =>
 export const createTempFile = (fileName: string, fileContent: string) => {
   const filePath = createTempFilePath(fileName);
 
-  fs.mkdirSync(TEMP_DIR, { recursive: true });
+  createTempDir();
   fs.writeFileSync(filePath, fileContent, { encoding: "utf8" });
 
   let isClean = false;
@@ -21,7 +31,7 @@ export const createTempFile = (fileName: string, fileContent: string) => {
     }
   };
 
-  process.on("exit", cleanup);
+  runOnExit(cleanup);
 
   return { filePath, cleanup };
 };

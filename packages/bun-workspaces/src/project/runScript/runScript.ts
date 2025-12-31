@@ -28,6 +28,7 @@ export type RunScriptResult<ScriptMetadata extends object = object> = {
   output: SimpleAsyncIterable<OutputChunk>;
   exit: Promise<RunScriptExit<ScriptMetadata>>;
   metadata: ScriptMetadata;
+  kill: (exit?: number | NodeJS.Signals) => void;
 };
 
 export type RunScriptOptions<ScriptMetadata extends object = object> = {
@@ -115,5 +116,10 @@ export const runScript = <ScriptMetadata extends object = object>({
     };
   });
 
-  return { output, exit, metadata };
+  return {
+    output,
+    exit,
+    metadata,
+    kill: (exit) => proc.kill(exit),
+  };
 };
