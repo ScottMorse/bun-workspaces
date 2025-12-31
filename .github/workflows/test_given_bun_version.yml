@@ -1,6 +1,7 @@
 name: Test Given Bun version and OS
 
 on:
+  workflow_call:
   workflow_dispatch:
     inputs:
       bun_version:
