@@ -106,7 +106,7 @@ describe("Run Single Script", () => {
     const result = await runScript({
       scriptCommand: {
         command: IS_WINDOWS
-          ? `echo test-script 1 && exit /b 137`
+          ? `echo test-script 1 && exit 137`
           : "echo 'test-script 1' && kill -9 $$",
         workingDirectory: ".",
       },
