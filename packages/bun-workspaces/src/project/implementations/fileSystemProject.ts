@@ -13,6 +13,7 @@ import {
   type RunScriptsParallelOptions,
   type ScriptRuntimeMetadata,
 } from "../../runScript";
+import type { ScriptShellOption } from "../../runScript/scriptExecution";
 import { findWorkspaces, type Workspace } from "../../workspaces";
 import { PROJECT_ERRORS } from "../errors";
 import type { Project } from "../project";
@@ -45,6 +46,8 @@ export type RunWorkspaceScriptOptions = {
   inline?: boolean | InlineScriptOptions;
   /** The arguments to append to the script command */
   args?: string;
+  /** Whether to use the Bun Shell or the OS shell (e.g. sh or cmd). Defaults to "bun" */
+  shell?: ScriptShellOption;
 };
 
 /** Metadata associated with a workspace script */
@@ -71,6 +74,8 @@ export type RunScriptAcrossWorkspacesOptions = {
   args?: string;
   /** Whether to run the scripts in parallel (series by default) */
   parallel?: ParallelOption;
+  /** Whether to use the Bun Shell or the OS shell (e.g. sh or cmd). Defaults to "bun" */
+  shell?: ScriptShellOption;
 };
 
 /** Result of `FileSystemProject.runScriptAcrossWorkspaces` */
@@ -195,6 +200,7 @@ class _FileSystemProject extends ProjectBase implements Project {
         workspace,
       },
       env: createScriptRuntimeEnvVars(scriptRuntimeMetadata),
+      shell: options.shell || "bun",
     });
   }
 
@@ -278,6 +284,7 @@ class _FileSystemProject extends ProjectBase implements Project {
           },
           scriptCommand,
           env: createScriptRuntimeEnvVars(scriptRuntimeMetadata),
+          shell: options.shell || "bun",
         };
       }),
       parallel: options.parallel ?? false,
