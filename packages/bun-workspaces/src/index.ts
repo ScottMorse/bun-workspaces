@@ -16,6 +16,7 @@ export {
   type RunScriptAcrossWorkspacesOptions,
   type RunScriptAcrossWorkspacesResult,
   type ParallelOption,
+  type ShellOption,
 } from "./project";
 export {
   type OutputChunk,

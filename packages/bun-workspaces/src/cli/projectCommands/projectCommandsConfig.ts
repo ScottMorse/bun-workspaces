@@ -1,4 +1,5 @@
 import { getUserEnvVarName } from "../../config/userEnvVars";
+import { SCRIPT_SHELL_OPTIONS } from "../../runScript/scriptExecution";
 
 export interface CliProjectCommandConfig {
   command: string;
@@ -115,7 +116,7 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
       },
       shell: {
         flags: ["-s", "--shell <shell>"],
-        values: ["bun", "os"],
+        values: [...SCRIPT_SHELL_OPTIONS, "default"],
         description: `When using --inline, the shell to use to run the script. Defaults to "bun" or the value of the ${getUserEnvVarName("scriptShellDefault")} environment variable`,
       },
       jsonOutfile: {

@@ -116,6 +116,23 @@ describe("Test run script shell option", () => {
       "[application-a:test] os",
     );
 
+    const explicitDefaultResult = await setupCliTest().run(
+      "run-script",
+      IS_WINDOWS
+        ? `echo %_BW_SCRIPT_SHELL_OPTION%`
+        : "echo $_BW_SCRIPT_SHELL_OPTION",
+      "application-a",
+      "--shell",
+      "default",
+      "-i",
+      "--inline-name",
+      "test",
+    );
+    expect(explicitDefaultResult.exitCode).toBe(0);
+    expect(explicitDefaultResult.stdout.sanitizedCompactLines).toInclude(
+      "[application-a:test] os",
+    );
+
     process.env[getUserEnvVarName("scriptShellDefault")] = "bun";
 
     const bunEnvResult = await setupCliTest().run(
@@ -219,6 +236,20 @@ describe("Test run script shell option", () => {
     }
     expect((await osEnvResult.exit).exitCode).toBe(0);
 
+    const explicitDefaultResult = await project.runWorkspaceScript({
+      workspaceNameOrAlias: "application-a",
+      script: IS_WINDOWS
+        ? `echo %_BW_SCRIPT_SHELL_OPTION%`
+        : "echo $_BW_SCRIPT_SHELL_OPTION",
+      inline: true,
+      shell: "default",
+    });
+
+    for await (const chunk of explicitDefaultResult.output) {
+      expect(chunk.decode().trim()).toBe("os");
+    }
+    expect((await explicitDefaultResult.exit).exitCode).toBe(0);
+
     process.env[getUserEnvVarName("scriptShellDefault")] = "bun";
 
     const bunEnvResult = await project.runWorkspaceScript({
@@ -309,6 +340,22 @@ describe("Test run script shell option", () => {
       expect(outputChunk.decode().trim()).toBe("os");
     }
     expect((await osEnvResult.summary).scriptResults[0].exitCode).toBe(0);
+
+    const explicitDefaultResult = await project.runScriptAcrossWorkspaces({
+      workspacePatterns: ["application-a"],
+      script: IS_WINDOWS
+        ? `echo %_BW_SCRIPT_SHELL_OPTION%`
+        : "echo $_BW_SCRIPT_SHELL_OPTION",
+      inline: true,
+      shell: "default",
+    });
+
+    for await (const { outputChunk } of explicitDefaultResult.output) {
+      expect(outputChunk.decode().trim()).toBe("os");
+    }
+    expect(
+      (await explicitDefaultResult.summary).scriptResults[0].exitCode,
+    ).toBe(0);
 
     process.env[getUserEnvVarName("scriptShellDefault")] = "bun";
 

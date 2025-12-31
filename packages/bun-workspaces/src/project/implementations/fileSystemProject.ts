@@ -65,6 +65,8 @@ export type RunWorkspaceScriptResult = Simplify<
 
 export type ParallelOption = boolean | RunScriptsParallelOptions;
 
+export type ShellOption = ScriptShellOption | "default";
+
 /** Arguments for `FileSystemProject.runScriptAcrossWorkspaces` */
 export type RunScriptAcrossWorkspacesOptions = {
   /** Workspace names, aliases, or patterns including a wildcard */
@@ -78,7 +80,7 @@ export type RunScriptAcrossWorkspacesOptions = {
   /** Whether to run the scripts in parallel (series by default) */
   parallel?: ParallelOption;
   /** Whether to use the Bun Shell or the OS shell (e.g. sh or cmd). Defaults to "bun" */
-  shell?: ScriptShellOption;
+  shell?: ShellOption;
 };
 
 /** Result of `FileSystemProject.runScriptAcrossWorkspaces` */
