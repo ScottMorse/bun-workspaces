@@ -618,7 +618,6 @@ describe("Run Multiple Scripts", () => {
         ],
       });
     },
-    { timeout: 10000 },
   );
 
   test.each([3, "auto", "default", "unbounded", "100%", "50%"])(
