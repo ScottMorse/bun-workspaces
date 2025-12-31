@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { logger } from "../../internal/logger";
-import type { ParallelMaxValue } from "../../project";
+import type { ParallelMaxValue } from "../../runScript";
 import type { Workspace } from "../../workspaces";
 import { commandOutputLogger, handleCommand } from "./commandHandlerUtils";
 
