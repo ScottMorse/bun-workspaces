@@ -10,19 +10,21 @@ export {
   type CreateProjectScriptCommandResult,
   type WorkspaceScriptMetadata,
   type RunWorkspaceScriptMetadata,
-  type WorkspaceScriptCommandMethod,
   type RunWorkspaceScriptOptions,
   type RunWorkspaceScriptResult,
   type InlineScriptOptions,
   type RunScriptAcrossWorkspacesOptions,
   type RunScriptAcrossWorkspacesResult,
+  type ParallelOption,
+} from "./project";
+export {
   type OutputChunk,
   type OutputStreamName,
   type PercentageValue,
   type ParallelMaxValue,
-  type ParallelOption,
+  type WorkspaceScriptCommandMethod,
   type RunScriptsParallelOptions,
-} from "./project";
+} from "./runScript";
 export { type Workspace } from "./workspaces";
 export { type SimpleAsyncIterable } from "./internal/core";
 export { setLogLevel, type LogLevelSetting } from "./internal/logger";

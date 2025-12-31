@@ -16,6 +16,7 @@ const createDesiredPackageJson = () => {
   const {
     name,
     version,
+    description,
     main,
     homepage,
     repository,
@@ -33,6 +34,7 @@ const createDesiredPackageJson = () => {
   return {
     name,
     version,
+    description,
     license,
     main: main.replace(".ts", ".mjs"),
     types: main.replace(".ts", ".d.ts"),
