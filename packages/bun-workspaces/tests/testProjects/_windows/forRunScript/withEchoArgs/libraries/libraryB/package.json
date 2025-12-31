@@ -1,0 +1,7 @@
+{
+  "name": "library-1b",
+  
+  "scripts": {
+    "test-echo": "echo passed args:"
+  }
+}

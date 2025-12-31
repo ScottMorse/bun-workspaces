@@ -1,0 +1,6 @@
+{
+  "name": "fail1",
+  "scripts": {
+    "test-exit": "echo fail1 stdout 1 && powershell -Command \"Start-Sleep -Seconds 0.025\" && echo fail1 stderr 1 1>&2 && powershell -Command \"Start-Sleep -Seconds 0.025\" && echo fail1 stdout 2 && exit 1"
+  }
+}

@@ -1,5 +1,6 @@
 import { test, expect, describe } from "bun:test";
 import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
+import { withWindowsPath } from "./util/windows";
 
 describe("CLI Workspace Aliases", () => {
   test("Aliases in workspace info", async () => {
@@ -13,7 +14,7 @@ describe("CLI Workspace Aliases", () => {
       result1.stdout.raw,
       `Workspace: application-1a
  - Aliases: appA
- - Path: applications/application-a
+ - Path: ${withWindowsPath("applications/application-a")}
  - Glob Match: applications/*
  - Scripts: a-workspaces, all-workspaces, application-a`,
     );
@@ -24,7 +25,7 @@ describe("CLI Workspace Aliases", () => {
       result2.stdout.raw,
       `Workspace: application-1b
  - Aliases: appB_file
- - Path: applications/application-b
+ - Path: ${withWindowsPath("applications/application-b")}
  - Glob Match: applications/*
  - Scripts: all-workspaces, application-b, b-workspaces`,
     );
@@ -35,7 +36,7 @@ describe("CLI Workspace Aliases", () => {
       result3.stdout.raw,
       `Workspace: application-1a
  - Aliases: appA
- - Path: applications/application-a
+ - Path: ${withWindowsPath("applications/application-a")}
  - Glob Match: applications/*
  - Scripts: a-workspaces, all-workspaces, application-a`,
     );
@@ -52,7 +53,7 @@ describe("CLI Workspace Aliases", () => {
       result1.stdout.raw,
       `Workspace: application-1a
  - Aliases: deprecated_appA, appA
- - Path: applications/application-a
+ - Path: ${withWindowsPath("applications/application-a")}
  - Glob Match: applications/*
  - Scripts: a-workspaces, all-workspaces, application-a`,
     );
@@ -63,7 +64,7 @@ describe("CLI Workspace Aliases", () => {
       result2.stdout.raw,
       `Workspace: application-1b
  - Aliases: deprecated_appB, appB_file
- - Path: applications/application-b
+ - Path: ${withWindowsPath("applications/application-b")}
  - Glob Match: applications/*
  - Scripts: all-workspaces, application-b, b-workspaces`,
     );
@@ -74,7 +75,7 @@ describe("CLI Workspace Aliases", () => {
       result3.stdout.raw,
       `Workspace: application-1a
  - Aliases: deprecated_appA, appA
- - Path: applications/application-a
+ - Path: ${withWindowsPath("applications/application-a")}
  - Glob Match: applications/*
  - Scripts: a-workspaces, all-workspaces, application-a`,
     );

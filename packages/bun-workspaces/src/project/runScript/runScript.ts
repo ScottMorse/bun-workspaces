@@ -1,3 +1,7 @@
+import crypto from "node:crypto";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 import {
   type SimpleAsyncIterable,
   mergeAsyncIterables,
@@ -32,6 +36,23 @@ export type RunScriptOptions<ScriptMetadata extends object = object> = {
   env: Record<string, string>;
 };
 
+const createWindowsBatchFile = (command: string) => {
+  const tmpDir = process.env.RUNNER_TEMP ?? os.tmpdir();
+  const filename = `bw-${crypto.randomUUID()}.cmd`;
+  const filePath = path.join(tmpDir, filename);
+
+  // IMPORTANT: CRLF helps with cmd/batch consistency
+  const content = `@echo off\r\n${command}\r\n`;
+
+  fs.writeFileSync(filePath, content, { encoding: "utf8" });
+
+  const cleanup = () => {
+    fs.unlinkSync(filePath);
+  };
+
+  return { filePath, cleanup };
+};
+
 /**
  * Run some script and get an async output stream of
  * stdout and stderr chunks and a result object
@@ -44,15 +65,26 @@ export const runScript = <ScriptMetadata extends object = object>({
 }: RunScriptOptions<ScriptMetadata>): RunScriptResult<ScriptMetadata> => {
   const startTime = new Date();
 
+  const windowsBatchFile = IS_WINDOWS
+    ? createWindowsBatchFile(scriptCommand.command)
+    : null;
+
   const proc = Bun.spawn(
-    [...(IS_WINDOWS ? ["cmd", "/c"] : ["sh", "-c"]), scriptCommand.command],
+    windowsBatchFile
+      ? ["cmd", "/d", "/s", "/c", "call", windowsBatchFile.filePath]
+      : ["sh", "-c", scriptCommand.command],
     {
-      cwd: scriptCommand.workingDirectory,
+      cwd: scriptCommand.workingDirectory || process.cwd(),
       env: { ...process.env, ...env, FORCE_COLOR: "1" },
       stdout: "pipe",
       stderr: "pipe",
+      stdin: "ignore",
     },
   );
+
+  if (windowsBatchFile) {
+    proc.exited.finally(windowsBatchFile.cleanup);
+  }
 
   async function* pipeOutput(
     streamName: OutputStreamName,

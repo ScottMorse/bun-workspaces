@@ -9,6 +9,7 @@ import {
 import { PROJECT_ERRORS } from "../src/project/errors";
 import { WORKSPACE_ERRORS } from "../src/workspaces";
 import { getProjectRoot } from "./testProjects";
+import { withWindowsPath } from "./util/windows";
 
 const test = (name: string, callback: (project: FileSystemProject) => void) =>
   _test(name, async () => {
@@ -28,35 +29,35 @@ describe("Test Project utilities", () => {
       {
         name: "application-a",
         matchPattern: "applications/*",
-        path: "applications/applicationA",
+        path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
         aliases: [],
       },
       {
         name: "application-b",
         matchPattern: "applications/*",
-        path: "applications/applicationB",
+        path: withWindowsPath("applications/applicationB"),
         scripts: ["all-workspaces", "application-b", "b-workspaces"],
         aliases: [],
       },
       {
         name: "library-a",
         matchPattern: "libraries/**/*",
-        path: "libraries/libraryA",
+        path: withWindowsPath("libraries/libraryA"),
         scripts: ["a-workspaces", "all-workspaces", "library-a"],
         aliases: [],
       },
       {
         name: "library-b",
         matchPattern: "libraries/**/*",
-        path: "libraries/libraryB",
+        path: withWindowsPath("libraries/libraryB"),
         scripts: ["all-workspaces", "b-workspaces", "library-b"],
         aliases: [],
       },
       {
         name: "library-c",
         matchPattern: "libraries/**/*",
-        path: "libraries/nested/libraryC",
+        path: withWindowsPath("libraries/nested/libraryC"),
         scripts: ["all-workspaces", "c-workspaces", "library-c"],
         aliases: [],
       },
@@ -68,7 +69,9 @@ describe("Test Project utilities", () => {
 
     const deprecated_appA = project.findWorkspaceByName("application-a");
     expect(deprecated_appA?.name).toEqual("application-a");
-    expect(deprecated_appA?.path).toEqual("applications/applicationA");
+    expect(deprecated_appA?.path).toEqual(
+      withWindowsPath("applications/applicationA"),
+    );
     expect(deprecated_appA?.scripts).toEqual([
       "a-workspaces",
       "all-workspaces",
@@ -78,7 +81,9 @@ describe("Test Project utilities", () => {
 
     const deprecated_libC = project.findWorkspaceByName("library-c");
     expect(deprecated_libC?.name).toEqual("library-c");
-    expect(deprecated_libC?.path).toEqual("libraries/nested/libraryC");
+    expect(deprecated_libC?.path).toEqual(
+      withWindowsPath("libraries/nested/libraryC"),
+    );
     expect(deprecated_libC?.scripts).toEqual([
       "all-workspaces",
       "c-workspaces",
@@ -139,35 +144,35 @@ describe("Test Project utilities", () => {
       {
         name: "application-a",
         matchPattern: "applications/*",
-        path: "applications/applicationA",
+        path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
         aliases: [],
       },
       {
         name: "application-b",
         matchPattern: "applications/*",
-        path: "applications/applicationB",
+        path: withWindowsPath("applications/applicationB"),
         scripts: ["all-workspaces", "application-b", "b-workspaces"],
         aliases: [],
       },
       {
         name: "library-a",
         matchPattern: "libraries/**/*",
-        path: "libraries/libraryA",
+        path: withWindowsPath("libraries/libraryA"),
         scripts: ["a-workspaces", "all-workspaces", "library-a"],
         aliases: [],
       },
       {
         name: "library-b",
         matchPattern: "libraries/**/*",
-        path: "libraries/libraryB",
+        path: withWindowsPath("libraries/libraryB"),
         scripts: ["all-workspaces", "b-workspaces", "library-b"],
         aliases: [],
       },
       {
         name: "library-c",
         matchPattern: "libraries/**/*",
-        path: "libraries/nested/libraryC",
+        path: withWindowsPath("libraries/nested/libraryC"),
         scripts: ["all-workspaces", "c-workspaces", "library-c"],
         aliases: [],
       },
@@ -283,7 +288,7 @@ describe("Test Project utilities", () => {
       commandDetails: {
         workingDirectory: path.resolve(
           project.rootDirectory,
-          "applications/applicationA",
+          withWindowsPath("applications/applicationA"),
         ),
         command: `bun --silent run all-workspaces`,
       },
@@ -291,7 +296,7 @@ describe("Test Project utilities", () => {
       workspace: {
         name: "application-a",
         matchPattern: "applications/*",
-        path: "applications/applicationA",
+        path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
         aliases: [],
       },
@@ -308,7 +313,7 @@ describe("Test Project utilities", () => {
       commandDetails: {
         workingDirectory: path.resolve(
           project.rootDirectory,
-          "applications/applicationA",
+          withWindowsPath("applications/applicationA"),
         ),
         command: `bun --silent run all-workspaces --watch`,
       },
@@ -316,7 +321,7 @@ describe("Test Project utilities", () => {
       workspace: {
         name: "application-a",
         matchPattern: "applications/*",
-        path: "applications/applicationA",
+        path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
         aliases: [],
       },
@@ -338,7 +343,7 @@ describe("Test Project utilities", () => {
       workspace: {
         name: "application-a",
         matchPattern: "applications/*",
-        path: "applications/applicationA",
+        path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
         aliases: [],
       },
@@ -360,7 +365,7 @@ describe("Test Project utilities", () => {
       workspace: {
         name: "application-a",
         matchPattern: "applications/*",
-        path: "applications/applicationA",
+        path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
         aliases: [],
       },
@@ -377,7 +382,7 @@ describe("Test Project utilities", () => {
       commandDetails: {
         workingDirectory: path.resolve(
           project.rootDirectory,
-          "libraries/libraryB",
+          withWindowsPath("libraries/libraryB"),
         ),
         command: `bun --silent run b-workspaces`,
       },
@@ -385,7 +390,7 @@ describe("Test Project utilities", () => {
       workspace: {
         name: "library-b",
         matchPattern: "libraries/**/*",
-        path: "libraries/libraryB",
+        path: withWindowsPath("libraries/libraryB"),
         scripts: ["all-workspaces", "b-workspaces", "library-b"],
         aliases: [],
       },
@@ -407,7 +412,7 @@ describe("Test Project utilities", () => {
       workspace: {
         name: "library-b",
         matchPattern: "libraries/**/*",
-        path: "libraries/libraryB",
+        path: withWindowsPath("libraries/libraryB"),
         scripts: ["all-workspaces", "b-workspaces", "library-b"],
         aliases: [],
       },
@@ -449,14 +454,14 @@ describe("Test Project utilities", () => {
       matchPattern: "test/*",
       scripts: ["test-script"],
       aliases: [],
-      path: "test/test-1",
+      path: withWindowsPath("test/test-1"),
     };
     const testWs2 = {
       name: "test-2",
       matchPattern: "test/*",
       scripts: ["test-script"],
       aliases: ["test-2-alias"],
-      path: "test/test-2",
+      path: withWindowsPath("test/test-2"),
     };
     const projectWithData = createMemoryProject({
       name: "test-project",
@@ -465,7 +470,9 @@ describe("Test Project utilities", () => {
     });
 
     expect(projectWithData.sourceType).toEqual("memory");
-    expect(projectWithData.rootDirectory).toEqual("test-project-directory");
+    expect(projectWithData.rootDirectory).toEqual(
+      withWindowsPath("test-project-directory"),
+    );
     expect(projectWithData.workspaces).toEqual([testWs1, testWs2]);
     expect(projectWithData.name).toEqual("test-project");
 
@@ -480,7 +487,7 @@ describe("Test Project utilities", () => {
       commandDetails: {
         workingDirectory: path.resolve(
           projectWithData.rootDirectory,
-          "test/test-1",
+          withWindowsPath("test/test-1"),
         ),
         command: `bun --silent run test-script`,
       },
@@ -546,9 +553,9 @@ describe("Test Project utilities", () => {
     });
 
     for await (const chunk of output) {
-      expect(chunk.decode()).toBe("script for a workspaces\n");
-      expect(chunk.decode({ stripAnsi: true })).toBe(
-        "script for a workspaces\n",
+      expect(chunk.decode().trim()).toBe("script for a workspaces");
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
+        "script for a workspaces",
       );
       expect(chunk.streamName).toBe("stdout");
     }
@@ -565,7 +572,7 @@ describe("Test Project utilities", () => {
         workspace: {
           name: "application-a",
           matchPattern: "applications/*",
-          path: "applications/applicationA",
+          path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
           aliases: [],
         },
@@ -578,13 +585,13 @@ describe("Test Project utilities", () => {
 
     const { output, exit } = project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
-      script: `echo "${echo}"`,
+      script: `echo ${echo}`,
       inline: true,
     });
 
     for await (const chunk of output) {
-      expect(chunk.decode()).toBe(`${echo}\n`);
-      expect(chunk.decode({ stripAnsi: true })).toBe(`${echo}\n`);
+      expect(chunk.decode().trim()).toBe(`${echo}`);
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(`${echo}`);
       expect(chunk.streamName).toBe("stdout");
     }
 
@@ -600,7 +607,7 @@ describe("Test Project utilities", () => {
         workspace: {
           name: "application-a",
           matchPattern: "applications/*",
-          path: "applications/applicationA",
+          path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
           aliases: [],
         },
@@ -620,9 +627,11 @@ describe("Test Project utilities", () => {
     });
 
     for await (const chunk of packageScript.output) {
-      expect(chunk.decode()).toBe("passed args: --arg1=value1 --arg2=value2\n");
-      expect(chunk.decode({ stripAnsi: true })).toBe(
-        "passed args: --arg1=value1 --arg2=value2\n",
+      expect(chunk.decode().trim()).toBe(
+        "passed args: --arg1=value1 --arg2=value2",
+      );
+      expect(chunk.decode({ stripAnsi: true }).trim()).toBe(
+        "passed args: --arg1=value1 --arg2=value2",
       );
       expect(chunk.streamName).toBe("stdout");
     }
@@ -639,7 +648,7 @@ describe("Test Project utilities", () => {
         workspace: {
           name: "application-1a",
           matchPattern: "applications/*",
-          path: "applications/applicationA",
+          path: withWindowsPath("applications/applicationA"),
           scripts: ["test-echo"],
           aliases: [],
         },
@@ -654,12 +663,12 @@ describe("Test Project utilities", () => {
     });
 
     for await (const chunk of inline.output) {
-      expect(chunk.decode()).toBe(
-        "inline passed args: --arg1=value1 --arg2=value2\n",
+      expect(chunk.decode().trim().replace(/\s+/g, " ")).toBe(
+        "inline passed args: --arg1=value1 --arg2=value2",
       );
-      expect(chunk.decode({ stripAnsi: true })).toBe(
-        "inline passed args: --arg1=value1 --arg2=value2\n",
-      );
+      expect(
+        chunk.decode({ stripAnsi: true }).trim().replace(/\s+/g, " "),
+      ).toBe("inline passed args: --arg1=value1 --arg2=value2");
       expect(chunk.streamName).toBe("stdout");
     }
 
@@ -675,7 +684,7 @@ describe("Test Project utilities", () => {
         workspace: {
           name: "application-1a",
           matchPattern: "applications/*",
-          path: "applications/applicationA",
+          path: withWindowsPath("applications/applicationA"),
           scripts: ["test-echo"],
           aliases: [],
         },
@@ -692,14 +701,14 @@ describe("Test Project utilities", () => {
             matchPattern: "test/*",
             scripts: ["test-script"],
             aliases: [],
-            path: "test/test-1",
+            path: withWindowsPath("test/test-1"),
           },
           {
             name: "test-1",
             matchPattern: "test/*",
             scripts: ["test-script"],
             aliases: [],
-            path: "test/test-1",
+            path: withWindowsPath("test/test-1"),
           },
         ],
       }),
@@ -713,14 +722,14 @@ describe("Test Project utilities", () => {
             matchPattern: "test/*",
             scripts: ["test-script"],
             aliases: ["test-1-alias"],
-            path: "test/test-1",
+            path: withWindowsPath("test/test-1"),
           },
           {
             name: "test-2",
             matchPattern: "test/*",
             scripts: ["test-script"],
             aliases: ["test-1-alias"],
-            path: "test/test-2",
+            path: withWindowsPath("test/test-2"),
           },
         ],
       }),

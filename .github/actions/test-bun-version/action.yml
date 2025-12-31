@@ -24,8 +24,7 @@ runs:
       id: install-deps
       shell: bash
       run: |
-        echo "Bun version: $(bun --version)"
-        bun install
+        bun install --frozen-lockfile
 
     - name: Run Tests
       id: run-tests

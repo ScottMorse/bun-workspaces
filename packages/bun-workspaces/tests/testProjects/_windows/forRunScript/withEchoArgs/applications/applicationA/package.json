@@ -1,0 +1,6 @@
+{
+  "name": "application-1a",
+  "scripts": {
+    "test-echo": "echo passed args:"
+  }
+}

@@ -1,5 +1,3 @@
-# yaml-language-server: $schema=https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/github-workflow.json
-
 name: Check PR
 
 on:
@@ -10,5 +8,5 @@ jobs:
     name: Validate Code
     uses: ./.github/workflows/validate_code.yml
   test_bun_versions:
-    name: Test Bun Versions
+    name: Test Bun Versions and OS
     uses: ./.github/workflows/test_bun_versions.yml
