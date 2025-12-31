@@ -10,8 +10,12 @@ const originalScriptShellDefault =
   process.env[getUserEnvVarName("scriptShellDefault")];
 
 afterEach(() => {
-  process.env[getUserEnvVarName("scriptShellDefault")] =
-    originalScriptShellDefault;
+  if (!originalScriptShellDefault) {
+    delete process.env[getUserEnvVarName("scriptShellDefault")];
+  } else {
+    process.env[getUserEnvVarName("scriptShellDefault")] =
+      originalScriptShellDefault;
+  }
 });
 
 const OS_ONLY_COMMAND = IS_WINDOWS
