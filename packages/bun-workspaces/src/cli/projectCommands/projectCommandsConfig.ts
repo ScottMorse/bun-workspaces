@@ -2,7 +2,10 @@ export interface CliProjectCommandConfig {
   command: string;
   aliases: string[];
   description: string;
-  options: Record<string, { flags: string[]; description: string }>;
+  options: Record<
+    string,
+    { flags: string[]; description: string; values?: string[] }
+  >;
 }
 
 export type CliProjectCommandName = keyof typeof CLI_PROJECT_COMMANDS_CONFIG;
@@ -107,6 +110,12 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
       inlineName: {
         flags: ["-I", "--inline-name <name>"],
         description: "An optional name for the script when --inline is passed",
+      },
+      shell: {
+        flags: ["-s", "--shell <shell>"],
+        values: ["bun", "os"],
+        description:
+          "When using --inline, the shell to use to run the script. Defaults to 'bun'",
       },
       jsonOutfile: {
         flags: ["-j", "--json-outfile <file>"],
