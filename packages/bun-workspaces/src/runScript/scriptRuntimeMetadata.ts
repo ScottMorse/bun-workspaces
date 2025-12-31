@@ -71,7 +71,7 @@ export const interpolateScriptRuntimeMetadata = (
       )?.[0];
       const value = metadata[key as keyof ScriptRuntimeMetadata];
       if (IS_WINDOWS && shell === "bun") {
-        return value.replace(/\\/g, "/");
+        return value.replace(/\\/g, "\\\\");
       }
       return value;
     },
