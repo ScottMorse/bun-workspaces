@@ -1081,8 +1081,8 @@ test-script-metadata-env-b
 
     const summaryResult = await summary;
 
-    expect(summaryResult.durationMs).toBeGreaterThan(200);
-    expect(summaryResult.durationMs).toBeLessThan(500);
+    expect(summaryResult.durationMs).toBeGreaterThan(1000);
+    expect(summaryResult.durationMs).toBeLessThan(2000);
 
     expect(summaryResult).toEqual({
       totalCount: 5,
