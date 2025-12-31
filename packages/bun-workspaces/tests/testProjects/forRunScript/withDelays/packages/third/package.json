@@ -1,6 +1,6 @@
 {
   "name": "third",
   "scripts": {
-    "test-delay": "sleep 0.2 && echo third"
+    "test-delay": "sleep 0.5 && echo third"
   }
 }
