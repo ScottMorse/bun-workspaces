@@ -1,8 +1,8 @@
 import {
   createAsyncIterableQueue,
   type SimpleAsyncIterable,
-} from "../../internal/core";
-import { logger } from "../../internal/logger";
+} from "../internal/core";
+import { logger } from "../internal/logger";
 import type { OutputChunk } from "./outputChunk";
 import { determineParallelMax, type ParallelMaxValue } from "./parallel";
 import {

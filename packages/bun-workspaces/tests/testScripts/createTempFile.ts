@@ -3,7 +3,10 @@ import { createTempFile } from "../../src/internal/runtime/tempFile";
 
 if (import.meta.main) {
   const fileName = `test-${crypto.randomUUID()}.txt`;
-  const { filePath } = createTempFile(fileName, "from createTempFile.ts");
+  const { filePath } = createTempFile({
+    fileName,
+    fileContent: "from createTempFile.ts",
+  });
   console.log(filePath);
   if (process.env.CRASH === "true") {
     await Bun.sleep(250);

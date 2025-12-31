@@ -17,11 +17,24 @@ export const cleanTempDir = () => {
 export const createTempFilePath = (fileName: string) =>
   path.join(TEMP_DIR, fileName);
 
-export const createTempFile = (fileName: string, fileContent: string) => {
+export type CreateTempFileOptions = {
+  fileName: string;
+  fileContent: string;
+  mode?: fs.Mode;
+};
+
+export const createTempFile = ({
+  fileName,
+  fileContent,
+  mode,
+}: CreateTempFileOptions) => {
   const filePath = createTempFilePath(fileName);
 
   createTempDir();
-  fs.writeFileSync(filePath, fileContent, { encoding: "utf8" });
+  fs.writeFileSync(filePath, fileContent, {
+    encoding: "utf8",
+    mode: mode ?? 0o644,
+  });
 
   let isClean = false;
   const cleanup = () => {

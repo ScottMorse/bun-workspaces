@@ -1,5 +1,5 @@
 import path from "path";
-import type { Workspace } from "../../workspaces";
+import type { Workspace } from "../workspaces";
 
 export const WORKSPACE_SCRIPT_COMMAND_METHODS = ["cd", "filter"] as const;
 

@@ -3,21 +3,19 @@ import path from "path";
 import { type ResolvedWorkspaceConfig } from "../../config";
 import type { Simplify } from "../../internal/core";
 import { logger } from "../../internal/logger";
-import { findWorkspaces, type Workspace } from "../../workspaces";
-import { PROJECT_ERRORS } from "../errors";
-import type { Project } from "../project";
 import {
   runScript,
   runScripts,
-  type RunScriptResult,
-  type RunScriptsParallelOptions,
-  type RunScriptsResult,
-} from "../runScript";
-import {
   createScriptRuntimeEnvVars,
   interpolateScriptRuntimeMetadata,
+  type RunScriptResult,
+  type RunScriptsResult,
+  type RunScriptsParallelOptions,
   type ScriptRuntimeMetadata,
-} from "../runScript/scriptRuntimeMetadata";
+} from "../../runScript";
+import { findWorkspaces, type Workspace } from "../../workspaces";
+import { PROJECT_ERRORS } from "../errors";
+import type { Project } from "../project";
 import { ProjectBase, resolveWorkspacePath } from "./projectBase";
 
 /** Arguments for {@link createFileSystemProject} */

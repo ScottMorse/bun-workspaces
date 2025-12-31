@@ -2,6 +2,7 @@ import path from "path";
 import { validateCurrentBunVersion } from "../../internal/bun";
 import { createWildcardRegex } from "../../internal/core";
 import { logger } from "../../internal/logger";
+import { createWorkspaceScriptCommand } from "../../runScript";
 import { type Workspace } from "../../workspaces";
 import { PROJECT_ERRORS } from "../errors";
 import type {
@@ -10,7 +11,6 @@ import type {
   Project,
   WorkspaceScriptMetadata,
 } from "../project";
-import { createWorkspaceScriptCommand } from "../runScript";
 
 export const resolveWorkspacePath = (project: Project, workspace: Workspace) =>
   path.resolve(project.rootDirectory, workspace.path);

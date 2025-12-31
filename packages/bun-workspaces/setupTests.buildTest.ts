@@ -3,7 +3,7 @@ import { Glob } from "bun";
 // @ts-expect-error - Importing from mjs file in build for build:test script
 import { setLogLevel } from "./src/index.mjs";
 // @ts-expect-error - Importing from mjs file in build for build:test script
-import { runScript } from "./src/project/index.mjs";
+import { runScript } from "./src/runScript/index.mjs";
 
 setLogLevel("silent");
 
