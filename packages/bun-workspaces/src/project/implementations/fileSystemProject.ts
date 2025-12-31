@@ -194,7 +194,9 @@ class _FileSystemProject extends ProjectBase implements Project {
           args,
         }).commandDetails;
 
-    return runScript({
+    const shell = options.shell || "bun";
+
+    const result = runScript({
       scriptCommand,
       metadata: {
         workspace,
@@ -202,6 +204,19 @@ class _FileSystemProject extends ProjectBase implements Project {
       env: createScriptRuntimeEnvVars(scriptRuntimeMetadata),
       shell: options.shell || "bun",
     });
+
+    if (shell === "bun" && !options.shell) {
+      /** @deprecated remove once Bun shell has been default for some time */
+      result.exit.then((exit) => {
+        if (exit.exitCode === 127) {
+          logger.warn(
+            `The default shell used to execute scripts was recently changed to the Bun shell. This is a temporary warning due to a script exiting with 127 (command not found). You may need to set the --shell option to "os" to use the system shell or update the script to use the Bun shell.`,
+          );
+        }
+      });
+    }
+
+    return result;
   }
 
   runScriptAcrossWorkspaces(
@@ -239,7 +254,9 @@ class _FileSystemProject extends ProjectBase implements Project {
       `Running script ${options.script} across workspaces: ${workspaces.map((workspace) => workspace.name).join(", ")}`,
     );
 
-    return runScripts({
+    const shell = options.shell || "bun";
+
+    const result = runScripts({
       scripts: workspaces.map((workspace) => {
         const inlineScriptName =
           typeof options.inline === "object"
@@ -284,11 +301,24 @@ class _FileSystemProject extends ProjectBase implements Project {
           },
           scriptCommand,
           env: createScriptRuntimeEnvVars(scriptRuntimeMetadata),
-          shell: options.shell || "bun",
+          shell,
         };
       }),
       parallel: options.parallel ?? false,
     });
+
+    if (shell === "bun" && !options.shell) {
+      /** @deprecated remove once Bun shell has been default for some time */
+      result.summary.then((summary) => {
+        if (summary.scriptResults.some((result) => result.exitCode === 127)) {
+          logger.warn(
+            `The default shell used to execute scripts was recently changed to the Bun shell. This is a temporary warning due to a script exiting with 127 (command not found). You may need to set the --shell option to "os" to use the system shell or update the script to use the Bun shell.`,
+          );
+        }
+      });
+    }
+
+    return result;
   }
 }
 
