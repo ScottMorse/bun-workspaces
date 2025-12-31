@@ -11,11 +11,7 @@ on:
       os:
         description: The OS to test
         required: true
-        type: choice
-        options:
-          - ubuntu
-          - windows
-          - macos
+        type: string
         default: ubuntu
 
   workflow_dispatch:
