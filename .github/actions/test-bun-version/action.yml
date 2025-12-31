@@ -19,7 +19,7 @@ runs:
         curl -fsSL https://bun.com/install | bash -s "bun-v$bun_version"
         echo "$HOME/.bun/bin:$PATH" >> $GITHUB_PATH
         echo "Bun version: $(bun --version)"
-    
+
     - name: Install Dependencies
       id: install-deps
       shell: bash
