@@ -207,7 +207,7 @@ class _FileSystemProject extends ProjectBase implements Project {
         workspace,
       },
       env: createScriptRuntimeEnvVars(scriptRuntimeMetadata),
-      shell: options.shell || "bun",
+      shell,
     });
 
     if (shell === "bun" && !options.shell) {

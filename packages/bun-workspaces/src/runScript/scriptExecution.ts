@@ -32,7 +32,7 @@ export const validateScriptShellOption = (shell: string): ScriptShellOption => {
 };
 
 export const getScriptShellDefault = () => {
-  const shell = getUserEnvVar("shellDefault");
+  const shell = getUserEnvVar("scriptShellDefault");
 
   return shell ? validateScriptShellOption(shell) : "bun";
 };

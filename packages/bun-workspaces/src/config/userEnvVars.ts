@@ -1,6 +1,6 @@
 export const USER_ENV_VARS = {
   parallelMaxDefault: "BW_PARALLEL_MAX_DEFAULT",
-  shellDefault: "BW_SHELL_DEFAULT",
+  scriptShellDefault: "BW_SHELL_DEFAULT",
 } as const;
 
 export type UserEnvVarName = keyof typeof USER_ENV_VARS;

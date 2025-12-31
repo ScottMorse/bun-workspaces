@@ -47,25 +47,26 @@ export const runScript = <ScriptMetadata extends object = object>({
   scriptCommand,
   metadata,
   env,
-  shell,
+  shell = "os",
 }: RunScriptOptions<ScriptMetadata>): RunScriptResult<ScriptMetadata> => {
   const startTime = new Date();
 
-  const { argv, cleanup } = createScriptExecutor(
-    scriptCommand.command,
-    shell ?? "os",
-  );
+  const { argv, cleanup } = createScriptExecutor(scriptCommand.command, shell);
 
   const proc = Bun.spawn(argv, {
     cwd: scriptCommand.workingDirectory || process.cwd(),
-    env: { ...process.env, ...env, FORCE_COLOR: "1" },
+    env: {
+      ...process.env,
+      ...env,
+      _BW_SCRIPT_SHELL_OPTION: shell,
+      FORCE_COLOR: "1",
+    },
     stdout: "pipe",
     stderr: "pipe",
     stdin: "ignore",
   });
 
   proc.exited.finally(cleanup);
-
   async function* pipeOutput(
     streamName: OutputStreamName,
   ): SimpleAsyncIterable<OutputChunk> {
