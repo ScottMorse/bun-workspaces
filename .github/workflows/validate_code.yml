@@ -3,8 +3,8 @@
 name: Validate Code
 
 on:
-  - workflow_call
-  - workflow_dispatch
+  workflow_call:
+  workflow_dispatch:
 
 jobs:
   format_check:
