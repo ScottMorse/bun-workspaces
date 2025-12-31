@@ -18,6 +18,8 @@ const OS_ONLY_COMMAND = IS_WINDOWS
   ? "setlocal EnableDelayedExpansion"
   : "set -o pipefail";
 
+const OS_ONLY_COMMAND_EXIT = IS_WINDOWS ? 2 : 0;
+
 describe("Test run script shell option", () => {
   test("Simple commands succeed in runScript", async () => {
     const bunResult = runScript({
@@ -39,7 +41,7 @@ describe("Test run script shell option", () => {
     const osResult = runScript({
       scriptCommand: {
         command: IS_WINDOWS
-          ? `echo %MY_VAR% $_BW_SCRIPT_SHELL_OPTION`
+          ? `echo %MY_VAR% %_BW_SCRIPT_SHELL_OPTION%`
           : "echo $MY_VAR $_BW_SCRIPT_SHELL_OPTION",
         workingDirectory: process.cwd(),
       },
@@ -99,7 +101,9 @@ describe("Test run script shell option", () => {
 
     const osEnvResult = await setupCliTest().run(
       "run-script",
-      "echo $_BW_SCRIPT_SHELL_OPTION",
+      IS_WINDOWS
+        ? `echo %_BW_SCRIPT_SHELL_OPTION%`
+        : "echo $_BW_SCRIPT_SHELL_OPTION",
       "application-a",
       "-i",
       "--inline-name",
@@ -154,7 +158,9 @@ describe("Test run script shell option", () => {
 
     const explicitOsResult = await setupCliTest().run(
       "run-script",
-      "echo $_BW_SCRIPT_SHELL_OPTION",
+      IS_WINDOWS
+        ? `echo %_BW_SCRIPT_SHELL_OPTION%`
+        : "echo $_BW_SCRIPT_SHELL_OPTION",
       "application-a",
       "--shell",
       "os",
@@ -177,7 +183,7 @@ describe("Test run script shell option", () => {
       "--inline-name",
       "test",
     );
-    expect(successfulOsOnlyResult.exitCode).toBe(0);
+    expect(successfulOsOnlyResult.exitCode).toBe(OS_ONLY_COMMAND_EXIT);
   });
 
   test("API - runWorkspaceScript utilizes shell option", async () => {
@@ -213,7 +219,9 @@ describe("Test run script shell option", () => {
 
     const bunEnvResult = await project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
-      script: "echo $_BW_SCRIPT_SHELL_OPTION",
+      script: IS_WINDOWS
+        ? `echo %_BW_SCRIPT_SHELL_OPTION%`
+        : "echo $_BW_SCRIPT_SHELL_OPTION",
       inline: true,
     });
 
@@ -245,7 +253,9 @@ describe("Test run script shell option", () => {
 
     const explicitOsResult = await project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
-      script: "echo $_BW_SCRIPT_SHELL_OPTION",
+      script: IS_WINDOWS
+        ? `echo %_BW_SCRIPT_SHELL_OPTION%`
+        : "echo $_BW_SCRIPT_SHELL_OPTION",
       inline: true,
       shell: "os",
     });
@@ -262,7 +272,9 @@ describe("Test run script shell option", () => {
       shell: "os",
     });
 
-    expect((await successfulOsOnlyResult.exit).exitCode).toBe(0);
+    expect((await successfulOsOnlyResult.exit).exitCode).toBe(
+      OS_ONLY_COMMAND_EXIT,
+    );
   });
 
   test("API - runScriptAcrossWorkspaces utilizes shell option", async () => {
@@ -285,7 +297,9 @@ describe("Test run script shell option", () => {
 
     const osEnvResult = await project.runScriptAcrossWorkspaces({
       workspacePatterns: ["application-a"],
-      script: "echo $_BW_SCRIPT_SHELL_OPTION",
+      script: IS_WINDOWS
+        ? `echo %_BW_SCRIPT_SHELL_OPTION%`
+        : "echo $_BW_SCRIPT_SHELL_OPTION",
       inline: true,
     });
 
@@ -330,7 +344,9 @@ describe("Test run script shell option", () => {
 
     const explicitOsResult = await project.runScriptAcrossWorkspaces({
       workspacePatterns: ["application-a"],
-      script: "echo $_BW_SCRIPT_SHELL_OPTION",
+      script: IS_WINDOWS
+        ? `echo %_BW_SCRIPT_SHELL_OPTION%`
+        : "echo $_BW_SCRIPT_SHELL_OPTION",
       inline: true,
       shell: "os",
     });
@@ -349,6 +365,6 @@ describe("Test run script shell option", () => {
 
     expect(
       (await successfulOsOnlyResult.summary).scriptResults[0].exitCode,
-    ).toBe(0);
+    ).toBe(OS_ONLY_COMMAND_EXIT);
   });
 });
