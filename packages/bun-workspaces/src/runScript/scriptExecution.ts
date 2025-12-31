@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { getUserEnvVar } from "../config/userEnvVars";
 import { BunWorkspacesError } from "../internal/core";
 import { IS_WINDOWS } from "../internal/runtime";
 import { createTempFile } from "../internal/runtime/tempFile";
@@ -21,6 +22,28 @@ export const SCRIPT_SHELL_OPTIONS = ["bun", "os"] as const;
 
 export type ScriptShellOption = (typeof SCRIPT_SHELL_OPTIONS)[number];
 
+export const validateScriptShellOption = (shell: string): ScriptShellOption => {
+  if (!SCRIPT_SHELL_OPTIONS.includes(shell as ScriptShellOption)) {
+    throw new BunWorkspacesError(
+      `Invalid shell option: ${shell} (accepted values: ${SCRIPT_SHELL_OPTIONS.join(", ")})`,
+    );
+  }
+  return shell as ScriptShellOption;
+};
+
+export const getScriptShellDefault = () => {
+  const shell = getUserEnvVar("shellDefault");
+
+  return shell ? validateScriptShellOption(shell) : "bun";
+};
+
+export const resolveScriptShell = (shell?: string): ScriptShellOption => {
+  if (shell) {
+    return validateScriptShellOption(shell);
+  }
+  return getScriptShellDefault();
+};
+
 export type ScriptExecutor = {
   argv: string[];
   cleanup: () => void;
@@ -30,6 +53,8 @@ export const createScriptExecutor = (
   command: string,
   shell: ScriptShellOption,
 ): ScriptExecutor => {
+  shell = resolveScriptShell(shell);
+
   if (shell === "bun") {
     const { filePath, cleanup } = createShellScript(command);
     return {

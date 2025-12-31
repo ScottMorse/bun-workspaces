@@ -1,3 +1,5 @@
+import { getUserEnvVarName } from "../../config/userEnvVars";
+
 export interface CliProjectCommandConfig {
   command: string;
   aliases: string[];
@@ -114,8 +116,7 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
       shell: {
         flags: ["-s", "--shell <shell>"],
         values: ["bun", "os"],
-        description:
-          "When using --inline, the shell to use to run the script. Defaults to 'bun'",
+        description: `When using --inline, the shell to use to run the script. Defaults to "bun" or the value of the ${getUserEnvVarName("shellDefault")} environment variable`,
       },
       jsonOutfile: {
         flags: ["-j", "--json-outfile <file>"],

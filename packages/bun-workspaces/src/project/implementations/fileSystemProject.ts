@@ -13,7 +13,10 @@ import {
   type RunScriptsParallelOptions,
   type ScriptRuntimeMetadata,
 } from "../../runScript";
-import type { ScriptShellOption } from "../../runScript/scriptExecution";
+import {
+  resolveScriptShell,
+  type ScriptShellOption,
+} from "../../runScript/scriptExecution";
 import { findWorkspaces, type Workspace } from "../../workspaces";
 import { PROJECT_ERRORS } from "../errors";
 import type { Project } from "../project";
@@ -194,7 +197,7 @@ class _FileSystemProject extends ProjectBase implements Project {
           args,
         }).commandDetails;
 
-    const shell = options.shell || "bun";
+    const shell = resolveScriptShell(options.shell);
 
     const result = runScript({
       scriptCommand,
@@ -254,7 +257,7 @@ class _FileSystemProject extends ProjectBase implements Project {
       `Running script ${options.script} across workspaces: ${workspaces.map((workspace) => workspace.name).join(", ")}`,
     );
 
-    const shell = options.shell || "bun";
+    const shell = resolveScriptShell(options.shell);
 
     const result = runScripts({
       scripts: workspaces.map((workspace) => {
