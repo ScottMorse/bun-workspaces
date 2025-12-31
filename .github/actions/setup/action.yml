@@ -1,10 +1,16 @@
 name: Setup Project
 description: Setup the project for the workflow
 
+inputs:
+  bun_version:
+    description: The Bun version to test
+    required: false
+
 runs:
   using: composite
   steps:
     - name: Get Bun version
+      if: inputs.bun_version == null
       id: get-bun-version
       shell: bash
       run: |
@@ -13,14 +19,9 @@ runs:
         echo "Bun version to be installed: $BUN_VERSION"
 
     - name: Install Bun
-      id: install-bun
-      shell: bash
-      run: |
-        echo "Installing Bun version: $BUN_VERSION"
-        BUN_INSTALL="$HOME/.bun"
-        curl -fsSL https://bun.com/install | bash -s "bun-v$BUN_VERSION"
-        echo "$HOME/.bun/bin:$PATH" >> $GITHUB_PATH
-        echo "Bun version: $(bun --version)"
+      uses: oven-sh/setup-bun@v2
+      with:
+        bun-version: ${{ inputs.bun_version || env.BUN_VERSION }}
 
     - name: Install Dependencies
       id: install-deps
