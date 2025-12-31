@@ -1,12 +1,7 @@
-import crypto from "node:crypto";
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
 import {
   type SimpleAsyncIterable,
   mergeAsyncIterables,
 } from "../internal/core";
-import { IS_WINDOWS } from "../internal/runtime";
 import {
   createOutputChunk,
   type OutputChunk,
