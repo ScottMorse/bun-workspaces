@@ -38,10 +38,15 @@ export const getScriptShellDefault = () => {
 };
 
 export const resolveScriptShell = (shell?: string): ScriptShellOption => {
-  if (shell) {
-    return validateScriptShellOption(shell);
+  if (
+    !shell ||
+    shell === "default" ||
+    shell === "undefined" ||
+    shell === "null"
+  ) {
+    return getScriptShellDefault();
   }
-  return getScriptShellDefault();
+  return validateScriptShellOption(shell);
 };
 
 export type ScriptExecutor = {

@@ -50,7 +50,7 @@ export type RunWorkspaceScriptOptions = {
   /** The arguments to append to the script command */
   args?: string;
   /** Whether to use the Bun Shell or the OS shell (e.g. sh or cmd). Defaults to "bun" */
-  shell?: ScriptShellOption;
+  shell?: ScriptShellOption | "default";
 };
 
 /** Metadata associated with a workspace script */
