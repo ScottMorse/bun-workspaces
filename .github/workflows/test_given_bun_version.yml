@@ -41,8 +41,5 @@ jobs:
         with:
           bun_version: ${{ inputs.bun_version }}
 
-      - name: Run Tests
-        run: bun bw test
-
       - name: Run Tests Against Build
         run: bun bw build:test
