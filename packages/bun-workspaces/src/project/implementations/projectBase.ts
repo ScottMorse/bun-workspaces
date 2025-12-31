@@ -2,6 +2,7 @@ import path from "path";
 import { validateCurrentBunVersion } from "../../internal/bun";
 import { createWildcardRegex } from "../../internal/core";
 import { logger } from "../../internal/logger";
+import { createTempDir } from "../../internal/runtime/tempFile";
 import { createWorkspaceScriptCommand } from "../../runScript";
 import { type Workspace } from "../../workspaces";
 import { PROJECT_ERRORS } from "../errors";
@@ -27,6 +28,10 @@ export abstract class ProjectBase implements Project {
       logger.error(
         bunVersionError.message + " (Features may not work as expected)",
       );
+    }
+    if (!ProjectBase.#initialized) {
+      createTempDir();
+      ProjectBase.#initialized = true;
     }
   }
 
@@ -121,4 +126,6 @@ export abstract class ProjectBase implements Project {
       }),
     };
   }
+
+  static #initialized = false;
 }
