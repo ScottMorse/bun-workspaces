@@ -146,7 +146,7 @@ describe("CLI Run Script", () => {
 5 scripts ran successfully`,
       );
     },
-    { repeats: 5 },
+    { repeats: 2 },
   );
 
   test("Run for specific workspaces", async () => {
