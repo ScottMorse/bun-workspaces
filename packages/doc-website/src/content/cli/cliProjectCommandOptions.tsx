@@ -15,13 +15,13 @@ export type CliProjectCommandContent = Omit<
 
 const defineOptionContent = (
   optionName: CliProjectCommandName,
-  factory: (optionConfig: CliProjectCommandConfig) => CliOptionContent,
+  factory: (optionConfig: CliProjectCommandConfig) => CliOptionContent
 ): CliProjectCommandContent => {
   const config = getProjectCommandConfig(optionName);
   const content = factory(config);
 
   const exampleLines = content.examples.filter(
-    (example) => example.trim() && !example.match(/^\s*#/),
+    (example) => example.trim() && !example.match(/^\s*#/)
   );
 
   const getMainFlag = (flags: string[]) => {
@@ -34,7 +34,7 @@ const defineOptionContent = (
       !exampleLines.find((line) => line.includes(getMainFlag(option.flags)))
     ) {
       throw new Error(
-        `Expected an example to include ${getMainFlag(option.flags)}`,
+        `Expected an example to include ${getMainFlag(option.flags)}`
       );
     }
   }
@@ -43,7 +43,7 @@ const defineOptionContent = (
     !exampleLines.find((line) => {
       // line that uses no flags
       return Object.values(config.options).every(
-        (option) => !line.includes(getMainFlag(option.flags)),
+        (option) => !line.includes(getMainFlag(option.flags))
       );
     })
   ) {
@@ -160,6 +160,10 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
       "# Run an inline command from each workspace's directory",
       `bw run "echo 'this is my inline script for <workspaceName>'" --inline`,
       "",
+      "# By default, the Bun shell executes inline scripts.",
+      "# --shell=system uses the native shell (sh in Unix, cmd in Windows)",
+      `bw run "echo 'this is my native inline script'" --inline --shell=system`,
+      "",
       "# Set a name for an inline command",
       `bw run "echo 'this is my inline script'" --inline --inline-name=my-inline-script`,
       "",
@@ -176,7 +180,7 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
 } as const satisfies Record<CliProjectCommandName, CliProjectCommandContent>;
 
 export const getCliProjectCommandContent = (
-  commandName: CliProjectCommandName,
+  commandName: CliProjectCommandName
 ) => CLI_PROJECT_COMMAND_OPTIONS_CONTENT[commandName];
 
 export const getCliProjectCommandsContent = () =>

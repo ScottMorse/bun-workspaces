@@ -95,7 +95,7 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
       parallel: {
         flags: ["-P", "--parallel [max]"],
         description:
-          "Run the scripts in parallel. Pass an optional number, percentage, or keyword: 'default', 'auto', 'unbounded'",
+          "Run the scripts in parallel. Pass an optional number, percentage, or keyword: default | auto | unbounded",
       },
       args: {
         flags: ["-a", "--args <args>"],
@@ -117,7 +117,7 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
       shell: {
         flags: ["-s", "--shell <shell>"],
         values: [...SCRIPT_SHELL_OPTIONS, "default"],
-        description: `When using --inline, the shell to use to run the script. Defaults to "bun" or the value of the ${getUserEnvVarName("scriptShellDefault")} environment variable`,
+        description: `When using --inline, the shell to use to run the script`,
       },
       jsonOutfile: {
         flags: ["-j", "--json-outfile <file>"],
