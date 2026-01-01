@@ -65,3 +65,17 @@ bw run my-script --parallel=50%
 # Run every script in parallel (use with caution)
 bw run my-script --parallel=unbounded 
 `.trim();
+
+export const CLI_INLINE_SHELL_EXAMPLE = `
+# This will use the Bun shell unless ${getUserEnvVarName("scriptShellDefault")} is set to "system"
+bw run "echo 'hello'" --inline
+
+# Same as the above command
+bw run "echo 'hello'" --inline --shell=default
+
+# Explicitly run the Bun shell
+bw run "echo 'hello'" --inline --shell=bun
+
+# Run an inline command from the workspace directory using the native shell
+bw run "echo 'hello'" --inline --shell=system
+`.trim();

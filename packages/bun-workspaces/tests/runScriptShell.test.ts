@@ -251,9 +251,7 @@ describe("Test run script shell option", () => {
 
     const bunEnvResult = await project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
-      script: IS_WINDOWS
-        ? `echo %_BW_SCRIPT_SHELL_OPTION%`
-        : "echo $_BW_SCRIPT_SHELL_OPTION",
+      script: "echo $_BW_SCRIPT_SHELL_OPTION",
       inline: true,
     });
 

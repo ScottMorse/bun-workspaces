@@ -282,3 +282,19 @@ project.runScriptAcrossWorkspaces({
   parallel: { max: 2 },
 });
 `.trim();
+
+export const API_INLINE_SHELL_EXAMPLE = `
+// This will use the Bun shell unless ${getUserEnvVarName("scriptShellDefault")} is set to "system"
+project.runWorkspaceScript({
+  workspaceNameOrAlias: "my-workspace",
+  script: "echo 'this is my inline script'",
+  inline: true,
+});
+
+project.runWorkspaceScript({
+  workspaceNameOrAlias: "my-workspace",
+  script: "echo 'this is my inline script'",
+  // Takes "bun", "system", or "default", same as the CLI --shell option
+  inline: { shell: "system" },
+});
+`.trim();

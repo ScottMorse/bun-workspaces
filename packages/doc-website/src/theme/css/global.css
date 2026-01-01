@@ -326,8 +326,9 @@ li {
 
 .sub-header-links a {
   color: var(--rp-c-link);
-  padding: 0.25rem 0.75rem;
+  padding: 0.125rem 0.85rem;
   border-radius: 1rem;
+  font-size: 0.9rem;
   text-align: center;
   border: 1px solid var(--rp-c-divider);
 }
