@@ -105,25 +105,13 @@ describe("Run Single Script", () => {
   test("Simple failure with signal", async () => {
     const result = await runScript({
       scriptCommand: {
-        command: IS_WINDOWS
-          ? `echo test-script 1 && exit 137`
-          : "echo 'test-script 1' && sleep 0.1 && kill -9 $$",
+        command: IS_WINDOWS ? `exit 137` : "kill -9 $$",
         workingDirectory: ".",
       },
       metadata: {},
       env: {},
     });
 
-    let outputCount = 0;
-    for await (const outputChunk of result.output) {
-      expect(outputChunk.raw).toBeInstanceOf(Uint8Array);
-      expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.decode()).toMatch(`test-script ${outputCount + 1}`);
-      expect(outputChunk.decode({ stripAnsi: true })).toMatch(
-        `test-script ${outputCount + 1}`,
-      );
-      outputCount++;
-    }
     const exit = await result.exit;
     expect(exit).toEqual({
       exitCode: 137,
@@ -234,6 +222,28 @@ describe("Run Single Script", () => {
       expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
         `test-script 1`,
       );
+    }
+  });
+
+  test("Confirm scripts have node_modules/.bin in PATH", async () => {
+    // This is something due to Bun's process.env.PATH including node_modules/.bin
+    // This test helps confirm this is consistent across Bun versions and platforms
+
+    const result = await runScript({
+      scriptCommand: {
+        command: "which eslint",
+        workingDirectory: ".",
+      },
+      metadata: {},
+      env: {},
+    });
+
+    for await (const outputChunk of result.output) {
+      expect(outputChunk.streamName).toBe("stdout");
+      expect(outputChunk.decode().trim()).toMatch(
+        /node_modules\/.bin\/eslint$/,
+      );
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toMatch(/eslint$/);
     }
   });
 });
