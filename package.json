@@ -10,7 +10,7 @@
     "bw:build": "bun cli run -N build bw",
     "bw:build:test": "bun cli run -N build:test bw",
     "docs:dev": "bun cli run -N dev doc-website",
-    "docs:build": "bun cli, run -N build doc-website",
+    "docs:build": "bun cli run -N build doc-website",
     "docs:build:dev": "bun cli run -N build:dev doc-website",
     "docs:preview": "bun cli run -N preview doc-website",
     "sandbox:cli:local": "bun --cwd=./packages/sandbox run cli:local",
