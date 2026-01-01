@@ -37,12 +37,12 @@ export type CreateFileSystemProjectOptions = {
 
 export type ShellOption = ScriptShellOption | "default";
 
-export interface InlineScriptOptions {
+export type InlineScriptOptions = {
   /** A name to act as a label for the inline script */
   scriptName?: string;
   /** Whether to run the script as an inline command */
   shell?: ShellOption;
-}
+};
 
 /** Arguments for `FileSystemProject.runWorkspaceScript` */
 export type RunWorkspaceScriptOptions = {
