@@ -18,7 +18,7 @@ afterEach(() => {
   }
 });
 
-const OS_ONLY_COMMAND = IS_WINDOWS ? "exit /b 0" : "set -o pipefail";
+const OS_ONLY_COMMAND = IS_WINDOWS ? "exit /b 0" : "command :";
 
 describe("Test run script shell option", () => {
   test("Simple commands succeed in runScript", async () => {
