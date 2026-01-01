@@ -18,7 +18,7 @@ afterEach(() => {
   }
 });
 
-const OS_ONLY_COMMAND = IS_WINDOWS ? "exit /b 0" : "command :";
+const OS_ONLY_COMMAND = IS_WINDOWS ? "exit /b 0" : "command : >/dev/null 2>&1";
 
 describe("Test run script shell option", () => {
   test("Simple commands succeed in runScript", async () => {

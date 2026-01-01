@@ -107,7 +107,7 @@ describe("Run Single Script", () => {
       scriptCommand: {
         command: IS_WINDOWS
           ? `echo test-script 1 && exit 137`
-          : "echo 'test-script 1' && kill -9 $$",
+          : "echo 'test-script 1' && sleep 0.1 && kill -9 $$",
         workingDirectory: ".",
       },
       metadata: {},
