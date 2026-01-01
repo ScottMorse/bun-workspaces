@@ -1,6 +1,9 @@
 import fs from "node:fs";
 import { expect, test, describe } from "bun:test";
-import { createTempFile, cleanTempDir } from "../src/internal/runtime/tempFile";
+import {
+  createTempDir,
+  createTempFile,
+} from "../src/internal/runtime/tempFile";
 import { runScript } from "../src/runScript";
 
 describe("Temp file utils", () => {
@@ -32,7 +35,7 @@ describe("Temp file utils", () => {
     expect(fs.readFileSync(b, "utf8")).toBe("test b");
     expect(fs.readFileSync(c, "utf8")).toBe("test c");
 
-    cleanTempDir();
+    createTempDir(true);
 
     expect(fs.existsSync(a)).toBe(false);
     expect(fs.existsSync(b)).toBe(false);

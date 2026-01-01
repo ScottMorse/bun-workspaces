@@ -239,8 +239,7 @@ describe("Test run script shell option", () => {
       script: IS_WINDOWS
         ? `echo %_BW_SCRIPT_SHELL_OPTION%`
         : "echo $_BW_SCRIPT_SHELL_OPTION",
-      inline: true,
-      shell: "default",
+      inline: { shell: "default" },
     });
 
     for await (const chunk of explicitDefaultResult.output) {
@@ -266,8 +265,7 @@ describe("Test run script shell option", () => {
     const explicitBunResult = await project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script: "echo $_BW_SCRIPT_SHELL_OPTION",
-      inline: true,
-      shell: "bun",
+      inline: { shell: "bun" },
     });
 
     for await (const chunk of explicitBunResult.output) {
@@ -278,8 +276,7 @@ describe("Test run script shell option", () => {
     const failingBunResult = await project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script: OS_ONLY_COMMAND,
-      inline: true,
-      shell: "bun",
+      inline: { shell: "bun" },
     });
 
     expect((await failingBunResult.exit).exitCode).toBe(1);
@@ -289,8 +286,7 @@ describe("Test run script shell option", () => {
       script: IS_WINDOWS
         ? `echo %_BW_SCRIPT_SHELL_OPTION%`
         : "echo $_BW_SCRIPT_SHELL_OPTION",
-      inline: true,
-      shell: "system",
+      inline: { shell: "system" },
     });
 
     for await (const chunk of explicitOsResult.output) {
@@ -301,8 +297,7 @@ describe("Test run script shell option", () => {
     const successfulOsOnlyResult = await project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script: OS_ONLY_COMMAND,
-      inline: true,
-      shell: "system",
+      inline: { shell: "system" },
     });
 
     expect((await successfulOsOnlyResult.exit).exitCode).toBe(0);
@@ -344,8 +339,7 @@ describe("Test run script shell option", () => {
       script: IS_WINDOWS
         ? `echo %_BW_SCRIPT_SHELL_OPTION%`
         : "echo $_BW_SCRIPT_SHELL_OPTION",
-      inline: true,
-      shell: "default",
+      inline: { shell: "default" },
     });
 
     for await (const { outputChunk } of explicitDefaultResult.output) {
@@ -371,8 +365,7 @@ describe("Test run script shell option", () => {
     const explicitBunResult = await project.runScriptAcrossWorkspaces({
       workspacePatterns: ["application-a"],
       script: "echo $_BW_SCRIPT_SHELL_OPTION",
-      inline: true,
-      shell: "bun",
+      inline: { shell: "bun" },
     });
 
     for await (const { outputChunk } of explicitBunResult.output) {
@@ -383,8 +376,7 @@ describe("Test run script shell option", () => {
     const failingBunResult = await project.runScriptAcrossWorkspaces({
       workspacePatterns: ["application-a"],
       script: OS_ONLY_COMMAND,
-      inline: true,
-      shell: "bun",
+      inline: { shell: "bun" },
     });
 
     expect((await failingBunResult.summary).scriptResults[0].exitCode).toBe(1);
@@ -394,8 +386,7 @@ describe("Test run script shell option", () => {
       script: IS_WINDOWS
         ? `echo %_BW_SCRIPT_SHELL_OPTION%`
         : "echo $_BW_SCRIPT_SHELL_OPTION",
-      inline: true,
-      shell: "system",
+      inline: { shell: "system" },
     });
 
     for await (const { outputChunk } of explicitOsResult.output) {
@@ -406,8 +397,7 @@ describe("Test run script shell option", () => {
     const successfulOsOnlyResult = await project.runScriptAcrossWorkspaces({
       workspacePatterns: ["application-a"],
       script: OS_ONLY_COMMAND,
-      inline: true,
-      shell: "system",
+      inline: { shell: "system" },
     });
 
     expect(

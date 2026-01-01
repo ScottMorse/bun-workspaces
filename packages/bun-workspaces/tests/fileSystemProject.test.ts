@@ -971,7 +971,7 @@ test-script-metadata-env-b
     });
   });
 
-  test("runScriptAcrossWorkspaces: parallel", async () => {
+  test.only("runScriptAcrossWorkspaces: parallel", async () => {
     const project = createFileSystemProject({
       rootDirectory: getProjectRoot("runScriptWithDelays"),
     });

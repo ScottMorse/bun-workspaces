@@ -3,6 +3,7 @@ import path from "path";
 import { type ResolvedWorkspaceConfig } from "../../config";
 import type { Simplify } from "../../internal/core";
 import { logger } from "../../internal/logger";
+import { createTempDir } from "../../internal/runtime/tempFile";
 import {
   runScript,
   runScripts,
@@ -34,9 +35,13 @@ export type CreateFileSystemProjectOptions = {
   name?: string;
 };
 
+export type ShellOption = ScriptShellOption | "default";
+
 export interface InlineScriptOptions {
   /** A name to act as a label for the inline script */
-  scriptName: string;
+  scriptName?: string;
+  /** Whether to run the script as an inline command */
+  shell?: ShellOption;
 }
 
 /** Arguments for `FileSystemProject.runWorkspaceScript` */
@@ -49,8 +54,6 @@ export type RunWorkspaceScriptOptions = {
   inline?: boolean | InlineScriptOptions;
   /** The arguments to append to the script command */
   args?: string;
-  /** Whether to use the Bun Shell or the OS shell (e.g. sh or cmd). Defaults to "bun" */
-  shell?: ScriptShellOption | "default";
 };
 
 /** Metadata associated with a workspace script */
@@ -65,8 +68,6 @@ export type RunWorkspaceScriptResult = Simplify<
 
 export type ParallelOption = boolean | RunScriptsParallelOptions;
 
-export type ShellOption = ScriptShellOption | "default";
-
 /** Arguments for `FileSystemProject.runScriptAcrossWorkspaces` */
 export type RunScriptAcrossWorkspacesOptions = {
   /** Workspace names, aliases, or patterns including a wildcard */
@@ -79,8 +80,6 @@ export type RunScriptAcrossWorkspacesOptions = {
   args?: string;
   /** Whether to run the scripts in parallel (series by default) */
   parallel?: ParallelOption;
-  /** Whether to use the Bun Shell or the OS shell (e.g. sh or cmd). Defaults to "bun" */
-  shell?: ShellOption;
 };
 
 /** Result of `FileSystemProject.runScriptAcrossWorkspaces` */
@@ -125,6 +124,11 @@ class _FileSystemProject extends ProjectBase implements Project {
   ) {
     super();
 
+    if (!_FileSystemProject.#initialized) {
+      createTempDir(true);
+      _FileSystemProject.#initialized = true;
+    }
+
     this.rootDirectory = path.resolve(options.rootDirectory);
 
     const { workspaces, workspaceConfigMap } = findWorkspaces({
@@ -158,10 +162,14 @@ class _FileSystemProject extends ProjectBase implements Project {
       );
     }
 
-    const shell = resolveScriptShell(options.shell);
+    const shell = resolveScriptShell(
+      options.inline && typeof options.inline === "object"
+        ? options.inline.shell
+        : undefined,
+    );
 
     logger.debug(
-      `Running script ${options.script} in workspace ${workspace.name} using the ${shell} shell`,
+      `Running script ${options.inline ? "inline command" : options.script} in workspace ${workspace.name}${options.inline ? ` using the ${shell} shell` : ""}`,
     );
 
     const inlineScriptName =
@@ -212,17 +220,6 @@ class _FileSystemProject extends ProjectBase implements Project {
       shell,
     });
 
-    if (shell === "bun" && !options.shell) {
-      /** @deprecated remove once Bun shell has been default for some time */
-      result.exit.then((exit) => {
-        if (exit.exitCode === 127) {
-          logger.warn(
-            `The default shell used to execute scripts was recently changed to the Bun shell. This is a temporary warning due to a script exiting with 127 (command not found). You may need to set the --shell option to "system" to use the system shell or update the script to use the Bun shell.`,
-          );
-        }
-      });
-    }
-
     return result;
   }
 
@@ -257,10 +254,14 @@ class _FileSystemProject extends ProjectBase implements Project {
         return (aScriptConfig.order ?? 0) - (bScriptConfig.order ?? 0);
       });
 
-    const shell = resolveScriptShell(options.shell);
+    const shell = resolveScriptShell(
+      options.inline && typeof options.inline === "object"
+        ? options.inline.shell
+        : undefined,
+    );
 
     logger.debug(
-      `Running script ${options.script} across workspaces using the ${shell} shell: ${workspaces.map((workspace) => workspace.name).join(", ")}`,
+      `Running script ${options.inline ? "inline command" : options.script} across workspaces${options.inline ? ` using the ${shell} shell` : ""}: ${workspaces.map((workspace) => workspace.name).join(", ")}`,
     );
 
     const result = runScripts({
@@ -316,19 +317,10 @@ class _FileSystemProject extends ProjectBase implements Project {
       parallel: options.parallel ?? false,
     });
 
-    if (shell === "bun" && !options.shell) {
-      /** @deprecated remove once Bun shell has been default for some time */
-      result.summary.then((summary) => {
-        if (summary.scriptResults.some((result) => result.exitCode === 127)) {
-          logger.warn(
-            `The default shell used to execute scripts was recently changed to the Bun shell. This is a temporary warning due to a script exiting with 127 (command not found). You may need to set the --shell option to "system" to use the system shell or update the script to use the Bun shell.`,
-          );
-        }
-      });
-    }
-
     return result;
   }
+
+  static #initialized = false;
 }
 
 /** An implementation of {@link Project} that is created from a root directory in the file system. */

@@ -93,12 +93,14 @@ export const runScript = handleCommand(
       workspacePatterns: workspaces.map(({ name }) => name),
       script,
       inline: options.inline
-        ? options.inlineName
-          ? { scriptName: options.inlineName }
+        ? options.inlineName || options.shell
+          ? {
+              scriptName: options.inlineName,
+              shell: options.shell as ScriptShellOption,
+            }
           : true
         : undefined,
       args: options.args,
-      shell: options.shell as ScriptShellOption,
       parallel:
         typeof options.parallel === "boolean" ||
         typeof options.parallel === "undefined"
