@@ -6,15 +6,13 @@ import { runOnExit } from "../runtime/onExit";
 
 const TEMP_DIR = path.join(os.tmpdir(), "bun-workspaces");
 
-export const createTempDir = () => {
+export const createTempDir = (clean = true) => {
+  if (clean) {
+    fs.rmSync(TEMP_DIR, { force: true, recursive: true });
+  }
   fs.mkdirSync(TEMP_DIR, { recursive: true });
   fs.chmodSync(TEMP_DIR, 0o700);
   logger.debug(`Created temp dir: ${TEMP_DIR}`);
-};
-
-export const cleanTempDir = () => {
-  fs.rmSync(TEMP_DIR, { force: true, recursive: true });
-  createTempDir();
 };
 
 export const createTempFilePath = (fileName: string) =>
