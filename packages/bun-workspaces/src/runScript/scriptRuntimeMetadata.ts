@@ -1,5 +1,5 @@
 import { IS_WINDOWS } from "../internal/runtime";
-import type { ScriptShellOption } from "./scriptExecution";
+import type { ScriptShellOption } from "./scriptShellOption";
 
 export interface ScriptRuntimeMetadata {
   projectPath: string;

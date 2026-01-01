@@ -16,7 +16,7 @@ import {
 import {
   resolveScriptShell,
   type ScriptShellOption,
-} from "../../runScript/scriptExecution";
+} from "../../runScript/scriptShellOption";
 import { findWorkspaces, type Workspace } from "../../workspaces";
 import { PROJECT_ERRORS } from "../errors";
 import type { Project } from "../project";

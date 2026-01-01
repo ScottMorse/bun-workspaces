@@ -1,5 +1,5 @@
 import { writeFileSync, rmSync, readFileSync } from "node:fs";
-import path from "node:path";
+import path from "path";
 import { $ } from "bun";
 import { globSync } from "glob";
 import packageJson from "../../bun-workspaces/package.json";

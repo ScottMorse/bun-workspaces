@@ -1,5 +1,5 @@
 import { getUserEnvVarName } from "../../config/userEnvVars";
-import { SCRIPT_SHELL_OPTIONS } from "../../runScript/scriptExecution";
+import { SCRIPT_SHELL_OPTIONS } from "../../runScript/scriptShellOption";
 
 export interface CliProjectCommandConfig {
   command: string;

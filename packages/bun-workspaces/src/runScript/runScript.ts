@@ -8,10 +8,8 @@ import {
   type OutputStreamName,
 } from "./outputChunk";
 import type { ScriptCommand } from "./scriptCommand";
-import {
-  createScriptExecutor,
-  type ScriptShellOption,
-} from "./scriptExecution";
+import { createScriptExecutor } from "./scriptExecution";
+import type { ScriptShellOption } from "./scriptShellOption";
 
 export type RunScriptExit<ScriptMetadata extends object = object> = {
   exitCode: number;
