@@ -1,12 +1,15 @@
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
+import { logger } from "../logger";
 import { runOnExit } from "../runtime/onExit";
 
 const TEMP_DIR = path.join(os.tmpdir(), "bun-workspaces");
 
 export const createTempDir = () => {
   fs.mkdirSync(TEMP_DIR, { recursive: true });
+  fs.chmodSync(TEMP_DIR, 0o700);
+  logger.debug(`Created temp dir: ${TEMP_DIR}`);
 };
 
 export const cleanTempDir = () => {
