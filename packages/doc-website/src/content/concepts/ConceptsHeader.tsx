@@ -33,16 +33,16 @@ export const ConceptsHeader = ({
           Workspace Aliases
         </Link>
         <Link
-          href={LINKS.parallelScripts}
-          className={activeHref === "parallelScripts" ? "active" : ""}
-        >
-          Parallel Scripts
-        </Link>
-        <Link
           href={LINKS.inlineScripts}
           className={activeHref === "inlineScripts" ? "active" : ""}
         >
           Inline Scripts
+        </Link>
+        <Link
+          href={LINKS.parallelScripts}
+          className={activeHref === "parallelScripts" ? "active" : ""}
+        >
+          Parallel Scripts
         </Link>
         <Link
           href={LINKS.scriptRuntimeMetadata}

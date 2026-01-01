@@ -122,7 +122,7 @@ describe("Run Single Script", () => {
         startTimeISO: expect.any(String),
         endTimeISO: expect.any(String),
         durationMs: expect.any(Number),
-        signal: IS_WINDOWS ? null : "SIGABRT",
+        signal: "SIGABRT",
         metadata: {},
       });
     });

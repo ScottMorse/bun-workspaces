@@ -79,3 +79,8 @@ bw run "echo 'hello'" --inline --shell=bun
 # Run an inline command from the workspace directory using the native shell
 bw run "echo 'hello'" --inline --shell=system
 `.trim();
+
+export const CLI_INLINE_NAME_EXAMPLE = `
+# Pass a name for an inline script
+bw run "echo 'my script: <scriptName>'" --inline --inline-name=my-inline-script
+`.trim();

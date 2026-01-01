@@ -269,6 +269,10 @@ export default defineConfig({
             link: "/concepts/workspace-aliases",
           },
           {
+            text: "Inline Scripts",
+            link: "/concepts/inline-scripts",
+          },
+          {
             text: "Parallel Scripts",
             link: "/concepts/parallel-scripts",
           },

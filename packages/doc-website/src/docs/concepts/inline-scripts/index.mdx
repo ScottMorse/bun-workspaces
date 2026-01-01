@@ -12,8 +12,8 @@ import { SyntaxHighlighter } from '../../../content/highlight';
 import { Footer } from "../../../content/Footer";
 import { ConceptsHeader } from "../../../content/concepts/ConceptsHeader";
 import { getUserEnvVarName } from 'bun-workspaces/src/config/userEnvVars';
-import { CLI_PARALLEL_SCRIPTS_EXAMPLE, CLI_INLINE_SHELL_EXAMPLE } from '../../../content/cli/cliExamples';
-import { API_PARALLEL_SCRIPTS_EXAMPLE, API_INLINE_SHELL_EXAMPLE } from '../../../content/api/apiExamples';
+import { CLI_INLINE_NAME_EXAMPLE, CLI_INLINE_SHELL_EXAMPLE } from '../../../content/cli/cliExamples';
+import { API_INLINE_NAME_EXAMPLE, API_INLINE_SHELL_EXAMPLE } from '../../../content/api/apiExamples';
 
 <ConceptsHeader activeHref="inlineScripts" />
 
@@ -39,4 +39,24 @@ You can also set the environment variable <code>{getUserEnvVarName("scriptShellD
 #### API:
 <SyntaxHighlighter language="typescript">
 {API_INLINE_SHELL_EXAMPLE}
+</SyntaxHighlighter>
+
+## Script Name
+
+Scripts from `package.json` are named by the key in the `"scripts"` field. 
+
+This is used in output logs and [script runtime metadata](/concepts/script-runtime-metadata).
+
+Inline scripts, however, have no name by default, but you can provide a name.
+
+### Examples
+
+#### CLI:
+<SyntaxHighlighter language="bash">
+{CLI_INLINE_NAME_EXAMPLE}
+</SyntaxHighlighter>
+
+#### API:
+<SyntaxHighlighter language="typescript">
+{API_INLINE_NAME_EXAMPLE}
 </SyntaxHighlighter>
