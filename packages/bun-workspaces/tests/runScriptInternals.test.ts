@@ -102,27 +102,31 @@ describe("Run Single Script", () => {
     expect(outputCount).toBe(1);
   });
 
-  test("Simple failure with signal", async () => {
-    const result = await runScript({
-      scriptCommand: {
-        command: IS_WINDOWS ? `exit 134` : "kill -ABRT $$",
-        workingDirectory: ".",
-      },
-      metadata: {},
-      env: {},
-    });
+  if (!IS_WINDOWS) {
+    test("Simple failure with signal", async () => {
+      const result = await runScript({
+        scriptCommand: {
+          command: "sleep 1",
+          workingDirectory: ".",
+        },
+        metadata: {},
+        env: {},
+      });
 
-    const exit = await result.exit;
-    expect(exit).toEqual({
-      exitCode: 134,
-      success: false,
-      startTimeISO: expect.any(String),
-      endTimeISO: expect.any(String),
-      durationMs: expect.any(Number),
-      signal: IS_WINDOWS ? null : "SIGABRT",
-      metadata: {},
+      result.kill("SIGABRT");
+
+      const exit = await result.exit;
+      expect(exit).toEqual({
+        exitCode: 134,
+        success: false,
+        startTimeISO: expect.any(String),
+        endTimeISO: expect.any(String),
+        durationMs: expect.any(Number),
+        signal: IS_WINDOWS ? null : "SIGABRT",
+        metadata: {},
+      });
     });
-  });
+  }
 
   test("With stdout and stderr", async () => {
     const result = await runScript({

@@ -180,19 +180,12 @@ for (const exitResult of summaryResult.scriptResults) {
 }
 `.trim();
 
-export const RUN_INLINE_SCRIPTS_EXAMPLE = `
+export const API_INLINE_SCRIPTS_EXAMPLE = `
 
 project.runWorkspaceScript({
   workspaceNameOrAlias: "my-workspace",
   script: "echo 'this is my inline script'",
   args: "--my-appended-args",
-  inline: true,
-});
-
-project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
-  script: "echo 'this is my inline script for <workspaceName>'",
-  args: "--my-workspace=<workspaceName>",
   inline: true,
 });
 
