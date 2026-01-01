@@ -3,21 +3,24 @@ import path from "path";
 import { type ResolvedWorkspaceConfig } from "../../config";
 import type { Simplify } from "../../internal/core";
 import { logger } from "../../internal/logger";
-import { findWorkspaces, type Workspace } from "../../workspaces";
-import { PROJECT_ERRORS } from "../errors";
-import type { Project } from "../project";
+import { createTempDir } from "../../internal/runtime/tempFile";
 import {
   runScript,
   runScripts,
-  type RunScriptResult,
-  type RunScriptsParallelOptions,
-  type RunScriptsResult,
-} from "../runScript";
-import {
   createScriptRuntimeEnvVars,
   interpolateScriptRuntimeMetadata,
+  type RunScriptResult,
+  type RunScriptsResult,
+  type RunScriptsParallelOptions,
   type ScriptRuntimeMetadata,
-} from "../runScript/scriptRuntimeMetadata";
+} from "../../runScript";
+import {
+  resolveScriptShell,
+  type ScriptShellOption,
+} from "../../runScript/scriptShellOption";
+import { findWorkspaces, type Workspace } from "../../workspaces";
+import { PROJECT_ERRORS } from "../errors";
+import type { Project } from "../project";
 import { ProjectBase, resolveWorkspacePath } from "./projectBase";
 
 /** Arguments for {@link createFileSystemProject} */
@@ -32,10 +35,14 @@ export type CreateFileSystemProjectOptions = {
   name?: string;
 };
 
-export interface InlineScriptOptions {
+export type ShellOption = ScriptShellOption | "default";
+
+export type InlineScriptOptions = {
   /** A name to act as a label for the inline script */
-  scriptName: string;
-}
+  scriptName?: string;
+  /** Whether to run the script as an inline command */
+  shell?: ShellOption;
+};
 
 /** Arguments for `FileSystemProject.runWorkspaceScript` */
 export type RunWorkspaceScriptOptions = {
@@ -117,6 +124,11 @@ class _FileSystemProject extends ProjectBase implements Project {
   ) {
     super();
 
+    if (!_FileSystemProject.#initialized) {
+      createTempDir(true);
+      _FileSystemProject.#initialized = true;
+    }
+
     this.rootDirectory = path.resolve(options.rootDirectory);
 
     const { workspaces, workspaceConfigMap } = findWorkspaces({
@@ -150,8 +162,14 @@ class _FileSystemProject extends ProjectBase implements Project {
       );
     }
 
+    const shell = resolveScriptShell(
+      options.inline && typeof options.inline === "object"
+        ? options.inline.shell
+        : undefined,
+    );
+
     logger.debug(
-      `Running script ${options.script} in workspace: ${workspace.name}`,
+      `Running script ${options.inline ? "inline command" : options.script} in workspace ${workspace.name}${options.inline ? ` using the ${shell} shell` : ""}`,
     );
 
     const inlineScriptName =
@@ -171,12 +189,14 @@ class _FileSystemProject extends ProjectBase implements Project {
     const args = interpolateScriptRuntimeMetadata(
       options.args ?? "",
       scriptRuntimeMetadata,
+      shell,
     );
 
     const script = options.inline
       ? interpolateScriptRuntimeMetadata(
           options.script,
           scriptRuntimeMetadata,
+          shell,
         ) + (args ? " " + args : "")
       : options.script;
 
@@ -191,13 +211,16 @@ class _FileSystemProject extends ProjectBase implements Project {
           args,
         }).commandDetails;
 
-    return runScript({
+    const result = runScript({
       scriptCommand,
       metadata: {
         workspace,
       },
       env: createScriptRuntimeEnvVars(scriptRuntimeMetadata),
+      shell,
     });
+
+    return result;
   }
 
   runScriptAcrossWorkspaces(
@@ -231,11 +254,17 @@ class _FileSystemProject extends ProjectBase implements Project {
         return (aScriptConfig.order ?? 0) - (bScriptConfig.order ?? 0);
       });
 
-    logger.debug(
-      `Running script ${options.script} across workspaces: ${workspaces.map((workspace) => workspace.name).join(", ")}`,
+    const shell = resolveScriptShell(
+      options.inline && typeof options.inline === "object"
+        ? options.inline.shell
+        : undefined,
     );
 
-    return runScripts({
+    logger.debug(
+      `Running script ${options.inline ? "inline command" : options.script} across workspaces${options.inline ? ` using the ${shell} shell` : ""}: ${workspaces.map((workspace) => workspace.name).join(", ")}`,
+    );
+
+    const result = runScripts({
       scripts: workspaces.map((workspace) => {
         const inlineScriptName =
           typeof options.inline === "object"
@@ -254,12 +283,14 @@ class _FileSystemProject extends ProjectBase implements Project {
         const args = interpolateScriptRuntimeMetadata(
           options.args ?? "",
           scriptRuntimeMetadata,
+          shell,
         );
 
         const script = options.inline
           ? interpolateScriptRuntimeMetadata(
               options.script,
               scriptRuntimeMetadata,
+              shell,
             ) + (args ? " " + args : "")
           : options.script;
 
@@ -280,11 +311,16 @@ class _FileSystemProject extends ProjectBase implements Project {
           },
           scriptCommand,
           env: createScriptRuntimeEnvVars(scriptRuntimeMetadata),
+          shell,
         };
       }),
       parallel: options.parallel ?? false,
     });
+
+    return result;
   }
+
+  static #initialized = false;
 }
 
 /** An implementation of {@link Project} that is created from a root directory in the file system. */

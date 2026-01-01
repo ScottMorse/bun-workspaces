@@ -5,7 +5,7 @@ import path from "node:path";
 import { test, expect, describe, afterAll } from "bun:test";
 import { getUserEnvVarName } from "../src/config/userEnvVars";
 import { IS_WINDOWS } from "../src/internal/runtime";
-import { runScript, runScripts } from "../src/project/runScript";
+import { runScript, runScripts } from "../src/runScript";
 
 // Sanity tests for lower level runScript and runScripts functions
 
@@ -65,7 +65,7 @@ describe("Run Single Script", () => {
       scriptCommand: {
         command: IS_WINDOWS
           ? "echo test-script 1 && exit /b 2"
-          : "echo 'test-script 1' && exit 2",
+          : "echo 'test-script 1' && sleep 0.1 && exit 2",
         workingDirectory: ".",
       },
       metadata: {},
@@ -102,39 +102,31 @@ describe("Run Single Script", () => {
     expect(outputCount).toBe(1);
   });
 
-  test("Simple failure with signal", async () => {
-    const result = await runScript({
-      scriptCommand: {
-        command: IS_WINDOWS
-          ? `echo test-script 1 && exit /b 137`
-          : "echo 'test-script 1' && kill -9 $$",
-        workingDirectory: ".",
-      },
-      metadata: {},
-      env: {},
-    });
+  if (!IS_WINDOWS) {
+    test("Simple failure with signal", async () => {
+      const result = await runScript({
+        scriptCommand: {
+          command: "sleep 1",
+          workingDirectory: ".",
+        },
+        metadata: {},
+        env: {},
+      });
 
-    let outputCount = 0;
-    for await (const outputChunk of result.output) {
-      expect(outputChunk.raw).toBeInstanceOf(Uint8Array);
-      expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.decode()).toMatch(`test-script ${outputCount + 1}`);
-      expect(outputChunk.decode({ stripAnsi: true })).toMatch(
-        `test-script ${outputCount + 1}`,
-      );
-      outputCount++;
-    }
-    const exit = await result.exit;
-    expect(exit).toEqual({
-      exitCode: 137,
-      success: false,
-      startTimeISO: expect.any(String),
-      endTimeISO: expect.any(String),
-      durationMs: expect.any(Number),
-      signal: IS_WINDOWS ? null : "SIGKILL",
-      metadata: {},
+      result.kill("SIGABRT");
+
+      const exit = await result.exit;
+      expect(exit).toEqual({
+        exitCode: 134,
+        success: false,
+        startTimeISO: expect.any(String),
+        endTimeISO: expect.any(String),
+        durationMs: expect.any(Number),
+        signal: "SIGABRT",
+        metadata: {},
+      });
     });
-  });
+  }
 
   test("With stdout and stderr", async () => {
     const result = await runScript({
@@ -234,6 +226,28 @@ describe("Run Single Script", () => {
       expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
         `test-script 1`,
       );
+    }
+  });
+
+  test("Confirm scripts have node_modules/.bin in PATH", async () => {
+    // This is something due to Bun's process.env.PATH including node_modules/.bin
+    // This test helps confirm this is consistent across Bun versions and platforms
+
+    const result = await runScript({
+      scriptCommand: {
+        command: "which eslint",
+        workingDirectory: ".",
+      },
+      metadata: {},
+      env: {},
+    });
+
+    for await (const outputChunk of result.output) {
+      expect(outputChunk.streamName).toBe("stdout");
+      expect(outputChunk.decode().trim()).toMatch(
+        /node_modules\/.bin\/eslint$/,
+      );
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toMatch(/eslint$/);
     }
   });
 });

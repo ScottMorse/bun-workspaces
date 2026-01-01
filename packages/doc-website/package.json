@@ -6,7 +6,6 @@
     "build": "BW_DOC_ENV=production bun run scripts/build.ts",
     "build:dev": "BW_DOC_ENV=development bun run scripts/build.ts",
     "preview": "rspress preview",
-    "deploy-build": "BW_DOC_ENV=production bun run build && aws s3 sync ./doc_build s3:/$BW_DOC_S3_BUCKET_NAME --delete && aws cloudfront create-invalidation --distribution-id $BW_DOC_CLOUDFRONT_DISTRIBUTION_ID --paths '/*'",
     "type-check": "tsc --noEmit"
   },
   "devDependencies": {

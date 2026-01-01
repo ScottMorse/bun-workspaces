@@ -1,4 +1,4 @@
-import type { SimpleAsyncIterable } from "./types";
+import type { SimpleAsyncIterable } from "../types";
 
 /** Run multiple async iterables in parallel and yield the results in the order they are completed. */
 export const mergeAsyncIterables = <T>(

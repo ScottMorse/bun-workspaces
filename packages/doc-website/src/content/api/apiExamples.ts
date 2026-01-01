@@ -180,32 +180,19 @@ for (const exitResult of summaryResult.scriptResults) {
 }
 `.trim();
 
-export const RUN_INLINE_SCRIPTS_EXAMPLE = `
+export const API_INLINE_NAME_EXAMPLE = `
 
 project.runWorkspaceScript({
   workspaceNameOrAlias: "my-workspace",
   script: "echo 'this is my inline script'",
-  args: "--my-appended-args",
-  inline: true,
-});
-
-project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
-  script: "echo 'this is my inline script for <workspaceName>'",
-  args: "--my-workspace=<workspaceName>",
+  // The name will be empty by default
   inline: true,
 });
 
 // Pass a name for an inline script
 project.runWorkspaceScript({
   workspaceNameOrAlias: "my-workspace",
-  script: "echo 'this is my inline script'",
-  inline: { scriptName: "my-inline-script" },
-});
-
-project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
-  script: "echo 'this is my inline script for <workspaceName>'",
+  script: "echo 'my script: <scriptName>'",
   inline: { scriptName: "my-inline-script" },
 });
 `.trim();
@@ -280,5 +267,21 @@ project.runScriptAcrossWorkspaces({
   workspacePatterns: ["*"],
   script: "my-script",
   parallel: { max: 2 },
+});
+`.trim();
+
+export const API_INLINE_SHELL_EXAMPLE = `
+// This will use the Bun shell unless ${getUserEnvVarName("scriptShellDefault")} is set to "system"
+project.runWorkspaceScript({
+  workspaceNameOrAlias: "my-workspace",
+  script: "echo 'this is my inline script'",
+  inline: true,
+});
+
+project.runWorkspaceScript({
+  workspaceNameOrAlias: "my-workspace",
+  script: "echo 'this is my inline script'",
+  // Takes "bun", "system", or "default", same as the CLI --shell option
+  inline: { shell: "system" },
 });
 `.trim();

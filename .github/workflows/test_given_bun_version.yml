@@ -30,10 +30,15 @@ on:
           - windows
           - macos
         default: ubuntu
+      os_version:
+        description: The OS version to test
+        required: false
+        type: string
+        default: latest
 
 jobs:
   run_tests:
-    runs-on: ${{ inputs.os }}-latest
+    runs-on: ${{ inputs.os }}-${{ inputs.os_version || 'latest' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -42,4 +47,4 @@ jobs:
           bun_version: ${{ inputs.bun_version }}
 
       - name: Run Tests Against Build
-        run: bun bw build:test
+        run: bun bw:build:test

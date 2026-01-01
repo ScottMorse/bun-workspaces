@@ -5,6 +5,7 @@ const LINKS = {
   parallelScripts: "/concepts/parallel-scripts",
   scriptRuntimeMetadata: "/concepts/script-runtime-metadata",
   scriptExecutionOrder: "/concepts/script-execution-order",
+  inlineScripts: "/concepts/inline-scripts",
 } as const;
 
 export interface ConceptsHeaderProps {
@@ -30,6 +31,12 @@ export const ConceptsHeader = ({
           className={activeHref === "workspaceAliases" ? "active" : ""}
         >
           Workspace Aliases
+        </Link>
+        <Link
+          href={LINKS.inlineScripts}
+          className={activeHref === "inlineScripts" ? "active" : ""}
+        >
+          Inline Scripts
         </Link>
         <Link
           href={LINKS.parallelScripts}

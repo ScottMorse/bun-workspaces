@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, copyFileSync, rmSync } from "node:fs";
+import { readFileSync, writeFileSync, rmSync } from "node:fs";
 import path from "node:path";
 import { build } from "@rslib/core";
 import { $ } from "bun";
@@ -16,6 +16,7 @@ const createDesiredPackageJson = () => {
   const {
     name,
     version,
+    description,
     main,
     homepage,
     repository,
@@ -33,6 +34,7 @@ const createDesiredPackageJson = () => {
   return {
     name,
     version,
+    description,
     license,
     main: main.replace(".ts", ".mjs"),
     types: main.replace(".ts", ".d.ts"),

@@ -8,14 +8,14 @@ outline: true
 footer: false
 ---
 
-import { getScriptRuntimeMetadataConfig } from 'bun-workspaces/src/project/runScript/scriptRuntimeMetadata';
+import { getScriptRuntimeMetadataConfig } from 'bun-workspaces/src/runScript/scriptRuntimeMetadata';
 import { SyntaxHighlighter } from '../../../content/highlight';
 import { Footer } from "../../../content/Footer";
 import { ConceptsHeader } from "../../../content/concepts/ConceptsHeader";
 
 <ConceptsHeader activeHref="scriptRuntimeMetadata" />
 
-When running scripts via the API or CLI, runtime metadata is available to be used in the script, which can be interpolated in an inline script or appended args, or it can be read from environment variables.
+When running scripts via the API or CLI, runtime metadata is available to be used in the script, which can be interpolated in an [inline script](/concepts/inline-scripts) or appended args, or it can be read from environment variables.
 
 ## Examples
 
@@ -88,7 +88,7 @@ In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("workspaceRela
 Environment variable: <code>{getScriptRuntimeMetadataConfig("workspaceRelativePath").envVarName}</code>
 
 #### Script Name
-The name of the script. This is an empty string when running as an inline script, unless a script name is explicitly provided via the [CLI](/cli/commands#run-script) or [API](/api/reference#inline-scripts).<br/>
+The name of the script. This is an empty string when running as an inline script, unless a script name is [explicitly provided](/concepts/inline-scripts#script-name).<br/>
 
 In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("scriptName").inlineName[0]}</code><br/>
 Environment variable: <code>{getScriptRuntimeMetadataConfig("scriptName").envVarName}</code>

@@ -1,5 +1,5 @@
 import fs from "node:fs";
-import path from "node:path";
+import path from "path";
 import { defineConfig } from "rspress/config";
 import packageJson from "../bun-workspaces/package.json";
 
@@ -267,6 +267,10 @@ export default defineConfig({
           {
             text: "Workspace Aliases",
             link: "/concepts/workspace-aliases",
+          },
+          {
+            text: "Inline Scripts",
+            link: "/concepts/inline-scripts",
           },
           {
             text: "Parallel Scripts",

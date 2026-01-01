@@ -29,7 +29,7 @@ import { RequiredBunVersion } from "../content/RequiredBunVersion";
     <li>Works right away, with no boilerplate required 🍔🍴</li>
     <li>Get metadata about your monorepo 🤖</li>
     <li>Run `package.json` scripts across workspaces 📋</li>
-    <li>Supports running inline scripts as well ⌨️</li>
+    <li>Run inline [Bun Shell](https://bun.com/docs/runtime/shell) scripts in workspaces ⌨️</li>
   </ul>
 </div>
 
@@ -47,11 +47,11 @@ Start running some [CLI commands](/cli) right away in your repo, or take full ad
 
 <h2 className="whats-new-subtitle">Notable recent updates 📦</h2>
 <div className="whats-new-list">
+- The [Bun Shell](https://bun.com/docs/runtime/shell) is now used by default to run [inline scripts](/concepts/inline-scripts), with the [option](/concepts/inline-scripts#shell) to use the system shell.
+- Increased support for Windows users.
 - You can check out the new [public roadmap](/roadmap) for the future of bun-workspaces!
 - You can now control how many parallel scripts can run at the same time! See [Concepts > Parallel Scripts](/concepts/parallel-scripts).
 - Added a way to set the [execution order of scripts](/concepts/script-execution-order) per workspace via the [workspace configuration](/config).
-- New [script runtime metadata](/concepts/script-runtime-metadata ) can be read from environment vars or used in inline scripts and args
-- Added `--inline` option to run a one-off commands (See [API](/api/reference#inline-scripts) and [CLI](/cli/commands#run-script) docs)
 </div>
 
 ## Quick Start

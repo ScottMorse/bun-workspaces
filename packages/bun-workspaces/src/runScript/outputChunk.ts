@@ -1,4 +1,4 @@
-import { sanitizeAnsi } from "../../internal/core";
+import { sanitizeAnsi } from "../internal/core";
 
 export type OutputStreamName = "stdout" | "stderr";
 

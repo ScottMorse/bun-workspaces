@@ -1,4 +1,4 @@
-import { type Command } from "commander";
+import { Option, type Command } from "commander";
 import { createLogger } from "../../internal/logger";
 import type { FileSystemProject } from "../../project/implementations/fileSystemProject";
 import type { Workspace } from "../../workspaces";
@@ -50,8 +50,14 @@ export const handleCommand = <T extends unknown[]>(
       .command(config.command)
       .aliases(config.aliases)
       .description(config.description);
-    for (const option of Object.values(config.options)) {
-      program.option(option.flags.join(", "), option.description);
+    for (const { flags, description, values } of Object.values(
+      config.options,
+    )) {
+      const option = new Option(flags.join(", "), description);
+      if (values?.length) {
+        option.choices(values);
+      }
+      program.addOption(option);
     }
     if (!projectError) {
       program = program.action((...actionArgs) =>

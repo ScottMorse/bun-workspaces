@@ -54,6 +54,11 @@ export const CliCommandDoc = ({
                     <code>{option.flags.join(" | ")}</code>
                   </p>
                   <p>{option.description}</p>
+                  {option.values?.length ? (
+                    <p style={{ marginLeft: "0.25rem" }}>
+                      (Values: <span>{option.values.join(" | ")}</span>)
+                    </p>
+                  ) : null}
                 </div>
               </div>
             ))}

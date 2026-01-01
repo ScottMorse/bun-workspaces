@@ -15,29 +15,27 @@ import { GLOSSARY_FILE_TREE, GLOSSARY_ROOT_PACKAGE_JSON, GLOSSARY_WORKSPACE_A_PA
 
 <ConceptsHeader activeHref="glossary" />
 
-## Terms
+### Terms
 
-### Project
+#### Project
 
 This is typically the same as the root of your git repository for your monorepo. This is where your top-level `package.json` 
 file is located, which contains the `"workspaces"` field. 
 
 [See Bun's documentation for more information on setting up workspaces via package.json](https://bun.sh/docs/install/workspaces).
 
-### Workspace
+#### Workspace
 
 A nested package within a project. The root of a workspace is always a nested directory within the project 
 that contains its own `package.json` file. 
 
 A workspace's directory must be matched by the globs in the project root `package.json`'s `"workspaces"` field.
 
-### Script
+#### Script
 
 In the context of `bun-workspaces`, a "script" generally refers to an entry in the `"scripts"` field in a workspace's `package.json` file by default. 
 
-However, bun-workspaces also supports running "inline scripts", one-off shell commands executed from a respective workspace's directory.
-
-For more on inline scripts vs. package.json scripts, see the CLI [`run-script` command](/cli/commands#run-script) and the [API equivalent](/api/reference#inline-scripts).
+However, bun-workspaces also supports running ["inline scripts"](/concepts/inline-scripts), one-off shell commands executed from a respective workspace's directory.
 
 ## Terms in Action
 

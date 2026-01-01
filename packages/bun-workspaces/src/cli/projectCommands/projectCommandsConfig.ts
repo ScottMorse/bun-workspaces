@@ -1,8 +1,14 @@
+import { getUserEnvVarName } from "../../config/userEnvVars";
+import { SCRIPT_SHELL_OPTIONS } from "../../runScript/scriptShellOption";
+
 export interface CliProjectCommandConfig {
   command: string;
   aliases: string[];
   description: string;
-  options: Record<string, { flags: string[]; description: string }>;
+  options: Record<
+    string,
+    { flags: string[]; description: string; values?: string[] }
+  >;
 }
 
 export type CliProjectCommandName = keyof typeof CLI_PROJECT_COMMANDS_CONFIG;
@@ -89,7 +95,7 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
       parallel: {
         flags: ["-P", "--parallel [max]"],
         description:
-          "Run the scripts in parallel. Pass an optional number, percentage, or keyword: 'default', 'auto', 'unbounded'",
+          "Run the scripts in parallel. Pass an optional number, percentage, or keyword: default | auto | unbounded",
       },
       args: {
         flags: ["-a", "--args <args>"],
@@ -107,6 +113,11 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
       inlineName: {
         flags: ["-I", "--inline-name <name>"],
         description: "An optional name for the script when --inline is passed",
+      },
+      shell: {
+        flags: ["-s", "--shell <shell>"],
+        values: [...SCRIPT_SHELL_OPTIONS, "default"],
+        description: `When using --inline, the shell to use to run the script`,
       },
       jsonOutfile: {
         flags: ["-j", "--json-outfile <file>"],

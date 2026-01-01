@@ -1,18 +1,15 @@
-import crypto from "node:crypto";
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
 import {
   type SimpleAsyncIterable,
   mergeAsyncIterables,
-} from "../../internal/core";
-import { IS_WINDOWS } from "../../internal/runtime";
+} from "../internal/core";
 import {
   createOutputChunk,
   type OutputChunk,
   type OutputStreamName,
 } from "./outputChunk";
 import type { ScriptCommand } from "./scriptCommand";
+import { createScriptExecutor } from "./scriptExecution";
+import type { ScriptShellOption } from "./scriptShellOption";
 
 export type RunScriptExit<ScriptMetadata extends object = object> = {
   exitCode: number;
@@ -28,29 +25,15 @@ export type RunScriptResult<ScriptMetadata extends object = object> = {
   output: SimpleAsyncIterable<OutputChunk>;
   exit: Promise<RunScriptExit<ScriptMetadata>>;
   metadata: ScriptMetadata;
+  kill: (exit?: number | NodeJS.Signals) => void;
 };
 
 export type RunScriptOptions<ScriptMetadata extends object = object> = {
   scriptCommand: ScriptCommand;
   metadata: ScriptMetadata;
   env: Record<string, string>;
-};
-
-const createWindowsBatchFile = (command: string) => {
-  const tmpDir = process.env.RUNNER_TEMP ?? os.tmpdir();
-  const filename = `bw-${crypto.randomUUID()}.cmd`;
-  const filePath = path.join(tmpDir, filename);
-
-  // IMPORTANT: CRLF helps with cmd/batch consistency
-  const content = `@echo off\r\n${command}\r\n`;
-
-  fs.writeFileSync(filePath, content, { encoding: "utf8" });
-
-  const cleanup = () => {
-    fs.unlinkSync(filePath);
-  };
-
-  return { filePath, cleanup };
+  /** The shell to use to run the script. Defaults to "system". */
+  shell?: ScriptShellOption;
 };
 
 /**
@@ -62,30 +45,26 @@ export const runScript = <ScriptMetadata extends object = object>({
   scriptCommand,
   metadata,
   env,
+  shell = "system",
 }: RunScriptOptions<ScriptMetadata>): RunScriptResult<ScriptMetadata> => {
   const startTime = new Date();
 
-  const windowsBatchFile = IS_WINDOWS
-    ? createWindowsBatchFile(scriptCommand.command)
-    : null;
+  const { argv, cleanup } = createScriptExecutor(scriptCommand.command, shell);
 
-  const proc = Bun.spawn(
-    windowsBatchFile
-      ? ["cmd", "/d", "/s", "/c", "call", windowsBatchFile.filePath]
-      : ["sh", "-c", scriptCommand.command],
-    {
-      cwd: scriptCommand.workingDirectory || process.cwd(),
-      env: { ...process.env, ...env, FORCE_COLOR: "1" },
-      stdout: "pipe",
-      stderr: "pipe",
-      stdin: "ignore",
+  const proc = Bun.spawn(argv, {
+    cwd: scriptCommand.workingDirectory || process.cwd(),
+    env: {
+      ...process.env,
+      ...env,
+      _BW_SCRIPT_SHELL_OPTION: shell,
+      FORCE_COLOR: "1",
     },
-  );
+    stdout: "pipe",
+    stderr: "pipe",
+    stdin: "ignore",
+  });
 
-  if (windowsBatchFile) {
-    proc.exited.finally(windowsBatchFile.cleanup);
-  }
-
+  proc.exited.finally(cleanup);
   async function* pipeOutput(
     streamName: OutputStreamName,
   ): SimpleAsyncIterable<OutputChunk> {
@@ -115,5 +94,10 @@ export const runScript = <ScriptMetadata extends object = object>({
     };
   });
 
-  return { output, exit, metadata };
+  return {
+    output,
+    exit,
+    metadata,
+    kill: (exit) => proc.kill(exit),
+  };
 };
