@@ -105,7 +105,7 @@ describe("Run Single Script", () => {
   test("Simple failure with signal", async () => {
     const result = await runScript({
       scriptCommand: {
-        command: IS_WINDOWS ? `exit 137` : "kill -9 $$",
+        command: IS_WINDOWS ? `exit 134` : "kill -ABRT $$",
         workingDirectory: ".",
       },
       metadata: {},
@@ -114,12 +114,12 @@ describe("Run Single Script", () => {
 
     const exit = await result.exit;
     expect(exit).toEqual({
-      exitCode: 137,
+      exitCode: 134,
       success: false,
       startTimeISO: expect.any(String),
       endTimeISO: expect.any(String),
       durationMs: expect.any(Number),
-      signal: IS_WINDOWS ? null : "SIGKILL",
+      signal: IS_WINDOWS ? null : "SIGABRT",
       metadata: {},
     });
   });
