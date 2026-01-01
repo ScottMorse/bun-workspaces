@@ -34,7 +34,7 @@ export type RunScriptOptions<ScriptMetadata extends object = object> = {
   scriptCommand: ScriptCommand;
   metadata: ScriptMetadata;
   env: Record<string, string>;
-  /** The shell to use to run the script. Defaults to "os". */
+  /** The shell to use to run the script. Defaults to "system". */
   shell?: ScriptShellOption;
 };
 
@@ -47,7 +47,7 @@ export const runScript = <ScriptMetadata extends object = object>({
   scriptCommand,
   metadata,
   env,
-  shell = "os",
+  shell = "system",
 }: RunScriptOptions<ScriptMetadata>): RunScriptResult<ScriptMetadata> => {
   const startTime = new Date();
 

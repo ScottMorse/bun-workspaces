@@ -18,7 +18,7 @@ const createShellScript = (command: string) => {
   return createTempFile({ fileName, fileContent: command, mode: 0o755 });
 };
 
-export const SCRIPT_SHELL_OPTIONS = ["bun", "os"] as const;
+export const SCRIPT_SHELL_OPTIONS = ["bun", "system"] as const;
 
 export type ScriptShellOption = (typeof SCRIPT_SHELL_OPTIONS)[number];
 
@@ -68,7 +68,7 @@ export const createScriptExecutor = (
     };
   }
 
-  if (shell === "os") {
+  if (shell === "system") {
     const { filePath, cleanup } = IS_WINDOWS
       ? createWindowsBatchFile(command)
       : createShellScript(command);

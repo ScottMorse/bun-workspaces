@@ -217,7 +217,7 @@ class _FileSystemProject extends ProjectBase implements Project {
       result.exit.then((exit) => {
         if (exit.exitCode === 127) {
           logger.warn(
-            `The default shell used to execute scripts was recently changed to the Bun shell. This is a temporary warning due to a script exiting with 127 (command not found). You may need to set the --shell option to "os" to use the system shell or update the script to use the Bun shell.`,
+            `The default shell used to execute scripts was recently changed to the Bun shell. This is a temporary warning due to a script exiting with 127 (command not found). You may need to set the --shell option to "system" to use the system shell or update the script to use the Bun shell.`,
           );
         }
       });
@@ -321,7 +321,7 @@ class _FileSystemProject extends ProjectBase implements Project {
       result.summary.then((summary) => {
         if (summary.scriptResults.some((result) => result.exitCode === 127)) {
           logger.warn(
-            `The default shell used to execute scripts was recently changed to the Bun shell. This is a temporary warning due to a script exiting with 127 (command not found). You may need to set the --shell option to "os" to use the system shell or update the script to use the Bun shell.`,
+            `The default shell used to execute scripts was recently changed to the Bun shell. This is a temporary warning due to a script exiting with 127 (command not found). You may need to set the --shell option to "system" to use the system shell or update the script to use the Bun shell.`,
           );
         }
       });

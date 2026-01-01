@@ -47,17 +47,17 @@ describe("Test run script shell option", () => {
       },
       metadata: {},
       env: { MY_VAR: "my test value" },
-      shell: "os",
+      shell: "system",
     });
 
     for await (const chunk of osResult.output) {
-      expect(chunk.decode().trim()).toBe("my test value os");
+      expect(chunk.decode().trim()).toBe("my test value system");
     }
 
     expect((await osResult.exit).exitCode).toBe(0);
   });
 
-  test("Command possible in os shell isn't in bun shell", async () => {
+  test("Command possible in system shell isn't in bun shell", async () => {
     const bunResult = runScript({
       scriptCommand: {
         command: OS_ONLY_COMMAND,
@@ -77,7 +77,7 @@ describe("Test run script shell option", () => {
       },
       metadata: {},
       env: {},
-      shell: "os",
+      shell: "system",
     });
 
     expect((await osResult.exit).exitCode).toBe(0);
@@ -97,7 +97,7 @@ describe("Test run script shell option", () => {
       "[application-a:test] bun",
     );
 
-    process.env[getUserEnvVarName("scriptShellDefault")] = "os";
+    process.env[getUserEnvVarName("scriptShellDefault")] = "system";
 
     const osEnvResult = await setupCliTest().run(
       "run-script",
@@ -111,7 +111,7 @@ describe("Test run script shell option", () => {
     );
     expect(osEnvResult.exitCode).toBe(0);
     expect(osEnvResult.stdout.sanitizedCompactLines).toInclude(
-      "[application-a:test] os",
+      "[application-a:test] system",
     );
 
     const explicitDefaultResult = await setupCliTest().run(
@@ -128,7 +128,7 @@ describe("Test run script shell option", () => {
     );
     expect(explicitDefaultResult.exitCode).toBe(0);
     expect(explicitDefaultResult.stdout.sanitizedCompactLines).toInclude(
-      "[application-a:test] os",
+      "[application-a:test] system",
     );
 
     process.env[getUserEnvVarName("scriptShellDefault")] = "bun";
@@ -180,14 +180,14 @@ describe("Test run script shell option", () => {
         : "echo $_BW_SCRIPT_SHELL_OPTION",
       "application-a",
       "--shell",
-      "os",
+      "system",
       "-i",
       "--inline-name",
       "test",
     );
     expect(explicitOsResult.exitCode).toBe(0);
     expect(explicitOsResult.stdout.sanitizedCompactLines).toInclude(
-      "[application-a:test] os",
+      "[application-a:test] system",
     );
 
     const successfulOsOnlyResult = await setupCliTest().run(
@@ -195,7 +195,7 @@ describe("Test run script shell option", () => {
       OS_ONLY_COMMAND,
       "application-a",
       "--shell",
-      "os",
+      "system",
       "-i",
       "--inline-name",
       "test",
@@ -219,7 +219,7 @@ describe("Test run script shell option", () => {
     }
     expect((await defaultResult.exit).exitCode).toBe(0);
 
-    process.env[getUserEnvVarName("scriptShellDefault")] = "os";
+    process.env[getUserEnvVarName("scriptShellDefault")] = "system";
 
     const osEnvResult = await project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
@@ -230,7 +230,7 @@ describe("Test run script shell option", () => {
     });
 
     for await (const chunk of osEnvResult.output) {
-      expect(chunk.decode().trim()).toBe("os");
+      expect(chunk.decode().trim()).toBe("system");
     }
     expect((await osEnvResult.exit).exitCode).toBe(0);
 
@@ -244,7 +244,7 @@ describe("Test run script shell option", () => {
     });
 
     for await (const chunk of explicitDefaultResult.output) {
-      expect(chunk.decode().trim()).toBe("os");
+      expect(chunk.decode().trim()).toBe("system");
     }
     expect((await explicitDefaultResult.exit).exitCode).toBe(0);
 
@@ -290,11 +290,11 @@ describe("Test run script shell option", () => {
         ? `echo %_BW_SCRIPT_SHELL_OPTION%`
         : "echo $_BW_SCRIPT_SHELL_OPTION",
       inline: true,
-      shell: "os",
+      shell: "system",
     });
 
     for await (const chunk of explicitOsResult.output) {
-      expect(chunk.decode().trim()).toBe("os");
+      expect(chunk.decode().trim()).toBe("system");
     }
     expect((await explicitOsResult.exit).exitCode).toBe(0);
 
@@ -302,7 +302,7 @@ describe("Test run script shell option", () => {
       workspaceNameOrAlias: "application-a",
       script: OS_ONLY_COMMAND,
       inline: true,
-      shell: "os",
+      shell: "system",
     });
 
     expect((await successfulOsOnlyResult.exit).exitCode).toBe(0);
@@ -324,7 +324,7 @@ describe("Test run script shell option", () => {
     }
     expect((await defaultResult.summary).scriptResults[0].exitCode).toBe(0);
 
-    process.env[getUserEnvVarName("scriptShellDefault")] = "os";
+    process.env[getUserEnvVarName("scriptShellDefault")] = "system";
 
     const osEnvResult = await project.runScriptAcrossWorkspaces({
       workspacePatterns: ["application-a"],
@@ -335,7 +335,7 @@ describe("Test run script shell option", () => {
     });
 
     for await (const { outputChunk } of osEnvResult.output) {
-      expect(outputChunk.decode().trim()).toBe("os");
+      expect(outputChunk.decode().trim()).toBe("system");
     }
     expect((await osEnvResult.summary).scriptResults[0].exitCode).toBe(0);
 
@@ -349,7 +349,7 @@ describe("Test run script shell option", () => {
     });
 
     for await (const { outputChunk } of explicitDefaultResult.output) {
-      expect(outputChunk.decode().trim()).toBe("os");
+      expect(outputChunk.decode().trim()).toBe("system");
     }
     expect(
       (await explicitDefaultResult.summary).scriptResults[0].exitCode,
@@ -395,11 +395,11 @@ describe("Test run script shell option", () => {
         ? `echo %_BW_SCRIPT_SHELL_OPTION%`
         : "echo $_BW_SCRIPT_SHELL_OPTION",
       inline: true,
-      shell: "os",
+      shell: "system",
     });
 
     for await (const { outputChunk } of explicitOsResult.output) {
-      expect(outputChunk.decode().trim()).toBe("os");
+      expect(outputChunk.decode().trim()).toBe("system");
     }
     expect((await explicitOsResult.summary).scriptResults[0].exitCode).toBe(0);
 
@@ -407,7 +407,7 @@ describe("Test run script shell option", () => {
       workspacePatterns: ["application-a"],
       script: OS_ONLY_COMMAND,
       inline: true,
-      shell: "os",
+      shell: "system",
     });
 
     expect(
