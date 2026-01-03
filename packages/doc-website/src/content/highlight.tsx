@@ -25,10 +25,27 @@ export const SyntaxHighlighter = (
         backgroundColor: "var(--rp-c-code-block-bg)",
         border: "1px solid rgba(40, 44, 52, 0.52)",
         lineHeight: "1.4",
-        color: "#EAEAEA",
+        color: "var(--code-base-color)",
         margin: "0.5rem 0",
       }}
-      style={dark}
+      style={{
+        ...dark,
+        "hljs-string": {
+          color: "var(--code-string-color)",
+        },
+        "hljs-keyword": {
+          color: "var(--code-keyword-color)",
+        },
+        "hljs-attr": {
+          color: "var(--code-attr-color)",
+        },
+        "hljs-built_in": {
+          color: "var(--code-built-in-color)",
+        },
+        "hljs-comment": {
+          color: "var(--code-comment-color)",
+        },
+      }}
     />
   );
 };

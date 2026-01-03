@@ -16,7 +16,7 @@ import { CREATE_MEMORY_PROJECT_EXAMPLE } from '../../../content/api/apiExamples'
 <ApiHeader activeHref="reference" />
 
 
-## `createFileSystemProject`
+## createFileSystemProject
 `createFileSystemProject(options: CreateFileSystemProjectOptions): FileSystemProject`
 
 Create a [FileSystemProject](/api/reference#filesystemproject), the core of `bun-workspaces`'s functionality, based on a given root directory.
@@ -29,7 +29,7 @@ It will also detect and utilize any [workspace configuration](/config) found.
 </SyntaxHighlighter>
 
 
-## `Workspace`
+## Workspace
 
 An object representing a workspace in a [Project](/api/reference#project).
 
@@ -39,7 +39,7 @@ Set [workspace aliases](/concepts/workspace-aliases) in the [workspace configura
 {WORKSPACE_EXAMPLE}
 </SyntaxHighlighter>
 
-## `Project`
+## Project
 
 The core of `bun-workspaces`'s functionality. 
 It contains a list of [Workspaces](/api/reference#workspace) and provides 
@@ -48,22 +48,25 @@ The Project root should contain the `package.json` file in which `"workspaces"` 
 
 Usually created via [createFileSystemProject](/api/reference#createfilesystemproject).
 
-### `.name`
+### .name
 `type: string`
 
 The name of the project. This is typically the name found in the root `package.json` unless otherwise provided.
+<hr className="reference-divider"/>
 
-### `.rootDirectory`
+### .rootDirectory
 `type: string`
 
 The given root directory of the project.
+<hr className="reference-divider"/>
 
-### `.workspaces`
+### .workspaces
 `type: Workspace[]`
 
 The list of all [Workspaces](/api/reference#workspace) in the project.
+<hr className="reference-divider"/>
 
-### `.findWorkspaceByName`
+### .findWorkspaceByName
 `findWorkspaceByName(workspaceName: string): Workspace | null`
 
 Find a [Workspace](/api/reference#workspace) by its package.json name.
@@ -71,7 +74,9 @@ Find a [Workspace](/api/reference#workspace) by its package.json name.
 {FIND_WORKSPACE_BY_NAME_EXAMPLE}
 </SyntaxHighlighter>
 
-### `.findWorkspaceByAlias`
+<hr className="reference-divider"/>
+
+### .findWorkspaceByAlias
 `findWorkspaceByAlias(alias: string): Workspace | null`
 
 Find a [Workspace](/api/reference#workspace) by its [alias](/concepts/workspace-aliases), if set in its [workspace configuration](/config).
@@ -79,7 +84,9 @@ Find a [Workspace](/api/reference#workspace) by its [alias](/concepts/workspace-
 {FIND_WORKSPACE_BY_ALIAS_EXAMPLE}
 </SyntaxHighlighter>
 
-### `.findWorkspaceByNameOrAlias`
+<hr className="reference-divider"/>
+
+### .findWorkspaceByNameOrAlias
 `findWorkspaceByNameOrAlias(nameOrAlias: string): Workspace | null`
 
 Find a [Workspace](/api/reference#workspace) by its package.json name or [alias](/concepts/workspace-aliases), if set in its [workspace configuration](/config).
@@ -92,7 +99,9 @@ this method can still unambiguously find a workspace.
 {FIND_WORKSPACE_BY_NAME_OR_ALIAS_EXAMPLE}
 </SyntaxHighlighter>
 
-### `.findWorkspacesByPattern`
+<hr className="reference-divider"/>
+
+### .findWorkspacesByPattern
 `findWorkspacesByPattern(workspacePattern: string): Workspace[]`
 
 Find a list of [Workspaces](/api/reference#workspace) by their name, using a wildcard pattern.
@@ -103,7 +112,9 @@ To prevent ambiguity, this method does not match workspace [aliases](/concepts/w
 </SyntaxHighlighter>
 
 
-### `.listWorkspacesWithScript`
+<hr className="reference-divider"/>
+
+### .listWorkspacesWithScript
 `listWorkspacesWithScript(scriptName: string): Workspace[]`
 
 Get an array of all [Workspaces](/api/reference#workspace) that have a given script in their package.json "scripts" field.
@@ -111,7 +122,9 @@ Get an array of all [Workspaces](/api/reference#workspace) that have a given scr
 {LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE}
 </SyntaxHighlighter>
 
-### `.mapScriptsToWorkspaces`
+<hr className="reference-divider"/>
+
+### .mapScriptsToWorkspaces
 `mapScriptsToWorkspaces(): Record<string, WorkspaceScriptMetadata>`
 
 Get a mapping of all project script names to the [Workspaces](/api/reference#workspace) that have them in their package.json "scripts" field.
@@ -119,7 +132,9 @@ Get a mapping of all project script names to the [Workspaces](/api/reference#wor
 {MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE}
 </SyntaxHighlighter>
 
-### `.createScriptCommand`
+<hr className="reference-divider"/>
+
+### .createScriptCommand
 `createScriptCommand(options: CreateProjectScriptCommandOptions): CreateProjectScriptCommandResult`
 
 Create metadata that can be used to run a [Workspace](/api/reference#workspace)'s script.
@@ -130,14 +145,16 @@ The `"method"` option changes what kind of `bun` command is implemented to run t
 {CREATE_SCRIPT_COMMAND_EXAMPLE  }
 </SyntaxHighlighter>
 
-## `FileSystemProject`
+
+## FileSystemProject
 
 Inherits from [Project](/api/reference#project). Used to represent a project in the file system. Created via [createFileSystemProject](/api/reference#createfilesystemproject).
 
 Includes methods for running scripts in the workspaces of the project.
 
 
-### `.runWorkspaceScript`
+
+### .runWorkspaceScript
 `runWorkspaceScript(options: RunWorkspaceScriptOptions): RunWorkspaceScriptResult`
 
 Run a script in a given workspace.
@@ -146,14 +163,17 @@ Run a script in a given workspace.
 {RUN_WORKSPACE_SCRIPT_EXAMPLE}
 </SyntaxHighlighter>
 
-### `.runScriptAcrossWorkspaces`
-`runScriptAcrossWorkspaces(options: RunScriptAcrossWorkspacesOptions): RunScriptAcrossWorkspacesResult`
+<hr className="reference-divider"/>
 
+### .runScriptAcrossWorkspaces
+`runScriptAcrossWorkspaces(options: RunScriptAcrossWorkspacesOptions): RunScriptAcrossWorkspacesResult`
+,
 Run a script in all workspaces that have it in their package.json "scripts" field.
 
 <SyntaxHighlighter language="typescript">
 {RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE}
 </SyntaxHighlighter>
+
 
 ### More Info
 
@@ -161,7 +181,8 @@ Run a script in all workspaces that have it in their package.json "scripts" fiel
 * See more on running [parallel scripts](/concepts/parallel-scripts).
 * See more on [script runtime metadata](/concepts/script-runtime-metadata), such as environment variables available in scripts and interpolating values in inline scripts and args such as `<workspaceName>`.<br/>
 
-## `createMemoryProject`
+
+## createMemoryProject
 `createMemoryProject(options: CreateMemoryProjectOptions): MemoryProject`
 
 Create a [Project](/api/reference#project) from a given array of [Workspaces](/api/reference#workspace). 
@@ -178,7 +199,8 @@ A `MemoryProject` currently does not support running scripts directly, though a 
 {CREATE_MEMORY_PROJECT_EXAMPLE}
 </SyntaxHighlighter>
 
-## `setLogLevel`
+
+## setLogLevel
 `setLogLevel(level: LogLevelSetting)`
 
 Set the global logging level. Defaults to "info" or "error" when `NODE_ENV` is "test".

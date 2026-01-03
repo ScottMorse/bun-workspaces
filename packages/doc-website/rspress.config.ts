@@ -156,10 +156,41 @@ export default defineConfig({
             content: `${DOMAIN}/images/png/bwunster-og-title_1200x630.png`,
           },
         },
+        {
+          tag: "link",
+          attrs: {
+            rel: "preconnect",
+            href: "https://fonts.googleapis.com",
+          },
+        },
+        {
+          tag: "link",
+          attrs: {
+            rel: "preconnect",
+            href: "https://fonts.gstatic.com",
+          },
+        },
+        {
+          tag: "link",
+          attrs: {
+            rel: "stylesheet",
+            href: "https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap",
+          },
+        },
+        {
+          tag: "script",
+          children: `
+          if(!localStorage.getItem('bw-doc-theme-initialized')) {
+            window.RSPRESS_THEME = 'dark';
+            localStorage.setItem('bw-doc-theme-initialized', 'true');
+          }
+          `.replace(/\s+/g, ""),
+        },
       ],
     },
   },
   themeConfig: {
+    enableScrollToTop: true,
     socialLinks: [
       {
         icon: {
