@@ -1,3 +1,5 @@
+import { getDoctorInfo } from "../../doctor";
+import { isJsonObject } from "../../internal/core";
 import { logger } from "../../internal/logger";
 import {
   createJsonLines,
@@ -6,6 +8,38 @@ import {
   createWorkspaceInfoLines,
   handleCommand,
 } from "./commandHandlerUtils";
+
+export const doctor = handleCommand(
+  "doctor",
+  (_, options: { json: boolean; pretty: boolean }) => {
+    const info = getDoctorInfo();
+    if (options.json) {
+      commandOutputLogger.info(
+        JSON.stringify(info, null, options.pretty ? 2 : undefined),
+      );
+    } else {
+      const createEntryLine = ([key, value]: [
+        key: string,
+        value: unknown,
+      ]): string => {
+        const keyName = (
+          key[0].toUpperCase() + key.slice(1).replace(/([A-Z])/g, " $1")
+        ).replace(/os|cpu/gi, (m) => m.toUpperCase());
+
+        return isJsonObject(value)
+          ? keyName +
+              ":\n - " +
+              Object.entries(value).map(createEntryLine).join("\n - ")
+          : `${keyName}: ${value}`;
+      };
+
+      commandOutputLogger.info(
+        "bun-workspaces\n" +
+          Object.entries(info).map(createEntryLine).join("\n"),
+      );
+    }
+  },
+);
 
 export const listWorkspaces = handleCommand(
   "listWorkspaces",

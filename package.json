@@ -18,6 +18,7 @@
     "sandbox:api:local": "bun cli run api:local sandbox -N",
     "sandbox:api:release": "bun cli run api:release sandbox -N ",
     "cli": "bun --silent --cwd=./packages/bun-workspaces run cli --cwd=../..",
+    "cli:build": "bun --silent --cwd=./packages/bun-workspaces run cli:build --cwd=../..",
     "lint": "bun cli run lint -P",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",

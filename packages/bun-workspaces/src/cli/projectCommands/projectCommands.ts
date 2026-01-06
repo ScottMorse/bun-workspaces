@@ -5,6 +5,7 @@ import {
   workspaceInfo,
   scriptInfo,
   listWorkspaces,
+  doctor,
 } from "./handleSimpleCommands";
 
 export const defineProjectCommands = (context: ProjectCommandContext) => {
@@ -13,4 +14,5 @@ export const defineProjectCommands = (context: ProjectCommandContext) => {
   workspaceInfo(context);
   scriptInfo(context);
   runScript(context);
+  doctor(context);
 };
