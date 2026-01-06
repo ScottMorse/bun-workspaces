@@ -1,6 +1,6 @@
 {
   "name": "bun-workspaces",
-  "version": "1.0.0-alpha.28",
+  "version": "1.0.0-alpha.29",
   "main": "src/index.ts",
   "private": true,
   "description": "A monorepo management tool for Bun, with a CLI and API to enhance Bun's native workspaces.",
@@ -30,6 +30,7 @@
   "scripts": {
     "cli": "bun --silent run bin/cli.js",
     "cli:dev": "_BW_RUNTIME_MODE=development bun --silent run bin/cli.js",
+    "cli:build": "bun --silent run dist/bin/cli.js",
     "lint": "eslint src",
     "test": "rm -rf dist.test && bun test --timeout 10000",
     "build": "bun run scripts/build.ts",

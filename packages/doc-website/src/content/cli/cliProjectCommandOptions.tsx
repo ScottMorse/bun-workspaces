@@ -177,6 +177,14 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
       `bw run my-script --json-outfile=results.json`,
     ],
   })),
+  doctor: defineOptionContent("doctor", () => ({
+    title: "Doctor",
+    description: "Print diagnostic information for bug reports etc.",
+    examples: [
+      "bw doctor",
+      "bw doctor --json --pretty # Output as formatted JSON",
+    ],
+  })),
 } as const satisfies Record<CliProjectCommandName, CliProjectCommandContent>;
 
 export const getCliProjectCommandContent = (

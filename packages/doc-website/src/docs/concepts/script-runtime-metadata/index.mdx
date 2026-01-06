@@ -19,7 +19,8 @@ When running scripts via the API or CLI, runtime metadata is available to be use
 
 ## Examples
 
-This example shows various uses of the runtime metadata to run the same file from all workspaces, while having a means of distinguishing the workspace and script running the file, thanks to the metadata.
+This example shows various uses of the runtime metadata for running the same file from all workspaces via an inline script, using the metadata in the script itself via environment variables,
+the inline command, and the `--args` (`-a`) passed.
 
 <SyntaxHighlighter language="typescript">
 {`// Contents of my-script.ts (in project root)
@@ -35,7 +36,7 @@ console.log(process.env.${getScriptRuntimeMetadataConfig("scriptName").envVarNam
 
 #### CLI:
 <SyntaxHighlighter language="bash">
-{`bw run "bun run <projectPath>/my-script.ts" --inline --args="<scriptName>"`}
+{`bw run "bun <projectPath>/my-script.ts" -i -I "my-script-name" -a "<scriptName>"`}
 </SyntaxHighlighter>
 
 #### API:
@@ -49,9 +50,9 @@ ${"  "}rootDirectory: ".",
 
 project.runScriptAcrossWorkspaces({
 ${"  "}workspacePatterns: ["*"],
-${"  "}script: "bun run <projectPath>/my-script.ts",
+${"  "}script: "bun <projectPath>/my-script.ts",
 ${"  "}args: "<scriptName>",
-${"  "}inline: true,
+${"  "}inline: { scriptName: "my-script-name" },
 });`}
 </SyntaxHighlighter>
 

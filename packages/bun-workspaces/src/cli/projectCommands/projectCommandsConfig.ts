@@ -1,4 +1,3 @@
-import { getUserEnvVarName } from "../../config/userEnvVars";
 import { SCRIPT_SHELL_OPTIONS } from "../../runScript/scriptShellOption";
 
 export interface CliProjectCommandConfig {
@@ -14,6 +13,21 @@ export interface CliProjectCommandConfig {
 export type CliProjectCommandName = keyof typeof CLI_PROJECT_COMMANDS_CONFIG;
 
 const CLI_PROJECT_COMMANDS_CONFIG = {
+  doctor: {
+    command: "doctor",
+    aliases: [],
+    description: "Print diagnostic information",
+    options: {
+      json: {
+        flags: ["-j", "--json"],
+        description: "Output as JSON",
+      },
+      pretty: {
+        flags: ["-p", "--pretty"],
+        description: "Pretty print JSON",
+      },
+    },
+  },
   listWorkspaces: {
     command: "list-workspaces [pattern]",
     aliases: ["ls", "list"],
