@@ -45,6 +45,7 @@ const HomeLink = () => {
                 width: "7.5rem",
               }}
               height="auto"
+              small
               className="dark-only nav-title-text"
               alt="bun-workspaces"
             />
@@ -54,6 +55,7 @@ const HomeLink = () => {
                 width: "7.5rem",
               }}
               height="auto"
+              small
               className="light-only nav-title-text"
               alt="bun-workspaces"
             />

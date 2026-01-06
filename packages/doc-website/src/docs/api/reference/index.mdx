@@ -21,7 +21,9 @@ import { CREATE_MEMORY_PROJECT_EXAMPLE } from '../../../content/api/apiExamples'
 
 Create a [FileSystemProject](/api/reference#filesystemproject), the core of `bun-workspaces`'s functionality, based on a given root directory.
 
-This finds [Workspaces](/api/reference#workspace) based on the `"workspaces"` field in the root package.json.
+This finds [Workspaces](/api/reference#workspace) by reading the project's `bun.lock` file, which means `bun install` must be run to have up-to-date 
+workspace information.
+
 It will also detect and utilize any [workspace configuration](/config) found.
 
 <SyntaxHighlighter language="typescript">
