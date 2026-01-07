@@ -8,7 +8,6 @@
   --rp-c-bg: #fcfcfc;
   --rp-c-link: rgb(73, 119, 245);
 
-
   --code-base-color: rgb(15, 15, 15);
   --code-string-color: rgb(95, 160, 3);
   --code-keyword-color: rgb(123, 99, 158);
@@ -59,11 +58,10 @@
   --code-built-in-color: rgb(253, 178, 64);
   --code-comment-color: rgb(145, 145, 145);
 
-  --nav-color: #121117AA;
+  --nav-color: #121117aa;
 }
 
-.rspress-nav-menu-group-content > *
-{
+.rspress-nav-menu-group-content > * {
   padding: 0.25rem 0.5rem;
   border-radius: 14px !important;
 }
@@ -72,7 +70,7 @@
   border-radius: 8px !important;
 }
 
-.rspress-nav-menu-group-content  .rounded-2xl {
+.rspress-nav-menu-group-content .rounded-2xl {
   border-radius: 8px !important;
 }
 
@@ -89,7 +87,12 @@ body {
   letter-spacing: 0.01em;
 }
 
-h1,h2,h3,h4,h5,h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: "Lexend", sans-serif;
   letter-spacing: 0.001em !important;
 }
@@ -170,7 +173,7 @@ pre {
   justify-content: center;
   font-family: var(--rp-font-family-mono);
   font-weight: bold;
-margin-top: -0.125rem;
+  margin-top: -0.125rem;
 }
 
 .nav-title-text-container {
