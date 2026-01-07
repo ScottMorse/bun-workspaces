@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { loadSpritesheet, type Spritesheet } from "./spritesheet";
 
 export interface AnimatedSpriteProps {
   spritesheetFileName: string;
   width: number;
+  height?: number;
   onFinish?: () => void;
   loop?: boolean;
   fps: number;
@@ -15,6 +16,7 @@ export interface AnimatedSpriteProps {
 export const AnimatedSprite = ({
   spritesheetFileName,
   width,
+  height,
   onFinish,
   loop,
   fps,
@@ -23,12 +25,20 @@ export const AnimatedSprite = ({
   reducedMotionFrame,
 }: AnimatedSpriteProps) => {
   const [spritesheetData, setSpritesheetData] = useState<Spritesheet | null>(
-    null,
+    null
   );
+  const [canvasHeight, setCanvasHeight] = useState(height ?? width);
 
   useEffect(() => {
     loadSpritesheet(spritesheetFileName).then((spritesheet) => {
       setSpritesheetData(spritesheet);
+      setCanvasHeight(
+        spritesheet.metadata.frames[0]
+          ? (spritesheet.metadata.frames[0].h /
+              spritesheet.metadata.frames[0].w) *
+              width
+          : width
+      );
     });
   }, [spritesheetFileName]);
 
@@ -40,11 +50,6 @@ export const AnimatedSprite = ({
     const canvas = canvasRef.current;
 
     const canvasWidth = width;
-    const canvasHeight =
-      (spritesheetData.metadata.frames[0].h /
-        spritesheetData.metadata.frames[0].w) *
-      width;
-
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
 
@@ -54,7 +59,7 @@ export const AnimatedSprite = ({
     ctx.imageSmoothingEnabled = false;
 
     const isReducedMotion = window.matchMedia(
-      `(prefers-reduced-motion: reduce)`,
+      `(prefers-reduced-motion: reduce)`
     ).matches;
 
     if (isReducedMotion) {
@@ -67,7 +72,7 @@ export const AnimatedSprite = ({
         0,
         0,
         width,
-        canvasHeight,
+        canvasHeight
       );
       return;
     }
@@ -98,7 +103,7 @@ export const AnimatedSprite = ({
           0,
           0,
           width,
-          canvasHeight,
+          canvasHeight
         );
 
         lastFrameTime = time;
@@ -124,7 +129,7 @@ export const AnimatedSprite = ({
     };
 
     requestAnimationFrame(draw);
-  }, [spritesheetData]);
+  }, [spritesheetData, canvasHeight]);
 
   useEffect(() => {
     return () => {
@@ -134,7 +139,12 @@ export const AnimatedSprite = ({
 
   return (
     <div className="animated-sprite-container">
-      <canvas ref={canvasRef} {...canvasProps} />
+      <canvas
+        ref={canvasRef}
+        width={width}
+        height={canvasHeight}
+        {...canvasProps}
+      />
     </div>
   );
 };

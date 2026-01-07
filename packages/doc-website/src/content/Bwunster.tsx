@@ -10,6 +10,7 @@ export const Bwunster = () => {
         <AnimatedSprite
           spritesheetFileName="bwunster-intro_animation_compact_64x106"
           width={128}
+          height={140}
           fps={10}
           onFinish={() => {
             setTimeout(() => setIsIdle(true), 250);
@@ -21,6 +22,7 @@ export const Bwunster = () => {
             <AnimatedSprite
               spritesheetFileName="bwunster-blink_animation_64x70"
               width={128}
+              height={140}
               fps={10}
               loop
               frameLengths={{
@@ -37,6 +39,7 @@ export const Bwunster = () => {
           <AnimatedSprite
             spritesheetFileName="bw-title_animation--dark_99x10"
             width={256}
+            height={25}
             fps={10}
             frameLengths={{
               16: 100,
@@ -52,6 +55,7 @@ export const Bwunster = () => {
           <AnimatedSprite
             spritesheetFileName="bw-title_animation--light_99x10"
             width={256}
+            height={25}
             fps={10}
             frameLengths={{
               16: 100,
