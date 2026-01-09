@@ -44,11 +44,16 @@ export const CLI_COMMANDS_CONFIG = {
     },
   },
   listWorkspaces: {
-    command: "list-workspaces [pattern]",
+    command: "list-workspaces [workspacePatterns...]",
     isGlobal: false,
     aliases: ["ls", "list"],
     description: "List all workspaces",
     options: {
+      workspacePatterns: {
+        flags: ["-w", "--workspace-patterns <patterns>"],
+        description:
+          "Workspace patterns to filter workspaces by, separated by commas",
+      },
       nameOnly: {
         flags: ["-n", "--name-only"],
         description: "Only show workspace names",

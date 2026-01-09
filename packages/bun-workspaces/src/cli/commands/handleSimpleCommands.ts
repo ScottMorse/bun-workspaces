@@ -46,8 +46,13 @@ export const listWorkspaces = handleProjectCommand(
   "listWorkspaces",
   (
     { project },
-    pattern: string | undefined,
-    options: { nameOnly: boolean; json: boolean; pretty: boolean },
+    workspacePatterns: string[] | undefined,
+    options: {
+      workspacePatterns: string | undefined;
+      nameOnly: boolean;
+      json: boolean;
+      pretty: boolean;
+    },
   ) => {
     logger.debug(
       `Command: List workspaces (options: ${JSON.stringify(options)})`,
@@ -55,8 +60,19 @@ export const listWorkspaces = handleProjectCommand(
 
     const lines: string[] = [];
 
-    const workspaces = pattern
-      ? project.findWorkspacesByPattern(pattern)
+    if (workspacePatterns?.length && options.workspacePatterns?.length) {
+      logger.error(
+        "CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-w option",
+      );
+      process.exit(1);
+    }
+
+    const patterns = workspacePatterns?.length
+      ? workspacePatterns
+      : options.workspacePatterns?.split(",");
+
+    const workspaces = patterns?.length
+      ? project.findWorkspacesByPattern(...patterns)
       : project.workspaces;
 
     if (options.json) {
