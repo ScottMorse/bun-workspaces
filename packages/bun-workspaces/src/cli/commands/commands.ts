@@ -1,4 +1,3 @@
-import type { Command } from "commander";
 import type {
   GlobalCommandContext,
   ProjectCommandContext,

@@ -13,9 +13,6 @@ import {
   createMemoryProject,
   type FileSystemProject,
 } from "../../project";
-import { defineGlobalCommands } from "../commands";
-import type { ProjectCommandContext } from "../commands/commandHandlerUtils";
-import { doctor } from "../commands/handleSimpleCommands";
 import {
   type CliGlobalOptionName,
   type CliGlobalOptions,
