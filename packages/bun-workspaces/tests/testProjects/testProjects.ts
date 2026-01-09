@@ -6,6 +6,7 @@ import { withWindowsPath } from "../util/windows";
 const TEST_PROJECTS = {
   default: "fullProject",
   fullProject: "fullProject",
+  notAProject: "notAProject",
   simple1: "simple1",
   simple2: "simple2",
   emptyWorkspaces: "emptyWorkspaces",

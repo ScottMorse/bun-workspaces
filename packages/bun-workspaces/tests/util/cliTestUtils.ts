@@ -2,7 +2,6 @@ import path from "node:path";
 import { expect } from "bun:test";
 import packageJson from "../../package.json";
 import { createRawPattern } from "../../src/internal/core";
-import { IS_WINDOWS } from "../../src/internal/runtime";
 import { getProjectRoot, type TestProjectName } from "../testProjects";
 
 export const USAGE_OUTPUT_PATTERN = new RegExp(
@@ -18,7 +17,10 @@ Options:`) +
 );
 
 export interface SetupTestOptions {
+  /** If provided, the test will be run in the project with the given name. Cannot be used together with workingDirectory. */
   testProject?: TestProjectName;
+  /** If provided, the test will be run in the given working directory. Cannot be used together with testProject. */
+  workingDirectory?: string;
 }
 
 export interface OutputText {
@@ -58,9 +60,16 @@ const blankOutputText: OutputText = {
 };
 
 export const setupCliTest = (
-  { testProject = "default" }: SetupTestOptions = { testProject: "default" },
+  { testProject, workingDirectory }: SetupTestOptions = {
+    testProject: "default",
+  },
 ): SetupTestResult => {
-  const testProjectRoot = getProjectRoot(testProject);
+  if (testProject && workingDirectory) {
+    throw new Error("Cannot specify both testProject and workingDirectory");
+  }
+
+  const testProjectRoot =
+    workingDirectory ?? getProjectRoot(testProject as TestProjectName);
 
   const sanitizeText = (text: string) =>
     // eslint-disable-next-line no-control-regex

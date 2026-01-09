@@ -38,4 +38,22 @@ Bun Version: ${Bun.version_with_sha}`),
     delete (jsonPrettyResultObject.binary as { path?: string }).path;
     expect(jsonPrettyResultObject).toEqual(expectedInfo);
   });
+
+  test("Should be possible without project", async () => {
+    const { run } = setupCliTest({ testProject: "notAProject" });
+
+    const result = await run("doctor");
+    expect(result.stderr.raw).toBeEmpty();
+    expect(result.exitCode).toBe(0);
+    assertOutputMatches(
+      result.stdout.sanitizedCompactLines,
+      new RegExp(
+        "^" +
+          createRawPattern(`bun-workspaces
+Version: ${packageJson.version}
+Bun Version: ${Bun.version_with_sha}`),
+        "m",
+      ),
+    );
+  });
 });
