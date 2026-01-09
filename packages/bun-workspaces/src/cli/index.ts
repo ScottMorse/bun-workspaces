@@ -1,3 +1,3 @@
 export * from "./createCli";
-export * from "./projectCommands";
+export * from "./commands";
 export * from "./globalOptions";

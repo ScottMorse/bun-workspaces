@@ -5,7 +5,7 @@ import { createRawPattern } from "../../src/internal/core";
 import { getProjectRoot, type TestProjectName } from "../testProjects";
 
 export const USAGE_OUTPUT_PATTERN = new RegExp(
-  createRawPattern(`Usage: bunx bun-workspaces [options] [command]
+  createRawPattern(`Usage: bun-workspaces [options] [command]
 
 A CLI on top of native Bun workspaces
 
@@ -69,7 +69,7 @@ export const setupCliTest = (
   }
 
   const testProjectRoot =
-    workingDirectory ?? getProjectRoot(testProject as TestProjectName);
+    workingDirectory ?? getProjectRoot(testProject || "default");
 
   const sanitizeText = (text: string) =>
     // eslint-disable-next-line no-control-regex

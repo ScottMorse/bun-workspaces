@@ -3,9 +3,9 @@ import packageJson from "../../package.json";
 import { validateCurrentBunVersion } from "../internal/bun";
 import { BunWorkspacesError } from "../internal/core";
 import { logger } from "../internal/logger";
+import { defineGlobalCommands, defineProjectCommands } from "./commands";
 import { fatalErrorLogger } from "./fatalErrorLogger";
 import { initializeWithGlobalOptions } from "./globalOptions";
-import { defineProjectCommands } from "./projectCommands";
 
 export interface RunCliOptions {
   argv?: string | string[];
@@ -42,7 +42,7 @@ export const createCli = ({
     process.on("unhandledRejection", errorListener);
 
     try {
-      const program = createCommand("bunx bun-workspaces")
+      const program = createCommand("bun-workspaces")
         .description("A CLI on top of native Bun workspaces")
         .version(packageJson.version)
         .showHelpAfterError(true);
@@ -53,7 +53,7 @@ export const createCli = ({
         typeof argv === "string" ? argv.split(/s+/) : argv,
       );
 
-      const { project, error } = initializeWithGlobalOptions(
+      const { project, projectError } = initializeWithGlobalOptions(
         program,
         args,
         defaultCwd,
@@ -69,13 +69,16 @@ export const createCli = ({
       defineProjectCommands({
         program,
         project,
-        projectError: error,
+        projectError,
       });
+
+      defineGlobalCommands({ program });
 
       await program.parseAsync(args, {
         from: programmatic ? "user" : "node",
       });
-      if (error) throw error;
+      const isHandledByGlobalCommand = program.command;
+      if (projectError && !isHandledByGlobalCommand) throw projectError;
     } catch (error) {
       if (error instanceof BunWorkspacesError) {
         logger.debug(error);
