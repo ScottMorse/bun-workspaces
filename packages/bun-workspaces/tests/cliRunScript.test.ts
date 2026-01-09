@@ -17,6 +17,102 @@ describe("CLI Run Script", () => {
     }
   });
 
+  test("Script option vs. inline script name", async () => {
+    const { run } = setupCliTest({
+      testProject: "simple1",
+    });
+
+    const optionResult = await run("run-script", "--script=a-workspaces");
+    expect(optionResult.exitCode).toBe(0);
+    assertOutputMatches(
+      optionResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:a-workspaces] script for a workspaces
+[library-1a:a-workspaces] script for a workspaces
+✅ application-1a: a-workspaces
+✅ library-1a: a-workspaces
+2 scripts ran successfully`,
+    );
+
+    const shortOptionResult = await run("run-script", "-S", "a-workspaces");
+    expect(shortOptionResult.exitCode).toBe(0);
+    assertOutputMatches(
+      shortOptionResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:a-workspaces] script for a workspaces
+[library-1a:a-workspaces] script for a workspaces
+✅ application-1a: a-workspaces
+✅ library-1a: a-workspaces
+2 scripts ran successfully`,
+    );
+
+    const inlineResult = await run("run-script", "a-workspaces");
+    expect(inlineResult.exitCode).toBe(0);
+    assertOutputMatches(
+      inlineResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:a-workspaces] script for a workspaces
+[library-1a:a-workspaces] script for a workspaces
+✅ application-1a: a-workspaces
+✅ library-1a: a-workspaces
+2 scripts ran successfully`,
+    );
+
+    const inlinePatternsResult = await run(
+      "run-script",
+      "--script=a-workspaces",
+      "application-*",
+    );
+    expect(inlinePatternsResult.exitCode).toBe(0);
+    assertOutputMatches(
+      inlinePatternsResult.stdout.sanitizedCompactLines,
+      `[application-1a:a-workspaces] script for a workspaces
+✅ application-1a: a-workspaces
+1 script ran successfully`,
+    );
+
+    const inlinePatternsResult2 = await run(
+      "run-script",
+      "--script=all-workspaces",
+      "library-1a",
+      "library-*",
+    );
+    expect(inlinePatternsResult2.exitCode).toBe(0);
+    assertOutputMatches(
+      inlinePatternsResult2.stdout.sanitizedCompactLines,
+      `[library-1a:all-workspaces] script for all workspaces
+[library-1b:all-workspaces] script for all workspaces
+✅ library-1a: all-workspaces
+✅ library-1b: all-workspaces
+2 scripts ran successfully`,
+    );
+
+    const scriptAndWorkspaceOptionResult = await run(
+      "run-script",
+      "--workspace-patterns=library-1a,library-*",
+      "--script=all-workspaces",
+    );
+    expect(scriptAndWorkspaceOptionResult.exitCode).toBe(0);
+    assertOutputMatches(
+      scriptAndWorkspaceOptionResult.stdout.sanitizedCompactLines,
+      `[library-1a:all-workspaces] script for all workspaces
+[library-1b:all-workspaces] script for all workspaces
+✅ library-1a: all-workspaces
+✅ library-1b: all-workspaces
+2 scripts ran successfully`,
+    );
+
+    const scriptAndWorkspaceOptionAndScriptOptionResult = await run(
+      "run-script",
+      "all-workspaces",
+      "--workspace-patterns=library-1a,library-*",
+      "--script=all-workspaces",
+    );
+    expect(scriptAndWorkspaceOptionAndScriptOptionResult.exitCode).toBe(1);
+    assertOutputMatches(
+      scriptAndWorkspaceOptionAndScriptOptionResult.stderr
+        .sanitizedCompactLines,
+      `CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-W option`,
+    );
+  });
+
   test("Running with failures", async () => {
     const { run } = setupCliTest({
       testProject: "runScriptWithFailures",
@@ -239,6 +335,54 @@ describe("CLI Run Script", () => {
 ✅ library-1a: all-workspaces
 2 scripts ran successfully`,
     );
+
+    const resultWorkspacePatterns = await run(
+      "run-script",
+      "all-workspaces",
+      "--workspace-patterns=application-*,library-1b",
+    );
+    expect(resultWorkspacePatterns.exitCode).toBe(0);
+    assertOutputMatches(
+      resultWorkspacePatterns.stdout.sanitizedCompactLines,
+      `[application-1a:all-workspaces] script for all workspaces
+[application-1b:all-workspaces] script for all workspaces
+[library-1b:all-workspaces] script for all workspaces
+✅ application-1a: all-workspaces
+✅ application-1b: all-workspaces
+✅ library-1b: all-workspaces
+3 scripts ran successfully`,
+    );
+
+    const resultWorkspacePatternsShort = await run(
+      "run-script",
+      "all-workspaces",
+      "-W",
+      "application-*,library-1b",
+    );
+    expect(resultWorkspacePatternsShort.exitCode).toBe(0);
+    assertOutputMatches(
+      resultWorkspacePatternsShort.stdout.sanitizedCompactLines,
+      `[application-1a:all-workspaces] script for all workspaces
+[application-1b:all-workspaces] script for all workspaces
+[library-1b:all-workspaces] script for all workspaces
+✅ application-1a: all-workspaces
+✅ application-1b: all-workspaces
+✅ library-1b: all-workspaces
+3 scripts ran successfully`,
+    );
+
+    const resultWorkspacePatternsAndOption = await run(
+      "run-script",
+      "all-workspaces",
+      "--workspace-patterns=application-*,library-1b",
+      "application-*",
+      "library-1b",
+    );
+    expect(resultWorkspacePatternsAndOption.exitCode).toBe(1);
+    assertOutputMatches(
+      resultWorkspacePatternsAndOption.stderr.sanitizedCompactLines,
+      `CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-W option`,
+    );
   });
 
   test("Using --args", async () => {
@@ -368,6 +512,42 @@ passed args: library-1b
 ✅ library-1a: test-echo
 ✅ library-1b: test-echo
 4 scripts ran successfully`,
+    );
+
+    const terminatorResult = await run(
+      "run-script",
+      "test-echo",
+      "--",
+      "test-args",
+      "--another-arg",
+    );
+    expect(terminatorResult.exitCode).toBe(0);
+    assertOutputMatches(
+      terminatorResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:test-echo] passed args: test-args --another-arg
+[application-1b:test-echo] passed args: test-args --another-arg
+[library-1a:test-echo] passed args: test-args --another-arg
+[library-1b:test-echo] passed args: test-args --another-arg
+✅ application-1a: test-echo
+✅ application-1b: test-echo
+✅ library-1a: test-echo
+✅ library-1b: test-echo
+4 scripts ran successfully`,
+    );
+
+    const terminatorAndOptionResult = await run(
+      "run-script",
+      "test-echo",
+      "--args=my-arg",
+      "--",
+      "test-args",
+      "--another-arg",
+      "--args=test-args",
+    );
+    expect(terminatorAndOptionResult.exitCode).toBe(1);
+    assertOutputMatches(
+      terminatorAndOptionResult.stderr.sanitizedCompactLines,
+      `CLI syntax error: Cannot use both --args and inline script args after --`,
     );
   });
 

@@ -25,8 +25,8 @@ import { ProjectBase, resolveWorkspacePath } from "./projectBase";
 
 /** Arguments for {@link createFileSystemProject} */
 export type CreateFileSystemProjectOptions = {
-  /** The directory containing the root package.json. Often the same root as a git repository. */
-  rootDirectory: string;
+  /** The directory containing the root package.json. Often the same root as a git repository. Relative to process.cwd(). The default is process.cwd(). */
+  rootDirectory?: string;
   /**
    * The name of the project.
    *
@@ -70,8 +70,12 @@ export type ParallelOption = boolean | RunScriptsParallelOptions;
 
 /** Arguments for `FileSystemProject.runScriptAcrossWorkspaces` */
 export type RunScriptAcrossWorkspacesOptions = {
-  /** Workspace names, aliases, or patterns including a wildcard */
-  workspacePatterns: string[];
+  /**
+   * Workspace names, aliases, or patterns including a wildcard.
+   *
+   * When not provided, all workspaces that the script can be ran in will be used.
+   */
+  workspacePatterns?: string[];
   /** The name of the script to run, or an inline command when `inline` is true */
   script: string;
   /** Whether to run the script as an inline command */
@@ -129,10 +133,13 @@ class _FileSystemProject extends ProjectBase implements Project {
       _FileSystemProject.#initialized = true;
     }
 
-    this.rootDirectory = path.resolve(options.rootDirectory);
+    this.rootDirectory = path.resolve(
+      process.cwd(),
+      options.rootDirectory ?? "",
+    );
 
     const { workspaces, workspaceConfigMap } = findWorkspaces({
-      rootDirectory: options.rootDirectory,
+      rootDirectory: this.rootDirectory,
       workspaceAliases: options.workspaceAliases,
     });
 
@@ -226,7 +233,10 @@ class _FileSystemProject extends ProjectBase implements Project {
   runScriptAcrossWorkspaces(
     options: RunScriptAcrossWorkspacesOptions,
   ): RunScriptAcrossWorkspacesResult {
-    const workspaces = options.workspacePatterns
+    const workspaces = (
+      options.workspacePatterns ??
+      this.workspaces.map((workspace) => workspace.name)
+    )
       .flatMap((pattern) => this.findWorkspacesByPattern(pattern))
       .filter(
         (workspace) =>
@@ -332,7 +342,7 @@ export type FileSystemProject = Simplify<_FileSystemProject>;
  * and detects and utilizes any provided configuration.
  */
 export const createFileSystemProject = (
-  options: CreateFileSystemProjectOptions,
+  options: CreateFileSystemProjectOptions = {},
 ): FileSystemProject => new _FileSystemProject(options);
 
 /** @deprecated temporarily supports workspaceAliases from deprecated config file */

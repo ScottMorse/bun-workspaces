@@ -1,11 +1,46 @@
 import { availableParallelism } from "node:os";
+import path from "node:path";
 import { expect, test, describe } from "bun:test";
 import { getUserEnvVar } from "../src/config/userEnvVars";
+import { BUN_LOCK_ERRORS } from "../src/internal/bun";
 import { createFileSystemProject, PROJECT_ERRORS } from "../src/project";
 import { getProjectRoot } from "./testProjects";
 import { withWindowsPath } from "./util/windows";
 
 describe("Test FileSystemProject", () => {
+  test("createFileSystemProject: root directory defaults to process.cwd()", async () => {
+    if (process.env.IS_BUILD === "true") {
+      expect(createFileSystemProject().rootDirectory).toBe(
+        withWindowsPath(process.cwd()),
+      );
+    } else {
+      expect(() => createFileSystemProject()).toThrow(
+        BUN_LOCK_ERRORS.BunLockNotFound,
+      );
+      expect(() => createFileSystemProject()).toThrow(
+        `No bun.lock found at ${withWindowsPath(process.cwd())}.`,
+      );
+    }
+  });
+
+  test("createFileSystemProject: root directory is relative to process.cwd()  ", async () => {
+    if (process.env.IS_BUILD === "true") {
+      const project = createFileSystemProject({
+        rootDirectory: "../../../",
+      });
+      expect(project.rootDirectory).toBe(
+        withWindowsPath(path.resolve(process.cwd(), "../../..")),
+      );
+    } else {
+      const project = createFileSystemProject({
+        rootDirectory: "../..",
+      });
+      expect(project.rootDirectory).toBe(
+        withWindowsPath(path.resolve(process.cwd(), "../..")),
+      );
+    }
+  });
+
   test("runWorkspaceScript: simple success", async () => {
     const project = createFileSystemProject({
       rootDirectory: getProjectRoot("default"),
@@ -282,6 +317,121 @@ describe("Test FileSystemProject", () => {
               name: "library-b",
               path: withWindowsPath("libraries/libraryB"),
               matchPattern: "libraries/**/*",
+              scripts: ["all-workspaces", "b-workspaces", "library-b"],
+              aliases: [],
+            },
+          },
+        },
+      ],
+    });
+  });
+
+  test("runScriptAcrossWorkspaces: all workspaces", async () => {
+    const project = createFileSystemProject({
+      rootDirectory: getProjectRoot("simple1"),
+    });
+
+    const { output, summary } = project.runScriptAcrossWorkspaces({
+      script: "all-workspaces",
+    });
+
+    const outputChunk = {
+      streamName: "stdout" as const,
+      text: "script for all workspaces",
+      textNoAnsi: "script for all workspaces",
+    };
+
+    const expectedOutput = [
+      { outputChunk },
+      { outputChunk },
+      { outputChunk },
+      { outputChunk },
+    ];
+
+    let i = 0;
+    for await (const { outputChunk } of output) {
+      expect(outputChunk.decode().trim()).toBe(
+        expectedOutput[i].outputChunk.text,
+      );
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
+        expectedOutput[i].outputChunk.textNoAnsi,
+      );
+      i++;
+    }
+
+    const summaryResult = await summary;
+    expect(summaryResult).toEqual({
+      totalCount: 4,
+      successCount: 4,
+      failureCount: 0,
+      allSuccess: true,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      scriptResults: [
+        {
+          exitCode: 0,
+          success: true,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+          metadata: {
+            workspace: {
+              name: "application-1a",
+              matchPattern: "applications/*",
+              path: withWindowsPath("applications/applicationA"),
+              scripts: ["a-workspaces", "all-workspaces", "application-a"],
+              aliases: [],
+            },
+          },
+        },
+        {
+          exitCode: 0,
+          success: true,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+          metadata: {
+            workspace: {
+              name: "application-1b",
+              matchPattern: "applications/*",
+              path: withWindowsPath("applications/applicationB"),
+              scripts: ["all-workspaces", "application-b", "b-workspaces"],
+              aliases: [],
+            },
+          },
+        },
+        {
+          exitCode: 0,
+          success: true,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+          metadata: {
+            workspace: {
+              name: "library-1a",
+              matchPattern: "libraries/*",
+              path: withWindowsPath("libraries/libraryA"),
+              scripts: ["a-workspaces", "all-workspaces", "library-a"],
+              aliases: [],
+            },
+          },
+        },
+        {
+          exitCode: 0,
+          success: true,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+          metadata: {
+            workspace: {
+              name: "library-1b",
+              matchPattern: "libraries/*",
+              path: withWindowsPath("libraries/libraryB"),
               scripts: ["all-workspaces", "b-workspaces", "library-b"],
               aliases: [],
             },

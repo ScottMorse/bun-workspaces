@@ -158,6 +158,67 @@ library-1b`,
         `No bun.lock found at ${withWindowsPath(getProjectRoot("emptyWorkspaces"))}. Check that this is the directory of your project and that you've ran 'bun install'.` +
           "If you have ran 'bun install', you may simply have no workspaces or dependencies in your project.",
       );
+
+      const patternOutput = `Workspace: application-1a
+ - Aliases: deprecated_appA
+ - Path: ${withWindowsPath("applications/applicationA")}
+ - Glob Match: applications/*
+ - Scripts: a-workspaces, all-workspaces, application-a
+Workspace: application-1b
+ - Aliases: deprecated_appB
+ - Path: ${withWindowsPath("applications/applicationB")}
+ - Glob Match: applications/*
+ - Scripts: all-workspaces, application-b, b-workspaces
+Workspace: library-1b
+ - Aliases: deprecated_libB
+ - Path: ${withWindowsPath("libraries/libraryB")}
+ - Glob Match: libraries/*
+ - Scripts: all-workspaces, b-workspaces, library-b`;
+
+      const workspacePatternsResult = await run(
+        command,
+        "application-*",
+        "library-1b",
+      );
+      expect(workspacePatternsResult.stderr.raw).toBeEmpty();
+      expect(workspacePatternsResult.exitCode).toBe(0);
+      assertOutputMatches(workspacePatternsResult.stdout.raw, patternOutput);
+
+      const workspacePatternsOptionResult = await run(
+        command,
+        "--workspace-patterns=application-*,library-1b",
+      );
+      expect(workspacePatternsOptionResult.stderr.raw).toBeEmpty();
+      expect(workspacePatternsOptionResult.exitCode).toBe(0);
+      assertOutputMatches(
+        workspacePatternsOptionResult.stdout.raw,
+        patternOutput,
+      );
+
+      const workspacePatternsOptionShortResult = await run(
+        command,
+        "-W",
+        "application-*,library-1b",
+      );
+      expect(workspacePatternsOptionShortResult.stderr.raw).toBeEmpty();
+      expect(workspacePatternsOptionShortResult.exitCode).toBe(0);
+      assertOutputMatches(
+        workspacePatternsOptionShortResult.stdout.raw,
+        patternOutput,
+      );
+
+      const workspacePatternsOptionAndPatternResult = await run(
+        command,
+        "--workspace-patterns=application-*,library-1b",
+        "application-*",
+        "library-1b",
+      );
+      expect(workspacePatternsOptionAndPatternResult.stdout.raw).toBeEmpty();
+      expect(workspacePatternsOptionAndPatternResult.exitCode).toBe(1);
+      assertOutputMatches(
+        workspacePatternsOptionAndPatternResult.stderr.sanitized,
+        "CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-W option",
+      );
     },
   );
 

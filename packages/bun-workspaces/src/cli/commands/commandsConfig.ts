@@ -44,11 +44,16 @@ export const CLI_COMMANDS_CONFIG = {
     },
   },
   listWorkspaces: {
-    command: "list-workspaces [pattern]",
+    command: "list-workspaces [workspacePatterns...]",
     isGlobal: false,
     aliases: ["ls", "list"],
     description: "List all workspaces",
     options: {
+      workspacePatterns: {
+        flags: ["-W", "--workspace-patterns <patterns>"],
+        description:
+          "Workspace patterns to filter workspaces by, separated by commas",
+      },
       nameOnly: {
         flags: ["-n", "--name-only"],
         description: "Only show workspace names",
@@ -120,12 +125,21 @@ export const CLI_COMMANDS_CONFIG = {
     },
   },
   runScript: {
-    command: "run-script <script> [workspaces...]",
+    command: "run-script [script] [workspacePatterns...]",
     isGlobal: false,
     aliases: ["run"],
     description:
       'Run a script in all workspaces that have it in their "scripts" field in package.json',
     options: {
+      script: {
+        flags: ["-S", "--script <script>"],
+        description: "The script to run.",
+      },
+      workspacePatterns: {
+        flags: ["-W", "--workspace-patterns <patterns>"],
+        description:
+          "Workspace patterns to filter workspaces by, separated by commas",
+      },
       parallel: {
         flags: ["-P", "--parallel [max]"],
         description:

@@ -24,6 +24,19 @@ export interface FindWorkspacesOptions {
   workspaceAliases?: ProjectConfig["workspaceAliases"];
 }
 
+export const sortWorkspaces = (workspaces: Workspace[]) =>
+  [...workspaces]
+    .sort(
+      (a, b) => a.name.localeCompare(b.name) || a.path.localeCompare(b.path),
+    )
+    .reduce<Workspace[]>((acc, workspace, i, arr) => {
+      const previousWorkspace = arr[i - 1];
+      if (previousWorkspace && previousWorkspace.path === workspace.path) {
+        return acc;
+      }
+      return [...acc, workspace];
+    }, []);
+
 const getWorkspaceGlobsFromRoot = ({
   rootDirectory,
 }: {
@@ -66,7 +79,7 @@ export const findWorkspaces = ({
 }: FindWorkspacesOptions) => {
   rootDirectory = path.resolve(rootDirectory);
 
-  const workspaces: Workspace[] = [];
+  let workspaces: Workspace[] = [];
   const excludedWorkspacePaths: string[] = [];
 
   const workspaceConfigMap: Record<string, ResolvedWorkspaceConfig> = {};
@@ -146,9 +159,7 @@ export const findWorkspaces = ({
     }
   }
 
-  workspaces.sort(
-    (a, b) => a.name.localeCompare(b.name) || a.path.localeCompare(b.path),
-  );
+  workspaces = sortWorkspaces(workspaces);
 
   validateWorkspaceAliases(workspaces, workspaceAliases);
 

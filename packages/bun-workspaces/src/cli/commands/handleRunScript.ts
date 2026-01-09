@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { logger } from "../../internal/logger";
 import type { ParallelMaxValue, ScriptShellOption } from "../../runScript";
-import type { Workspace } from "../../workspaces";
+import { sortWorkspaces, type Workspace } from "../../workspaces";
 import {
   commandOutputLogger,
   handleProjectCommand,
@@ -11,10 +11,12 @@ import {
 export const runScript = handleProjectCommand(
   "runScript",
   async (
-    { project },
-    script: string,
-    _workspaces: string[],
+    { project, postTerminatorArgs },
+    _script: string,
+    _workspacePatterns: string[],
     options: {
+      script: string | undefined;
+      workspacePatterns: string | undefined;
       parallel: boolean | string;
       args: string;
       prefix: boolean;
@@ -32,16 +34,44 @@ export const runScript = handleProjectCommand(
         ? options.parallel.trim()
         : options.parallel;
 
+    if (_script && options.script) {
+      _workspacePatterns.splice(0, 0, _script);
+    }
+
+    const script = options.script || _script;
+
+    if (postTerminatorArgs.length && options.args) {
+      logger.error(
+        "CLI syntax error: Cannot use both --args and inline script args after --",
+      );
+      process.exit(1);
+    }
+
+    const scriptArgs = postTerminatorArgs.length
+      ? postTerminatorArgs.join(" ")
+      : options.args;
+
+    if (_workspacePatterns.length && options.workspacePatterns) {
+      logger.error(
+        "CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-W option",
+      );
+      process.exit(1);
+    }
+
+    const workspacePatterns = _workspacePatterns?.length
+      ? _workspacePatterns
+      : (options.workspacePatterns?.split(",") ?? []);
+
     logger.debug(
       `Command: Run script ${JSON.stringify(script)} for ${
-        _workspaces.length
-          ? "workspaces " + _workspaces.join(", ")
+        workspacePatterns.length
+          ? "workspaces " + workspacePatterns.join(", ")
           : "all workspaces"
-      } (parallel: ${!!options.parallel}, args: ${JSON.stringify(options.args)})`,
+      } (parallel: ${!!options.parallel}, args: ${JSON.stringify(scriptArgs)})`,
     );
 
-    const workspaces: Workspace[] = _workspaces.length
-      ? (_workspaces
+    let workspaces: Workspace[] = workspacePatterns.length
+      ? (workspacePatterns
           .flatMap((workspacePattern) => {
             if (workspacePattern.includes("*")) {
               return project
@@ -69,12 +99,19 @@ export const runScript = handleProjectCommand(
         ? project.workspaces
         : project.listWorkspacesWithScript(script);
 
+    workspaces = sortWorkspaces(workspaces);
+
     if (!workspaces.length) {
-      if (_workspaces.length === 1 && !_workspaces[0].includes("*")) {
-        logger.error(`Workspace not found: ${JSON.stringify(_workspaces[0])}`);
+      if (
+        workspacePatterns.length === 1 &&
+        !workspacePatterns[0].includes("*")
+      ) {
+        logger.error(
+          `Workspace not found: ${JSON.stringify(workspacePatterns[0])}`,
+        );
       } else {
         logger.error(
-          `No ${_workspaces.length ? "matching " : ""}workspaces found${options.inline ? " in the project" : " with script " + JSON.stringify(script)}`,
+          `No ${workspacePatterns.length ? "matching " : ""}workspaces found${options.inline ? " in the project" : " with script " + JSON.stringify(script)}`,
         );
       }
       process.exit(1);
@@ -103,7 +140,7 @@ export const runScript = handleProjectCommand(
             }
           : true
         : undefined,
-      args: options.args,
+      args: scriptArgs,
       parallel:
         typeof options.parallel === "boolean" ||
         typeof options.parallel === "undefined"
