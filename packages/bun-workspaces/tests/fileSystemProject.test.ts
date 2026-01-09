@@ -1,11 +1,31 @@
 import { availableParallelism } from "node:os";
+import path from "node:path";
 import { expect, test, describe } from "bun:test";
 import { getUserEnvVar } from "../src/config/userEnvVars";
+import { BUN_LOCK_ERRORS } from "../src/internal/bun";
 import { createFileSystemProject, PROJECT_ERRORS } from "../src/project";
 import { getProjectRoot } from "./testProjects";
 import { withWindowsPath } from "./util/windows";
 
 describe("Test FileSystemProject", () => {
+  test("createFileSystemProject: root directory defaults to process.cwd()", async () => {
+    expect(() => createFileSystemProject()).toThrow(
+      BUN_LOCK_ERRORS.BunLockNotFound,
+    );
+    expect(() => createFileSystemProject()).toThrow(
+      `No bun.lock found at ${withWindowsPath(process.cwd())}.`,
+    );
+  });
+
+  test("createFileSystemProject: root directory is relative to process.cwd()  ", async () => {
+    const project = createFileSystemProject({
+      rootDirectory: "../..",
+    });
+    expect(project.rootDirectory).toBe(
+      withWindowsPath(path.resolve(process.cwd(), "../..")),
+    );
+  });
+
   test("runWorkspaceScript: simple success", async () => {
     const project = createFileSystemProject({
       rootDirectory: getProjectRoot("default"),

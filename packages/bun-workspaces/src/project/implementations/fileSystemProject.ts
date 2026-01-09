@@ -25,8 +25,8 @@ import { ProjectBase, resolveWorkspacePath } from "./projectBase";
 
 /** Arguments for {@link createFileSystemProject} */
 export type CreateFileSystemProjectOptions = {
-  /** The directory containing the root package.json. Often the same root as a git repository. */
-  rootDirectory: string;
+  /** The directory containing the root package.json. Often the same root as a git repository. Relative to process.cwd(). The default is process.cwd(). */
+  rootDirectory?: string;
   /**
    * The name of the project.
    *
@@ -129,10 +129,13 @@ class _FileSystemProject extends ProjectBase implements Project {
       _FileSystemProject.#initialized = true;
     }
 
-    this.rootDirectory = path.resolve(options.rootDirectory);
+    this.rootDirectory = path.resolve(
+      process.cwd(),
+      options.rootDirectory ?? "",
+    );
 
     const { workspaces, workspaceConfigMap } = findWorkspaces({
-      rootDirectory: options.rootDirectory,
+      rootDirectory: this.rootDirectory,
       workspaceAliases: options.workspaceAliases,
     });
 
@@ -332,7 +335,7 @@ export type FileSystemProject = Simplify<_FileSystemProject>;
  * and detects and utilizes any provided configuration.
  */
 export const createFileSystemProject = (
-  options: CreateFileSystemProjectOptions,
+  options: CreateFileSystemProjectOptions = {},
 ): FileSystemProject => new _FileSystemProject(options);
 
 /** @deprecated temporarily supports workspaceAliases from deprecated config file */
