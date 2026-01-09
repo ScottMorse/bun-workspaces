@@ -13,6 +13,9 @@ import {
   createMemoryProject,
   type FileSystemProject,
 } from "../../project";
+import { defineGlobalCommands } from "../commands";
+import type { ProjectCommandContext } from "../commands/commandHandlerUtils";
+import { doctor } from "../commands/handleSimpleCommands";
 import {
   type CliGlobalOptionName,
   type CliGlobalOptions,
@@ -128,7 +131,7 @@ const applyGlobalOptions = (
     }) as unknown as FileSystemProject;
   }
 
-  return { project, error };
+  return { project, projectError: error };
 };
 
 export const initializeWithGlobalOptions = (

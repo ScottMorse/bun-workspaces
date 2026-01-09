@@ -3,25 +3,20 @@ import {
   type CliGlobalOptionConfig,
   type CliGlobalOptionName,
 } from "bun-workspaces/src/cli/globalOptions/globalOptionsConfig";
-import type { CliOptionContent } from "./cliOption";
-
-export type CliGlobalOptionContent = Omit<
-  CliGlobalOptionConfig,
-  "description"
-> &
-  CliOptionContent & {
-    optionName: CliGlobalOptionName;
-  };
+import type { CliGlobalOptionContent, CliGlobalOptionInfo } from "./cliOption";
 
 const defineOptionContent = (
   optionName: CliGlobalOptionName,
-  factory: (optionConfig: CliGlobalOptionConfig) => CliOptionContent,
+  factory: (
+    optionConfig: CliGlobalOptionConfig,
+  ) => Omit<CliGlobalOptionInfo, "optionName">,
 ): CliGlobalOptionContent => {
   const config = getCliGlobalOptionConfig(optionName);
+  const content = factory(config);
   return {
     optionName,
     ...config,
-    ...factory(config),
+    ...content,
   };
 };
 

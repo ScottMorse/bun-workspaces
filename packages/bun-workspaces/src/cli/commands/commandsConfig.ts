@@ -1,7 +1,8 @@
 import { SCRIPT_SHELL_OPTIONS } from "../../runScript/scriptShellOption";
 
-export interface CliProjectCommandConfig {
+export interface CliCommandConfig {
   command: string;
+  isGlobal: boolean;
   aliases: string[];
   description: string;
   options: Record<
@@ -10,11 +11,25 @@ export interface CliProjectCommandConfig {
   >;
 }
 
-export type CliProjectCommandName = keyof typeof CLI_PROJECT_COMMANDS_CONFIG;
+export type CliCommandName = keyof typeof CLI_COMMANDS_CONFIG;
 
-const CLI_PROJECT_COMMANDS_CONFIG = {
+export type CliGlobalCommandName = {
+  [K in CliCommandName]: (typeof CLI_COMMANDS_CONFIG)[K] extends {
+    isGlobal: true;
+  }
+    ? K
+    : never;
+}[CliCommandName];
+
+export type CliProjectCommandName = Exclude<
+  CliCommandName,
+  CliGlobalCommandName
+>;
+
+const CLI_COMMANDS_CONFIG = {
   doctor: {
     command: "doctor",
+    isGlobal: true,
     aliases: [],
     description: "Print diagnostic information",
     options: {
@@ -30,6 +45,7 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
   },
   listWorkspaces: {
     command: "list-workspaces [pattern]",
+    isGlobal: false,
     aliases: ["ls", "list"],
     description: "List all workspaces",
     options: {
@@ -49,6 +65,7 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
   },
   listScripts: {
     command: "list-scripts",
+    isGlobal: false,
     aliases: ["ls-scripts"],
     description: "List all scripts available with their workspaces",
     options: {
@@ -68,6 +85,7 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
   },
   workspaceInfo: {
     command: "workspace-info <workspaceName>",
+    isGlobal: false,
     aliases: ["info"],
     description: "Show information about a workspace",
     options: {
@@ -83,6 +101,7 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
   },
   scriptInfo: {
     command: "script-info <script>",
+    isGlobal: false,
     aliases: [],
     description: "Show information about a script",
     options: {
@@ -102,6 +121,7 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
   },
   runScript: {
     command: "run-script <script> [workspaces...]",
+    isGlobal: false,
     aliases: ["run"],
     description:
       'Run a script in all workspaces that have it in their "scripts" field in package.json',
@@ -139,10 +159,10 @@ const CLI_PROJECT_COMMANDS_CONFIG = {
       },
     },
   },
-} as const satisfies Record<string, CliProjectCommandConfig>;
+} as const satisfies Record<string, CliCommandConfig>;
 
-export const getProjectCommandConfig = (commandName: CliProjectCommandName) =>
-  CLI_PROJECT_COMMANDS_CONFIG[commandName];
+export const getCliCommandConfig = (commandName: CliCommandName) =>
+  CLI_COMMANDS_CONFIG[commandName];
 
-export const getCliProjectCommandNames = () =>
-  Object.keys(CLI_PROJECT_COMMANDS_CONFIG) as CliProjectCommandName[];
+export const getCliCommandNames = () =>
+  Object.keys(CLI_COMMANDS_CONFIG) as CliCommandName[];

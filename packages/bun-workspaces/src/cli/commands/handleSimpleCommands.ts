@@ -6,10 +6,11 @@ import {
   commandOutputLogger,
   createScriptInfoLines,
   createWorkspaceInfoLines,
-  handleCommand,
+  handleProjectCommand,
+  handleGlobalCommand,
 } from "./commandHandlerUtils";
 
-export const doctor = handleCommand(
+export const doctor = handleGlobalCommand(
   "doctor",
   (_, options: { json: boolean; pretty: boolean }) => {
     const info = getDoctorInfo();
@@ -41,7 +42,7 @@ export const doctor = handleCommand(
   },
 );
 
-export const listWorkspaces = handleCommand(
+export const listWorkspaces = handleProjectCommand(
   "listWorkspaces",
   (
     { project },
@@ -83,7 +84,7 @@ export const listWorkspaces = handleCommand(
   },
 );
 
-export const listScripts = handleCommand(
+export const listScripts = handleProjectCommand(
   "listScripts",
   (
     { project },
@@ -132,7 +133,7 @@ export const listScripts = handleCommand(
   },
 );
 
-export const workspaceInfo = handleCommand(
+export const workspaceInfo = handleProjectCommand(
   "workspaceInfo",
   (
     { project },
@@ -158,7 +159,7 @@ export const workspaceInfo = handleCommand(
   },
 );
 
-export const scriptInfo = handleCommand(
+export const scriptInfo = handleProjectCommand(
   "scriptInfo",
   (
     { project },

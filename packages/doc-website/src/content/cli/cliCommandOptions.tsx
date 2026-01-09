@@ -1,23 +1,17 @@
 import {
-  getProjectCommandConfig,
-  type CliProjectCommandConfig,
-  type CliProjectCommandName,
-} from "bun-workspaces/src/cli/projectCommands/projectCommandsConfig";
-import type { CliOptionContent } from "./cliOption";
+  getCliCommandConfig,
+  type CliCommandConfig,
+  type CliCommandName,
+} from "bun-workspaces/src/cli/commands/commandsConfig";
+import type { CliCommandContent, CliCommandInfo } from "./cliOption";
 
-export type CliProjectCommandContent = Omit<
-  CliProjectCommandConfig,
-  "description"
-> &
-  CliOptionContent & {
-    optionName: CliProjectCommandName;
-  };
-
-const defineOptionContent = (
-  optionName: CliProjectCommandName,
-  factory: (optionConfig: CliProjectCommandConfig) => CliOptionContent,
-): CliProjectCommandContent => {
-  const config = getProjectCommandConfig(optionName);
+const defineCommandContent = (
+  commandName: CliCommandName,
+  factory: (
+    optionConfig: CliCommandConfig,
+  ) => Omit<CliCommandInfo, "commandName">,
+): CliCommandContent => {
+  const config = getCliCommandConfig(commandName);
   const content = factory(config);
 
   const exampleLines = content.examples.filter(
@@ -51,14 +45,14 @@ const defineOptionContent = (
   }
 
   return {
-    optionName,
+    commandName,
     ...config,
     ...factory(config),
   };
 };
 
-const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
-  listWorkspaces: defineOptionContent("listWorkspaces", () => ({
+const CLI_PROJECT_COMMANDS_CONTENT = {
+  listWorkspaces: defineCommandContent("listWorkspaces", () => ({
     title: "List Workspaces",
     description:
       'List all workspaces found in the project. This uses the "workspaces" field in your root package.json file.',
@@ -76,7 +70,7 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
       `bw list-workspaces --json --pretty`,
     ],
   })),
-  listScripts: defineOptionContent("listScripts", () => ({
+  listScripts: defineCommandContent("listScripts", () => ({
     title: "List Scripts",
     description: "List all scripts available with their workspaces",
     examples: [
@@ -93,7 +87,7 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
       `bw list-scripts --json --pretty`,
     ],
   })),
-  workspaceInfo: defineOptionContent("workspaceInfo", () => ({
+  workspaceInfo: defineCommandContent("workspaceInfo", () => ({
     title: "Workspace Info",
     description: "Show metadata about a workspace",
     examples: [
@@ -107,7 +101,7 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
       `bw workspace-info --json --pretty`,
     ],
   })),
-  scriptInfo: defineOptionContent("scriptInfo", () => ({
+  scriptInfo: defineCommandContent("scriptInfo", () => ({
     title: "Script Info",
     description: "Show metadata about a script",
     examples: [
@@ -124,7 +118,7 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
       `bw script-info --json --pretty`,
     ],
   })),
-  runScript: defineOptionContent("runScript", () => ({
+  runScript: defineCommandContent("runScript", () => ({
     title: "Run Script",
     description:
       'Run a script in all workspaces that have it in their "scripts" field in their respective package.json, or run an inline script.',
@@ -177,7 +171,7 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
       `bw run my-script --json-outfile=results.json`,
     ],
   })),
-  doctor: defineOptionContent("doctor", () => ({
+  doctor: defineCommandContent("doctor", () => ({
     title: "Doctor",
     description: "Print diagnostic information for bug reports etc.",
     examples: [
@@ -185,11 +179,10 @@ const CLI_PROJECT_COMMAND_OPTIONS_CONTENT = {
       "bw doctor --json --pretty # Output as formatted JSON",
     ],
   })),
-} as const satisfies Record<CliProjectCommandName, CliProjectCommandContent>;
+} as const satisfies Record<CliCommandName, CliCommandContent>;
 
-export const getCliProjectCommandContent = (
-  commandName: CliProjectCommandName,
-) => CLI_PROJECT_COMMAND_OPTIONS_CONTENT[commandName];
+export const getCliCommandContent = (commandName: CliCommandName) =>
+  CLI_PROJECT_COMMANDS_CONTENT[commandName];
 
-export const getCliProjectCommandsContent = () =>
-  Object.values(CLI_PROJECT_COMMAND_OPTIONS_CONTENT);
+export const getCliCommandsContent = () =>
+  Object.values(CLI_PROJECT_COMMANDS_CONTENT);
