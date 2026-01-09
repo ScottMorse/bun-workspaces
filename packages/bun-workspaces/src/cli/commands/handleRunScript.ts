@@ -13,8 +13,9 @@ export const runScript = handleProjectCommand(
   async (
     { project },
     script: string,
-    _workspaces: string[],
+    _workspacePatterns: string[],
     options: {
+      workspacePatterns: string | undefined;
       parallel: boolean | string;
       args: string;
       prefix: boolean;
@@ -32,16 +33,27 @@ export const runScript = handleProjectCommand(
         ? options.parallel.trim()
         : options.parallel;
 
+    if (_workspacePatterns.length && options.workspacePatterns) {
+      logger.error(
+        "CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-w option",
+      );
+      process.exit(1);
+    }
+
+    const workspacePatterns = _workspacePatterns?.length
+      ? _workspacePatterns
+      : (options.workspacePatterns?.split(",") ?? []);
+
     logger.debug(
       `Command: Run script ${JSON.stringify(script)} for ${
-        _workspaces.length
-          ? "workspaces " + _workspaces.join(", ")
+        workspacePatterns.length
+          ? "workspaces " + workspacePatterns.join(", ")
           : "all workspaces"
       } (parallel: ${!!options.parallel}, args: ${JSON.stringify(options.args)})`,
     );
 
-    const workspaces: Workspace[] = _workspaces.length
-      ? (_workspaces
+    const workspaces: Workspace[] = workspacePatterns.length
+      ? (workspacePatterns
           .flatMap((workspacePattern) => {
             if (workspacePattern.includes("*")) {
               return project
@@ -70,11 +82,16 @@ export const runScript = handleProjectCommand(
         : project.listWorkspacesWithScript(script);
 
     if (!workspaces.length) {
-      if (_workspaces.length === 1 && !_workspaces[0].includes("*")) {
-        logger.error(`Workspace not found: ${JSON.stringify(_workspaces[0])}`);
+      if (
+        workspacePatterns.length === 1 &&
+        !workspacePatterns[0].includes("*")
+      ) {
+        logger.error(
+          `Workspace not found: ${JSON.stringify(workspacePatterns[0])}`,
+        );
       } else {
         logger.error(
-          `No ${_workspaces.length ? "matching " : ""}workspaces found${options.inline ? " in the project" : " with script " + JSON.stringify(script)}`,
+          `No ${workspacePatterns.length ? "matching " : ""}workspaces found${options.inline ? " in the project" : " with script " + JSON.stringify(script)}`,
         );
       }
       process.exit(1);
