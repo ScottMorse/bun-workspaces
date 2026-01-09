@@ -13,6 +13,7 @@ import {
 
 export interface GlobalCommandContext {
   program: Command;
+  postTerminatorArgs: string[];
 }
 
 export type ProjectCommandContext = GlobalCommandContext & {

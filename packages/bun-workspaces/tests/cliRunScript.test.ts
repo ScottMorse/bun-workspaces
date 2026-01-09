@@ -417,6 +417,42 @@ passed args: library-1b
 ✅ library-1b: test-echo
 4 scripts ran successfully`,
     );
+
+    const terminatorResult = await run(
+      "run-script",
+      "test-echo",
+      "--",
+      "test-args",
+      "--another-arg",
+    );
+    expect(terminatorResult.exitCode).toBe(0);
+    assertOutputMatches(
+      terminatorResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:test-echo] passed args: test-args --another-arg
+[application-1b:test-echo] passed args: test-args --another-arg
+[library-1a:test-echo] passed args: test-args --another-arg
+[library-1b:test-echo] passed args: test-args --another-arg
+✅ application-1a: test-echo
+✅ application-1b: test-echo
+✅ library-1a: test-echo
+✅ library-1b: test-echo
+4 scripts ran successfully`,
+    );
+
+    const terminatorAndOptionResult = await run(
+      "run-script",
+      "test-echo",
+      "--args=my-arg",
+      "--",
+      "test-args",
+      "--another-arg",
+      "--args=test-args",
+    );
+    expect(terminatorAndOptionResult.exitCode).toBe(1);
+    assertOutputMatches(
+      terminatorAndOptionResult.stderr.sanitizedCompactLines,
+      `CLI syntax error: Cannot use both --args and inline script args after --`,
+    );
   });
 
   test("Using --no-prefix", async () => {

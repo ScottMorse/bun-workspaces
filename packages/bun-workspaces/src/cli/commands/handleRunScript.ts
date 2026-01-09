@@ -11,7 +11,7 @@ import {
 export const runScript = handleProjectCommand(
   "runScript",
   async (
-    { project },
+    { project, postTerminatorArgs },
     script: string,
     _workspacePatterns: string[],
     options: {
@@ -33,6 +33,17 @@ export const runScript = handleProjectCommand(
         ? options.parallel.trim()
         : options.parallel;
 
+    if (postTerminatorArgs.length && options.args) {
+      logger.error(
+        "CLI syntax error: Cannot use both --args and inline script args after --",
+      );
+      process.exit(1);
+    }
+
+    const scriptArgs = postTerminatorArgs.length
+      ? postTerminatorArgs.join(" ")
+      : options.args;
+
     if (_workspacePatterns.length && options.workspacePatterns) {
       logger.error(
         "CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-w option",
@@ -49,7 +60,7 @@ export const runScript = handleProjectCommand(
         workspacePatterns.length
           ? "workspaces " + workspacePatterns.join(", ")
           : "all workspaces"
-      } (parallel: ${!!options.parallel}, args: ${JSON.stringify(options.args)})`,
+      } (parallel: ${!!options.parallel}, args: ${JSON.stringify(scriptArgs)})`,
     );
 
     const workspaces: Workspace[] = workspacePatterns.length
@@ -120,7 +131,7 @@ export const runScript = handleProjectCommand(
             }
           : true
         : undefined,
-      args: options.args,
+      args: scriptArgs,
       parallel:
         typeof options.parallel === "boolean" ||
         typeof options.parallel === "undefined"

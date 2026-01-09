@@ -49,9 +49,21 @@ export const createCli = ({
 
       postInit?.(program);
 
-      const args = tempFixCamelCaseOptions(
+      const rawArgs = tempFixCamelCaseOptions(
         typeof argv === "string" ? argv.split(/s+/) : argv,
       );
+
+      const { args, postTerminatorArgs } = (() => {
+        const terminatorIndex = rawArgs.findIndex((arg) => arg === "--");
+        return {
+          args:
+            terminatorIndex !== -1
+              ? rawArgs.slice(0, terminatorIndex)
+              : rawArgs,
+          postTerminatorArgs:
+            terminatorIndex !== -1 ? rawArgs.slice(terminatorIndex + 1) : [],
+        };
+      })();
 
       const { project, projectError } = initializeWithGlobalOptions(
         program,
@@ -70,9 +82,10 @@ export const createCli = ({
         program,
         project,
         projectError,
+        postTerminatorArgs,
       });
 
-      defineGlobalCommands({ program });
+      defineGlobalCommands({ program, postTerminatorArgs });
 
       await program.parseAsync(args, {
         from: programmatic ? "user" : "node",
