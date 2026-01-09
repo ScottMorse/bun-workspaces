@@ -3,12 +3,15 @@ import { getUserEnvVarName } from "bun-workspaces/src/config/userEnvVars";
 export const CREATE_FS_PROJECT_EXAMPLE = `
 import { createFileSystemProject } from "bun-workspaces";
 
-const project = createFileSystemProject({
+// Root directory defaults to process.cwd()
+const defaultProject = createFileSystemProject();
+
+const pathProject = createFileSystemProject({
   rootDirectory: "./path/to/project/root" // relative from process.cwd()
 });
 
-console.log(project.name); // The name from the root package.json
-console.log(project.workspaces); // An array of workspaces found in the project
+console.log(pathProject.name); // The name from the root package.json
+console.log(pathProject.workspaces); // An array of workspaces found in the project
 `.trim();
 
 export const CREATE_MEMORY_PROJECT_EXAMPLE = `
@@ -201,9 +204,9 @@ export const API_QUICKSTART = `
 import { createFileSystemProject } from "bun-workspaces";
 
 // A Project contains the core functionality of bun-workspaces.
-const project = createFileSystemProject({
-  rootDirectory: "path/to/your/project", // relative from process.cwd()
-});
+// Below defaults to process.cwd() for the project root directory
+// Pass { rootDirectory: "path/to/your/project" } to use a different root directory
+const project = createFileSystemProject();
 
 // A Workspace that matches the name or alias "my-workspace"
 const myWorkspace = project.findWorkspaceByNameOrAlias("my-workspace");
@@ -226,6 +229,10 @@ const runManyScripts = async () => {
 `.trim();
 
 export const API_PARALLEL_SCRIPTS_EXAMPLE = `
+import { createFileSystemProject } from "bun-workspaces";
+
+const project = createFileSystemProject();
+
 // Run in parallel with the default limit 
 // Equal to "auto" or value of process.env.${getUserEnvVarName("parallelMaxDefault")}
 project.runScriptAcrossWorkspaces({
@@ -271,6 +278,10 @@ project.runScriptAcrossWorkspaces({
 `.trim();
 
 export const API_INLINE_SHELL_EXAMPLE = `
+import { createFileSystemProject } from "bun-workspaces";
+
+const project = createFileSystemProject();
+
 // This will use the Bun shell unless ${getUserEnvVarName("scriptShellDefault")} is set to "system"
 project.runWorkspaceScript({
   workspaceNameOrAlias: "my-workspace",
