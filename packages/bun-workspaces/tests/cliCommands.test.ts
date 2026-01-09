@@ -635,7 +635,7 @@ Script: library-b
     },
   );
 
-  test.only("Project command exits with error if invalid project is provided", async () => {
+  test("Project command exits with error if invalid project is provided", async () => {
     const { run } = setupCliTest({
       testProject: "invalidBadJson",
     });
