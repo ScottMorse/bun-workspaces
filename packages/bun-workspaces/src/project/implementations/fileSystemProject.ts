@@ -70,8 +70,8 @@ export type ParallelOption = boolean | RunScriptsParallelOptions;
 
 /** Arguments for `FileSystemProject.runScriptAcrossWorkspaces` */
 export type RunScriptAcrossWorkspacesOptions = {
-  /** Workspace names, aliases, or patterns including a wildcard */
-  workspacePatterns: string[];
+  /** Workspace names, aliases, or patterns including a wildcard. When not provided, all workspaces that the script can be ran in will be used. */
+  workspacePatterns?: string[];
   /** The name of the script to run, or an inline command when `inline` is true */
   script: string;
   /** Whether to run the script as an inline command */
@@ -229,7 +229,10 @@ class _FileSystemProject extends ProjectBase implements Project {
   runScriptAcrossWorkspaces(
     options: RunScriptAcrossWorkspacesOptions,
   ): RunScriptAcrossWorkspacesResult {
-    const workspaces = options.workspacePatterns
+    const workspaces = (
+      options.workspacePatterns ??
+      this.workspaces.map((workspace) => workspace.name)
+    )
       .flatMap((pattern) => this.findWorkspacesByPattern(pattern))
       .filter(
         (workspace) =>

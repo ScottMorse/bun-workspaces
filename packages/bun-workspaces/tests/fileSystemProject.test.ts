@@ -326,6 +326,129 @@ describe("Test FileSystemProject", () => {
     });
   });
 
+  test("runScriptAcrossWorkspaces: all workspaces", async () => {
+    const project = createFileSystemProject({
+      rootDirectory: getProjectRoot("simple1"),
+    });
+
+    const { output, summary } = project.runScriptAcrossWorkspaces({
+      script: "all-workspaces",
+    });
+
+    const outputChunk = {
+      streamName: "stdout" as const,
+      text: "script for all workspaces",
+      textNoAnsi: "script for all workspaces",
+    };
+
+    const expectedOutput = [
+      {
+        outputChunk,
+      },
+      {
+        outputChunk,
+      },
+      {
+        outputChunk,
+      },
+      {
+        outputChunk,
+      },
+    ];
+
+    let i = 0;
+    for await (const { outputChunk } of output) {
+      expect(outputChunk.decode().trim()).toBe(
+        expectedOutput[i].outputChunk.text,
+      );
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
+        expectedOutput[i].outputChunk.textNoAnsi,
+      );
+      i++;
+    }
+
+    const summaryResult = await summary;
+    expect(summaryResult).toEqual({
+      totalCount: 4,
+      successCount: 4,
+      failureCount: 0,
+      allSuccess: true,
+      startTimeISO: expect.any(String),
+      endTimeISO: expect.any(String),
+      durationMs: expect.any(Number),
+      scriptResults: [
+        {
+          exitCode: 0,
+          success: true,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+          metadata: {
+            workspace: {
+              name: "application-1a",
+              matchPattern: "applications/*",
+              path: withWindowsPath("applications/applicationA"),
+              scripts: ["a-workspaces", "all-workspaces", "application-a"],
+              aliases: [],
+            },
+          },
+        },
+        {
+          exitCode: 0,
+          success: true,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+          metadata: {
+            workspace: {
+              name: "application-1b",
+              matchPattern: "applications/*",
+              path: withWindowsPath("applications/applicationB"),
+              scripts: ["all-workspaces", "application-b", "b-workspaces"],
+              aliases: [],
+            },
+          },
+        },
+        {
+          exitCode: 0,
+          success: true,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+          metadata: {
+            workspace: {
+              name: "library-1a",
+              matchPattern: "libraries/*",
+              path: withWindowsPath("libraries/libraryA"),
+              scripts: ["a-workspaces", "all-workspaces", "library-a"],
+              aliases: [],
+            },
+          },
+        },
+        {
+          exitCode: 0,
+          success: true,
+          startTimeISO: expect.any(String),
+          endTimeISO: expect.any(String),
+          durationMs: expect.any(Number),
+          signal: null,
+          metadata: {
+            workspace: {
+              name: "library-1b",
+              matchPattern: "libraries/*",
+              path: withWindowsPath("libraries/libraryB"),
+              scripts: ["all-workspaces", "b-workspaces", "library-b"],
+              aliases: [],
+            },
+          },
+        },
+      ],
+    });
+  });
+
   test("runScriptAcrossWorkspaces: some workspaces", async () => {
     const project = createFileSystemProject({
       rootDirectory: getProjectRoot("simple1"),
