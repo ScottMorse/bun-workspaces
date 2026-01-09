@@ -143,10 +143,19 @@ console.log(exitResult.metadata.workspace); // The target workspace (Workspace)
 export const RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE = `
 
 const { output, summary } = project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"], // this will run in all workspaces that have my-script
-  script: "my-script", // the package.json "scripts" field name to run
+  // Optional. This will run in all matching workspaces that have my-script
+  // Accepts same values as the CLI run-script command's workspace patterns
+  // When not provided, all workspaces that have the script will be used.
+  workspacePatterns: ["my-workspace", "my-pattern-*"],
+
+  // Required. The package.json "scripts" field name to run
+  script: "my-script",
+
+  // Optional. Arguments to add to the command
   args: "--my --appended --args", // optional, arguments to add to the command
-  parallel: true, // optional, run the scripts in parallel
+
+  // Optional. Whether to run the scripts in parallel
+  parallel: true,
 });
 
 // Get a stream of script output
@@ -236,42 +245,36 @@ const project = createFileSystemProject();
 // Run in parallel with the default limit 
 // Equal to "auto" or value of process.env.${getUserEnvVarName("parallelMaxDefault")}
 project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
   script: "my-script",
   parallel: true,
 });
 
 // Same result as above
 project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
   script: "my-script",
   parallel: { max: "default" },
 });
 
 // Run in parallel with the number of available logical CPUs
 project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
   script: "my-script",
   parallel: { max: "auto" },
 });
 
 // Run in parallel with a max of 50% of the available logical CPUs
 project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
   script: "my-script",
   parallel: { max: "50%" },
 });
 
 // Run in parallel with no concurrency limit (use with caution)
 project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
   script: "my-script",
   parallel: { max: "unbounded" },
 });
 
 // Run in parallel with a max of 2 concurrent scripts
 project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
   script: "my-script",
   parallel: { max: 2 },
 });

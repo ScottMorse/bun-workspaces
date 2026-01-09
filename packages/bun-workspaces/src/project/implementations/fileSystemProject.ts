@@ -70,7 +70,11 @@ export type ParallelOption = boolean | RunScriptsParallelOptions;
 
 /** Arguments for `FileSystemProject.runScriptAcrossWorkspaces` */
 export type RunScriptAcrossWorkspacesOptions = {
-  /** Workspace names, aliases, or patterns including a wildcard. When not provided, all workspaces that the script can be ran in will be used. */
+  /**
+   * Workspace names, aliases, or patterns including a wildcard.
+   *
+   * When not provided, all workspaces that the script can be ran in will be used.
+   */
   workspacePatterns?: string[];
   /** The name of the script to run, or an inline command when `inline` is true */
   script: string;

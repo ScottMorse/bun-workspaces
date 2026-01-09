@@ -342,18 +342,10 @@ describe("Test FileSystemProject", () => {
     };
 
     const expectedOutput = [
-      {
-        outputChunk,
-      },
-      {
-        outputChunk,
-      },
-      {
-        outputChunk,
-      },
-      {
-        outputChunk,
-      },
+      { outputChunk },
+      { outputChunk },
+      { outputChunk },
+      { outputChunk },
     ];
 
     let i = 0;
