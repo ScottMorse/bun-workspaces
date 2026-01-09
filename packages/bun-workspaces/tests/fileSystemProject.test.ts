@@ -9,21 +9,36 @@ import { withWindowsPath } from "./util/windows";
 
 describe("Test FileSystemProject", () => {
   test("createFileSystemProject: root directory defaults to process.cwd()", async () => {
-    expect(() => createFileSystemProject()).toThrow(
-      BUN_LOCK_ERRORS.BunLockNotFound,
-    );
-    expect(() => createFileSystemProject()).toThrow(
-      `No bun.lock found at ${withWindowsPath(process.cwd())}.`,
-    );
+    if (process.env.IS_BUILD === "true") {
+      expect(createFileSystemProject().rootDirectory).toBe(
+        withWindowsPath(process.cwd()),
+      );
+    } else {
+      expect(() => createFileSystemProject()).toThrow(
+        BUN_LOCK_ERRORS.BunLockNotFound,
+      );
+      expect(() => createFileSystemProject()).toThrow(
+        `No bun.lock found at ${withWindowsPath(process.cwd())}.`,
+      );
+    }
   });
 
   test("createFileSystemProject: root directory is relative to process.cwd()  ", async () => {
-    const project = createFileSystemProject({
-      rootDirectory: "../..",
-    });
-    expect(project.rootDirectory).toBe(
-      withWindowsPath(path.resolve(process.cwd(), "../..")),
-    );
+    if (process.env.IS_BUILD === "true") {
+      const project = createFileSystemProject({
+        rootDirectory: "../../../",
+      });
+      expect(project.rootDirectory).toBe(
+        withWindowsPath(path.resolve(process.cwd(), "../../..")),
+      );
+    } else {
+      const project = createFileSystemProject({
+        rootDirectory: "../..",
+      });
+      expect(project.rootDirectory).toBe(
+        withWindowsPath(path.resolve(process.cwd(), "../..")),
+      );
+    }
   });
 
   test("runWorkspaceScript: simple success", async () => {
