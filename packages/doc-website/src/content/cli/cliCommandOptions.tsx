@@ -8,14 +8,14 @@ import type { CliCommandContent, CliCommandInfo } from "./cliOption";
 const defineCommandContent = (
   commandName: CliCommandName,
   factory: (
-    optionConfig: CliCommandConfig,
-  ) => Omit<CliCommandInfo, "commandName">,
+    optionConfig: CliCommandConfig
+  ) => Omit<CliCommandInfo, "commandName">
 ): CliCommandContent => {
   const config = getCliCommandConfig(commandName);
   const content = factory(config);
 
   const exampleLines = content.examples.filter(
-    (example) => example.trim() && !example.match(/^\s*#/),
+    (example) => example.trim() && !example.match(/^\s*#/)
   );
 
   const getMainFlag = (flags: string[]) => {
@@ -28,7 +28,7 @@ const defineCommandContent = (
       !exampleLines.find((line) => line.includes(getMainFlag(option.flags)))
     ) {
       throw new Error(
-        `Expected an example to include ${getMainFlag(option.flags)}`,
+        `Expected an example to include ${getMainFlag(option.flags)}`
       );
     }
   }
@@ -37,7 +37,7 @@ const defineCommandContent = (
     !exampleLines.find((line) => {
       // line that uses no flags
       return Object.values(config.options).every(
-        (option) => !line.includes(getMainFlag(option.flags)),
+        (option) => !line.includes(getMainFlag(option.flags))
       );
     })
   ) {
@@ -68,6 +68,12 @@ const CLI_PROJECT_COMMANDS_CONTENT = {
       "",
       "# Output as formatted JSON",
       `bw list-workspaces --json --pretty`,
+      "",
+      "# Filter workspaces by pattern",
+      `bw list-workspaces my-workspace "my-pattern-*"`,
+      "",
+      "# Filter workspaces by pattern using the --workspace-patterns|-w option",
+      `bw list-workspaces --workspace-patterns="my-pattern-*,my-workspace"`,
     ],
   })),
   listScripts: defineCommandContent("listScripts", () => ({
