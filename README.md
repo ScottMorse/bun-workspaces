@@ -78,9 +78,9 @@ bw --log-level=silent run my-script
 import { createFileSystemProject } from "bun-workspaces";
 
 // A Project contains the core functionality of bun-workspaces.
-const project = createFileSystemProject({
-  rootDirectory: "path/to/your/project",
-});
+// Below defaults to process.cwd() for the project root directory
+// Pass { rootDirectory: "path/to/your/project" } to use a different root directory
+const project = createFileSystemProject();
 
 // A Workspace that matches the name or alias "my-workspace"
 const myWorkspace = project.findWorkspaceByNameOrAlias("my-workspace");
@@ -122,10 +122,19 @@ const runSingleScript = async () => {
 // Run a script in all workspaces that have it in their package.json "scripts" field
 const runManyScripts = async () => {
   const { output, summary } = project.runScriptAcrossWorkspaces({
-    workspacePatterns: ["*"], // this will run in all workspaces that have my-script
-    script: "my-script", // the package.json "scripts" field name to run
+    // Optional. This will run in all matching workspaces that have my-script
+    // Accepts same values as the CLI run-script command's workspace patterns
+    // When not provided, all workspaces that have the script will be used.
+    workspacePatterns: ["my-workspace", "my-pattern-*"],
+
+    // Required. The package.json "scripts" field name to run
+    script: "my-script",
+
+    // Optional. Arguments to add to the command
     args: "--my --appended --args", // optional, arguments to add to the command
-    parallel: true, // optional, run the scripts in parallel
+
+    // Optional. Whether to run the scripts in parallel
+    parallel: true,
   });
 
   // Get a stream of script output
