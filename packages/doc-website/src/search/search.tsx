@@ -1,7 +1,7 @@
 import { type OnSearch } from "rspress/theme";
 import {
   getCliGlobalOptionsContent,
-  getCliProjectCommandsContent,
+  getCliCommandsContent,
 } from "../content/cli";
 import { getCommandId, getGlobalOptionId } from "../content/cli/searchIds";
 
@@ -18,16 +18,16 @@ const matches = (s: string, query: string) =>
 const onSearch: OnSearch = async (query, defaultResult) => {
   query = sanitize(query);
 
-  for (const command of getCliProjectCommandsContent()) {
+  for (const command of getCliCommandsContent()) {
     if (
       matches(command.title, query) ||
       matches(command.description, query) ||
       matches(command.command, query) ||
-      matches(command.optionName, query) ||
+      matches(command.commandName, query) ||
       Object.values(command.options).some(
         (option) =>
           matches(option.flags[option.flags.length - 1], query) ||
-          matches(option.description, query),
+          matches(option.description, query)
       )
     ) {
       defaultResult[0].result?.push({

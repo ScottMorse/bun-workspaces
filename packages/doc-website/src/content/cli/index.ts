@@ -1,3 +1,3 @@
 export * from "./cliGlobalOptions";
-export * from "./cliProjectCommandOptions";
+export * from "./cliCommandOptions";
 export type * from "./cliOption";
