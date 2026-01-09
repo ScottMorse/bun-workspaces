@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import { logger } from "../../internal/logger";
 import type { ParallelMaxValue, ScriptShellOption } from "../../runScript";
-import type { Workspace } from "../../workspaces";
+import { sortWorkspaces, type Workspace } from "../../workspaces";
 import {
   commandOutputLogger,
   handleProjectCommand,
@@ -12,9 +12,10 @@ export const runScript = handleProjectCommand(
   "runScript",
   async (
     { project, postTerminatorArgs },
-    script: string,
+    _script: string,
     _workspacePatterns: string[],
     options: {
+      script: string | undefined;
       workspacePatterns: string | undefined;
       parallel: boolean | string;
       args: string;
@@ -33,6 +34,12 @@ export const runScript = handleProjectCommand(
         ? options.parallel.trim()
         : options.parallel;
 
+    if (_script && options.script) {
+      _workspacePatterns.splice(0, 0, _script);
+    }
+
+    const script = options.script || _script;
+
     if (postTerminatorArgs.length && options.args) {
       logger.error(
         "CLI syntax error: Cannot use both --args and inline script args after --",
@@ -46,7 +53,7 @@ export const runScript = handleProjectCommand(
 
     if (_workspacePatterns.length && options.workspacePatterns) {
       logger.error(
-        "CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-w option",
+        "CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-W option",
       );
       process.exit(1);
     }
@@ -63,7 +70,7 @@ export const runScript = handleProjectCommand(
       } (parallel: ${!!options.parallel}, args: ${JSON.stringify(scriptArgs)})`,
     );
 
-    const workspaces: Workspace[] = workspacePatterns.length
+    let workspaces: Workspace[] = workspacePatterns.length
       ? (workspacePatterns
           .flatMap((workspacePattern) => {
             if (workspacePattern.includes("*")) {
@@ -91,6 +98,8 @@ export const runScript = handleProjectCommand(
       : options.inline
         ? project.workspaces
         : project.listWorkspacesWithScript(script);
+
+    workspaces = sortWorkspaces(workspaces);
 
     if (!workspaces.length) {
       if (

@@ -197,7 +197,7 @@ Workspace: library-1b
 
       const workspacePatternsOptionShortResult = await run(
         command,
-        "-w",
+        "-W",
         "application-*,library-1b",
       );
       expect(workspacePatternsOptionShortResult.stderr.raw).toBeEmpty();
@@ -217,7 +217,7 @@ Workspace: library-1b
       expect(workspacePatternsOptionAndPatternResult.exitCode).toBe(1);
       assertOutputMatches(
         workspacePatternsOptionAndPatternResult.stderr.sanitized,
-        "CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-w option",
+        "CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-W option",
       );
     },
   );

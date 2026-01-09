@@ -25,9 +25,17 @@ export interface FindWorkspacesOptions {
 }
 
 export const sortWorkspaces = (workspaces: Workspace[]) =>
-  [...workspaces].sort(
-    (a, b) => a.name.localeCompare(b.name) || a.path.localeCompare(b.path),
-  );
+  [...workspaces]
+    .sort(
+      (a, b) => a.name.localeCompare(b.name) || a.path.localeCompare(b.path),
+    )
+    .reduce<Workspace[]>((acc, workspace, i, arr) => {
+      const previousWorkspace = arr[i - 1];
+      if (previousWorkspace && previousWorkspace.path === workspace.path) {
+        return acc;
+      }
+      return [...acc, workspace];
+    }, []);
 
 const getWorkspaceGlobsFromRoot = ({
   rootDirectory,

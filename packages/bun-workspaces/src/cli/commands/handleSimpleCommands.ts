@@ -62,7 +62,7 @@ export const listWorkspaces = handleProjectCommand(
 
     if (workspacePatterns?.length && options.workspacePatterns?.length) {
       logger.error(
-        "CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-w option",
+        "CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-W option",
       );
       process.exit(1);
     }

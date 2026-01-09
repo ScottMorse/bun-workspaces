@@ -50,7 +50,7 @@ export const CLI_COMMANDS_CONFIG = {
     description: "List all workspaces",
     options: {
       workspacePatterns: {
-        flags: ["-w", "--workspace-patterns <patterns>"],
+        flags: ["-W", "--workspace-patterns <patterns>"],
         description:
           "Workspace patterns to filter workspaces by, separated by commas",
       },
@@ -125,14 +125,18 @@ export const CLI_COMMANDS_CONFIG = {
     },
   },
   runScript: {
-    command: "run-script <script> [workspacePatterns...]",
+    command: "run-script [script] [workspacePatterns...]",
     isGlobal: false,
     aliases: ["run"],
     description:
       'Run a script in all workspaces that have it in their "scripts" field in package.json',
     options: {
+      script: {
+        flags: ["-S", "--script <script>"],
+        description: "The script to run.",
+      },
       workspacePatterns: {
-        flags: ["-w", "--workspace-patterns <patterns>"],
+        flags: ["-W", "--workspace-patterns <patterns>"],
         description:
           "Workspace patterns to filter workspaces by, separated by commas",
       },
