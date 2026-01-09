@@ -3,7 +3,11 @@ import packageJson from "../../package.json";
 import { validateCurrentBunVersion } from "../internal/bun";
 import { BunWorkspacesError } from "../internal/core";
 import { logger } from "../internal/logger";
-import { defineGlobalCommands, defineProjectCommands } from "./commands";
+import {
+  CLI_COMMANDS_CONFIG,
+  defineGlobalCommands,
+  defineProjectCommands,
+} from "./commands";
 import { fatalErrorLogger } from "./fatalErrorLogger";
 import { initializeWithGlobalOptions } from "./globalOptions";
 
@@ -77,8 +81,6 @@ export const createCli = ({
       await program.parseAsync(args, {
         from: programmatic ? "user" : "node",
       });
-      const isHandledByGlobalCommand = program.command;
-      if (projectError && !isHandledByGlobalCommand) throw projectError;
     } catch (error) {
       if (error instanceof BunWorkspacesError) {
         logger.debug(error);

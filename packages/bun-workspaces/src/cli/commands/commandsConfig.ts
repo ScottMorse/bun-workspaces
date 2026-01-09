@@ -26,7 +26,7 @@ export type CliProjectCommandName = Exclude<
   CliGlobalCommandName
 >;
 
-const CLI_COMMANDS_CONFIG = {
+export const CLI_COMMANDS_CONFIG = {
   doctor: {
     command: "doctor",
     isGlobal: true,
