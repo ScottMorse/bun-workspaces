@@ -5,6 +5,8 @@ import "@fontsource/unifontex";
 import packageJson from "../../../bun-workspaces/package.json";
 import Theme from "rspress/theme";
 import { PixelArtImage } from "../util/pixelArt";
+import { useLayout } from "../util/useLayout";
+import { Footer } from "../content/Footer";
 
 const OnPageChange = () => {
   const location = useLocation();
@@ -67,12 +69,16 @@ const HomeLink = () => {
   );
 };
 
-const Layout = () => (
-  <>
-    <OnPageChange />
-    <Theme.Layout navTitle={<HomeLink />} />
-  </>
-);
+const Layout = () => {
+  useLayout();
+  return (
+    <>
+      <OnPageChange />
+      <Theme.Layout navTitle={<HomeLink />} />
+      <Footer />
+    </>
+  );
+};
 
 export default {
   ...Theme,

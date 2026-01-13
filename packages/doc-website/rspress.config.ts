@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "path";
+import { pluginSvgr } from "@rsbuild/plugin-svgr";
 import { defineConfig } from "rspress/config";
 import packageJson from "../bun-workspaces/package.json";
 
@@ -13,7 +14,7 @@ const NPM_PACKAGE_URL = "https://www.npmjs.com/package/bun-workspaces";
 
 const TITLE = "bun-workspaces — Better Bun monorepo management | Documentation";
 const DESCRIPTION =
-  "A tool for managing monorepos using native Bun workspaces. Upgrade how you develop JavaScript and TypeScript projects with the bun-workspaces CLI and API.";
+  "A tool for managing monorepos using native Bun workspaces, helping you develop JavaScript and TypeScript projects with the bun-workspaces CLI and API.";
 
 const LD_JSON = {
   "@context": "https://schema.org",
@@ -38,8 +39,8 @@ const LD_JSON = {
   },
   publisher: {
     "@type": "Organization",
-    name: "bun-workspaces",
-    url: DOMAIN,
+    name: "Smorsic Labs, LLC",
+    url: "https://smorsic.io",
   },
   audience: {
     "@type": "Audience",
@@ -85,6 +86,7 @@ export default defineConfig({
     cleanUrls: true,
   },
   builderConfig: {
+    plugins: [pluginSvgr()],
     output: {
       cleanDistPath: true,
     },

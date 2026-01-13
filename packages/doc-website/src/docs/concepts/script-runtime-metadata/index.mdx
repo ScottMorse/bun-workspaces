@@ -10,7 +10,6 @@ footer: false
 
 import { getScriptRuntimeMetadataConfig } from 'bun-workspaces/src/runScript/scriptRuntimeMetadata';
 import { SyntaxHighlighter } from '../../../content/highlight';
-import { Footer } from "../../../content/Footer";
 import { ConceptsHeader } from "../../../content/concepts/ConceptsHeader";
 
 <ConceptsHeader activeHref="scriptRuntimeMetadata" />
@@ -93,5 +92,3 @@ The name of the script. This is an empty string when running as an inline script
 
 In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("scriptName").inlineName[0]}</code><br/>
 Environment variable: <code>{getScriptRuntimeMetadataConfig("scriptName").envVarName}</code>
-
-<Footer />

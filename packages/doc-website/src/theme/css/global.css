@@ -472,20 +472,34 @@ hr {
 }
 
 .rspress-doc {
-  min-height: calc(100dvh - 120px);
-  padding-bottom: 2rem !important;
+  padding-bottom: 3rem !important;
+}
+
+.rspress-doc-footer {
+  display: none;
 }
 
 .footer {
-  position: absolute;
-  bottom: 2rem;
-  z-index: -1;
-  left: 0;
-  color: var(--rp-c-text-2);
-  text-align: center;
   width: 100%;
+  color: var(--rp-c-text-2);
+  background-color: var(--rp-c-bg);
+  z-index: 1;
+  height: 3rem;
   display: flex;
   justify-content: center;
+  align-items: center;
+  touch-action: none;
+}
+
+.footer a {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+@media (max-width: 768px) {
+  .footer {
+    font-size: 0.65rem;
+  }
 }
 
 .animated-sprite-container {
@@ -524,4 +538,17 @@ hr {
 .reference-divider {
   margin-top: 2rem;
   margin-bottom: -0.5rem;
+}
+
+.home-smorsic-banner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 4rem;
+}
+
+.smorsic-banner-logo:hover {
+  filter: brightness(0.9);
 }
