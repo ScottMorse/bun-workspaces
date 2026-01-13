@@ -10,6 +10,8 @@
   },
   "devDependencies": {
     "@fontsource/unifontex": "^5.2.6",
+    "@rsbuild/plugin-svgr": "^1.2.3",
+    "@types/lodash": "^4.17.23",
     "@types/react": "^19.2.7",
     "@types/react-syntax-highlighter": "^15.5.13",
     "bun-workspaces": "file:../bun-workspaces",
@@ -20,5 +22,8 @@
     "react-router-dom": "^7.11.0",
     "react-syntax-highlighter": "^16.1.0",
     "rspress": "^1.47.0"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21"
   }
 }
