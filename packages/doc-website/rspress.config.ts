@@ -246,11 +246,6 @@ export default defineConfig({
             text: "Commands",
             link: "/cli/commands",
           },
-          // TODO enable when needed
-          // {
-          //   text: "Examples",
-          //   link: "/cli/examples",
-          // },
         ],
       },
       {
@@ -268,11 +263,6 @@ export default defineConfig({
             text: "Reference",
             link: "/api/reference",
           },
-          // TODO enable when needed
-          // {
-          //   text: "Examples",
-          //   link: "/api/examples",
-          // },
         ],
       },
       {
@@ -330,6 +320,10 @@ export default defineConfig({
           {
             text: "Changelog",
             link: CHANGELOG_URL,
+          },
+          {
+            text: "Bwunster Lore",
+            link: "/lore",
           },
         ],
       },

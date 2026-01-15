@@ -552,3 +552,43 @@ hr {
 .smorsic-banner-logo:hover {
   filter: brightness(0.9);
 }
+
+#who-is-bwunster {
+  text-align: center;
+}
+
+.lore-bwunster {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 2rem;
+}
+
+.lore-recipe {
+  margin-bottom: 2.5rem;
+}
+
+.lore-recipe ol {
+  line-height: 1.3;
+}
+
+.lore-recipe span {
+  line-height: 1.7;
+}
+
+.lore-credits {
+  color: var(--rp-c-text-2);
+  display: flex;
+  flex-direction: column;
+}
+
+.lore-credits > div {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: -0.5rem;
+}
+
+.lore-credits a {
+  margin-right: 0.25rem;
+  font-size: 1.1em;
+}
