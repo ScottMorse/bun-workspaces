@@ -24,6 +24,7 @@
     "rspress": "^1.47.0"
   },
   "dependencies": {
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "react-icons": "^5.5.0"
   }
 }
