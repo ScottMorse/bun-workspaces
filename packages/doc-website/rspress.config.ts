@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "path";
+import { pluginSvgr } from "@rsbuild/plugin-svgr";
 import { defineConfig } from "rspress/config";
 import packageJson from "../bun-workspaces/package.json";
 
@@ -11,9 +12,9 @@ const CHANGELOG_URL = `${GITHUB_REPO_URL}/releases`;
 const LICENSE_URL = GITHUB_REPO_URL + "/blob/main/LICENSE.md";
 const NPM_PACKAGE_URL = "https://www.npmjs.com/package/bun-workspaces";
 
-const TITLE = "bun-workspaces — Bun monorepo tool | Documentation";
+const TITLE = "bun-workspaces — Better Bun monorepo management | Documentation";
 const DESCRIPTION =
-  "Documentation for bun-workspaces: A CLI and TypeScript API for developers using the Bun runtime to manage monorepos and run scripts across their workspaces.";
+  "A tool for managing monorepos using native Bun workspaces, helping you develop JavaScript and TypeScript projects with the bun-workspaces CLI and API.";
 
 const LD_JSON = {
   "@context": "https://schema.org",
@@ -38,8 +39,8 @@ const LD_JSON = {
   },
   publisher: {
     "@type": "Organization",
-    name: "bun-workspaces",
-    url: DOMAIN,
+    name: "Smorsic Labs, LLC",
+    url: "https://smorsic.io",
   },
   audience: {
     "@type": "Audience",
@@ -85,6 +86,7 @@ export default defineConfig({
     cleanUrls: true,
   },
   builderConfig: {
+    plugins: [pluginSvgr()],
     output: {
       cleanDistPath: true,
     },
@@ -244,11 +246,6 @@ export default defineConfig({
             text: "Commands",
             link: "/cli/commands",
           },
-          // TODO enable when needed
-          // {
-          //   text: "Examples",
-          //   link: "/cli/examples",
-          // },
         ],
       },
       {
@@ -266,11 +263,6 @@ export default defineConfig({
             text: "Reference",
             link: "/api/reference",
           },
-          // TODO enable when needed
-          // {
-          //   text: "Examples",
-          //   link: "/api/examples",
-          // },
         ],
       },
       {
@@ -328,6 +320,10 @@ export default defineConfig({
           {
             text: "Changelog",
             link: CHANGELOG_URL,
+          },
+          {
+            text: "Bwunster Lore",
+            link: "/lore",
           },
         ],
       },

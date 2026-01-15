@@ -2,7 +2,13 @@
 export const Footer = () => {
   return (
     <footer className="footer">
-      <p>© {process.env.YEAR} Smorsic Labs, LLC. All rights reserved.</p>
+      <p>
+        © {process.env.YEAR}{" "}
+        <a href="https://smorsic.io" target="_blank" rel="noopener noreferrer">
+          Smorsic Labs, LLC
+        </a>
+        . All rights reserved.
+      </p>
     </footer>
   );
 };
