@@ -5,3 +5,8 @@ export type Simplify<T extends object> = {
 
 /** A normal `AsyncIterable` that is only intended for `for await` style iteration */
 export type SimpleAsyncIterable<T> = AsyncIterable<T, void, undefined>;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyFunction<Args extends unknown[] = any[], Return = any> = (
+  ...args: Args
+) => Return;

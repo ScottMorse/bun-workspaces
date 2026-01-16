@@ -6,11 +6,25 @@ export type DefinedErrors<ErrorName extends string> = {
   [name in ErrorName]: typeof BunWorkspacesError;
 };
 
-export const defineErrors = <ErrorName extends string>(
-  ...errors: ErrorName[]
-): DefinedErrors<ErrorName> =>
-  errors.reduce((acc, error) => {
-    acc[error] = class extends BunWorkspacesError {
+export function defineErrors<ErrorName extends string>(
+  parentError: typeof BunWorkspacesError,
+  ...errorNames: ErrorName[]
+): DefinedErrors<ErrorName>;
+export function defineErrors<ErrorName extends string>(
+  ...errorNames: ErrorName[]
+): DefinedErrors<ErrorName>;
+export function defineErrors<ErrorName extends string>(
+  ...[parentError, ...errorNames]: [
+    typeof BunWorkspacesError | ErrorName,
+    ...ErrorName[],
+  ]
+): DefinedErrors<ErrorName> {
+  let Parent = BunWorkspacesError;
+  if (typeof parentError === "function") {
+    Parent = parentError;
+  }
+  return errorNames.reduce((acc, error) => {
+    acc[error] = class extends Parent {
       constructor(message?: string) {
         super(message);
         this.name = error;
@@ -36,3 +50,4 @@ export const defineErrors = <ErrorName extends string>(
 
     return acc;
   }, {} as DefinedErrors<ErrorName>);
+}

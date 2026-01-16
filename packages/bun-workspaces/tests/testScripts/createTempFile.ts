@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { createTempFile } from "../../src/internal/runtime/tempFile";
+import { createTempFile } from "../../src/internal/core";
 
 if (import.meta.main) {
   const fileName = `test-${crypto.randomUUID()}.txt`;

@@ -1,16 +1,13 @@
 import fs from "node:fs";
 import { expect, test, describe } from "bun:test";
-import {
-  createTempDir,
-  createTempFile,
-} from "../src/internal/runtime/tempFile";
+import { createTempDir, createTempFile } from "../src/internal/core";
 import { runScript } from "../src/runScript";
 
 describe("Temp file utils", () => {
   test("createTempFile", () => {
     const { filePath, cleanup } = createTempFile({
-      fileName: "test.txt",
-      fileContent: "test",
+      name: "test.txt",
+      content: "test",
     });
     expect(fs.readFileSync(filePath, "utf8")).toBe("test");
     cleanup();
@@ -19,16 +16,16 @@ describe("Temp file utils", () => {
 
   test("cleanTempDir", () => {
     const { filePath: a } = createTempFile({
-      fileName: "a.txt",
-      fileContent: "test a",
+      name: "a.txt",
+      content: "test a",
     });
     const { filePath: b } = createTempFile({
-      fileName: "b.txt",
-      fileContent: "test b",
+      name: "b.txt",
+      content: "test b",
     });
     const { filePath: c } = createTempFile({
-      fileName: "c.txt",
-      fileContent: "test c",
+      name: "c.txt",
+      content: "test c",
     });
 
     expect(fs.readFileSync(a, "utf8")).toBe("test a");

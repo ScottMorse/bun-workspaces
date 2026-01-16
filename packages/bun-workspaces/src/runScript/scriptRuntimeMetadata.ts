@@ -1,4 +1,4 @@
-import { IS_WINDOWS } from "../internal/runtime";
+import { IS_WINDOWS } from "../internal/core";
 import type { ScriptShellOption } from "./scriptShellOption";
 
 export interface ScriptRuntimeMetadata {

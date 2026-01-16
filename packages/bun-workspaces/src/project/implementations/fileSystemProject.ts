@@ -2,8 +2,8 @@ import fs from "fs";
 import path from "path";
 import { type ResolvedWorkspaceConfig } from "../../config";
 import type { Simplify } from "../../internal/core";
+import { createTempDir } from "../../internal/core";
 import { logger } from "../../internal/logger";
-import { createTempDir } from "../../internal/runtime/tempFile";
 import {
   runScript,
   runScripts,
