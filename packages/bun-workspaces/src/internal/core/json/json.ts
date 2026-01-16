@@ -1,6 +1,18 @@
 export type JSONData = JSONPrimitive | JSONObject | JSONArray;
 
-export type JSONPrimitive = string | number | boolean | null;
+type JsonPrimitiveMap = {
+  string: string;
+  number: number;
+  boolean: boolean;
+  null: null;
+};
+
+export type JSONPrimitiveName = keyof JsonPrimitiveMap;
+
+export type NameToJsonPrimitive<Name extends JSONPrimitiveName> =
+  JsonPrimitiveMap[Name];
+
+export type JSONPrimitive = NameToJsonPrimitive<JSONPrimitiveName>;
 
 export interface JSONObject {
   [key: string]: JSONData;
