@@ -19,7 +19,7 @@
     },
     "packages/bun-workspaces": {
       "name": "bun-workspaces",
-      "version": "1.0.0-alpha.30",
+      "version": "1.0.0-alpha.31",
       "bin": {
         "bun-workspaces": "bin/cli.js",
         "bw": "bin/cli.js",
@@ -506,7 +506,7 @@
 
     "bun-workspaces_local": ["bun-workspaces@workspace:packages/bun-workspaces"],
 
-    "bun-workspaces_release": ["bun-workspaces@workspace:packages/bun-workspaces"],
+    "bun-workspaces_release": ["bun-workspaces@1.0.0-alpha.30", "", { "dependencies": { "commander": "^12.1.0" }, "bin": { "bw": "bin/cli.js", "bun-workspaces": "bin/cli.js" } }, "sha512-viH+gvx6a8PHY6X++hrA92fxHJEMs2WXdW6Aac2x9ij9lvDsTKhgAI66yzAlHX4rL19A/fy3E2xVX4/mhsZqHg=="],
 
     "cac": ["cac@6.7.14", "", {}, "sha512-b6Ilus+c3RrdDk+JhLKUAQfzzgLEPy6wcXqS7f/xe1EETvsDP6GORG7SFuOs6cID5YkqchW/LXZbX5bc8j7ZcQ=="],
 
