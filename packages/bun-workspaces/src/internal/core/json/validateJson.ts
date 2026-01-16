@@ -1,8 +1,4 @@
-import type {
-  OptionalArray,
-  ResolvedOptionalArray,
-  Simplify,
-} from "../language";
+import type { OptionalArray, ResolvedOptionalArray } from "../language";
 import type { JSONPrimitiveName, NameToJsonPrimitive } from "./json";
 
 export type JsonPrimitiveValidationConfig = {
@@ -20,7 +16,10 @@ export type JsonItemValidationConfig =
 
 export type JsonObjectValidationConfig = {
   properties: {
-    [key: string]: JsonItemValidationConfig;
+    [key: string]: {
+      property: JsonItemValidationConfig;
+      optional: boolean;
+    };
   };
 };
 
@@ -37,11 +36,31 @@ export type JSONValidationConfigToType<
 type PrimitiveConfigToPrimitive<Config extends JsonPrimitiveValidationConfig> =
   NameToJsonPrimitive<ResolvedOptionalArray<Config["primitive"]>[number]>;
 
-type ObjectConfigToType<Config extends JsonObjectValidationConfig> = Simplify<{
-  [K in keyof Config["properties"]]: JSONValidationConfigToType<
-    Config["properties"][K]
+type OptionalObjectConfigKeys<Config extends JsonObjectValidationConfig> = {
+  [K in keyof Config["properties"]]: Config["properties"][K] extends {
+    optional: true;
+  }
+    ? K
+    : never;
+}[keyof Config["properties"]];
+
+type RequiredObjectConfigKeys<Config extends JsonObjectValidationConfig> = {
+  [K in keyof Config["properties"]]: Config["properties"][K] extends {
+    optional: false;
+  }
+    ? K
+    : never;
+}[keyof Config["properties"]];
+
+type ObjectConfigToType<Config extends JsonObjectValidationConfig> = Partial<{
+  [K in OptionalObjectConfigKeys<Config>]: JSONValidationConfigToType<
+    Config["properties"][K]["property"]
   >;
-}>;
+}> & {
+  [K in RequiredObjectConfigKeys<Config>]: JSONValidationConfigToType<
+    Config["properties"][K]["property"]
+  >;
+};
 
 type ArrayConfigToType<Config extends JsonArrayValidationConfig> =
   JSONValidationConfigToType<ResolvedOptionalArray<Config["item"]>[number]>[];
