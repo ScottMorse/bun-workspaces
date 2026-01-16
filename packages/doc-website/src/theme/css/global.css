@@ -549,6 +549,10 @@ hr {
   margin-top: 4rem;
 }
 
+.smorsic-banner-logo {
+  height: auto;
+}
+
 .smorsic-banner-logo:hover {
   filter: brightness(0.9);
 }

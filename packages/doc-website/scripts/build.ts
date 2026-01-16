@@ -1,4 +1,4 @@
-import { writeFileSync, rmSync, readFileSync } from "node:fs";
+import { writeFileSync, rmSync, readFileSync } from "fs";
 import path from "path";
 import { $ } from "bun";
 import { globSync } from "glob";

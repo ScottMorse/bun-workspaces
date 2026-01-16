@@ -1,5 +1,7 @@
-import { type CliCommandConfig } from "bun-workspaces/src/cli/commands/commandsConfig";
-import { type CliGlobalOptionConfig } from "bun-workspaces/src/cli/globalOptions/globalOptionsConfig";
+import {
+  type CliCommandConfig,
+  type CliGlobalOptionConfig,
+} from "bun-workspaces/src/cli";
 
 export type CliExample = {
   bashLines: string[];

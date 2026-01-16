@@ -1,4 +1,4 @@
-import { availableParallelism } from "node:os";
+import os from "os";
 import { getUserEnvVar, getUserEnvVarName } from "../config/userEnvVars";
 import { BunWorkspacesError } from "../internal/core";
 
@@ -46,7 +46,7 @@ export const determineParallelMax = (
     return Infinity;
   }
 
-  const cpuCount = Math.max(1, availableParallelism());
+  const cpuCount = Math.max(1, os.availableParallelism());
 
   if (value === "auto") {
     return cpuCount;

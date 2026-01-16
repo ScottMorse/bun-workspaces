@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { describe, test, expect } from "bun:test";
-import { isJsonObject, parseJsonc } from "../src/internal/core/json";
+import { isJsonObject, parseJsonc } from "../src/internal/core";
 
 // Note that the parser is based on the package strip-json-comments. Tests are here for sanity.
 

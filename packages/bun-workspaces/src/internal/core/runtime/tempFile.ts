@@ -1,17 +1,16 @@
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
+import fs from "fs";
+import os from "os";
+import path from "path";
+import { validateCurrentBunVersion } from "../../bun/bunVersion";
 import { logger } from "../../logger";
 import { BUN_WORKSPACES_VERSION } from "../../version";
 import { createShortId } from "../language/string/id";
 import { runOnExit } from "./onExit";
 
-const TEMP_BASE_PACKAGE_DIR = path.join(os.tmpdir(), "bun-workspaces");
+const getTempBasePackageDir = () => path.join(os.tmpdir(), "bun-workspaces");
 
-const TEMP_PARENT_DIR = path.join(
-  TEMP_BASE_PACKAGE_DIR,
-  BUN_WORKSPACES_VERSION,
-);
+const getTempParentDir = () =>
+  path.join(getTempBasePackageDir(), BUN_WORKSPACES_VERSION);
 
 export type CreateTempFileOptions = {
   name: string;
@@ -24,7 +23,7 @@ class TempDir {
   public readonly dir: string;
 
   constructor() {
-    this.dir = path.join(TEMP_PARENT_DIR, this.id);
+    this.dir = path.join(getTempParentDir(), this.id);
   }
 
   initialize(clean = false) {
@@ -34,12 +33,12 @@ class TempDir {
     fs.chmodSync(this.dir, 0o700);
 
     if (clean) {
-      for (const dir of fs.readdirSync(path.resolve(TEMP_BASE_PACKAGE_DIR))) {
+      for (const dir of fs.readdirSync(path.resolve(getTempBasePackageDir()))) {
         if (dir !== BUN_WORKSPACES_VERSION) {
           logger.debug(
-            `Removing temp dir: ${path.join(TEMP_BASE_PACKAGE_DIR, dir)}`,
+            `Removing temp dir: ${path.join(getTempBasePackageDir(), dir)}`,
           );
-          fs.rmSync(path.join(TEMP_PARENT_DIR, dir), {
+          fs.rmSync(path.join(getTempBasePackageDir(), dir), {
             force: true,
             recursive: true,
           });
@@ -77,4 +76,10 @@ class TempDir {
   }
 }
 
-export const DEFAULT_TEMP_DIR = new TempDir();
+export let DEFAULT_TEMP_DIR: TempDir;
+
+if (!validateCurrentBunVersion()) {
+  DEFAULT_TEMP_DIR = new TempDir();
+} else {
+  DEFAULT_TEMP_DIR = null as unknown as TempDir;
+}

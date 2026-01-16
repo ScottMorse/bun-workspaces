@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs from "fs";
 import path from "path";
 import { IS_WINDOWS } from "../../src/internal/core";
 import { withWindowsPath } from "../util/windows";

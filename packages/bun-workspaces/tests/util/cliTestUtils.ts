@@ -1,4 +1,4 @@
-import path from "node:path";
+import path from "path";
 import { expect } from "bun:test";
 import packageJson from "../../package.json";
 import { createRawPattern } from "../../src/internal/core";

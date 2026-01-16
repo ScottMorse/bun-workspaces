@@ -1,4 +1,4 @@
-import path from "node:path";
+import path from "path";
 import { expect, test, describe } from "bun:test";
 import { loadConfigFile, validateBunWorkspacesConfig } from "../src/config";
 

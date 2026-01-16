@@ -1,5 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
+import fs from "fs";
+import path from "path";
 import { type Command, Option } from "commander";
 import {
   DEFAULT_CONFIG_FILE_PATH,

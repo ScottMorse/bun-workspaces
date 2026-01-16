@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { Glob } from "bun";
+import bun from "bun";
 import {
   createWorkspaceConfig,
   loadWorkspaceConfig,
@@ -128,7 +128,8 @@ export const findWorkspaces = ({
       );
 
       const matchPattern =
-        workspaceGlobs.find((glob) => new Glob(glob).match(relativePath)) ?? "";
+        workspaceGlobs.find((glob) => new bun.Glob(glob).match(relativePath)) ??
+        "";
 
       if (_workspaceGlobs && !matchPattern) {
         continue;
