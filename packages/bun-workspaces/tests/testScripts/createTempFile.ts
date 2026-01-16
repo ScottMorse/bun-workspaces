@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
-import { createTempFile } from "../../src/internal/runtime/tempFile";
+import { DEFAULT_TEMP_DIR } from "../../src/internal/core";
 
 if (import.meta.main) {
   const fileName = `test-${crypto.randomUUID()}.txt`;
-  const { filePath } = createTempFile({
-    fileName,
-    fileContent: "from createTempFile.ts",
+  const { filePath } = DEFAULT_TEMP_DIR.createFile({
+    name: fileName,
+    content: "from createTempFile.ts",
   });
   console.log(filePath);
   if (process.env.CRASH === "true") {

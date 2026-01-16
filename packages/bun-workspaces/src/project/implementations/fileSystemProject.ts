@@ -2,8 +2,8 @@ import fs from "fs";
 import path from "path";
 import { type ResolvedWorkspaceConfig } from "../../config";
 import type { Simplify } from "../../internal/core";
+import { DEFAULT_TEMP_DIR } from "../../internal/core";
 import { logger } from "../../internal/logger";
-import { createTempDir } from "../../internal/runtime/tempFile";
 import {
   runScript,
   runScripts,
@@ -129,7 +129,7 @@ class _FileSystemProject extends ProjectBase implements Project {
     super();
 
     if (!_FileSystemProject.#initialized) {
-      createTempDir(true);
+      DEFAULT_TEMP_DIR.initialize(true);
       _FileSystemProject.#initialized = true;
     }
 

@@ -1,0 +1,11 @@
+{
+  "name": "test-root",
+  "workspaces": [
+    "applications/*",
+    "libraries/*"
+  ],
+  "scripts": {
+    "all-workspaces": "echo 'script for all workspaces'",
+    "root-workspace": "echo 'script for root workspace'"
+  }
+}

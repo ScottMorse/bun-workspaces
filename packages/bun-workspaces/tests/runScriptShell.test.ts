@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { createFileSystemProject } from "../src";
 import { getUserEnvVarName } from "../src/config/userEnvVars";
-import { IS_WINDOWS } from "../src/internal/runtime";
+import { IS_WINDOWS } from "../src/internal/core";
 import { runScript } from "../src/runScript";
 import { getProjectRoot } from "./testProjects/testProjects";
 import { setupCliTest } from "./util/cliTestUtils";

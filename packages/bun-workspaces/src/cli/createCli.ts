@@ -65,18 +65,18 @@ export const createCli = ({
         };
       })();
 
-      const { project, projectError } = initializeWithGlobalOptions(
-        program,
-        args,
-        defaultCwd,
-      );
-
       const bunVersionError = validateCurrentBunVersion();
 
       if (bunVersionError) {
         fatalErrorLogger.error(bunVersionError.message);
         process.exit(1);
       }
+
+      const { project, projectError } = initializeWithGlobalOptions(
+        program,
+        args,
+        defaultCwd,
+      );
 
       defineProjectCommands({
         program,

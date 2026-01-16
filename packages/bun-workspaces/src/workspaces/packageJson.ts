@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import { Glob } from "bun";
 import { logger } from "../internal/logger";
 import { WORKSPACE_ERRORS } from "./errors";
 
@@ -21,13 +20,6 @@ export type ResolvedPackageJsonContent = {
 } & Record<string, unknown>;
 
 type UnknownPackageJson = Record<string, unknown>;
-
-export const scanWorkspaceGlob = (globPattern: string, rootDirectory: string) =>
-  new Glob(globPattern).scanSync({
-    cwd: rootDirectory,
-    absolute: true,
-    onlyFiles: false,
-  });
 
 const validateJsonRoot = (json: UnknownPackageJson) => {
   if (!json || typeof json !== "object" || Array.isArray(json)) {
