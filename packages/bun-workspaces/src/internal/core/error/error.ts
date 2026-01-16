@@ -22,6 +22,8 @@ export function defineErrors<ErrorName extends string>(
   let Parent = BunWorkspacesError;
   if (typeof parentError === "function") {
     Parent = parentError;
+  } else {
+    errorNames.unshift(parentError);
   }
   return errorNames.reduce((acc, error) => {
     acc[error] = class extends Parent {

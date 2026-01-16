@@ -3,11 +3,13 @@ import os from "node:os";
 import path from "node:path";
 import { logger } from "../../logger";
 import { BUN_WORKSPACES_VERSION } from "../../version";
+import { createShortId } from "../language/string/id";
 import { runOnExit } from "./onExit";
 
+const TEMP_BASE_PACKAGE_DIR = path.join(os.tmpdir(), "bun-workspaces");
+
 const TEMP_PARENT_DIR = path.join(
-  os.tmpdir(),
-  "bun-workspaces",
+  TEMP_BASE_PACKAGE_DIR,
   BUN_WORKSPACES_VERSION,
 );
 
@@ -18,7 +20,7 @@ export type CreateTempFileOptions = {
 };
 
 class TempDir {
-  public readonly id = crypto.randomUUID();
+  public readonly id = createShortId(6);
   public readonly dir: string;
 
   constructor() {
@@ -26,9 +28,17 @@ class TempDir {
   }
 
   initialize(clean = false) {
+    if (fs.existsSync(this.dir)) return;
+
+    fs.mkdirSync(this.dir, { recursive: true });
+    fs.chmodSync(this.dir, 0o700);
+
     if (clean) {
-      for (const dir of fs.readdirSync(path.resolve(TEMP_PARENT_DIR, ".."))) {
+      for (const dir of fs.readdirSync(path.resolve(TEMP_BASE_PACKAGE_DIR))) {
         if (dir !== BUN_WORKSPACES_VERSION) {
+          logger.debug(
+            `Removing temp dir: ${path.join(TEMP_BASE_PACKAGE_DIR, dir)}`,
+          );
           fs.rmSync(path.join(TEMP_PARENT_DIR, dir), {
             force: true,
             recursive: true,
@@ -37,9 +47,10 @@ class TempDir {
       }
     }
 
-    fs.mkdirSync(this.dir, { recursive: true });
-    fs.chmodSync(this.dir, 0o700);
-    runOnExit(() => fs.rmSync(this.dir, { force: true, recursive: true }));
+    runOnExit(() => {
+      logger.debug(`Removing temp dir: ${this.dir}`);
+      fs.rmSync(this.dir, { force: true, recursive: true });
+    });
 
     logger.debug(`Created temp dir: ${this.dir}`);
   }
@@ -49,6 +60,7 @@ class TempDir {
   }
 
   createFile({ name, content, mode }: CreateTempFileOptions) {
+    this.initialize();
     const filePath = this.createFilePath(name);
     fs.writeFileSync(filePath, content, {
       encoding: "utf8",
@@ -65,10 +77,4 @@ class TempDir {
   }
 }
 
-const TEMP_DIR = new TempDir();
-
-export const createTempDir = TEMP_DIR.initialize.bind(TEMP_DIR);
-
-export const createTempFile = TEMP_DIR.createFile.bind(TEMP_DIR);
-
-export const createTempFilePath = TEMP_DIR.createFilePath.bind(TEMP_DIR);
+export const DEFAULT_TEMP_DIR = new TempDir();

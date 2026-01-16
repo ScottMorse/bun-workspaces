@@ -1,7 +1,7 @@
-import crypto from "node:crypto";
 import {
   BunWorkspacesError,
-  createTempFile,
+  createShortId,
+  DEFAULT_TEMP_DIR,
   IS_WINDOWS,
 } from "../internal/core";
 import {
@@ -10,17 +10,21 @@ import {
 } from "./scriptShellOption";
 
 const createWindowsBatchFile = (command: string) => {
-  const fileName = `${crypto.randomUUID()}.cmd`;
+  const fileName = `${createShortId(6)}.cmd`;
 
   const fileContent = `@echo off\r\n${command}\r\n`;
 
-  return createTempFile({ name: fileName, content: fileContent });
+  return DEFAULT_TEMP_DIR.createFile({ name: fileName, content: fileContent });
 };
 
 const createShellScript = (command: string) => {
-  const fileName = `${crypto.randomUUID()}.sh`;
+  const fileName = `${createShortId(6)}.sh`;
 
-  return createTempFile({ name: fileName, content: command, mode: 0o755 });
+  return DEFAULT_TEMP_DIR.createFile({
+    name: fileName,
+    content: command,
+    mode: 0o755,
+  });
 };
 
 export type ScriptExecutor = {

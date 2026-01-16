@@ -1,11 +1,11 @@
 import fs from "node:fs";
 import { expect, test, describe } from "bun:test";
-import { createTempDir, createTempFile } from "../src/internal/core";
+import { DEFAULT_TEMP_DIR } from "../src/internal/core";
 import { runScript } from "../src/runScript";
 
 describe("Temp file utils", () => {
-  test("createTempFile", () => {
-    const { filePath, cleanup } = createTempFile({
+  test("createFile", () => {
+    const { filePath, cleanup } = DEFAULT_TEMP_DIR.createFile({
       name: "test.txt",
       content: "test",
     });
@@ -14,16 +14,16 @@ describe("Temp file utils", () => {
     expect(fs.existsSync(filePath)).toBe(false);
   });
 
-  test("cleanTempDir", () => {
-    const { filePath: a } = createTempFile({
+  test("cleanup files", () => {
+    const { filePath: a } = DEFAULT_TEMP_DIR.createFile({
       name: "a.txt",
       content: "test a",
     });
-    const { filePath: b } = createTempFile({
+    const { filePath: b } = DEFAULT_TEMP_DIR.createFile({
       name: "b.txt",
       content: "test b",
     });
-    const { filePath: c } = createTempFile({
+    const { filePath: c } = DEFAULT_TEMP_DIR.createFile({
       name: "c.txt",
       content: "test c",
     });
@@ -32,14 +32,14 @@ describe("Temp file utils", () => {
     expect(fs.readFileSync(b, "utf8")).toBe("test b");
     expect(fs.readFileSync(c, "utf8")).toBe("test c");
 
-    createTempDir(true);
+    DEFAULT_TEMP_DIR.cleanup();
 
     expect(fs.existsSync(a)).toBe(false);
     expect(fs.existsSync(b)).toBe(false);
     expect(fs.existsSync(c)).toBe(false);
   });
 
-  test("createTempFile: cleans up on exit", async () => {
+  test("runScript: temp files are cleaned up on exit", async () => {
     const { exit, output } = runScript({
       scriptCommand: {
         command: "bun run testScripts/createTempFile.ts",
@@ -60,7 +60,7 @@ describe("Temp file utils", () => {
     expect(fs.existsSync(filePath)).toBe(false);
   });
 
-  test("createTempFile: cleans up on interrupt", async () => {
+  test("runScript: temp files cleans up on interrupt", async () => {
     const { exit, output, kill } = runScript({
       scriptCommand: {
         command: "bun run testScripts/createTempFile.ts",
@@ -82,7 +82,7 @@ describe("Temp file utils", () => {
     expect(fs.existsSync(filePath)).toBe(false);
   });
 
-  test("createTempFile: cleans up on crash", async () => {
+  test("temp files cleans up on crash", async () => {
     const { exit, output } = runScript({
       scriptCommand: {
         command: "bun run testScripts/createTempFile.ts",

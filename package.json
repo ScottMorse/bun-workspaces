@@ -6,7 +6,7 @@
     "packages/*"
   ],
   "scripts": {
-    "bw": "bun cli run -N -SW bw",
+    "bw": "bun cli run -N -W bw",
     "bw:test": "bun cli run -N test bw --",
     "bw:build": "bun cli run -N build bw --",
     "bw:build:test": "bun cli run -N build:test bw --",
