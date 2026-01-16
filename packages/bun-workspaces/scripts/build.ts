@@ -41,6 +41,9 @@ const createDesiredPackageJson = () => {
     homepage,
     repository,
     keywords,
+    engines: {
+      bun: _bwInternal.bunVersion.libraryConsumer,
+    },
     bin,
     _bwInternal,
     dependencies,
