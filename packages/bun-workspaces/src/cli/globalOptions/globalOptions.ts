@@ -128,7 +128,7 @@ const applyGlobalOptions = (
     }) as unknown as FileSystemProject;
   }
 
-  return { project, error };
+  return { project, projectError: error };
 };
 
 export const initializeWithGlobalOptions = (

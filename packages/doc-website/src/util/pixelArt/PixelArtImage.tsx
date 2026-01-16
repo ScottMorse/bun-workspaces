@@ -13,8 +13,8 @@ export const PixelArtImage = ({
   return (
     <img
       src={path}
-      className={`pixel-art-image ${small ? "small" : ""}`}
       {...props}
+      className={`pixel-art-image ${small ? "small" : ""} ${props.className}`}
     />
   );
 };

@@ -3,12 +3,15 @@ import { getUserEnvVarName } from "bun-workspaces/src/config/userEnvVars";
 export const CREATE_FS_PROJECT_EXAMPLE = `
 import { createFileSystemProject } from "bun-workspaces";
 
-const project = createFileSystemProject({
+// Root directory defaults to process.cwd()
+const defaultProject = createFileSystemProject();
+
+const pathProject = createFileSystemProject({
   rootDirectory: "./path/to/project/root" // relative from process.cwd()
 });
 
-console.log(project.name); // The name from the root package.json
-console.log(project.workspaces); // An array of workspaces found in the project
+console.log(pathProject.name); // The name from the root package.json
+console.log(pathProject.workspaces); // An array of workspaces found in the project
 `.trim();
 
 export const CREATE_MEMORY_PROJECT_EXAMPLE = `
@@ -140,10 +143,19 @@ console.log(exitResult.metadata.workspace); // The target workspace (Workspace)
 export const RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE = `
 
 const { output, summary } = project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"], // this will run in all workspaces that have my-script
-  script: "my-script", // the package.json "scripts" field name to run
+  // Optional. This will run in all matching workspaces that have my-script
+  // Accepts same values as the CLI run-script command's workspace patterns
+  // When not provided, all workspaces that have the script will be used.
+  workspacePatterns: ["my-workspace", "my-pattern-*"],
+
+  // Required. The package.json "scripts" field name to run
+  script: "my-script",
+
+  // Optional. Arguments to add to the command
   args: "--my --appended --args", // optional, arguments to add to the command
-  parallel: true, // optional, run the scripts in parallel
+
+  // Optional. Whether to run the scripts in parallel
+  parallel: true,
 });
 
 // Get a stream of script output
@@ -180,32 +192,19 @@ for (const exitResult of summaryResult.scriptResults) {
 }
 `.trim();
 
-export const RUN_INLINE_SCRIPTS_EXAMPLE = `
+export const API_INLINE_NAME_EXAMPLE = `
 
 project.runWorkspaceScript({
   workspaceNameOrAlias: "my-workspace",
   script: "echo 'this is my inline script'",
-  args: "--my-appended-args",
-  inline: true,
-});
-
-project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
-  script: "echo 'this is my inline script for <workspaceName>'",
-  args: "--my-workspace=<workspaceName>",
+  // The name will be empty by default
   inline: true,
 });
 
 // Pass a name for an inline script
 project.runWorkspaceScript({
   workspaceNameOrAlias: "my-workspace",
-  script: "echo 'this is my inline script'",
-  inline: { scriptName: "my-inline-script" },
-});
-
-project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
-  script: "echo 'this is my inline script for <workspaceName>'",
+  script: "echo 'my script: <scriptName>'",
   inline: { scriptName: "my-inline-script" },
 });
 `.trim();
@@ -214,9 +213,9 @@ export const API_QUICKSTART = `
 import { createFileSystemProject } from "bun-workspaces";
 
 // A Project contains the core functionality of bun-workspaces.
-const project = createFileSystemProject({
-  rootDirectory: "path/to/your/project", // relative from process.cwd()
-});
+// Below defaults to process.cwd() for the project root directory
+// Pass { rootDirectory: "path/to/your/project" } to use a different root directory
+const project = createFileSystemProject();
 
 // A Workspace that matches the name or alias "my-workspace"
 const myWorkspace = project.findWorkspaceByNameOrAlias("my-workspace");
@@ -239,46 +238,64 @@ const runManyScripts = async () => {
 `.trim();
 
 export const API_PARALLEL_SCRIPTS_EXAMPLE = `
+import { createFileSystemProject } from "bun-workspaces";
+
+const project = createFileSystemProject();
+
 // Run in parallel with the default limit 
 // Equal to "auto" or value of process.env.${getUserEnvVarName("parallelMaxDefault")}
 project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
   script: "my-script",
   parallel: true,
 });
 
 // Same result as above
 project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
   script: "my-script",
   parallel: { max: "default" },
 });
 
 // Run in parallel with the number of available logical CPUs
 project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
   script: "my-script",
   parallel: { max: "auto" },
 });
 
 // Run in parallel with a max of 50% of the available logical CPUs
 project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
   script: "my-script",
   parallel: { max: "50%" },
 });
 
 // Run in parallel with no concurrency limit (use with caution)
 project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
   script: "my-script",
   parallel: { max: "unbounded" },
 });
 
 // Run in parallel with a max of 2 concurrent scripts
 project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["*"],
   script: "my-script",
   parallel: { max: 2 },
+});
+`.trim();
+
+export const API_INLINE_SHELL_EXAMPLE = `
+import { createFileSystemProject } from "bun-workspaces";
+
+const project = createFileSystemProject();
+
+// This will use the Bun shell unless ${getUserEnvVarName("scriptShellDefault")} is set to "system"
+project.runWorkspaceScript({
+  workspaceNameOrAlias: "my-workspace",
+  script: "echo 'this is my inline script'",
+  inline: true,
+});
+
+project.runWorkspaceScript({
+  workspaceNameOrAlias: "my-workspace",
+  script: "echo 'this is my inline script'",
+  // Takes "bun", "system", or "default", same as the CLI --shell option
+  inline: { shell: "system" },
 });
 `.trim();

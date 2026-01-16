@@ -1,6 +1,6 @@
 ---
-title: Script Runtime Metadata
-titleSuffix: " | Concepts | bun-workspaces"
+title: Concepts > Script Runtime Metadata
+titleSuffix: " | bun-workspaces"
 description: "Script Runtime Metadata | Concepts | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
 pageType: doc
 sidebar: false
@@ -8,18 +8,18 @@ outline: true
 footer: false
 ---
 
-import { getScriptRuntimeMetadataConfig } from 'bun-workspaces/src/project/runScript/scriptRuntimeMetadata';
+import { getScriptRuntimeMetadataConfig } from 'bun-workspaces/src/runScript/scriptRuntimeMetadata';
 import { SyntaxHighlighter } from '../../../content/highlight';
-import { Footer } from "../../../content/Footer";
 import { ConceptsHeader } from "../../../content/concepts/ConceptsHeader";
 
 <ConceptsHeader activeHref="scriptRuntimeMetadata" />
 
-When running scripts via the API or CLI, runtime metadata is available to be used in the script, which can be interpolated in an inline script or appended args, or it can be read from environment variables.
+When running scripts via the API or CLI, runtime metadata is available to be used in the script, which can be interpolated in an [inline script](/concepts/inline-scripts) or appended args, or it can be read from environment variables.
 
 ## Examples
 
-This example shows various uses of the runtime metadata to run the same file from all workspaces, while having a means of distinguishing the workspace and script running the file, thanks to the metadata.
+This example shows various uses of the runtime metadata for running the same file from all workspaces via an inline script, using the metadata in the script itself via environment variables,
+the inline command, and the `--args` (`-a`) passed.
 
 <SyntaxHighlighter language="typescript">
 {`// Contents of my-script.ts (in project root)
@@ -35,7 +35,7 @@ console.log(process.env.${getScriptRuntimeMetadataConfig("scriptName").envVarNam
 
 #### CLI:
 <SyntaxHighlighter language="bash">
-{`bw run "bun run <projectPath>/my-script.ts" --inline --args="<scriptName>"`}
+{`bw run "bun <projectPath>/my-script.ts" -i -I "my-script-name" -a "<scriptName>"`}
 </SyntaxHighlighter>
 
 #### API:
@@ -49,9 +49,9 @@ ${"  "}rootDirectory: ".",
 
 project.runScriptAcrossWorkspaces({
 ${"  "}workspacePatterns: ["*"],
-${"  "}script: "bun run <projectPath>/my-script.ts",
+${"  "}script: "bun <projectPath>/my-script.ts",
 ${"  "}args: "<scriptName>",
-${"  "}inline: true,
+${"  "}inline: { scriptName: "my-script-name" },
 });`}
 </SyntaxHighlighter>
 
@@ -88,9 +88,7 @@ In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("workspaceRela
 Environment variable: <code>{getScriptRuntimeMetadataConfig("workspaceRelativePath").envVarName}</code>
 
 #### Script Name
-The name of the script. This is an empty string when running as an inline script, unless a script name is explicitly provided via the [CLI](/cli/commands#run-script) or [API](/api/reference#inline-scripts).<br/>
+The name of the script. This is an empty string when running as an inline script, unless a script name is [explicitly provided](/concepts/inline-scripts#script-name).<br/>
 
 In inline scripts and args: <code>{getScriptRuntimeMetadataConfig("scriptName").inlineName[0]}</code><br/>
 Environment variable: <code>{getScriptRuntimeMetadataConfig("scriptName").envVarName}</code>
-
-<Footer />

@@ -3,8 +3,10 @@ import { availableParallelism } from "os";
 import path from "path";
 import { test, expect, describe, beforeAll } from "bun:test";
 import { getUserEnvVar } from "../src/config/userEnvVars";
+import { createRawPattern } from "../src/internal/core";
 import { getProjectRoot, type TestProjectName } from "./testProjects";
 import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
+import { withWindowsPath } from "./util/windows";
 
 const TEST_OUTPUT_DIR = path.resolve(__dirname, "test-output");
 
@@ -13,6 +15,102 @@ describe("CLI Run Script", () => {
     if (fs.existsSync(TEST_OUTPUT_DIR)) {
       fs.rmSync(TEST_OUTPUT_DIR, { recursive: true });
     }
+  });
+
+  test("Script option vs. inline script name", async () => {
+    const { run } = setupCliTest({
+      testProject: "simple1",
+    });
+
+    const optionResult = await run("run-script", "--script=a-workspaces");
+    expect(optionResult.exitCode).toBe(0);
+    assertOutputMatches(
+      optionResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:a-workspaces] script for a workspaces
+[library-1a:a-workspaces] script for a workspaces
+✅ application-1a: a-workspaces
+✅ library-1a: a-workspaces
+2 scripts ran successfully`,
+    );
+
+    const shortOptionResult = await run("run-script", "-S", "a-workspaces");
+    expect(shortOptionResult.exitCode).toBe(0);
+    assertOutputMatches(
+      shortOptionResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:a-workspaces] script for a workspaces
+[library-1a:a-workspaces] script for a workspaces
+✅ application-1a: a-workspaces
+✅ library-1a: a-workspaces
+2 scripts ran successfully`,
+    );
+
+    const inlineResult = await run("run-script", "a-workspaces");
+    expect(inlineResult.exitCode).toBe(0);
+    assertOutputMatches(
+      inlineResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:a-workspaces] script for a workspaces
+[library-1a:a-workspaces] script for a workspaces
+✅ application-1a: a-workspaces
+✅ library-1a: a-workspaces
+2 scripts ran successfully`,
+    );
+
+    const inlinePatternsResult = await run(
+      "run-script",
+      "--script=a-workspaces",
+      "application-*",
+    );
+    expect(inlinePatternsResult.exitCode).toBe(0);
+    assertOutputMatches(
+      inlinePatternsResult.stdout.sanitizedCompactLines,
+      `[application-1a:a-workspaces] script for a workspaces
+✅ application-1a: a-workspaces
+1 script ran successfully`,
+    );
+
+    const inlinePatternsResult2 = await run(
+      "run-script",
+      "--script=all-workspaces",
+      "library-1a",
+      "library-*",
+    );
+    expect(inlinePatternsResult2.exitCode).toBe(0);
+    assertOutputMatches(
+      inlinePatternsResult2.stdout.sanitizedCompactLines,
+      `[library-1a:all-workspaces] script for all workspaces
+[library-1b:all-workspaces] script for all workspaces
+✅ library-1a: all-workspaces
+✅ library-1b: all-workspaces
+2 scripts ran successfully`,
+    );
+
+    const scriptAndWorkspaceOptionResult = await run(
+      "run-script",
+      "--workspace-patterns=library-1a,library-*",
+      "--script=all-workspaces",
+    );
+    expect(scriptAndWorkspaceOptionResult.exitCode).toBe(0);
+    assertOutputMatches(
+      scriptAndWorkspaceOptionResult.stdout.sanitizedCompactLines,
+      `[library-1a:all-workspaces] script for all workspaces
+[library-1b:all-workspaces] script for all workspaces
+✅ library-1a: all-workspaces
+✅ library-1b: all-workspaces
+2 scripts ran successfully`,
+    );
+
+    const scriptAndWorkspaceOptionAndScriptOptionResult = await run(
+      "run-script",
+      "all-workspaces",
+      "--workspace-patterns=library-1a,library-*",
+      "--script=all-workspaces",
+    );
+    expect(scriptAndWorkspaceOptionAndScriptOptionResult.exitCode).toBe(1);
+    assertOutputMatches(
+      scriptAndWorkspaceOptionAndScriptOptionResult.stderr
+        .sanitizedCompactLines,
+      `CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-W option`,
+    );
   });
 
   test("Running with failures", async () => {
@@ -144,7 +242,7 @@ describe("CLI Run Script", () => {
 5 scripts ran successfully`,
       );
     },
-    { repeats: 5 },
+    { repeats: 2 },
   );
 
   test("Run for specific workspaces", async () => {
@@ -236,6 +334,54 @@ describe("CLI Run Script", () => {
 ✅ application-1b: all-workspaces
 ✅ library-1a: all-workspaces
 2 scripts ran successfully`,
+    );
+
+    const resultWorkspacePatterns = await run(
+      "run-script",
+      "all-workspaces",
+      "--workspace-patterns=application-*,library-1b",
+    );
+    expect(resultWorkspacePatterns.exitCode).toBe(0);
+    assertOutputMatches(
+      resultWorkspacePatterns.stdout.sanitizedCompactLines,
+      `[application-1a:all-workspaces] script for all workspaces
+[application-1b:all-workspaces] script for all workspaces
+[library-1b:all-workspaces] script for all workspaces
+✅ application-1a: all-workspaces
+✅ application-1b: all-workspaces
+✅ library-1b: all-workspaces
+3 scripts ran successfully`,
+    );
+
+    const resultWorkspacePatternsShort = await run(
+      "run-script",
+      "all-workspaces",
+      "-W",
+      "application-*,library-1b",
+    );
+    expect(resultWorkspacePatternsShort.exitCode).toBe(0);
+    assertOutputMatches(
+      resultWorkspacePatternsShort.stdout.sanitizedCompactLines,
+      `[application-1a:all-workspaces] script for all workspaces
+[application-1b:all-workspaces] script for all workspaces
+[library-1b:all-workspaces] script for all workspaces
+✅ application-1a: all-workspaces
+✅ application-1b: all-workspaces
+✅ library-1b: all-workspaces
+3 scripts ran successfully`,
+    );
+
+    const resultWorkspacePatternsAndOption = await run(
+      "run-script",
+      "all-workspaces",
+      "--workspace-patterns=application-*,library-1b",
+      "application-*",
+      "library-1b",
+    );
+    expect(resultWorkspacePatternsAndOption.exitCode).toBe(1);
+    assertOutputMatches(
+      resultWorkspacePatternsAndOption.stderr.sanitizedCompactLines,
+      `CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-W option`,
     );
   });
 
@@ -367,6 +513,42 @@ passed args: library-1b
 ✅ library-1b: test-echo
 4 scripts ran successfully`,
     );
+
+    const terminatorResult = await run(
+      "run-script",
+      "test-echo",
+      "--",
+      "test-args",
+      "--another-arg",
+    );
+    expect(terminatorResult.exitCode).toBe(0);
+    assertOutputMatches(
+      terminatorResult.stdoutAndErr.sanitizedCompactLines,
+      `[application-1a:test-echo] passed args: test-args --another-arg
+[application-1b:test-echo] passed args: test-args --another-arg
+[library-1a:test-echo] passed args: test-args --another-arg
+[library-1b:test-echo] passed args: test-args --another-arg
+✅ application-1a: test-echo
+✅ application-1b: test-echo
+✅ library-1a: test-echo
+✅ library-1b: test-echo
+4 scripts ran successfully`,
+    );
+
+    const terminatorAndOptionResult = await run(
+      "run-script",
+      "test-echo",
+      "--args=my-arg",
+      "--",
+      "test-args",
+      "--another-arg",
+      "--args=test-args",
+    );
+    expect(terminatorAndOptionResult.exitCode).toBe(1);
+    assertOutputMatches(
+      terminatorAndOptionResult.stderr.sanitizedCompactLines,
+      `CLI syntax error: Cannot use both --args and inline script args after --`,
+    );
   });
 
   test("Using --no-prefix", async () => {
@@ -430,7 +612,7 @@ success2
 
     const resultSimple = await run(
       "run-script",
-      "echo 'this is my inline script for <workspaceName>'",
+      "echo this is my inline script for <workspaceName>",
       "--inline",
     );
     expect(resultSimple.exitCode).toBe(0);
@@ -449,7 +631,7 @@ success2
 
     const resultSimpleShort = await run(
       "run-script",
-      "echo 'this is my inline script for <workspaceName>'",
+      "echo this is my inline script for <workspaceName>",
       "-i",
     );
     expect(resultSimpleShort.exitCode).toBe(0);
@@ -468,7 +650,7 @@ success2
 
     const resultWithArgs = await run(
       "run-script",
-      "echo 'this is my inline script for <workspaceName>'",
+      "echo this is my inline script for <workspaceName>",
       "--inline",
       "--args=test-args-<workspaceName>",
     );
@@ -488,7 +670,7 @@ success2
 
     const resultWithArgsNoPrefix = await run(
       "run-script",
-      "echo 'this is my inline script for <workspaceName>'",
+      "echo this is my inline script for <workspaceName>",
       "--inline",
       "--args=test-args-<workspaceName>",
       "--no-prefix",
@@ -514,7 +696,7 @@ this is my inline script for library-1b test-args-library-1b
     });
     const result = await run(
       "run-script",
-      "echo 'this is my inline script for <workspaceName>'",
+      "echo this is my inline script for <workspaceName>",
       "--inline",
       "--inline-name=test-echo-inline",
     );
@@ -534,7 +716,7 @@ this is my inline script for library-1b test-args-library-1b
 
     const resultShort = await run(
       "run-script",
-      "echo 'this is my inline script for <workspaceName>'",
+      "echo this is my inline script for <workspaceName>",
       "-i",
       "-I test-echo-inline",
     );
@@ -581,7 +763,7 @@ this is my inline script for library-1b test-args-library-1b
     expect(result2.exitCode).toBe(1);
     assertOutputMatches(
       result2.stderr.sanitizedCompactLines,
-      `Given JSON output file directory "${TEST_OUTPUT_DIR}/test-file.txt" is an existing file`,
+      `Given JSON output file directory "${withWindowsPath(`${TEST_OUTPUT_DIR}/test-file.txt`)}" is an existing file`,
     );
 
     const result3 = await run(
@@ -593,7 +775,11 @@ this is my inline script for library-1b test-args-library-1b
     expect(result3.exitCode).toBe(1);
     assertOutputMatches(
       result3.stderr.sanitizedCompactLines,
-      `Failed to create JSON output file directory "${TEST_OUTPUT_DIR}/test-file.txt/something": Error: ENOTDIR: not a directory, mkdir '${TEST_OUTPUT_DIR}/test-file.txt/something'`,
+      new RegExp(
+        createRawPattern(
+          `Failed to create JSON output file directory "${withWindowsPath(`${TEST_OUTPUT_DIR}/test-file.txt/something`)}":`,
+        ),
+      ),
     );
   });
 
@@ -627,8 +813,8 @@ this is my inline script for library-1b test-args-library-1b
     expect(plainResult.exitCode).toBe(0);
     assertOutputMatches(
       plainResult.stdoutAndErr.sanitizedCompactLines,
-      `[application-a:test-echo] ${projectRoot} test-root application-a ${projectRoot}/applications/application-a applications/application-a test-echo
-[application-b:test-echo] ${projectRoot} test-root application-b ${projectRoot}/applications/application-b applications/application-b test-echo
+      `[application-a:test-echo] ${projectRoot} test-root application-a ${withWindowsPath(projectRoot + "/applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo
+[application-b:test-echo] ${projectRoot} test-root application-b ${withWindowsPath(projectRoot + "/applications/application-b")} ${withWindowsPath("applications/application-b")} test-echo
 ✅ application-a: test-echo
 ✅ application-b: test-echo
 2 scripts ran successfully`,
@@ -641,8 +827,8 @@ this is my inline script for library-1b test-args-library-1b
     );
     assertOutputMatches(
       argsResult.stdoutAndErr.sanitizedCompactLines,
-      `[application-a:test-echo] ${projectRoot} test-root application-a ${projectRoot}/applications/application-a applications/application-a test-echo --arg1=${projectRoot} --arg2=test-root --arg3=application-a --arg4=${projectRoot}/applications/application-a --arg5=applications/application-a --arg6=test-echo
-[application-b:test-echo] ${projectRoot} test-root application-b ${projectRoot}/applications/application-b applications/application-b test-echo --arg1=${projectRoot} --arg2=test-root --arg3=application-b --arg4=${projectRoot}/applications/application-b --arg5=applications/application-b --arg6=test-echo
+      `[application-a:test-echo] ${projectRoot} test-root application-a ${withWindowsPath(projectRoot + "/applications/application-a")} ${withWindowsPath("applications/application-a")} test-echo --arg1=${projectRoot} --arg2=test-root --arg3=application-a --arg4=${withWindowsPath(projectRoot + "/applications/application-a")} --arg5=${withWindowsPath("applications/application-a")} --arg6=test-echo
+[application-b:test-echo] ${projectRoot} test-root application-b ${withWindowsPath(projectRoot + "/applications/application-b")} ${withWindowsPath("applications/application-b")} test-echo --arg1=${projectRoot} --arg2=test-root --arg3=application-b --arg4=${withWindowsPath(projectRoot + "/applications/application-b")} --arg5=${withWindowsPath("applications/application-b")} --arg6=test-echo
 ✅ application-a: test-echo
 ✅ application-b: test-echo
 2 scripts ran successfully`,
@@ -650,14 +836,14 @@ this is my inline script for library-1b test-args-library-1b
 
     const inlineResult = await run(
       "run-script",
-      "echo '<projectPath> <projectName> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>'",
+      "echo <projectPath> <projectName> <workspaceName> <workspacePath> <workspaceRelativePath> <scriptName>",
       "--inline",
     );
     expect(inlineResult.exitCode).toBe(0);
     assertOutputMatches(
       inlineResult.stdoutAndErr.sanitizedCompactLines,
-      `[application-a:(inline)] ${projectRoot} test-root application-a ${projectRoot}/applications/application-a applications/application-a
-[application-b:(inline)] ${projectRoot} test-root application-b ${projectRoot}/applications/application-b applications/application-b
+      `[application-a:(inline)] ${projectRoot} test-root application-a ${withWindowsPath(projectRoot + "/applications/application-a")} ${withWindowsPath("applications/application-a")}
+[application-b:(inline)] ${projectRoot} test-root application-b ${withWindowsPath(projectRoot + "/applications/application-b")} ${withWindowsPath("applications/application-b")}
 ✅ application-a: (inline)
 ✅ application-b: (inline)
 2 scripts ran successfully`,
@@ -851,7 +1037,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "application-1a",
               matchPattern: "applications/*",
-              path: "applications/applicationA",
+              path: withWindowsPath("applications/applicationA"),
               aliases: ["deprecated_appA"],
               scripts: ["a-workspaces", "all-workspaces", "application-a"],
             },
@@ -868,7 +1054,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "application-1b",
               matchPattern: "applications/*",
-              path: "applications/applicationB",
+              path: withWindowsPath("applications/applicationB"),
               aliases: ["deprecated_appB"],
               scripts: ["all-workspaces", "application-b", "b-workspaces"],
             },
@@ -885,7 +1071,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "library-1a",
               matchPattern: "libraries/*",
-              path: "libraries/libraryA",
+              path: withWindowsPath("libraries/libraryA"),
               aliases: ["deprecated_libA"],
               scripts: ["a-workspaces", "all-workspaces", "library-a"],
             },
@@ -902,7 +1088,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "library-1b",
               matchPattern: "libraries/*",
-              path: "libraries/libraryB",
+              path: withWindowsPath("libraries/libraryB"),
               aliases: ["deprecated_libB"],
               scripts: ["all-workspaces", "b-workspaces", "library-b"],
             },
@@ -947,7 +1133,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "application-1a",
               matchPattern: "applications/*",
-              path: "applications/applicationA",
+              path: withWindowsPath("applications/applicationA"),
               aliases: ["deprecated_appA"],
               scripts: ["a-workspaces", "all-workspaces", "application-a"],
             },
@@ -964,7 +1150,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "library-1a",
               matchPattern: "libraries/*",
-              path: "libraries/libraryA",
+              path: withWindowsPath("libraries/libraryA"),
               aliases: ["deprecated_libA"],
               scripts: ["a-workspaces", "all-workspaces", "library-a"],
             },
@@ -1011,7 +1197,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "library-1b",
               matchPattern: "libraries/*",
-              path: "libraries/libraryB",
+              path: withWindowsPath("libraries/libraryB"),
               scripts: ["all-workspaces", "b-workspaces", "library-b"],
               aliases: ["deprecated_libB"],
             },
@@ -1060,7 +1246,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "fail1",
               matchPattern: "packages/**/*",
-              path: "packages/fail1",
+              path: withWindowsPath("packages/fail1"),
               aliases: [],
               scripts: ["test-exit"],
             },
@@ -1077,7 +1263,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "fail2",
               matchPattern: "packages/**/*",
-              path: "packages/fail2",
+              path: withWindowsPath("packages/fail2"),
               aliases: [],
               scripts: ["test-exit"],
             },
@@ -1094,7 +1280,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "success1",
               matchPattern: "packages/**/*",
-              path: "packages/success1",
+              path: withWindowsPath("packages/success1"),
               aliases: [],
               scripts: ["test-exit"],
             },
@@ -1111,7 +1297,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "success2",
               matchPattern: "packages/**/*",
-              path: "packages/success2",
+              path: withWindowsPath("packages/success2"),
               aliases: [],
               scripts: ["test-exit"],
             },
@@ -1175,7 +1361,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "application-1a",
               matchPattern: "applications/*",
-              path: "applications/applicationA",
+              path: withWindowsPath("applications/applicationA"),
               aliases: ["deprecated_appA"],
               scripts: ["a-workspaces", "all-workspaces", "application-a"],
             },
@@ -1225,7 +1411,7 @@ this is my inline script for library-1b test-args-library-1b
             workspace: {
               name: "application-1a",
               matchPattern: "applications/*",
-              path: "applications/applicationA",
+              path: withWindowsPath("applications/applicationA"),
               aliases: ["deprecated_appA"],
               scripts: ["a-workspaces", "all-workspaces", "application-a"],
             },

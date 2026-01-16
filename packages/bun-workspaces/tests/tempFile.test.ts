@@ -1,0 +1,119 @@
+import fs from "node:fs";
+import { expect, test, describe } from "bun:test";
+import {
+  createTempDir,
+  createTempFile,
+} from "../src/internal/runtime/tempFile";
+import { runScript } from "../src/runScript";
+
+describe("Temp file utils", () => {
+  test("createTempFile", () => {
+    const { filePath, cleanup } = createTempFile({
+      fileName: "test.txt",
+      fileContent: "test",
+    });
+    expect(fs.readFileSync(filePath, "utf8")).toBe("test");
+    cleanup();
+    expect(fs.existsSync(filePath)).toBe(false);
+  });
+
+  test("cleanTempDir", () => {
+    const { filePath: a } = createTempFile({
+      fileName: "a.txt",
+      fileContent: "test a",
+    });
+    const { filePath: b } = createTempFile({
+      fileName: "b.txt",
+      fileContent: "test b",
+    });
+    const { filePath: c } = createTempFile({
+      fileName: "c.txt",
+      fileContent: "test c",
+    });
+
+    expect(fs.readFileSync(a, "utf8")).toBe("test a");
+    expect(fs.readFileSync(b, "utf8")).toBe("test b");
+    expect(fs.readFileSync(c, "utf8")).toBe("test c");
+
+    createTempDir(true);
+
+    expect(fs.existsSync(a)).toBe(false);
+    expect(fs.existsSync(b)).toBe(false);
+    expect(fs.existsSync(c)).toBe(false);
+  });
+
+  test("createTempFile: cleans up on exit", async () => {
+    const { exit, output } = runScript({
+      scriptCommand: {
+        command: "bun run testScripts/createTempFile.ts",
+        workingDirectory: __dirname,
+      },
+      metadata: {},
+      env: {},
+    });
+
+    let filePath = "";
+    for await (const chunk of output) {
+      filePath = chunk.decode().trim();
+      expect(fs.readFileSync(filePath, "utf8")).toBe("from createTempFile.ts");
+    }
+
+    await exit;
+
+    expect(fs.existsSync(filePath)).toBe(false);
+  });
+
+  test("createTempFile: cleans up on interrupt", async () => {
+    const { exit, output, kill } = runScript({
+      scriptCommand: {
+        command: "bun run testScripts/createTempFile.ts",
+        workingDirectory: __dirname,
+      },
+      metadata: {},
+      env: {},
+    });
+
+    let filePath = "";
+    for await (const chunk of output) {
+      filePath = chunk.decode().trim();
+      expect(fs.readFileSync(filePath, "utf8")).toBe("from createTempFile.ts");
+      kill("SIGINT");
+    }
+
+    await exit;
+
+    expect(fs.existsSync(filePath)).toBe(false);
+  });
+
+  test("createTempFile: cleans up on crash", async () => {
+    const { exit, output } = runScript({
+      scriptCommand: {
+        command: "bun run testScripts/createTempFile.ts",
+        workingDirectory: __dirname,
+      },
+      metadata: {},
+      env: {
+        CRASH: "true",
+      },
+    });
+
+    let filePath = "";
+    let stderr = "";
+    for await (const chunk of output) {
+      if (chunk.streamName === "stderr") {
+        stderr += chunk.decode({ stripAnsi: true }).trim();
+        continue;
+      }
+
+      filePath = chunk.decode().trim();
+      expect(fs.readFileSync(filePath, "utf8")).toBe("from createTempFile.ts");
+    }
+
+    expect(stderr).toMatch(/error: Test crash/g);
+    expect(stderr).toMatch(/throw new Error\("Test crash"\)/g);
+
+    await exit;
+
+    expect(fs.existsSync(filePath)).toBe(false);
+  });
+});

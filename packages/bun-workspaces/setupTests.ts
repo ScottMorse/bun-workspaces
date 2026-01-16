@@ -2,7 +2,7 @@
 import path from "node:path";
 import { Glob } from "bun";
 import { setLogLevel } from "./src";
-import { runScript } from "./src/project";
+import { runScript } from "./src/runScript";
 
 setLogLevel("silent");
 

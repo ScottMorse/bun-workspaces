@@ -16,6 +16,7 @@ const createDesiredPackageJson = () => {
   const {
     name,
     version,
+    description,
     main,
     homepage,
     repository,
@@ -23,6 +24,7 @@ const createDesiredPackageJson = () => {
     _bwInternal,
     dependencies,
     keywords,
+    scripts,
   } = JSON.parse(readFileSync(path.resolve(PACKAGE_JSON_PATH)).toString());
 
   const { license } = JSON.parse(
@@ -32,6 +34,7 @@ const createDesiredPackageJson = () => {
   return {
     name,
     version,
+    description,
     license,
     main: main.replace(".ts", ".mjs"),
     types: main.replace(".ts", ".d.ts"),
@@ -44,6 +47,7 @@ const createDesiredPackageJson = () => {
     bin,
     _bwInternal,
     dependencies,
+    ...(IS_TEST_BUILD ? { scripts } : {}),
   };
 };
 

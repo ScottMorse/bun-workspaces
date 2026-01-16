@@ -10,8 +10,9 @@ if (import.meta.main && process.env.CLI === "true") {
 
   const { output } = project.runScriptAcrossWorkspaces({
     workspacePatterns: ["p*"],
-    script: "test",
+    script: "echo <workspaceName>: <scriptName> && set -o pipefail",
     parallel: { max: "100%" },
+    inline: { scriptName: "test", shell: "system" },
   });
 
   for await (const { outputChunk } of output) {

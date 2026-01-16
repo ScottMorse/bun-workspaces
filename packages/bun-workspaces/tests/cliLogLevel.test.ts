@@ -1,5 +1,6 @@
 import { test, describe } from "bun:test";
 import { setupCliTest, assertOutputMatches } from "./util/cliTestUtils";
+import { withWindowsPath } from "./util/windows";
 
 describe("CLI Log Level", () => {
   test("Level is silent", async () => {
@@ -9,7 +10,7 @@ describe("CLI Log Level", () => {
       (await run("--log-level=silent", "ls")).stdoutAndErr.raw,
       `Workspace: application-a
  - Aliases: 
- - Path: applications/applicationA
+ - Path: ${withWindowsPath("applications/applicationA")}
  - Glob Match: applications/*
  - Scripts: a-workspaces, all-workspaces, application-a`,
     );
@@ -20,7 +21,7 @@ describe("CLI Log Level", () => {
         {
           name: "application-a",
           matchPattern: "applications/*",
-          path: "applications/applicationA",
+          path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
           aliases: [],
         },
@@ -37,7 +38,7 @@ describe("CLI Log Level", () => {
         .raw,
       `Workspace: application-a
  - Aliases: 
- - Path: applications/applicationA
+ - Path: ${withWindowsPath("applications/applicationA")}
  - Glob Match: applications/*
  - Scripts: a-workspaces, all-workspaces, application-a`,
     );
@@ -48,7 +49,7 @@ describe("CLI Log Level", () => {
       JSON.stringify({
         name: "application-a",
         matchPattern: "applications/*",
-        path: "applications/applicationA",
+        path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
         aliases: [],
       }),
@@ -145,7 +146,7 @@ application-a`,
       (await run("--log-level=error", "ls")).stdoutAndErr.raw,
       `Workspace: application-a
  - Aliases: 
- - Path: applications/applicationA
+ - Path: ${withWindowsPath("applications/applicationA")}
  - Glob Match: applications/*
  - Scripts: a-workspaces, all-workspaces, application-a`,
     );
@@ -156,7 +157,7 @@ application-a`,
         {
           name: "application-a",
           matchPattern: "applications/*",
-          path: "applications/applicationA",
+          path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
           aliases: [],
         },
@@ -173,7 +174,7 @@ application-a`,
         .raw,
       `Workspace: application-a
  - Aliases: 
- - Path: applications/applicationA
+ - Path: ${withWindowsPath("applications/applicationA")}
  - Glob Match: applications/*
  - Scripts: a-workspaces, all-workspaces, application-a`,
     );
@@ -184,7 +185,7 @@ application-a`,
       JSON.stringify({
         name: "application-a",
         matchPattern: "applications/*",
-        path: "applications/applicationA",
+        path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
         aliases: [],
       }),

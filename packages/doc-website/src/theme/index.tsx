@@ -1,8 +1,22 @@
 import { useEffect, useRef } from "react";
 import { Link } from "rspress/theme";
+import { useLocation } from "rspress/runtime";
+import "@fontsource/unifontex";
 import packageJson from "../../../bun-workspaces/package.json";
 import Theme from "rspress/theme";
 import { PixelArtImage } from "../util/pixelArt";
+import { useLayout } from "../util/useLayout";
+import { Footer } from "../content/Footer";
+
+const OnPageChange = () => {
+  const location = useLocation();
+  useEffect(() => {
+    if (!location.hash) {
+      window.scrollTo(0, 0);
+    }
+  }, [location]);
+  return null;
+};
 
 /** @todo The href-related code is all a pretty terrible hack to get around "/index" being forced as the home link. */
 const HomeLink = () => {
@@ -20,7 +34,7 @@ const HomeLink = () => {
         <PixelArtImage
           path="/images/png/bwunster_64x70.png"
           style={{
-            width: "1.6rem",
+            width: "2rem",
           }}
           small
           height="auto"
@@ -33,6 +47,7 @@ const HomeLink = () => {
                 width: "7.5rem",
               }}
               height="auto"
+              small
               className="dark-only nav-title-text"
               alt="bun-workspaces"
             />
@@ -42,6 +57,7 @@ const HomeLink = () => {
                 width: "7.5rem",
               }}
               height="auto"
+              small
               className="light-only nav-title-text"
               alt="bun-workspaces"
             />
@@ -53,7 +69,16 @@ const HomeLink = () => {
   );
 };
 
-const Layout = () => <Theme.Layout navTitle={<HomeLink />} />;
+const Layout = () => {
+  useLayout();
+  return (
+    <>
+      <OnPageChange />
+      <Theme.Layout navTitle={<HomeLink />} />
+      <Footer />
+    </>
+  );
+};
 
 export default {
   ...Theme,

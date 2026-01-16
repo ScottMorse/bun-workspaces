@@ -2,7 +2,8 @@ import path from "path";
 import { validateCurrentBunVersion } from "../../internal/bun";
 import { createWildcardRegex } from "../../internal/core";
 import { logger } from "../../internal/logger";
-import { type Workspace } from "../../workspaces";
+import { createWorkspaceScriptCommand } from "../../runScript";
+import { sortWorkspaces, type Workspace } from "../../workspaces";
 import { PROJECT_ERRORS } from "../errors";
 import type {
   CreateProjectScriptCommandOptions,
@@ -10,7 +11,6 @@ import type {
   Project,
   WorkspaceScriptMetadata,
 } from "../project";
-import { createWorkspaceScriptCommand } from "../runScript";
 
 export const resolveWorkspacePath = (project: Project, workspace: Workspace) =>
   path.resolve(project.rootDirectory, workspace.path);
@@ -78,14 +78,20 @@ export abstract class ProjectBase implements Project {
   }
 
   /** Accepts wildcard for finding a list of workspaces */
-  findWorkspacesByPattern(workspacePattern: string): Workspace[] {
-    if (!workspacePattern) return [];
-    if (!workspacePattern.includes("*")) {
-      const workspace = this.findWorkspaceByNameOrAlias(workspacePattern);
-      return workspace ? [workspace] : [];
-    }
-    const regex = createWildcardRegex(workspacePattern);
-    return this.workspaces.filter((workspace) => regex.test(workspace.name));
+  findWorkspacesByPattern(...workspacePatterns: string[]): Workspace[] {
+    return sortWorkspaces(
+      workspacePatterns.flatMap((pattern) => {
+        if (!pattern) return [];
+        if (!pattern.includes("*")) {
+          const workspace = this.findWorkspaceByNameOrAlias(pattern);
+          return workspace ? [workspace] : [];
+        }
+        const regex = createWildcardRegex(pattern);
+        return this.workspaces.filter((workspace) =>
+          regex.test(workspace.name),
+        );
+      }),
+    );
   }
 
   createScriptCommand(

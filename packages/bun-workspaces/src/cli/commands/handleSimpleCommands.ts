@@ -1,0 +1,213 @@
+import { getDoctorInfo } from "../../doctor";
+import { isJsonObject } from "../../internal/core";
+import { logger } from "../../internal/logger";
+import {
+  createJsonLines,
+  commandOutputLogger,
+  createScriptInfoLines,
+  createWorkspaceInfoLines,
+  handleProjectCommand,
+  handleGlobalCommand,
+} from "./commandHandlerUtils";
+
+export const doctor = handleGlobalCommand(
+  "doctor",
+  (_, options: { json: boolean; pretty: boolean }) => {
+    const info = getDoctorInfo();
+    if (options.json) {
+      commandOutputLogger.info(
+        JSON.stringify(info, null, options.pretty ? 2 : undefined),
+      );
+    } else {
+      const createEntryLine = ([key, value]: [
+        key: string,
+        value: unknown,
+      ]): string => {
+        const keyName = (
+          key[0].toUpperCase() + key.slice(1).replace(/([A-Z])/g, " $1")
+        ).replace(/os|cpu/gi, (m) => m.toUpperCase());
+
+        return isJsonObject(value)
+          ? keyName +
+              ":\n - " +
+              Object.entries(value).map(createEntryLine).join("\n - ")
+          : `${keyName}: ${value}`;
+      };
+
+      commandOutputLogger.info(
+        "bun-workspaces\n" +
+          Object.entries(info).map(createEntryLine).join("\n"),
+      );
+    }
+  },
+);
+
+export const listWorkspaces = handleProjectCommand(
+  "listWorkspaces",
+  (
+    { project },
+    workspacePatterns: string[] | undefined,
+    options: {
+      workspacePatterns: string | undefined;
+      nameOnly: boolean;
+      json: boolean;
+      pretty: boolean;
+    },
+  ) => {
+    logger.debug(
+      `Command: List workspaces (options: ${JSON.stringify(options)})`,
+    );
+
+    const lines: string[] = [];
+
+    if (workspacePatterns?.length && options.workspacePatterns?.length) {
+      logger.error(
+        "CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-W option",
+      );
+      process.exit(1);
+    }
+
+    const patterns = workspacePatterns?.length
+      ? workspacePatterns
+      : options.workspacePatterns?.split(",");
+
+    const workspaces = patterns?.length
+      ? project.findWorkspacesByPattern(...patterns)
+      : project.workspaces;
+
+    if (options.json) {
+      lines.push(
+        ...createJsonLines(
+          options.nameOnly ? workspaces.map(({ name }) => name) : workspaces,
+          options,
+        ),
+      );
+    } else {
+      workspaces.forEach((workspace) => {
+        if (options.nameOnly) {
+          lines.push(workspace.name);
+        } else {
+          lines.push(...createWorkspaceInfoLines(workspace));
+        }
+      });
+    }
+
+    if (!lines.length && !options.nameOnly) {
+      logger.info("No workspaces found");
+    }
+
+    if (lines.length) commandOutputLogger.info(lines.join("\n"));
+  },
+);
+
+export const listScripts = handleProjectCommand(
+  "listScripts",
+  (
+    { project },
+    options: { nameOnly: boolean; json: boolean; pretty: boolean },
+  ) => {
+    logger.debug(`Command: List scripts (options: ${JSON.stringify(options)})`);
+
+    const scripts = project.mapScriptsToWorkspaces();
+    const lines: string[] = [];
+
+    if (!project.workspaces.length && !options.nameOnly) {
+      logger.info("No workspaces found");
+      return;
+    }
+
+    if (!Object.keys(scripts).length && !options.nameOnly) {
+      logger.info("No scripts found");
+      return;
+    }
+
+    if (options.json) {
+      lines.push(
+        ...createJsonLines(
+          options.nameOnly
+            ? Object.keys(scripts)
+            : Object.values(scripts).map(({ workspaces, ...rest }) => ({
+                ...rest,
+                workspaces: workspaces.map(({ name }) => name),
+              })),
+          options,
+        ),
+      );
+    } else {
+      Object.values(scripts)
+        .sort(({ name: nameA }, { name: nameB }) => nameA.localeCompare(nameB))
+        .forEach(({ name, workspaces }) => {
+          if (options.nameOnly) {
+            lines.push(name);
+          } else {
+            lines.push(...createScriptInfoLines(name, workspaces));
+          }
+        });
+    }
+
+    if (lines.length) commandOutputLogger.info(lines.join("\n"));
+  },
+);
+
+export const workspaceInfo = handleProjectCommand(
+  "workspaceInfo",
+  (
+    { project },
+    workspaceName: string,
+    options: { json: boolean; pretty: boolean },
+  ) => {
+    logger.debug(
+      `Command: Workspace info for ${workspaceName} (options: ${JSON.stringify(options)})`,
+    );
+
+    const workspace = project.findWorkspaceByNameOrAlias(workspaceName);
+    if (!workspace) {
+      logger.error(`Workspace ${JSON.stringify(workspaceName)} not found`);
+      process.exit(1);
+    }
+
+    commandOutputLogger.info(
+      (options.json
+        ? createJsonLines(workspace, options)
+        : createWorkspaceInfoLines(workspace)
+      ).join("\n"),
+    );
+  },
+);
+
+export const scriptInfo = handleProjectCommand(
+  "scriptInfo",
+  (
+    { project },
+    script: string,
+    options: { workspacesOnly: boolean; json: boolean; pretty: boolean },
+  ) => {
+    logger.debug(
+      `Command: Script info for ${script} (options: ${JSON.stringify(options)})`,
+    );
+
+    const scripts = project.mapScriptsToWorkspaces();
+    const scriptMetadata = scripts[script];
+    if (!scriptMetadata) {
+      logger.error(`Script not found: ${JSON.stringify(script)}`);
+      process.exit(1);
+    }
+
+    commandOutputLogger.info(
+      (options.json
+        ? createJsonLines(
+            options.workspacesOnly
+              ? scriptMetadata.workspaces.map(({ name }) => name)
+              : {
+                  name: scriptMetadata.name,
+                  workspaces: scriptMetadata.workspaces.map(({ name }) => name),
+                },
+            options,
+          )
+        : options.workspacesOnly
+          ? scriptMetadata.workspaces.map(({ name }) => name)
+          : createScriptInfoLines(script, scriptMetadata.workspaces)
+      ).join("\n"),
+    );
+  },
+);

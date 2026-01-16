@@ -5,7 +5,7 @@ import { createRawPattern } from "../../src/internal/core";
 import { getProjectRoot, type TestProjectName } from "../testProjects";
 
 export const USAGE_OUTPUT_PATTERN = new RegExp(
-  createRawPattern(`Usage: bunx bun-workspaces [options] [command]
+  createRawPattern(`Usage: bun-workspaces [options] [command]
 
 A CLI on top of native Bun workspaces
 
@@ -17,7 +17,10 @@ Options:`) +
 );
 
 export interface SetupTestOptions {
+  /** If provided, the test will be run in the project with the given name. Cannot be used together with workingDirectory. */
   testProject?: TestProjectName;
+  /** If provided, the test will be run in the given working directory. Cannot be used together with testProject. */
+  workingDirectory?: string;
 }
 
 export interface OutputText {
@@ -57,9 +60,16 @@ const blankOutputText: OutputText = {
 };
 
 export const setupCliTest = (
-  { testProject = "default" }: SetupTestOptions = { testProject: "default" },
+  { testProject, workingDirectory }: SetupTestOptions = {
+    testProject: "default",
+  },
 ): SetupTestResult => {
-  const testProjectRoot = getProjectRoot(testProject);
+  if (testProject && workingDirectory) {
+    throw new Error("Cannot specify both testProject and workingDirectory");
+  }
+
+  const testProjectRoot =
+    workingDirectory ?? getProjectRoot(testProject || "default");
 
   const sanitizeText = (text: string) =>
     // eslint-disable-next-line no-control-regex
@@ -68,6 +78,7 @@ export const setupCliTest = (
   const run = async (...argv: string[]) => {
     const subprocess = Bun.spawn(
       [
+        "bun",
         path.resolve(__dirname, "../../", packageJson.bin["bun-workspaces"]),
         ...argv,
       ],

@@ -3,8 +3,8 @@
 name: Validate Code
 
 on:
-  - workflow_call
-  - workflow_dispatch
+  workflow_call:
+  workflow_dispatch:
 
 jobs:
   format_check:
@@ -16,7 +16,8 @@ jobs:
         uses: ./.github/actions/setup
       - name: Format Check
         id: format-check
-        run: bun run format-check
+        run: bun format-check
+
   type_check:
     name: Type Check
     runs-on: ubuntu-latest
@@ -26,7 +27,8 @@ jobs:
         uses: ./.github/actions/setup
       - name: Type Check
         id: type-check
-        run: bun run type-check
+        run: bun type-check
+
   lint:
     name: Lint
     runs-on: ubuntu-latest
@@ -36,7 +38,8 @@ jobs:
         uses: ./.github/actions/setup
       - name: Lint
         id: lint
-        run: bun run lint
+        run: bun lint
+
   test:
     name: Run Tests
     runs-on: ubuntu-latest
@@ -47,11 +50,7 @@ jobs:
       - name: Run Tests
         id: test
         run: |
-          bun --cwd=./packages/bun-workspaces test --reporter=junit --reporter-outfile=../../junit.xml
-          if grep -q "<skipped" junit.xml; then
-            echo "❌ Skipped tests found. Exiting with error."
-            exit 1
-          fi
+          bun bw:test
 
   test_build:
     name: Run Tests Against Build
@@ -62,4 +61,4 @@ jobs:
         uses: ./.github/actions/setup
       - name: Run Tests
         id: test
-        run: bun --cwd=./packages/bun-workspaces run build:test
+        run: bun bw:build:test

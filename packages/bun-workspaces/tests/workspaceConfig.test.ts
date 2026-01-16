@@ -13,13 +13,14 @@ import { logger } from "../src/internal/logger";
 import { _internalCreateFileSystemProject } from "../src/project";
 import { WORKSPACE_ERRORS, findWorkspaces } from "../src/workspaces";
 import { getProjectRoot } from "./testProjects";
+import { withWindowsPath } from "./util/windows";
 
 describe("Test workspace config", () => {
   test("loadWorkspaceConfig", () => {
     const config = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigPackageFileMix"),
-        "applications/application-a",
+        withWindowsPath("applications/application-a"),
       ),
     );
 
@@ -35,7 +36,7 @@ describe("Test workspace config", () => {
     const config2 = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigPackageFileMix"),
-        "applications/application-b",
+        withWindowsPath("applications/application-b"),
       ),
     );
 
@@ -54,7 +55,7 @@ describe("Test workspace config", () => {
     const config3 = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigPackageFileMix"),
-        "libraries/library-a",
+        withWindowsPath("libraries/library-a"),
       ),
     );
 
@@ -66,7 +67,7 @@ describe("Test workspace config", () => {
     const config4 = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigPackageFileMix"),
-        "libraries/library-b",
+        withWindowsPath("libraries/library-b"),
       ),
     );
 
@@ -85,7 +86,7 @@ describe("Test workspace config", () => {
     const config5 = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigPackageFileMix"),
-        "libraries/library-c",
+        withWindowsPath("libraries/library-c"),
       ),
     );
     expect(config5).toEqual({
@@ -96,7 +97,7 @@ describe("Test workspace config", () => {
     const config6 = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigPackageFileMix"),
-        "applications/application-c",
+        withWindowsPath("applications/application-c"),
       ),
     );
     expect(config6).toEqual({
@@ -107,7 +108,7 @@ describe("Test workspace config", () => {
     const config7 = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigFileOnly"),
-        "applications/application-a",
+        withWindowsPath("applications/application-a"),
       ),
     );
     expect(config7).toEqual({
@@ -125,7 +126,7 @@ describe("Test workspace config", () => {
       getPackageJsonConfig(
         path.join(
           getProjectRoot("workspaceConfigInvalidJson"),
-          "applications/application-a",
+          withWindowsPath("applications/application-a"),
         ),
       ),
     ).toThrow(WORKSPACE_ERRORS.InvalidPackageJson);
@@ -134,7 +135,7 @@ describe("Test workspace config", () => {
       loadWorkspaceConfig(
         path.join(
           getProjectRoot("workspaceConfigInvalidJson"),
-          "applications/application-a",
+          withWindowsPath("applications/application-a"),
         ),
       ),
     ).toBeNull();
@@ -143,7 +144,7 @@ describe("Test workspace config", () => {
       getFileConfig(
         path.join(
           getProjectRoot("workspaceConfigInvalidJson"),
-          "applications/application-b",
+          withWindowsPath("applications/application-b"),
         ),
       ),
     ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfigFileFormat);
@@ -152,7 +153,7 @@ describe("Test workspace config", () => {
       loadWorkspaceConfig(
         path.join(
           getProjectRoot("workspaceConfigInvalidJson"),
-          "applications/application-b",
+          withWindowsPath("applications/application-b"),
         ),
       ),
     ).toBeNull();
@@ -200,7 +201,7 @@ describe("Test workspace config", () => {
     const invalidResult = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigInvalidConfig"),
-        "applications/application-a",
+        withWindowsPath("applications/application-a"),
       ),
     );
     expect(invalidResult).toBeNull();
@@ -208,7 +209,7 @@ describe("Test workspace config", () => {
     const invalidResult2 = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigInvalidConfig"),
-        "applications/application-b",
+        withWindowsPath("applications/application-b"),
       ),
     );
     expect(invalidResult2).toBeNull();
@@ -216,7 +217,7 @@ describe("Test workspace config", () => {
     const invalidResult3 = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigInvalidConfig"),
-        "applications/application-c",
+        withWindowsPath("applications/application-c"),
       ),
     );
     expect(invalidResult3).toBeNull();
@@ -224,7 +225,7 @@ describe("Test workspace config", () => {
     const invalidResult4 = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigInvalidConfig"),
-        "applications/application-d",
+        withWindowsPath("applications/application-d"),
       ),
     );
     expect(invalidResult4).toBeNull();
@@ -232,7 +233,7 @@ describe("Test workspace config", () => {
     const invalidResult5 = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigInvalidConfig"),
-        "applications/application-e",
+        withWindowsPath("applications/application-e"),
       ),
     );
     expect(invalidResult5).toBeNull();
@@ -240,7 +241,7 @@ describe("Test workspace config", () => {
     const invalidResult6 = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigInvalidConfig"),
-        "applications/application-f",
+        withWindowsPath("applications/application-f"),
       ),
     );
     expect(invalidResult6).toBeNull();
@@ -248,7 +249,7 @@ describe("Test workspace config", () => {
     const invalidResult7 = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigInvalidConfig"),
-        "applications/application-g",
+        withWindowsPath("applications/application-g"),
       ),
     );
     expect(invalidResult7).toBeNull();
@@ -256,7 +257,7 @@ describe("Test workspace config", () => {
     const invalidResult8 = loadWorkspaceConfig(
       path.join(
         getProjectRoot("workspaceConfigInvalidConfig"),
-        "applications/application-h",
+        withWindowsPath("applications/application-h"),
       ),
     );
     expect(invalidResult8).toBeNull();
@@ -273,28 +274,28 @@ describe("Test workspace config", () => {
           aliases: ["appA"],
           matchPattern: "applications/*",
           name: "application-1a",
-          path: "applications/application-a",
+          path: withWindowsPath("applications/application-a"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
         },
         {
           aliases: ["appB"],
           matchPattern: "applications/*",
           name: "application-1b",
-          path: "applications/application-b",
+          path: withWindowsPath("applications/application-b"),
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
         },
         {
           aliases: ["libA", "libA2"],
           matchPattern: "libraries/*",
           name: "library-1a",
-          path: "libraries/library-a",
+          path: withWindowsPath("libraries/library-a"),
           scripts: ["a-workspaces", "all-workspaces", "library-a"],
         },
         {
           aliases: ["libB"],
           matchPattern: "libraries/*",
           name: "library-1b",
-          path: "libraries/library-b",
+          path: withWindowsPath("libraries/library-b"),
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
         },
       ],
@@ -323,28 +324,28 @@ describe("Test workspace config", () => {
           aliases: ["appA"],
           matchPattern: "applications/*",
           name: "application-1a",
-          path: "applications/application-a",
+          path: withWindowsPath("applications/application-a"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
         },
         {
           aliases: ["appB", "appB2"],
           matchPattern: "applications/*",
           name: "application-1b",
-          path: "applications/application-b",
+          path: withWindowsPath("applications/application-b"),
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
         },
         {
           aliases: ["libA", "libA2"],
           matchPattern: "libraries/*",
           name: "library-1a",
-          path: "libraries/library-a",
+          path: withWindowsPath("libraries/library-a"),
           scripts: ["a-workspaces", "all-workspaces", "library-a"],
         },
         {
           aliases: ["libB"],
           matchPattern: "libraries/*",
           name: "library-1b",
-          path: "libraries/library-b",
+          path: withWindowsPath("libraries/library-b"),
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
         },
       ],
@@ -366,42 +367,42 @@ describe("Test workspace config", () => {
           aliases: ["appA"],
           matchPattern: "applications/*",
           name: "application-1a",
-          path: "applications/application-a",
+          path: withWindowsPath("applications/application-a"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
         },
         {
           aliases: ["appB_file"],
           matchPattern: "applications/*",
           name: "application-1b",
-          path: "applications/application-b",
+          path: withWindowsPath("applications/application-b"),
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
         },
         {
           aliases: [],
           matchPattern: "applications/*",
           name: "application-1c",
-          path: "applications/application-c",
+          path: withWindowsPath("applications/application-c"),
           scripts: ["all-workspaces", "application-c", "c-workspaces"],
         },
         {
           aliases: ["libA_file"],
           matchPattern: "libraries/*",
           name: "library-1a",
-          path: "libraries/library-a",
+          path: withWindowsPath("libraries/library-a"),
           scripts: ["a-workspaces", "all-workspaces", "library-a"],
         },
         {
           aliases: ["libB", "libB2"],
           matchPattern: "libraries/*",
           name: "library-1b",
-          path: "libraries/library-b",
+          path: withWindowsPath("libraries/library-b"),
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
         },
         {
           aliases: [],
           matchPattern: "libraries/*",
           name: "library-1c",
-          path: "libraries/library-c",
+          path: withWindowsPath("libraries/library-c"),
           scripts: ["all-workspaces", "c-workspaces", "library-c"],
         },
       ],
@@ -460,7 +461,7 @@ describe("Test workspace config", () => {
     });
 
     expect(warnSpy).toHaveBeenCalledWith(
-      `Found config for workspace at path "${getProjectRoot("workspaceConfigDeprecatedConfigMix")}/libraries/library-a" in both package.json and bw.workspace.json. The config in bw.workspace.json will be used.`,
+      `Found config for workspace at path "${withWindowsPath(getProjectRoot("workspaceConfigDeprecatedConfigMix") + "/libraries/library-a")}" in both package.json and bw.workspace.json. The config in bw.workspace.json will be used.`,
     );
 
     expect(project.workspaces).toEqual([
@@ -468,42 +469,42 @@ describe("Test workspace config", () => {
         aliases: ["deprecated_appA", "appA"],
         matchPattern: "applications/*",
         name: "application-1a",
-        path: "applications/application-a",
+        path: withWindowsPath("applications/application-a"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
       },
       {
         aliases: ["deprecated_appB", "appB_file"],
         matchPattern: "applications/*",
         name: "application-1b",
-        path: "applications/application-b",
+        path: withWindowsPath("applications/application-b"),
         scripts: ["all-workspaces", "application-b", "b-workspaces"],
       },
       {
         aliases: [],
         matchPattern: "applications/*",
         name: "application-1c",
-        path: "applications/application-c",
+        path: withWindowsPath("applications/application-c"),
         scripts: ["all-workspaces", "application-c", "c-workspaces"],
       },
       {
         aliases: ["deprecated_libA", "libA_file"],
         matchPattern: "libraries/*",
         name: "library-1a",
-        path: "libraries/library-a",
+        path: withWindowsPath("libraries/library-a"),
         scripts: ["a-workspaces", "all-workspaces", "library-a"],
       },
       {
         aliases: ["deprecated_libB", "libB", "libB2"],
         matchPattern: "libraries/*",
         name: "library-1b",
-        path: "libraries/library-b",
+        path: withWindowsPath("libraries/library-b"),
         scripts: ["all-workspaces", "b-workspaces", "library-b"],
       },
       {
         aliases: [],
         matchPattern: "libraries/*",
         name: "library-1c",
-        path: "libraries/library-c",
+        path: withWindowsPath("libraries/library-c"),
         scripts: ["all-workspaces", "c-workspaces", "library-c"],
       },
     ]);

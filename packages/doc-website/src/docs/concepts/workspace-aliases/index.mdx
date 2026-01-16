@@ -1,6 +1,6 @@
 ---
-title: Workspace Aliases
-titleSuffix: " | Concepts | bun-workspaces"
+title: Concepts > Workspace Aliases
+titleSuffix: " | bun-workspaces"
 description: "Workspace Aliases | Concepts | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
 pageType: doc
 sidebar: false
@@ -8,10 +8,9 @@ outline: true
 footer: false
 ---
 
-import { getScriptRuntimeMetadataConfig } from 'bun-workspaces/src/project/runScript/scriptRuntimeMetadata';
+import { getScriptRuntimeMetadataConfig } from 'bun-workspaces/src/runScript/scriptRuntimeMetadata';
 import { SyntaxHighlighter } from '../../../content/highlight';
 import { exampleWorkspaceConfigArray, exampleWorkspaceConfigSimple } from '../../../content/cli/exampleConfig';
-import { Footer } from "../../../content/Footer";
 import { ConceptsHeader } from "../../../content/concepts/ConceptsHeader";
 
 <ConceptsHeader activeHref="workspaceAliases" />
@@ -36,5 +35,3 @@ A workspace can have multiple aliases:
 <SyntaxHighlighter language="json">
   {JSON.stringify(exampleWorkspaceConfigArray, null, 2)}
 </SyntaxHighlighter>
-
-<Footer />

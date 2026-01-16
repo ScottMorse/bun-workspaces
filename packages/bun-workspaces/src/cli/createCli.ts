@@ -3,9 +3,9 @@ import packageJson from "../../package.json";
 import { validateCurrentBunVersion } from "../internal/bun";
 import { BunWorkspacesError } from "../internal/core";
 import { logger } from "../internal/logger";
+import { defineGlobalCommands, defineProjectCommands } from "./commands";
 import { fatalErrorLogger } from "./fatalErrorLogger";
 import { initializeWithGlobalOptions } from "./globalOptions";
-import { defineProjectCommands } from "./projectCommands";
 
 export interface RunCliOptions {
   argv?: string | string[];
@@ -42,15 +42,33 @@ export const createCli = ({
     process.on("unhandledRejection", errorListener);
 
     try {
-      const program = createCommand("bunx bun-workspaces")
+      const program = createCommand("bun-workspaces")
         .description("A CLI on top of native Bun workspaces")
         .version(packageJson.version)
         .showHelpAfterError(true);
 
       postInit?.(program);
 
-      const args = tempFixCamelCaseOptions(
+      const rawArgs = tempFixCamelCaseOptions(
         typeof argv === "string" ? argv.split(/s+/) : argv,
+      );
+
+      const { args, postTerminatorArgs } = (() => {
+        const terminatorIndex = rawArgs.findIndex((arg) => arg === "--");
+        return {
+          args:
+            terminatorIndex !== -1
+              ? rawArgs.slice(0, terminatorIndex)
+              : rawArgs,
+          postTerminatorArgs:
+            terminatorIndex !== -1 ? rawArgs.slice(terminatorIndex + 1) : [],
+        };
+      })();
+
+      const { project, projectError } = initializeWithGlobalOptions(
+        program,
+        args,
+        defaultCwd,
       );
 
       const bunVersionError = validateCurrentBunVersion();
@@ -60,22 +78,18 @@ export const createCli = ({
         process.exit(1);
       }
 
-      const { project, error } = initializeWithGlobalOptions(
-        program,
-        args,
-        defaultCwd,
-      );
-
       defineProjectCommands({
         program,
         project,
-        projectError: error,
+        projectError,
+        postTerminatorArgs,
       });
+
+      defineGlobalCommands({ program, postTerminatorArgs });
 
       await program.parseAsync(args, {
         from: programmatic ? "user" : "node",
       });
-      if (error) throw error;
     } catch (error) {
       if (error instanceof BunWorkspacesError) {
         logger.debug(error);

@@ -1,15 +1,11 @@
-import { type CliProjectCommandName } from "bun-workspaces/src/cli/projectCommands/projectCommandsConfig";
+import { type CliCommandName } from "bun-workspaces/src/cli/commands/commandsConfig";
 import { useId } from "react";
 import { SyntaxHighlighter } from "../highlight";
-import { getCliProjectCommandContent } from "./cliProjectCommandOptions";
+import { getCliCommandContent } from "./cliCommandOptions";
 import { getCommandId } from "./searchIds";
 
-export const CliCommandDoc = ({
-  command,
-}: {
-  command: CliProjectCommandName;
-}) => {
-  const content = getCliProjectCommandContent(command);
+export const CliCommandDoc = ({ command }: { command: CliCommandName }) => {
+  const content = getCliCommandContent(command);
   const id = useId();
   return (
     <div className="cli-command-doc">
@@ -54,6 +50,11 @@ export const CliCommandDoc = ({
                     <code>{option.flags.join(" | ")}</code>
                   </p>
                   <p>{option.description}</p>
+                  {option.values?.length ? (
+                    <p style={{ marginLeft: "0.25rem" }}>
+                      (Values: <span>{option.values.join(" | ")}</span>)
+                    </p>
+                  ) : null}
                 </div>
               </div>
             ))}

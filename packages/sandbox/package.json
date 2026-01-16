@@ -10,10 +10,11 @@
     "api:local": "bun run src/local.ts",
     "cli:local": "CLI=true bun run src/local.ts",
     "api:release": "bun run src/release.ts",
-    "cli:release": "CLI=true bun run src/release.ts"
+    "cli:release": "CLI=true bun run src/release.ts",
+    "cli:bunx-local": "bunx bun-workspaces_local"
   },
   "devDependencies": {
     "bun-workspaces_local": "file:../bun-workspaces",
-    "bun-workspaces_release": "npm:bun-workspaces@1.0.0-alpha.25"
+    "bun-workspaces_release": "npm:bun-workspaces@1.0.0-alpha.30"
   }
 }

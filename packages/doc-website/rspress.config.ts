@@ -1,5 +1,6 @@
 import fs from "node:fs";
-import path from "node:path";
+import path from "path";
+import { pluginSvgr } from "@rsbuild/plugin-svgr";
 import { defineConfig } from "rspress/config";
 import packageJson from "../bun-workspaces/package.json";
 
@@ -11,9 +12,9 @@ const CHANGELOG_URL = `${GITHUB_REPO_URL}/releases`;
 const LICENSE_URL = GITHUB_REPO_URL + "/blob/main/LICENSE.md";
 const NPM_PACKAGE_URL = "https://www.npmjs.com/package/bun-workspaces";
 
-const TITLE = "bun-workspaces — Bun monorepo tool | Documentation";
+const TITLE = "bun-workspaces — Better Bun monorepo management | Documentation";
 const DESCRIPTION =
-  "Documentation for bun-workspaces: A CLI and TypeScript API for developers using the Bun runtime to manage monorepos and run scripts across their workspaces.";
+  "A tool for managing monorepos using native Bun workspaces, helping you develop JavaScript and TypeScript projects with the bun-workspaces CLI and API.";
 
 const LD_JSON = {
   "@context": "https://schema.org",
@@ -38,8 +39,8 @@ const LD_JSON = {
   },
   publisher: {
     "@type": "Organization",
-    name: "bun-workspaces",
-    url: DOMAIN,
+    name: "Smorsic Labs, LLC",
+    url: "https://smorsic.io",
   },
   audience: {
     "@type": "Audience",
@@ -85,6 +86,7 @@ export default defineConfig({
     cleanUrls: true,
   },
   builderConfig: {
+    plugins: [pluginSvgr()],
     output: {
       cleanDistPath: true,
     },
@@ -156,10 +158,41 @@ export default defineConfig({
             content: `${DOMAIN}/images/png/bwunster-og-title_1200x630.png`,
           },
         },
+        {
+          tag: "link",
+          attrs: {
+            rel: "preconnect",
+            href: "https://fonts.googleapis.com",
+          },
+        },
+        {
+          tag: "link",
+          attrs: {
+            rel: "preconnect",
+            href: "https://fonts.gstatic.com",
+          },
+        },
+        {
+          tag: "link",
+          attrs: {
+            rel: "stylesheet",
+            href: "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@300;400;500;600;700&family=Lexend:wght@100..900&display=swap",
+          },
+        },
+        {
+          tag: "script",
+          children: `
+          if(!localStorage.getItem('bw-doc-theme-initialized')) {
+            window.RSPRESS_THEME = 'dark';
+            localStorage.setItem('bw-doc-theme-initialized', 'true');
+          }
+          `.replace(/\s+/g, ""),
+        },
       ],
     },
   },
   themeConfig: {
+    enableScrollToTop: true,
     socialLinks: [
       {
         icon: {
@@ -213,11 +246,6 @@ export default defineConfig({
             text: "Commands",
             link: "/cli/commands",
           },
-          // TODO enable when needed
-          // {
-          //   text: "Examples",
-          //   link: "/cli/examples",
-          // },
         ],
       },
       {
@@ -235,11 +263,6 @@ export default defineConfig({
             text: "Reference",
             link: "/api/reference",
           },
-          // TODO enable when needed
-          // {
-          //   text: "Examples",
-          //   link: "/api/examples",
-          // },
         ],
       },
       {
@@ -269,6 +292,10 @@ export default defineConfig({
             link: "/concepts/workspace-aliases",
           },
           {
+            text: "Inline Scripts",
+            link: "/concepts/inline-scripts",
+          },
+          {
             text: "Parallel Scripts",
             link: "/concepts/parallel-scripts",
           },
@@ -293,6 +320,10 @@ export default defineConfig({
           {
             text: "Changelog",
             link: CHANGELOG_URL,
+          },
+          {
+            text: "Bwunster Lore",
+            link: "/lore",
           },
         ],
       },

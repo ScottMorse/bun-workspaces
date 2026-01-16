@@ -4,7 +4,8 @@ import { availableParallelism } from "node:os";
 import path from "node:path";
 import { test, expect, describe, afterAll } from "bun:test";
 import { getUserEnvVarName } from "../src/config/userEnvVars";
-import { runScript, runScripts } from "../src/project/runScript";
+import { IS_WINDOWS } from "../src/internal/runtime";
+import { runScript, runScripts } from "../src/runScript";
 
 // Sanity tests for lower level runScript and runScripts functions
 
@@ -20,7 +21,9 @@ describe("Run Single Script", () => {
   test("Simple success", async () => {
     const result = await runScript({
       scriptCommand: {
-        command: "echo 'test-script 1'",
+        command: IS_WINDOWS
+          ? `powershell -NoProfile -Command "Write-Output 'test-script 1'"`
+          : "echo 'test-script 1'",
         workingDirectory: ".",
       },
       metadata: {},
@@ -60,7 +63,9 @@ describe("Run Single Script", () => {
   test("Simple failure", async () => {
     const result = await runScript({
       scriptCommand: {
-        command: "echo 'test-script 1' && exit 2",
+        command: IS_WINDOWS
+          ? "echo test-script 1 && exit /b 2"
+          : "echo 'test-script 1' && sleep 0.1 && exit 2",
         workingDirectory: ".",
       },
       metadata: {},
@@ -97,43 +102,42 @@ describe("Run Single Script", () => {
     expect(outputCount).toBe(1);
   });
 
-  test("Simple failure with signal", async () => {
-    const result = await runScript({
-      scriptCommand: {
-        command: "echo 'test-script 1' && kill -9 $$",
-        workingDirectory: ".",
-      },
-      metadata: {},
-      env: {},
-    });
+  if (!IS_WINDOWS) {
+    test("Simple failure with signal", async () => {
+      const result = await runScript({
+        scriptCommand: {
+          command: "sleep 1",
+          workingDirectory: ".",
+        },
+        metadata: {},
+        env: {},
+      });
 
-    let outputCount = 0;
-    for await (const outputChunk of result.output) {
-      expect(outputChunk.raw).toBeInstanceOf(Uint8Array);
-      expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.decode()).toMatch(`test-script ${outputCount + 1}`);
-      expect(outputChunk.decode({ stripAnsi: true })).toMatch(
-        `test-script ${outputCount + 1}`,
-      );
-      outputCount++;
-    }
-    const exit = await result.exit;
-    expect(exit).toEqual({
-      exitCode: 137,
-      success: false,
-      startTimeISO: expect.any(String),
-      endTimeISO: expect.any(String),
-      durationMs: expect.any(Number),
-      signal: "SIGKILL",
-      metadata: {},
+      result.kill("SIGABRT");
+
+      const exit = await result.exit;
+      expect(exit).toEqual({
+        exitCode: 134,
+        success: false,
+        startTimeISO: expect.any(String),
+        endTimeISO: expect.any(String),
+        durationMs: expect.any(Number),
+        signal: "SIGABRT",
+        metadata: {},
+      });
     });
-  });
+  }
 
   test("With stdout and stderr", async () => {
     const result = await runScript({
       scriptCommand: {
-        command:
-          "echo 'test-script 1' && sleep 0.1 && echo 'test-script 2' >&2 && sleep 0.1 && echo 'test-script 3'",
+        command: IS_WINDOWS
+          ? `echo test-script 1 ^
+&& ping 127.0.0.1 -n 2 -w 100 >nul ^
+&& echo test-script 2 1>&2 ^
+&& ping 127.0.0.1 -n 2 -w 100 >nul ^
+&& echo test-script 3`
+          : "echo 'test-script 1' && sleep 0.1 && echo 'test-script 2' >&2 && sleep 0.1 && echo 'test-script 3'",
         workingDirectory: ".",
       },
       metadata: {},
@@ -168,7 +172,9 @@ describe("Run Single Script", () => {
   test("Env vars are passed", async () => {
     const testValue = `test value ${Math.round(Math.random() * 1000000)}`;
     const scriptCommand = {
-      command: "echo $NODE_ENV $TEST_ENV_VAR",
+      command: IS_WINDOWS
+        ? `echo(%NODE_ENV% %TEST_ENV_VAR%`
+        : "echo $NODE_ENV $TEST_ENV_VAR",
       workingDirectory: ".",
       env: { TEST_ENV_VAR: testValue },
     };
@@ -183,9 +189,9 @@ describe("Run Single Script", () => {
 
     for await (const outputChunk of singleResult.output) {
       expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.decode()).toBe(`test ${testValue}\n`);
-      expect(outputChunk.decode({ stripAnsi: true })).toBe(
-        `test ${testValue}\n`,
+      expect(outputChunk.decode().trim()).toBe(`test ${testValue}`);
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
+        `test ${testValue}`,
       );
     }
 
@@ -197,9 +203,9 @@ describe("Run Single Script", () => {
     for await (const { outputChunk } of multiResult.output) {
       expect(outputChunk.raw).toBeInstanceOf(Uint8Array);
       expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.decode()).toBe(`test ${testValue}\n`);
-      expect(outputChunk.decode({ stripAnsi: true })).toBe(
-        `test ${testValue}\n`,
+      expect(outputChunk.decode().trim()).toBe(`test ${testValue}`);
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
+        `test ${testValue}`,
       );
     }
   });
@@ -207,7 +213,7 @@ describe("Run Single Script", () => {
   test("With ANSI escape codes", async () => {
     const result = await runScript({
       scriptCommand: {
-        command: "echo '\x1b[31mtest-script 1\x1b[0m'",
+        command: "echo \x1b[31mtest-script 1\x1b[0m",
         workingDirectory: ".",
       },
       metadata: {},
@@ -216,8 +222,32 @@ describe("Run Single Script", () => {
 
     for await (const outputChunk of result.output) {
       expect(outputChunk.streamName).toBe("stdout");
-      expect(outputChunk.decode()).toBe(`\x1b[31mtest-script 1\x1b[0m\n`);
-      expect(outputChunk.decode({ stripAnsi: true })).toBe(`test-script 1\n`);
+      expect(outputChunk.decode().trim()).toBe(`\x1b[31mtest-script 1\x1b[0m`);
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toBe(
+        `test-script 1`,
+      );
+    }
+  });
+
+  test("Confirm scripts have node_modules/.bin in PATH", async () => {
+    // This is something due to Bun's process.env.PATH including node_modules/.bin
+    // This test helps confirm this is consistent across Bun versions and platforms
+
+    const result = await runScript({
+      scriptCommand: {
+        command: "which eslint",
+        workingDirectory: ".",
+      },
+      metadata: {},
+      env: {},
+    });
+
+    for await (const outputChunk of result.output) {
+      expect(outputChunk.streamName).toBe("stdout");
+      expect(outputChunk.decode().trim()).toMatch(
+        /node_modules\/.bin\/eslint$/,
+      );
+      expect(outputChunk.decode({ stripAnsi: true }).trim()).toMatch(/eslint$/);
     }
   });
 });
@@ -231,7 +261,7 @@ describe("Run Multiple Scripts", () => {
             name: "test-script name 1",
           },
           scriptCommand: {
-            command: "echo 'test-script 1'",
+            command: "echo test-script 1",
             workingDirectory: "",
           },
           env: {},
@@ -241,7 +271,7 @@ describe("Run Multiple Scripts", () => {
             name: "test-script name 2",
           },
           scriptCommand: {
-            command: "echo 'test-script 2'",
+            command: "echo test-script 2",
             workingDirectory: "",
           },
           env: {},
@@ -307,7 +337,9 @@ describe("Run Multiple Scripts", () => {
             name: "test-script name 1",
           },
           scriptCommand: {
-            command: "echo 'test-script 1' && exit 1",
+            command: IS_WINDOWS
+              ? "echo test-script 1 && exit /b 1"
+              : "echo 'test-script 1' && exit 1",
             workingDirectory: "",
           },
           env: {},
@@ -317,7 +349,7 @@ describe("Run Multiple Scripts", () => {
             name: "test-script name 2",
           },
           scriptCommand: {
-            command: "echo 'test-script 2'",
+            command: "echo test-script 2",
             workingDirectory: "",
           },
           env: {},
@@ -382,7 +414,9 @@ describe("Run Multiple Scripts", () => {
           name: "test-script name 1",
         },
         scriptCommand: {
-          command: "sleep 0.5 && echo 'test-script 1'",
+          command: IS_WINDOWS
+            ? "ping 127.0.0.1 -n 3 >nul && echo test-script 1"
+            : "sleep 0.5 && echo test-script 1",
           workingDirectory: "",
         },
         env: {},
@@ -392,7 +426,9 @@ describe("Run Multiple Scripts", () => {
           name: "test-script name 2",
         },
         scriptCommand: {
-          command: "echo 'test-script 2' && exit 2",
+          command: IS_WINDOWS
+            ? "echo test-script 2 && exit /b 2"
+            : "echo 'test-script 2' && exit 2",
           workingDirectory: "",
         },
         env: {},
@@ -402,7 +438,9 @@ describe("Run Multiple Scripts", () => {
           name: "test-script name 3",
         },
         scriptCommand: {
-          command: "sleep 0.25 && echo 'test-script 3'",
+          command: IS_WINDOWS
+            ? "ping 127.0.0.1 -n 2 >nul && echo test-script 3"
+            : "sleep 0.25 && echo test-script 3",
           workingDirectory: "",
         },
         env: {},
@@ -492,12 +530,21 @@ describe("Run Multiple Scripts", () => {
       const getRunningFile = (scriptName: string) =>
         path.join(outputDir, `${scriptName}.txt`);
 
-      const getRandomSleepTime = () => Math.random() + 0.05;
+      const getRandomSleepTime = () => Math.max(0.075, Math.random() + 0.025);
 
       const createScript = (scriptName: string) => ({
         metadata: { name: scriptName },
         scriptCommand: {
-          command: `echo 'test-script ${scriptName}' > ${getRunningFile(scriptName)} && ls ${outputDir} | wc -l && sleep ${getRandomSleepTime()} && rm ${getRunningFile(scriptName)}`,
+          command: IS_WINDOWS
+            ? `echo test-script ${scriptName} > ${getRunningFile(scriptName)}  && ` +
+              `dir /b ${outputDir} | find /c /v "" && ` +
+              `ping 127.0.0.1 -n 2 -w ${Math.floor(getRandomSleepTime() * 1000)} >nul && ` +
+              `del ${getRunningFile(scriptName)}`
+            : `echo 'test-script ${scriptName}' > ${getRunningFile(
+                scriptName,
+              )} && ls ${outputDir} | wc -l && sleep ${getRandomSleepTime()} && rm ${getRunningFile(
+                scriptName,
+              )}`,
           workingDirectory: "",
         },
         env: {},
@@ -597,7 +644,9 @@ describe("Run Multiple Scripts", () => {
         scripts: [
           {
             scriptCommand: {
-              command: "echo $_BW_PARALLEL_MAX",
+              command: IS_WINDOWS
+                ? `echo %_BW_PARALLEL_MAX%`
+                : "echo $_BW_PARALLEL_MAX",
               workingDirectory: "",
             },
             metadata: {},
@@ -642,7 +691,9 @@ describe("Run Multiple Scripts", () => {
         scripts: [
           {
             scriptCommand: {
-              command: "echo $_BW_PARALLEL_MAX",
+              command: IS_WINDOWS
+                ? `echo %_BW_PARALLEL_MAX%`
+                : "echo $_BW_PARALLEL_MAX",
               workingDirectory: "",
             },
             metadata: {},
@@ -662,7 +713,9 @@ describe("Run Multiple Scripts", () => {
         scripts: [
           {
             scriptCommand: {
-              command: "echo $_BW_PARALLEL_MAX",
+              command: IS_WINDOWS
+                ? `echo %_BW_PARALLEL_MAX%`
+                : "echo $_BW_PARALLEL_MAX",
               workingDirectory: "",
             },
             metadata: {},
@@ -685,7 +738,9 @@ describe("Run Multiple Scripts", () => {
       scripts: [
         {
           scriptCommand: {
-            command: "echo $_BW_PARALLEL_MAX",
+            command: IS_WINDOWS
+              ? `echo %_BW_PARALLEL_MAX%`
+              : "echo $_BW_PARALLEL_MAX",
             workingDirectory: "",
           },
           metadata: {},

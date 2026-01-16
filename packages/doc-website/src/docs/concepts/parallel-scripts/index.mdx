@@ -1,6 +1,6 @@
 ---
-title: Parallel Scripts
-titleSuffix: " | Concepts | bun-workspaces"
+title: Concepts > Parallel Scripts
+titleSuffix: " | bun-workspaces"
 description: "Parallel Scripts | Concepts | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
 pageType: doc
 sidebar: false
@@ -9,7 +9,6 @@ footer: false
 ---
 import { exampleWorkspaceConfigSimple } from '../../../content/cli/exampleConfig'
 import { SyntaxHighlighter } from '../../../content/highlight';
-import { Footer } from "../../../content/Footer";
 import { ConceptsHeader } from "../../../content/concepts/ConceptsHeader";
 import { getUserEnvVarName } from 'bun-workspaces/src/config/userEnvVars';
 import { CLI_PARALLEL_SCRIPTS_EXAMPLE } from '../../../content/cli/cliExamples';
@@ -17,7 +16,7 @@ import { API_PARALLEL_SCRIPTS_EXAMPLE } from '../../../content/api/apiExamples';
 
 <ConceptsHeader activeHref="parallelScripts" />
 
-### Parallel Max Value
+## Parallel Max Value
 
 When running scripts in parallel, you have control over how many concurrent scripts can run at the same time.
 
@@ -51,5 +50,3 @@ When the environment variable <code>{getUserEnvVarName("parallelMaxDefault")}</c
 <SyntaxHighlighter language="typescript">
 {API_PARALLEL_SCRIPTS_EXAMPLE}
 </SyntaxHighlighter>
-
-<Footer />

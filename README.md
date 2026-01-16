@@ -9,7 +9,7 @@ A CLI and API to enhance your monorepo development with Bun's [native workspaces
 - Works right away, with no boilerplate required 🍔🍴
 - Get metadata about your monorepo 🤖
 - Run package.json scripts across workspaces 📋
-- Supports running inline scripts as well ⌨️
+- Run inline [Bun Shell](https://bun.com/docs/runtime/shell) scripts in workspaces ⌨️
 
 This tool lets you decide the complexity of how you use it.
 To get started, all you need is a normal project using [Bun's native workspaces](https://bun.sh/docs/install/workspaces) feature for nested JavaScript/TypeScript packages.
@@ -78,9 +78,9 @@ bw --log-level=silent run my-script
 import { createFileSystemProject } from "bun-workspaces";
 
 // A Project contains the core functionality of bun-workspaces.
-const project = createFileSystemProject({
-  rootDirectory: "path/to/your/project",
-});
+// Below defaults to process.cwd() for the project root directory
+// Pass { rootDirectory: "path/to/your/project" } to use a different root directory
+const project = createFileSystemProject();
 
 // A Workspace that matches the name or alias "my-workspace"
 const myWorkspace = project.findWorkspaceByNameOrAlias("my-workspace");
@@ -122,10 +122,19 @@ const runSingleScript = async () => {
 // Run a script in all workspaces that have it in their package.json "scripts" field
 const runManyScripts = async () => {
   const { output, summary } = project.runScriptAcrossWorkspaces({
-    workspacePatterns: ["*"], // this will run in all workspaces that have my-script
-    script: "my-script", // the package.json "scripts" field name to run
+    // Optional. This will run in all matching workspaces that have my-script
+    // Accepts same values as the CLI run-script command's workspace patterns
+    // When not provided, all workspaces that have the script will be used.
+    workspacePatterns: ["my-workspace", "my-pattern-*"],
+
+    // Required. The package.json "scripts" field name to run
+    script: "my-script",
+
+    // Optional. Arguments to add to the command
     args: "--my --appended --args", // optional, arguments to add to the command
-    parallel: true, // optional, run the scripts in parallel
+
+    // Optional. Whether to run the scripts in parallel
+    parallel: true,
   });
 
   // Get a stream of script output
@@ -165,3 +174,9 @@ const runManyScripts = async () => {
 ```
 
 _`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Anthropic. This project aims to enhance enhance the experience of Bun for its users._
+
+Developed By:
+
+<a href="https://smorsic.io" target="_blank" rel="noopener noreferrer">
+  <img src="./packages/doc-website/src/docs/public/images/png/smorsic-banner_light_803x300.png" alt="Smorsic Labs logo" width="280" />
+</a>

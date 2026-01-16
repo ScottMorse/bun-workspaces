@@ -13,7 +13,7 @@ const rootDirectory = path.join(
 );
 
 describe("bun.lock utilities", () => {
-  test("parseBunLock", () => {
+  test("parseBunLock", async () => {
     expect(
       parseBunLock(`{
         "lockfileVersion": 1, // this is jsonc
