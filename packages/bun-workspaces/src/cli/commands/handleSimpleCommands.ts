@@ -1,5 +1,5 @@
 import { getDoctorInfo } from "../../doctor";
-import { isJsonObject } from "../../internal/core";
+import { isJSONObject } from "../../internal/core";
 import { logger } from "../../internal/logger";
 import {
   createJsonLines,
@@ -27,7 +27,7 @@ export const doctor = handleGlobalCommand(
           key[0].toUpperCase() + key.slice(1).replace(/([A-Z])/g, " $1")
         ).replace(/os|cpu/gi, (m) => m.toUpperCase());
 
-        return isJsonObject(value)
+        return isJSONObject(value)
           ? keyName +
               ":\n - " +
               Object.entries(value).map(createEntryLine).join("\n - ")

@@ -1,4 +1,4 @@
-import { isJsonObject, type BunWorkspacesError } from "../../internal/core";
+import { isJSONObject, type BunWorkspacesError } from "../../internal/core";
 import type { ShellOption } from "../../project";
 import {
   determineParallelMax,
@@ -25,7 +25,7 @@ export type ResolvedRootConfig = {
 
 const VALIDATIONS = {
   defaults: (value: unknown) => {
-    if (!isJsonObject(value)) {
+    if (!isJSONObject(value)) {
       return new ROOT_CONFIG_ERRORS.InvalidRootConfig(
         `Root config "defaults" must be an object`,
       );
@@ -61,7 +61,7 @@ const VALIDATIONS = {
 >;
 
 export const validateRootConfig = (config: RootConfig) => {
-  if (!isJsonObject(config)) {
+  if (!isJSONObject(config)) {
     return [
       new ROOT_CONFIG_ERRORS.InvalidRootConfig(
         `Workspace config must be an object`,

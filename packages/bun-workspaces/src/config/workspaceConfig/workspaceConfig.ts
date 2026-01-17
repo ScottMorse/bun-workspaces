@@ -1,5 +1,5 @@
 import {
-  isJsonObject,
+  isJSONObject,
   type OptionalArray,
   type BunWorkspacesError,
   resolveOptionalArray,
@@ -22,7 +22,7 @@ export interface ResolvedWorkspaceConfig {
 }
 
 const validateScriptConfig = (value: unknown, keyName: string) => {
-  if (!isJsonObject(value)) {
+  if (!isJSONObject(value)) {
     return new WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig(
       `"${keyName}" in workspace config must be an object`,
     );
@@ -54,7 +54,7 @@ const VALIDATIONS = {
     return null;
   },
   scripts: (value: unknown) => {
-    if (!isJsonObject(value)) {
+    if (!isJSONObject(value)) {
       return new WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig(
         `Workspace config "scripts" must be an object`,
       );
@@ -71,7 +71,7 @@ const VALIDATIONS = {
 >;
 
 export const validateWorkspaceConfig = (config: WorkspaceConfig) => {
-  if (!isJsonObject(config)) {
+  if (!isJSONObject(config)) {
     return [
       new WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig(
         `Workspace config must be an object`,

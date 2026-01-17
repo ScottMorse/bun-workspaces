@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
-import { type BunWorkspacesError, defineErrors, isJsonObject } from "../core";
-import { parseJsonc } from "../core/json";
+import { type BunWorkspacesError, defineErrors, isJSONObject } from "../core";
+import { parseJSONC } from "../core/json";
 
 export const BUN_LOCK_ERRORS = defineErrors(
   "BunLockNotFound",
@@ -27,7 +27,7 @@ export const parseBunLock = (
 ): RelevantBunLock | BunWorkspacesError => {
   let bunLockJson: RelevantBunLock | null = null;
   try {
-    bunLockJson = parseJsonc(jsonString);
+    bunLockJson = parseJSONC(jsonString);
   } catch (error) {
     return new BUN_LOCK_ERRORS.MalformedBunLock(
       `Failed to parse bun lockfile ${bunLockPath ? `at "${bunLockPath}"` : ""}: ${
@@ -36,7 +36,7 @@ export const parseBunLock = (
     );
   }
 
-  if (!isJsonObject(bunLockJson)) {
+  if (!isJSONObject(bunLockJson)) {
     return new BUN_LOCK_ERRORS.MalformedBunLock(
       `Bun lockfile ${bunLockPath ? `at "${bunLockPath}"` : ""} is not a valid JSON object`,
     );
