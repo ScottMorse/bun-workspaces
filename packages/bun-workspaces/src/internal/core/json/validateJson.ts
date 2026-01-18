@@ -1,13 +1,25 @@
 import { defineErrors, type BunWorkspacesError } from "../error";
-import { type OptionalArray, type ResolvedOptionalArray } from "../language";
-import { isJSON, isJSONArray, isJSONObject, type JSONPrimitiveName, type NameToJSONPrimitive } from "./json";
+import {
+  resolveOptionalArray,
+  validateJSType,
+  type JSDataTypeofName,
+  type OptionalArray,
+  type ResolvedOptionalArray,
+} from "../language";
+import {
+  isJSON,
+  isJSONArray,
+  isJSONObject,
+  type JSONPrimitiveName,
+  type NameToJSONPrimitive,
+} from "./json";
 
 export type JSONPrimitiveValidationConfig = {
   primitive: OptionalArray<JSONPrimitiveName>;
 };
 
 export type JSONArrayValidationConfig = {
-  item: OptionalArray<JSONItemValidationConfig>;
+  item: JSONItemValidationConfig;
 };
 
 export type JSONItemValidationConfig =
@@ -18,8 +30,8 @@ export type JSONItemValidationConfig =
 export type JSONObjectValidationConfig = {
   properties: {
     [key: string]: {
-      property: JSONItemValidationConfig;
-      optional: boolean;
+      type: JSONItemValidationConfig;
+      optional?: boolean;
     };
   };
 };
@@ -55,74 +67,152 @@ type RequiredObjectConfigKeys<Config extends JSONObjectValidationConfig> = {
 
 type ObjectConfigToType<Config extends JSONObjectValidationConfig> = Partial<{
   [K in OptionalObjectConfigKeys<Config>]: JSONValidationConfigToType<
-    Config["properties"][K]["property"]
+    Config["properties"][K]["type"]
   >;
 }> & {
   [K in RequiredObjectConfigKeys<Config>]: JSONValidationConfigToType<
-    Config["properties"][K]["property"]
+    Config["properties"][K]["type"]
   >;
 };
 
 type ArrayConfigToType<Config extends JSONArrayValidationConfig> =
   JSONValidationConfigToType<ResolvedOptionalArray<Config["item"]>[number]>[];
 
-  export const InvalidJSONError = defineErrors("InvalidJSONError").InvalidJSONError;
+export const InvalidJSONError =
+  defineErrors("InvalidJSONError").InvalidJSONError;
 
-  export const INVALID_JSON_ERRORS = defineErrors(InvalidJSONError,
-    "NotJSONValue",
-  )
+export const INVALID_JSON_ERRORS = defineErrors(
+  InvalidJSONError,
+  "NotJSONValue",
+  "JSONObjectMissingProperty",
+  "JSONObjectUnexpectedProperty",
+  "NotJSONObject",
+  "NotJSONArray",
+  "NotJSONPrimitive",
+);
 
-  const validateJSONObject = <Config extends JSONObjectValidationConfig>(
-    value: unknown,
-    valueLabel: string,
-    config: Config,
-  ) => {
-    const errors: BunWorkspacesError[] = [];
+const validateJSONObject = <Config extends JSONObjectValidationConfig>(
+  value: object,
+  valueLabel: string,
+  config: Config,
+) => {
+  const errors: BunWorkspacesError[] = [];
 
-    return errors
+  if (!isJSONObject(value)) {
+    return [
+      new INVALID_JSON_ERRORS.NotJSONObject(
+        `Expected ${valueLabel} to be a JSON object. Received: ${Array.isArray(value) ? "array" : value}`,
+      ),
+    ];
   }
 
-  const validateJSONArray = <Config extends JSONArrayValidationConfig>(
-    value: unknown,
-    valueLabel: string,
-    config: Config,
-  ) => {
-    const errors: BunWorkspacesError[] = [];
-
-    return errors
-  }
-
-  const validateJSONPrimitive = <Config extends JSONPrimitiveValidationConfig>(
-    value: unknown,
-    valueLabel: string,
-    config: Config,
-  ) => {
-    const errors: BunWorkspacesError[] = [];
-
-    return errors
-  }
-  
-  export const validateJSONShape = <Config extends JSONItemValidationConfig>(
-    value: unknown,
-    valueLabel: string,
-    config: Config,
-  ) => {
-    const errors: BunWorkspacesError[] = [];
-    if(!isJSON(value)){
-      errors.push(new INVALID_JSON_ERRORS.NotJSONValue(`Expected ${valueLabel} to be a JSON value: ${value}`));
-      return errors;
+  for (const [key, val] of Object.entries(value)) {
+    if (!(key in config.properties)) {
+      errors.push(
+        new INVALID_JSON_ERRORS.JSONObjectUnexpectedProperty(
+          `Object ${valueLabel} has unexpected property: ${key}`,
+        ),
+      );
+    } else {
+      const error = validateJSONShape(
+        val,
+        `${valueLabel}.${key}`,
+        config.properties[key].type,
+      );
+      if (error) errors.push(...error);
     }
-    
-    if(typeof value === "object" && value !== null){
-      if(isJSONObject(value)){
-        errors.push(...validateJSONObject(value, valueLabel, config));
-      } else if(isJSONArray(value)){
-        errors.push(...validateJSONArray(value, valueLabel, config));
-      } else {
-        errors.push(...validateJSONPrimitive(value, valueLabel, config));
-      }
+  }
+
+  for (const [key, val] of Object.entries(config.properties)) {
+    if (!(key in value) && !val.optional) {
+      errors.push(
+        new INVALID_JSON_ERRORS.JSONObjectMissingProperty(
+          `Expected ${valueLabel} to have property: ${key}`,
+        ),
+      );
     }
+  }
 
+  return errors;
+};
 
+const validateJSONArray = <Config extends JSONArrayValidationConfig>(
+  value: Array<unknown>,
+  valueLabel: string,
+  config: Config,
+) => {
+  const errors: BunWorkspacesError[] = [];
+
+  if (!isJSONArray(value)) {
+    return [
+      new INVALID_JSON_ERRORS.NotJSONArray(
+        `Expected ${valueLabel} to be a JSON array: ${value}`,
+      ),
+    ];
+  }
+
+  for (const [index, val] of value.entries()) {
+    const error = validateJSONShape(
+      val,
+      `${valueLabel}[${index}]`,
+      config.item,
+    );
+    if (error) errors.push(...error);
+  }
+
+  return errors;
+};
+
+const validateJSONPrimitive = <Config extends JSONPrimitiveValidationConfig>(
+  value: unknown,
+  valueLabel: string,
+  config: Config,
+) => {
+  const errors: BunWorkspacesError[] = [];
+
+  const types = resolveOptionalArray(config.primitive) as (
+    | JSDataTypeofName
+    | "null"
+  )[];
+
+  if (types.includes("null") && value === null) {
     return errors;
-  };
+  }
+  const typeError = validateJSType(value, types as JSDataTypeofName[], {
+    valueLabel,
+  });
+
+  if (typeError)
+    errors.push(
+      new INVALID_JSON_ERRORS.NotJSONPrimitive(
+        `Expected ${valueLabel} to be of type ${types.join(" | ")}. Received: ${value}`,
+      ),
+    );
+
+  return errors;
+};
+
+export const validateJSONShape = <Config extends JSONItemValidationConfig>(
+  value: unknown,
+  valueLabel: string,
+  config: Config,
+) => {
+  const errors: BunWorkspacesError[] = [];
+  if (!isJSON(value)) {
+    errors.push(
+      new INVALID_JSON_ERRORS.NotJSONValue(
+        `Expected ${valueLabel} to be a JSON value: ${value}`,
+      ),
+    );
+    return errors;
+  }
+
+  if ("properties" in config) {
+    errors.push(...validateJSONObject(value as object, valueLabel, config));
+  } else if (isJSONArray(value) && "item" in config) {
+    errors.push(...validateJSONArray(value, valueLabel, config));
+  } else if ("primitive" in config) {
+    errors.push(...validateJSONPrimitive(value, valueLabel, config));
+  }
+  return errors;
+};
