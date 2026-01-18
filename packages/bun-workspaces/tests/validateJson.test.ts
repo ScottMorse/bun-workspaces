@@ -511,7 +511,7 @@ describe("validateJSONShape", () => {
     ]);
   });
 
-  test.only("validateJSONShape - arrays", () => {
+  test("validateJSONShape - arrays", () => {
     expect(
       simplifyErrors(
         validateJSONShape([], "test-label", {

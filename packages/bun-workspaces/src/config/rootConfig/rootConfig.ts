@@ -1,84 +1,77 @@
-import { isJSONObject, type BunWorkspacesError } from "../../internal/core";
-import type { ShellOption } from "../../project";
 import {
-  determineParallelMax,
-  resolveScriptShell,
-  validateScriptShellOption,
-} from "../../runScript";
+  BunWorkspacesError,
+  validateJSONShape,
+  type JSONObjectValidationConfig,
+  type JSONValidationConfigToType,
+  type RequiredDeep,
+} from "../../internal/core";
+import type { ShellOption } from "../../project";
+import { determineParallelMax, resolveScriptShell } from "../../runScript";
 import { getUserEnvVar } from "../userEnvVars";
-import { ROOT_CONFIG_ERRORS } from "./errors";
 
 export type RootConfigDefaults = {
   parallelMax?: number;
   shell?: ShellOption;
 };
 
-export type RootConfig = {
-  defaults?: RootConfigDefaults;
-  includeRootWorkspace?: boolean;
-};
-
-export type ResolvedRootConfig = {
-  defaults: Required<RootConfigDefaults>;
-  includeRootWorkspace: boolean;
-};
-
-const VALIDATIONS = {
-  defaults: (value: unknown) => {
-    if (!isJSONObject(value)) {
-      return new ROOT_CONFIG_ERRORS.InvalidRootConfig(
-        `Root config "defaults" must be an object`,
-      );
-    }
-    if ("parallelMax" in value && typeof value.parallelMax !== "number") {
-      return new ROOT_CONFIG_ERRORS.InvalidRootConfig(
-        `The "parallelMax" value in root config "defaults" must be a number`,
-      );
-    }
-    if ("shell" in value && typeof value.shell !== "string") {
-      if (typeof value.shell !== "string") {
-        return new ROOT_CONFIG_ERRORS.InvalidRootConfig(
-          `The "shell" value in root config "defaults" must be a string`,
-        );
-      }
-      validateScriptShellOption(value.shell);
-    }
-    return null;
+const ROOT_CONFIG_VALIDATION_CONFIG = {
+  properties: {
+    defaults: {
+      type: {
+        properties: {
+          parallelMax: {
+            type: {
+              primitive: "number",
+            },
+            optional: true,
+          },
+          shell: {
+            type: {
+              primitive: "string",
+            },
+            optional: true,
+          },
+        },
+      },
+    },
+    includeRootWorkspace: {
+      type: {
+        primitive: "boolean",
+      },
+      optional: true,
+    },
   },
-  includeRootWorkspace: (value: unknown) => {
-    if (value !== undefined) {
-      if (typeof value !== "boolean") {
-        return new ROOT_CONFIG_ERRORS.InvalidRootConfig(
-          `The "includeRootWorkspace" value in root config must be a boolean`,
-        );
-      }
-    }
-    return null;
-  },
-} as const satisfies Record<
-  keyof RootConfig,
-  (value: unknown) => BunWorkspacesError | null
+} as const satisfies JSONObjectValidationConfig;
+
+export type RootConfig = JSONValidationConfigToType<
+  typeof ROOT_CONFIG_VALIDATION_CONFIG
 >;
 
-export const validateRootConfig = (config: RootConfig) => {
-  if (!isJSONObject(config)) {
-    return [
-      new ROOT_CONFIG_ERRORS.InvalidRootConfig(
-        `Workspace config must be an object`,
-      ),
-    ];
-  }
+export type ResolvedRootConfig = RequiredDeep<RootConfig>;
 
-  const errors: BunWorkspacesError[] = [];
-  for (const [key, value] of Object.entries(config)) {
-    const error = VALIDATIONS[key as keyof RootConfig](value);
-    if (error) errors.push(error);
+export const validateRootConfig = (
+  config: RootConfig,
+  configErrorName = "root config",
+) => {
+  const errors = validateJSONShape(
+    config,
+    "config",
+    ROOT_CONFIG_VALIDATION_CONFIG,
+  );
+  if (errors.length) {
+    return new BunWorkspacesError(
+      `Invalid ${configErrorName}: ${errors.map((error) => error.message).join("\n")}`,
+    );
   }
-
-  return errors;
+  return null;
 };
 
-export const resolveRootConfig = (config: RootConfig): ResolvedRootConfig => {
+export const resolveRootConfig = (
+  config: RootConfig,
+  configErrorName = "root config",
+): ResolvedRootConfig => {
+  validateRootConfig(config, configErrorName);
+
   const includeRootWorkspace =
     config.includeRootWorkspace ??
     getUserEnvVar("includeRootWorkspace") === "true";
@@ -90,9 +83,6 @@ export const resolveRootConfig = (config: RootConfig): ResolvedRootConfig => {
       ),
       shell: resolveScriptShell(config.defaults?.shell),
     },
-    includeRootWorkspace: includeRootWorkspace,
+    includeRootWorkspace,
   };
 };
-
-export const createRootConfig = (config?: RootConfig): ResolvedRootConfig =>
-  resolveRootConfig(config ?? {});

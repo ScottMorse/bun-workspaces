@@ -10,3 +10,9 @@ export type SimpleAsyncIterable<T> = AsyncIterable<T, void, undefined>;
 export type AnyFunction<Args extends unknown[] = any[], Return = any> = (
   ...args: Args
 ) => Return;
+
+export type RequiredDeep<T> = T extends object
+  ? Required<{
+      [K in keyof T]: RequiredDeep<T[K]>;
+    }>
+  : T;

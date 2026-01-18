@@ -1,14 +1,17 @@
-import { getUserEnvVar } from "../config/userEnvVars";
+import { getUserEnvVar, getUserEnvVarName } from "../config/userEnvVars";
 import { BunWorkspacesError } from "../internal/core";
 
 export const SCRIPT_SHELL_OPTIONS = ["bun", "system"] as const;
 
 export type ScriptShellOption = (typeof SCRIPT_SHELL_OPTIONS)[number];
 
-export const validateScriptShellOption = (shell: string): ScriptShellOption => {
+export const validateScriptShellOption = (
+  shell: string,
+  fromEnvVar = false,
+): ScriptShellOption => {
   if (!SCRIPT_SHELL_OPTIONS.includes(shell as ScriptShellOption)) {
     throw new BunWorkspacesError(
-      `Invalid shell option: ${shell} (accepted values: ${SCRIPT_SHELL_OPTIONS.join(", ")})`,
+      `Invalid shell option: ${shell} (accepted values: ${SCRIPT_SHELL_OPTIONS.join(", ")})${fromEnvVar ? ` (set by env var ${getUserEnvVarName("scriptShellDefault")})` : ""}`,
     );
   }
   return shell as ScriptShellOption;
@@ -17,7 +20,7 @@ export const validateScriptShellOption = (shell: string): ScriptShellOption => {
 export const getScriptShellDefault = () => {
   const shell = getUserEnvVar("scriptShellDefault");
 
-  return shell ? validateScriptShellOption(shell) : "bun";
+  return shell ? validateScriptShellOption(shell, true) : "bun";
 };
 
 export const resolveScriptShell = (shell?: string): ScriptShellOption => {
