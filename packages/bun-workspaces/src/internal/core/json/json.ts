@@ -9,16 +9,45 @@ type JSONPrimitiveMap = {
 
 export type JSONPrimitiveName = keyof JSONPrimitiveMap;
 
+export type JSONPrimitiveToName<P extends JSONPrimitive> = {
+  [key in keyof JSONPrimitiveMap]: P extends JSONPrimitiveMap[key]
+    ? key
+    : never;
+}[keyof JSONPrimitiveMap];
+
 export type NameToJSONPrimitive<Name extends JSONPrimitiveName> =
   JSONPrimitiveMap[Name];
 
-export type JSONPrimitive = NameToJSONPrimitive<JSONPrimitiveName>;
+export type JSONPrimitive<N extends JSONPrimitiveName = JSONPrimitiveName> =
+  NameToJSONPrimitive<N>;
 
 export interface JSONObject {
   [key: string]: JSONData;
 }
 
-export type JSONArray = JSONData[];
+type JSONArrayItem =
+  | JSONObject
+  | JSONPrimitive
+  | JSONObject[]
+  | JSONPrimitive[]
+  | JSONObject[][]
+  | JSONPrimitive[][]
+  | JSONObject[][][]
+  | JSONPrimitive[][][]
+  | JSONObject[][][][]
+  | JSONPrimitive[][][][]
+  | JSONObject[][][][][]
+  | JSONPrimitive[][][][][]
+  | JSONObject[][][][][][]
+  | JSONPrimitive[][][][][][]
+  | JSONObject[][][][][][][]
+  | JSONPrimitive[][][][][][][];
+
+export type JSONArray<Item extends JSONArrayItem = JSONArrayItem> = Item[];
+
+export type JSONArrayToItem<A extends JSONArray> = A extends (infer Item)[]
+  ? Item
+  : never;
 
 export type JSONData = JSONPrimitive | JSONObject | JSONArray;
 

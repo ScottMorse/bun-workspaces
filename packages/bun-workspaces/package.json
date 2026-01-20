@@ -42,10 +42,7 @@
   },
   "devDependencies": {
     "@rslib/core": "^0.15.1",
-    "ajv": "^8.17.1",
-    "ajv-cli": "^5.0.0",
-    "bun-workspaces": "file:.",
-    "json-schema-to-ts": "^3.1.1"
+    "bun-workspaces": "file:."
   },
   "dependencies": {
     "commander": "^12.1.0"

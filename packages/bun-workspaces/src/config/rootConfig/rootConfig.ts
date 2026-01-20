@@ -3,6 +3,7 @@ import validate from "../../internal/generated/ajv/validateRootConfig";
 import {
   determineParallelMax,
   resolveScriptShell,
+  type ParallelMaxValue,
   type ScriptShellOption,
 } from "../../runScript";
 import type { AjvSchemaValidator } from "../util/ajvTypes";
@@ -13,7 +14,6 @@ export const ROOT_CONFIG_JSON_SCHEMA = {
   type: "object",
   additionalProperties: false,
   properties: {
-    additionalProperties: false,
     defaults: {
       type: "object",
       additionalProperties: false,
@@ -27,7 +27,7 @@ export const ROOT_CONFIG_JSON_SCHEMA = {
       },
     },
   },
-} satisfies JSONSchema;
+} as const satisfies JSONSchema;
 
 export type RootConfig = FromSchema<typeof ROOT_CONFIG_JSON_SCHEMA>;
 
@@ -55,7 +55,7 @@ export const resolveRootConfig = (config: RootConfig): ResolvedRootConfig => {
   return {
     defaults: {
       parallelMax: determineParallelMax(
-        config.defaults?.parallelMax ?? "default",
+        (config.defaults?.parallelMax as ParallelMaxValue) ?? "default",
       ),
       shell: resolveScriptShell(config.defaults?.shell),
     },

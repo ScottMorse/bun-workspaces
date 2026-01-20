@@ -2,13 +2,13 @@ import os from "os";
 import { getUserEnvVar, getUserEnvVarName } from "../config/userEnvVars";
 import { BunWorkspacesError } from "../internal/core";
 
+export const PARALLEL_MAX_VALUES = ["auto", "unbounded", "default"] as const;
+
 export type PercentageValue = `${number}%`;
 
 export type ParallelMaxValue =
   | number
-  | "auto"
-  | "default"
-  | "unbounded"
+  | (typeof PARALLEL_MAX_VALUES)[number]
   | PercentageValue;
 
 /** Should always return at least 1 */

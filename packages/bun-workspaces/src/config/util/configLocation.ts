@@ -10,14 +10,15 @@ export type ConfigLocation = {
 
 const CONFIG_LOCATION_PATHS: Record<
   ConfigLocationType,
-  (name: string) => string
+  (name: string, packageJsonKey: string) => string
 > = {
   jsoncFile: (name) => `${name}.jsonc`,
   jsonFile: (name) => `${name}.json`,
-  packageJson: (name) => `package.json["${name}"]`,
+  packageJson: (_, packageJsonKey) => `package.json["${packageJsonKey}"]`,
 };
 
 export const createConfigLocationPath = (
   locationType: ConfigLocationType,
   name: string,
-) => CONFIG_LOCATION_PATHS[locationType](name);
+  packageJsonKey: string,
+) => CONFIG_LOCATION_PATHS[locationType](name, packageJsonKey);
