@@ -160,41 +160,33 @@ describe("Test workspace config", () => {
   });
 
   test("validateWorkspaceConfig", () => {
-    const invalidResult1 = validateWorkspaceConfig({
-      // @ts-expect-error - Invalid config
-      alias: [["invalid"]],
-    });
-    expect(invalidResult1).toHaveLength(1);
-    expect(invalidResult1[0]).toBeInstanceOf(
-      WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig,
-    );
+    expect(() =>
+      validateWorkspaceConfig({
+        // @ts-expect-error - Invalid config
+        alias: [["invalid"]],
+      }),
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
 
-    const invalidResult2 = validateWorkspaceConfig({
-      // @ts-expect-error - Invalid config
-      alias: {},
-    });
-    expect(invalidResult2).toHaveLength(1);
-    expect(invalidResult2[0]).toBeInstanceOf(
-      WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig,
-    );
+    expect(() =>
+      validateWorkspaceConfig({
+        // @ts-expect-error - Invalid config
+        alias: {},
+      }),
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
 
-    const invalidResult3 = validateWorkspaceConfig({
-      // @ts-expect-error - Invalid config
-      alias: 123,
-    });
-    expect(invalidResult3).toHaveLength(1);
-    expect(invalidResult3[0]).toBeInstanceOf(
-      WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig,
-    );
+    expect(() =>
+      validateWorkspaceConfig({
+        // @ts-expect-error - Invalid config
+        alias: 123,
+      }),
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
 
-    const invalidResult4 = validateWorkspaceConfig({
-      // @ts-expect-error - Invalid config
-      alias: [123, null],
-    });
-    expect(invalidResult4).toHaveLength(1);
-    expect(invalidResult4[0]).toBeInstanceOf(
-      WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig,
-    );
+    expect(() =>
+      validateWorkspaceConfig({
+        // @ts-expect-error - Invalid config
+        alias: [123, null],
+      }),
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
   });
 
   test("loadWorkspaceConfig with invalid config", () => {

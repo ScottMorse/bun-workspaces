@@ -1,80 +1,59 @@
+import { validate } from "json-schema";
+import { type FromSchema, type JSONSchema } from "json-schema-to-ts";
+import { defineErrors } from "../../internal/core";
 import {
-  BunWorkspacesError,
-  validateJSONShape,
-  type JSONObjectValidationConfig,
-  type JSONValidationConfigToType,
-  type RequiredDeep,
-} from "../../internal/core";
-import type { ShellOption } from "../../project";
-import { determineParallelMax, resolveScriptShell } from "../../runScript";
-import { getUserEnvVar } from "../userEnvVars";
+  determineParallelMax,
+  resolveScriptShell,
+  type ScriptShellOption,
+} from "../../runScript";
 
-export type RootConfigDefaults = {
-  parallelMax?: number;
-  shell?: ShellOption;
-};
+const JSON_VALIDATION_ERRORS = defineErrors("InvalidJSONType");
 
-const ROOT_CONFIG_VALIDATION_CONFIG = {
+export const ROOT_CONFIG_JSON_SCHEMA = {
+  type: "object",
+  additionalProperties: false,
   properties: {
+    additionalProperties: false,
     defaults: {
-      type: {
-        properties: {
-          parallelMax: {
-            type: {
-              primitive: "number",
-            },
-            optional: true,
-          },
-          shell: {
-            type: {
-              primitive: "string",
-            },
-            optional: true,
-          },
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        parallelMax: {
+          type: "number",
+        },
+        shell: {
+          type: "string",
         },
       },
     },
-    includeRootWorkspace: {
-      type: {
-        primitive: "boolean",
-      },
-      optional: true,
-    },
   },
-} as const satisfies JSONObjectValidationConfig;
+} satisfies JSONSchema;
 
-export type RootConfig = JSONValidationConfigToType<
-  typeof ROOT_CONFIG_VALIDATION_CONFIG
->;
+export type RootConfig = FromSchema<typeof ROOT_CONFIG_JSON_SCHEMA>;
 
-export type ResolvedRootConfig = RequiredDeep<RootConfig>;
-
-export const validateRootConfig = (
-  config: RootConfig,
-  configErrorName = "root config",
-) => {
-  const errors = validateJSONShape(
-    config,
-    "config",
-    ROOT_CONFIG_VALIDATION_CONFIG,
-  );
-  if (errors.length) {
-    return new BunWorkspacesError(
-      `Invalid ${configErrorName}: ${errors.map((error) => error.message).join("\n")}`,
-    );
-  }
-  return null;
+export type ResolvedRootConfig = {
+  defaults: {
+    parallelMax: number;
+    shell: ScriptShellOption;
+  };
 };
 
-export const resolveRootConfig = (
-  config: RootConfig,
-  configErrorName = "root config",
-): ResolvedRootConfig => {
-  validateRootConfig(config, configErrorName);
+export const validateRootConfig = (config: RootConfig) => {
+  const result = validate(config, ROOT_CONFIG_JSON_SCHEMA);
+  if (!result.valid) {
+    throw new JSON_VALIDATION_ERRORS.InvalidJSONType(
+      `JSON is invalid:\n${result.errors.map((error) => `  ${error.message}`).join("\n")}`,
+    );
+  }
+  return [];
+};
 
-  const includeRootWorkspace =
-    config.includeRootWorkspace ??
-    getUserEnvVar("includeRootWorkspace") === "true";
+export const createDefaultRootConfig = (
+  config?: RootConfig,
+): ResolvedRootConfig => resolveRootConfig(config ?? {});
+
+export const resolveRootConfig = (config: RootConfig): ResolvedRootConfig => {
+  validateRootConfig(config);
 
   return {
     defaults: {
@@ -83,6 +62,5 @@ export const resolveRootConfig = (
       ),
       shell: resolveScriptShell(config.defaults?.shell),
     },
-    includeRootWorkspace,
   };
 };

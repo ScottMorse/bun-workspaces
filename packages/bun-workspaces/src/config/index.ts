@@ -7,3 +7,4 @@ export {
 export { loadConfigFile, DEFAULT_CONFIG_FILE_PATH } from "./configFile";
 
 export * from "./workspaceConfig";
+export * from "./rootConfig";

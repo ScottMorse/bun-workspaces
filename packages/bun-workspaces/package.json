@@ -31,16 +31,21 @@
     "cli": "bun --silent run bin/cli.js",
     "cli:dev": "_BW_RUNTIME_MODE=development bun --silent run bin/cli.js",
     "cli:build": "bun --silent run dist/bin/cli.js",
+    "ajv": "bun --silent run scripts/ajv.ts",
     "lint": "eslint src",
     "test": "rm -rf dist.test && bun test --timeout 10000",
     "build": "bun run scripts/build.ts",
     "build:test": "BUILD_INCLUDE_TESTS=true bun run scripts/build.ts && chmod +x dist.test/bin/cli.js && cd dist.test && bun install && IS_BUILD=true bun run test",
     "build:rslib-only": "rslib build",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "prepare": "bun run ajv"
   },
   "devDependencies": {
     "@rslib/core": "^0.15.1",
-    "bun-workspaces": "file:."
+    "ajv": "^8.17.1",
+    "ajv-cli": "^5.0.0",
+    "bun-workspaces": "file:.",
+    "json-schema-to-ts": "^3.1.1"
   },
   "dependencies": {
     "commander": "^12.1.0"
