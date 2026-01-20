@@ -19,7 +19,7 @@ export const ROOT_CONFIG_JSON_SCHEMA = {
       additionalProperties: false,
       properties: {
         parallelMax: {
-          type: "number",
+          type: ["number", "string"],
         },
         shell: {
           type: "string",

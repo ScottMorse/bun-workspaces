@@ -244,6 +244,12 @@ class _FileSystemProject extends ProjectBase implements Project {
         return (aScriptConfig.order ?? 0) - (bScriptConfig.order ?? 0);
       });
 
+    if (!workspaces.length) {
+      throw new PROJECT_ERRORS.ProjectWorkspaceNotFound(
+        `No workspaces found for script ${JSON.stringify(options.script)} (available: ${this.workspaces.map((workspace) => workspace.name).join(", ")})`,
+      );
+    }
+
     const shell = resolveScriptShell(
       options.inline && typeof options.inline === "object"
         ? options.inline.shell

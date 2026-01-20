@@ -1,4 +1,5 @@
 {
+  // Project config
   "defaults": {
     "parallelMax": 5,
     "shell": "system",

@@ -47,6 +47,11 @@ const TEST_PROJECTS = {
   workspaceConfigDeprecatedConfigMix: "workspaceConfig/deprecatedConfigMix",
   rootConfigJsoncFile: "rootConfig/jsoncFile",
   rootConfigPackage: "rootConfig/package",
+  rootConfigInvalidJson: "rootConfig/invalidJson",
+  rootConfigInvalidType: "rootConfig/invalidType",
+  rootConfigInvalidShell: "rootConfig/invalidShell",
+  rootConfigInvalidParallel: "rootConfig/invalidParallel",
+  rootConfigParallelMaxOnly: "rootConfig/parallelMaxOnly",
 };
 
 export type TestProjectName = keyof typeof TEST_PROJECTS;
