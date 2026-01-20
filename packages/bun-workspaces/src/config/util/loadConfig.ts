@@ -8,6 +8,7 @@ import {
 import { logger } from "../../internal/logger";
 import {
   CONFIG_LOCATION_TYPES,
+  createConfigLocationPath,
   type ConfigLocation,
   type ConfigLocationType,
 } from "./configLocation";
@@ -33,7 +34,10 @@ const LOCATION_FINDERS: Record<
   ) => ConfigLocation | null
 > = {
   jsoncFile: (directory: string, fileName: string) => {
-    const configFilePath = path.join(directory, fileName + ".jsonc");
+    const configFilePath = path.join(
+      directory,
+      createConfigLocationPath("jsoncFile", fileName),
+    );
     if (fs.existsSync(configFilePath)) {
       return {
         type: "jsoncFile",
@@ -47,7 +51,10 @@ const LOCATION_FINDERS: Record<
     return null;
   },
   jsonFile: (directory: string, fileName: string) => {
-    const configFilePath = path.join(directory, fileName + ".json");
+    const configFilePath = path.join(
+      directory,
+      createConfigLocationPath("jsonFile", fileName),
+    );
     if (fs.existsSync(configFilePath)) {
       return {
         type: "jsonFile",
@@ -76,7 +83,10 @@ const LOCATION_FINDERS: Record<
           type: "packageJson",
           path: path.relative(
             process.cwd(),
-            path.join(directory, `package.json["${packageJsonKey}"]`),
+            path.join(
+              directory,
+              createConfigLocationPath("packageJson", packageJsonKey),
+            ),
           ),
           content: packageJson[packageJsonKey],
         };
