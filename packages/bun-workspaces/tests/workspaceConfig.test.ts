@@ -10,9 +10,20 @@ import {
 } from "../src/config/workspaceConfig";
 import { logger } from "../src/internal/logger";
 import { _internalCreateFileSystemProject } from "../src/project";
-import { WORKSPACE_ERRORS, findWorkspaces } from "../src/workspaces";
+import { findWorkspaces } from "../src/workspaces";
 import { getProjectRoot } from "./testProjects";
 import { withWindowsPath } from "./util/windows";
+
+/**
+ * ########
+ * # NOTE #
+ * ########
+ *
+ * The workspace config was the first config to use the current
+ * utils for config loading, so these tests are more thorough/verbose
+ * than for other config types, which helps cover the shared code used
+ * for config loading.
+ */
 
 describe("Test workspace config", () => {
   test("loadWorkspaceConfig", () => {

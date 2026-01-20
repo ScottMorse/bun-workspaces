@@ -1,7 +1,0 @@
-{
-  "defaults": {
-    "parallelMax": 10,
-    "shell": "bun"
-  },
-  "includeRootWorkspace": true
-}
