@@ -1,11 +1,6 @@
 {
   "name": "@bw/sandbox",
-  "version": "1.0.0-alpha.19",
-  "main": "src/index.ts",
   "private": true,
-  "workspaces": [
-    "workspaces/*"
-  ],
   "scripts": {
     "api:local": "bun run src/local.ts",
     "cli:local": "CLI=true bun run src/local.ts",
@@ -15,6 +10,6 @@
   },
   "devDependencies": {
     "bun-workspaces_local": "file:../bun-workspaces",
-    "bun-workspaces_release": "npm:bun-workspaces@1.0.0-alpha.30"
+    "bun-workspaces_release": "npm:bun-workspaces@1.0.0-alpha.32"
   }
 }
