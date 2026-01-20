@@ -1,4 +1,4 @@
-import { type FromSchema, type JSONSchema } from "json-schema-to-ts";
+import { type FromSchema } from "json-schema-to-ts";
 import validate from "../../internal/generated/ajv/validateRootConfig";
 import {
   determineParallelMax,
@@ -9,25 +9,7 @@ import {
 import type { AjvSchemaValidator } from "../util/ajvTypes";
 import { executeValidator } from "../util/validateConfig";
 import { ROOT_CONFIG_ERRORS } from "./errors";
-
-export const ROOT_CONFIG_JSON_SCHEMA = {
-  type: "object",
-  additionalProperties: false,
-  properties: {
-    defaults: {
-      type: "object",
-      additionalProperties: false,
-      properties: {
-        parallelMax: {
-          type: ["number", "string"],
-        },
-        shell: {
-          type: "string",
-        },
-      },
-    },
-  },
-} as const satisfies JSONSchema;
+import type { ROOT_CONFIG_JSON_SCHEMA } from "./rootConfigSchema";
 
 export type RootConfig = FromSchema<typeof ROOT_CONFIG_JSON_SCHEMA>;
 

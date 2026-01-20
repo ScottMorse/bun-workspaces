@@ -2,10 +2,8 @@ import fs from "fs";
 import path from "path";
 import Ajv from "ajv";
 import standaloneCode from "ajv/dist/standalone";
-import {
-  WORKSPACE_CONFIG_JSON_SCHEMA,
-  ROOT_CONFIG_JSON_SCHEMA,
-} from "../src/config";
+import { ROOT_CONFIG_JSON_SCHEMA } from "../src/config/rootConfig/rootConfigSchema";
+import { WORKSPACE_CONFIG_JSON_SCHEMA } from "../src/config/workspaceConfig/workspaceConfigSchema";
 
 const ajv = new Ajv({ code: { source: true }, allowUnionTypes: true });
 const validateWorkspaceConfig = ajv.compile(WORKSPACE_CONFIG_JSON_SCHEMA);
