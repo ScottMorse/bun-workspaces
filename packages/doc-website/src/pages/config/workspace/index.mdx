@@ -34,9 +34,9 @@ See [workspace aliases](/concepts/workspace-aliases) and [script execution order
 ### Examples:
 #### 1. JSON/JSONC file
 
-<p className="workspace-config-path"><code>path/to/your/workspace/{createConfigLocationPath("jsonFile", WORKSPACE_CONFIG_FILE_NAME, WORKSPACE_CONFIG_PACKAGE_JSON_KEY)}</code></p>
+<span className="config-path"><code>path/to/your/workspace/{createConfigLocationPath("jsonFile", WORKSPACE_CONFIG_FILE_NAME, WORKSPACE_CONFIG_PACKAGE_JSON_KEY)}</code></span>
 or:
-<p className="workspace-config-path"><code>path/to/your/workspace/{createConfigLocationPath("jsoncFile", WORKSPACE_CONFIG_FILE_NAME, WORKSPACE_CONFIG_PACKAGE_JSON_KEY)}</code></p>
+<span className="config-path"><code>path/to/your/workspace/{createConfigLocationPath("jsoncFile", WORKSPACE_CONFIG_FILE_NAME, WORKSPACE_CONFIG_PACKAGE_JSON_KEY)}</code></span>
 
 <SyntaxHighlighter language="json">
   {JSON.stringify(exampleWorkspaceConfigSimple, null, 2)}
@@ -44,7 +44,7 @@ or:
 
 #### 2. package.json
 
-<p className="workspace-config-path"><code>path/to/your/workspace/package.json</code></p>
+<span className="config-path"><code>path/to/your/workspace/package.json</code></span>
 
 <SyntaxHighlighter language="json">
   {JSON.stringify(createPackageJsonExample(exampleWorkspaceConfigSimple, "workspace"), null, 2)}

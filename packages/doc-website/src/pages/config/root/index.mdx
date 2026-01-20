@@ -26,7 +26,7 @@ The root configuration is the general configuration for a [project](/concepts/gl
 
 The values in <code>{CONFIG_DEFAULTS_KEY}</code> can also be set by [environment variables](/config/env-vars). Defaults provided in the configuration take precedence over environment variables.
 
-See more on the [parallel max value](/concepts/parallel-scripts#parallel-max-value) and [script shell](/concepts/script-shell) for more information on the use of the config values.
+See the [parallel max value](/concepts/parallel-scripts#parallel-max-value) and [shell option for inline scripts](/concepts/inline-scripts#shell) for information on the use of the config values.
 
 ### Type Definition
 
@@ -37,9 +37,9 @@ See more on the [parallel max value](/concepts/parallel-scripts#parallel-max-val
 ### Examples:
 #### 1. JSON/JSONC file
 
-<p className="workspace-config-path"><code>path/to/your/project/{createConfigLocationPath("jsonFile", ROOT_CONFIG_FILE_NAME, ROOT_CONFIG_PACKAGE_JSON_KEY)}</code></p>
+<span className="config-path"><code>path/to/your/project/{createConfigLocationPath("jsonFile", ROOT_CONFIG_FILE_NAME, ROOT_CONFIG_PACKAGE_JSON_KEY)}</code></span>
 or:
-<p className="workspace-config-path"><code>path/to/your/project/{createConfigLocationPath("jsoncFile", ROOT_CONFIG_FILE_NAME, ROOT_CONFIG_PACKAGE_JSON_KEY)}</code></p>
+<span className="config-path"><code>path/to/your/project/{createConfigLocationPath("jsoncFile", ROOT_CONFIG_FILE_NAME, ROOT_CONFIG_PACKAGE_JSON_KEY)}</code></span>
 
 <SyntaxHighlighter language="json">
   {JSON.stringify(exampleRootConfigSimple1, null, 2)}
@@ -47,7 +47,7 @@ or:
 
 #### 2. package.json
 
-<p className="workspace-config-path"><code>path/to/your/project/package.json</code></p>
+<span className="config-path"><code>path/to/your/project/package.json</code></span>
 
 <SyntaxHighlighter language="json">
   {JSON.stringify(createPackageJsonExample(exampleRootConfigSimple2, "root"), null, 2)}
