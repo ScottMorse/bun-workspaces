@@ -1,8 +1,10 @@
-<img src="./packages/doc-website/src/docs/public/images/png/bwunster_64x70.png" alt="bun-workspaces" width="45" />
-
-### [**See Full Documentation Here**: _https://bunworkspaces.com_](https://bunworkspaces.com)
+<a href="https://bunworkspaces.com">
+<img src="./packages/doc-website/src/pages/public/images/png/bwunster-bg-banner-wide_3000x900.png" alt="bun-workspaces" width="100%" />
+</a>
 
 # bun-workspaces
+
+### [**See Full Documentation Here**: _https://bunworkspaces.com_](https://bunworkspaces.com)
 
 A CLI and API to enhance your monorepo development with Bun's [native workspaces](https://bun.sh/docs/install/workspaces) feature for nested JavaScript/TypeScript packages.
 
