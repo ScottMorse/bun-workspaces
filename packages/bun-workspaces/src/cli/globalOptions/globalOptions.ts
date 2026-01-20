@@ -103,9 +103,8 @@ const defineGlobalOptions = (
 const applyGlobalOptions = (
   options: CliGlobalOptions,
   config: BunWorkspacesConfig | null,
-  forceSilent: boolean,
 ) => {
-  logger.printLevel = forceSilent ? "silent" : options.logLevel;
+  logger.printLevel = options.logLevel;
   logger.debug("Log level: " + options.logLevel);
 
   let project: FileSystemProject;
@@ -136,7 +135,6 @@ export const initializeWithGlobalOptions = (
   program: Command,
   args: string[],
   defaultCwd: string,
-  forceSilent: boolean,
 ) => {
   program.allowUnknownOption(true);
 
@@ -153,6 +151,5 @@ export const initializeWithGlobalOptions = (
       cwd,
     },
     config,
-    forceSilent,
   );
 };

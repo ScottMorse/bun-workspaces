@@ -69,12 +69,6 @@ export const createCli = ({
         };
       })();
 
-      const forceSilent = JSON_FLAGS.some((flag) => args.includes(flag));
-
-      if (forceSilent) {
-        logger.printLevel = "silent";
-      }
-
       const bunVersionError = validateCurrentBunVersion();
 
       if (bunVersionError) {
@@ -86,7 +80,6 @@ export const createCli = ({
         program,
         args,
         defaultCwd,
-        forceSilent,
       );
 
       defineProjectCommands({
