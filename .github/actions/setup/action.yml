@@ -33,7 +33,7 @@ runs:
       if: runner.os == 'Windows'
       shell: pwsh
       run: |
-        irm bun.sh/install.ps1 | iex
+        iex "& {$(irm https://bun.com/install.ps1)} -Version ${{ inputs.bun_version || env.BUN_VERSION }}"
         "$env:USERPROFILE\.bun\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
         bun --version
 
