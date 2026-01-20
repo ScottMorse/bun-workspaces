@@ -174,7 +174,7 @@ export const CLI_COMMANDS_CONFIG = {
         description: `When using --inline, the shell to use to run the script`,
       },
       jsonOutfile: {
-        flags: ["-J", "--json-outfile <file>"],
+        flags: ["-j", "--json-outfile <file>"],
         description: "Output results in a JSON file",
       },
     },
