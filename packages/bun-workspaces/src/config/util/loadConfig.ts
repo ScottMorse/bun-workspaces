@@ -36,7 +36,7 @@ const LOCATION_FINDERS: Record<
   jsoncFile: (directory: string, fileName: string) => {
     const configFilePath = path.join(
       directory,
-      createConfigLocationPath("jsoncFile", fileName),
+      createConfigLocationPath("jsoncFile", fileName, ""),
     );
     if (fs.existsSync(configFilePath)) {
       return {
@@ -53,7 +53,7 @@ const LOCATION_FINDERS: Record<
   jsonFile: (directory: string, fileName: string) => {
     const configFilePath = path.join(
       directory,
-      createConfigLocationPath("jsonFile", fileName),
+      createConfigLocationPath("jsonFile", fileName, ""),
     );
     if (fs.existsSync(configFilePath)) {
       return {
@@ -85,7 +85,7 @@ const LOCATION_FINDERS: Record<
             process.cwd(),
             path.join(
               directory,
-              createConfigLocationPath("packageJson", packageJsonKey),
+              createConfigLocationPath("packageJson", "", packageJsonKey),
             ),
           ),
           content: packageJson[packageJsonKey],

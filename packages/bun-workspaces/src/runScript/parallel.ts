@@ -14,12 +14,8 @@ export type ParallelMaxValue =
 /** Should always return at least 1 */
 export const determineParallelMax = (
   value: ParallelMaxValue,
-  fromEnvVar = false,
+  errorMessageSuffix = "",
 ): number => {
-  const errorMessageSuffix = fromEnvVar
-    ? ` (set by env var ${getUserEnvVarName("parallelMaxDefault")})`
-    : "";
-
   if (!isNaN(Number(value))) {
     value = Math.floor(Number(value));
   }
@@ -38,7 +34,7 @@ export const determineParallelMax = (
     if (defaultMax === "default") return determineParallelMax("auto");
     return determineParallelMax(
       (defaultMax as ParallelMaxValue) ?? "auto",
-      true,
+      ` (set by env var ${getUserEnvVarName("parallelMaxDefault")})`,
     );
   }
 

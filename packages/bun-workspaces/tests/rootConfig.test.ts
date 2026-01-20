@@ -41,7 +41,7 @@ describe("Test project root config", () => {
     expect(() =>
       loadRootConfig(getProjectRoot("rootConfigInvalidParallel")),
     ).toThrow(
-      "Root config is invalid: config.defaults.parallelMax must be number",
+      'Invalid parallel max value: "something wrong" (set by root config)',
     );
   });
 

@@ -56,6 +56,7 @@ export const resolveRootConfig = (config: RootConfig): ResolvedRootConfig => {
     defaults: {
       parallelMax: determineParallelMax(
         (config.defaults?.parallelMax as ParallelMaxValue) ?? "default",
+        " (set by root config)",
       ),
       shell: resolveScriptShell(config.defaults?.shell),
     },
