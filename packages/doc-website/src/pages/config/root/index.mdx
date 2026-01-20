@@ -9,7 +9,7 @@ footer: false
 ---
 
 import { ROOT_CONFIG_FILE_NAME, ROOT_CONFIG_PACKAGE_JSON_KEY } from "bun-workspaces/src/config";
-import { exampleRootConfigSimple, createPackageJsonExample } from "../../../lib/config/exampleConfig";
+import { exampleRootConfigSimple1, exampleRootConfigSimple2, createPackageJsonExample } from "../../../lib/config/exampleConfig";
 import { SyntaxHighlighter } from "../../../lib/util/highlight";
 import { CONFIG_LOCATION_TYPES, createConfigLocationPath } from 'bun-workspaces/src/config/util'
 import { ROOT_CONFIG_TYPE } from "../../../lib/config/configTypes";
@@ -42,7 +42,7 @@ or:
 <p className="workspace-config-path"><code>path/to/your/project/{createConfigLocationPath("jsoncFile", ROOT_CONFIG_FILE_NAME, ROOT_CONFIG_PACKAGE_JSON_KEY)}</code></p>
 
 <SyntaxHighlighter language="json">
-  {JSON.stringify(exampleRootConfigSimple, null, 2)}
+  {JSON.stringify(exampleRootConfigSimple1, null, 2)}
 </SyntaxHighlighter>
 
 #### 2. package.json
@@ -50,5 +50,5 @@ or:
 <p className="workspace-config-path"><code>path/to/your/project/package.json</code></p>
 
 <SyntaxHighlighter language="json">
-  {JSON.stringify(createPackageJsonExample(exampleRootConfigSimple, "root"), null, 2)}
+  {JSON.stringify(createPackageJsonExample(exampleRootConfigSimple2, "root"), null, 2)}
 </SyntaxHighlighter>

@@ -242,8 +242,10 @@ import { createFileSystemProject } from "bun-workspaces";
 
 const project = createFileSystemProject();
 
-// Run in parallel with the default limit 
-// Equal to "auto" or value of the root ${ENV_VARS_METADATA.parallelMaxDefault.rootConfigDefaultsKey} or process.env.${ENV_VARS_METADATA.parallelMaxDefault.envVarName}
+// Run in parallel with the default limit.
+// Equal to "auto" or value of 
+// the root ${ENV_VARS_METADATA.parallelMaxDefault.rootConfigDefaultsKey} 
+// or process.env.${ENV_VARS_METADATA.parallelMaxDefault.envVarName}
 project.runScriptAcrossWorkspaces({
   script: "my-script",
   parallel: true,

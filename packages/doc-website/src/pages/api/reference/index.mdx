@@ -24,7 +24,7 @@ Create a [FileSystemProject](/api/reference#filesystemproject), the core of `bun
 This finds [Workspaces](/api/reference#workspace) by reading the project's `bun.lock` file, which means `bun install` must be run to have up-to-date 
 workspace information.
 
-It will also detect and utilize any [workspace configuration](/config) found.
+It will also detect and utilize any [root configuration](/config/root) and [workspace configurations](/config/workspace) found.
 
 <SyntaxHighlighter language="typescript">
 {CREATE_FS_PROJECT_EXAMPLE}
@@ -35,7 +35,7 @@ It will also detect and utilize any [workspace configuration](/config) found.
 
 An object representing a workspace in a [Project](/api/reference#project).
 
-Set [workspace aliases](/concepts/workspace-aliases) in the [workspace configuration](/config) to make it easier to reference workspaces.
+Set [workspace aliases](/concepts/workspace-aliases) in the [workspace configuration](/config/workspace) to make it easier to reference workspaces.
 
 <SyntaxHighlighter language="typescript">
 {WORKSPACE_EXAMPLE}
@@ -81,7 +81,7 @@ Find a [Workspace](/api/reference#workspace) by its package.json name.
 ### .findWorkspaceByAlias
 `findWorkspaceByAlias(alias: string): Workspace | null`
 
-Find a [Workspace](/api/reference#workspace) by its [alias](/concepts/workspace-aliases), if set in its [workspace configuration](/config).
+Find a [Workspace](/api/reference#workspace) by its [alias](/concepts/workspace-aliases), if set in its [workspace configuration](/config/workspace).
 <SyntaxHighlighter language="typescript">
 {FIND_WORKSPACE_BY_ALIAS_EXAMPLE}
 </SyntaxHighlighter>
@@ -91,7 +91,7 @@ Find a [Workspace](/api/reference#workspace) by its [alias](/concepts/workspace-
 ### .findWorkspaceByNameOrAlias
 `findWorkspaceByNameOrAlias(nameOrAlias: string): Workspace | null`
 
-Find a [Workspace](/api/reference#workspace) by its package.json name or [alias](/concepts/workspace-aliases), if set in its [workspace configuration](/config).
+Find a [Workspace](/api/reference#workspace) by its package.json name or [alias](/concepts/workspace-aliases), if set in its [workspace configuration](/config/workspace).
 
 Since [aliases](/concepts/workspace-aliases) are validated to be unique to each workspace
 and not clash with other workspaces' package.json names,
@@ -193,7 +193,7 @@ Usually used  only for testing purposes to do without the need for a real projec
 in the file system.
 
 Since it doesn't read anything from the file system,
-it isn't affected by [workspace configuration](/config).
+it isn't affected by [root configuration](/config/root) or [workspace configurations](/config/workspace).
 
 A `MemoryProject` currently does not support running scripts directly, though a means of mocking script execution may be added later, considering demand.
 

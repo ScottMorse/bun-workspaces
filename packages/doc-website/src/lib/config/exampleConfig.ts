@@ -6,9 +6,16 @@ import {
   ROOT_CONFIG_PACKAGE_JSON_KEY,
 } from "bun-workspaces/src/config";
 
-export const exampleRootConfigSimple: RootConfig = {
+export const exampleRootConfigSimple1: RootConfig = {
   defaults: {
     parallelMax: 4,
+    shell: "system",
+  },
+};
+
+export const exampleRootConfigSimple2: RootConfig = {
+  defaults: {
+    parallelMax: "50%",
     shell: "system",
   },
 };
