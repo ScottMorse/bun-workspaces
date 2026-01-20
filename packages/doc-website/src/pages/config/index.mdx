@@ -10,19 +10,19 @@ footer: false
 
 import { exampleDeprecatedConfig, exampleWorkspaceConfigArray, exampleWorkspaceConfigSimple, createPackageJsonExample } from "../../lib/cli/exampleConfig";
 import { SyntaxHighlighter } from "../../lib/util/highlight";
-import { WORKSPACE_CONFIG_FILE_PATH, WORKSPACE_CONFIG_PACKAGE_JSON_KEY} from 'bun-workspaces/src/config/workspaceConfig/workspaceConfigLocation'
+// import { WORKSPACE_CONFIG_FILE_PATH, WORKSPACE_CONFIG_PACKAGE_JSON_KEY} from 'bun-workspaces/src/config/workspaceConfig/workspaceConfigLocation'
 
 # Configuration
 ## Workspace Configuration
 
-You can add optional configuration to a workspace in its `package.json` file in  <code>"{WORKSPACE_CONFIG_PACKAGE_JSON_KEY}"</code> 
-or in a separate <code>{WORKSPACE_CONFIG_FILE_PATH}</code> file.
+{/* You can add optional configuration to a workspace in its `package.json` file in  <code>"{WORKSPACE_CONFIG_PACKAGE_JSON_KEY}"</code> 
+or in a separate <code>{WORKSPACE_CONFIG_FILE_PATH}</code> file. */}
 
 See [workspace aliases](/concepts/workspace-aliases) and [script execution order](/concepts/script-execution-order) for more information on the fields available.
 
 ### Examples:
 #### 1. Separate Config File
-<p className="workspace-config-path"><code>path/to/your/workspace/{WORKSPACE_CONFIG_FILE_PATH}</code></p>
+{/* <p className="workspace-config-path"><code>path/to/your/workspace/{WORKSPACE_CONFIG_FILE_PATH}</code></p> */}
 
 <SyntaxHighlighter language="json">
   {JSON.stringify(exampleWorkspaceConfigSimple, null, 2)}
@@ -31,13 +31,13 @@ See [workspace aliases](/concepts/workspace-aliases) and [script execution order
 #### 2. Within package.json
 <p className="workspace-config-path"><code>path/to/your/workspace/package.json</code></p>
 
-The same configuration can be added to the workspace's `package.json` file in <code>"{WORKSPACE_CONFIG_PACKAGE_JSON_KEY}"</code>.
+{/* The same configuration can be added to the workspace's `package.json` file in <code>"{WORKSPACE_CONFIG_PACKAGE_JSON_KEY}"</code>. */}
 <SyntaxHighlighter language="json">
   {JSON.stringify(createPackageJsonExample(exampleWorkspaceConfigSimple), null, 2)}
 </SyntaxHighlighter>
 
-Note that if both package.json config and <code>{WORKSPACE_CONFIG_FILE_PATH}</code> are present, 
-<code>{WORKSPACE_CONFIG_FILE_PATH}</code> will take precedence. It's recommended to only use one type of configuration within your
+{/* Note that if both package.json config and <code>{WORKSPACE_CONFIG_FILE_PATH}</code> are present,  */}
+{/* <code>{WORKSPACE_CONFIG_FILE_PATH}</code> will take precedence. It's recommended to only use one type of configuration within your */}
 project for consistency.
 
 ## Config File (bw.json)

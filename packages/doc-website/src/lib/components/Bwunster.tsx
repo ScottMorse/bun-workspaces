@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AnimatedSprite } from "./util/pixelArt";
+import { AnimatedSprite } from "../util/pixelArt";
 
 export const Bwunster = () => {
   const [isIdle, setIsIdle] = useState(false);

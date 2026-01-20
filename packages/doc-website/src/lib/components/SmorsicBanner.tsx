@@ -1,4 +1,4 @@
-import SmorsicBannerLogo from "../docs/public/images/svg/smorsic-logo-title_outline_variable.svg?react";
+import SmorsicBannerLogo from "../../pages/public/images/svg/smorsic-logo-title_outline_variable.svg?react";
 
 export const SmorsicBanner = ({
   width,
