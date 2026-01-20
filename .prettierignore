@@ -1,5 +1,7 @@
 **/tests/**/*.json
 **/tests/**/*.jsonc
 
+**/generated/**/*.js
+
 # MDX formatting is very buggy
 **/*.mdx 
