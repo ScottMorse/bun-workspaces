@@ -19,6 +19,7 @@ runs:
         echo "Bun version to be installed: $BUN_VERSION"
 
     - name: Install Bun
+      if: runner.os != 'Windows'
       shell: bash
       id: install-bun
       run: |
@@ -27,6 +28,14 @@ runs:
         export BUN_INSTALL="$HOME/.bun"
         curl -fsSL https://bun.com/install | bash -s "bun-v$bun_version"
         echo "$HOME/.bun/bin:$PATH" >> $GITHUB_PATH
+
+    - name: Install Bun (Windows)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        irm bun.sh/install.ps1 | iex
+        "$env:USERPROFILE\.bun\bin" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+        bun --version
 
     - name: Install Dependencies
       id: install-deps
