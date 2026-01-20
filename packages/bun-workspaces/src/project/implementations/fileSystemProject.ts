@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { type ResolvedWorkspaceConfig } from "../../config";
+import { loadRootConfig } from "../../config";
 import type { Simplify } from "../../internal/core";
 import { DEFAULT_TEMP_DIR } from "../../internal/core";
 import { logger } from "../../internal/logger";
@@ -20,7 +20,7 @@ import {
 } from "../../runScript/scriptShellOption";
 import { findWorkspaces, type Workspace } from "../../workspaces";
 import { PROJECT_ERRORS } from "../errors";
-import type { Project } from "../project";
+import type { Project, ProjectConfig } from "../project";
 import { ProjectBase, resolveWorkspacePath } from "./projectBase";
 
 /** Arguments for {@link createFileSystemProject} */
@@ -91,34 +91,12 @@ export type RunScriptAcrossWorkspacesResult = Simplify<
   RunScriptsResult<RunWorkspaceScriptMetadata>
 >;
 
-const INSTANCE_PRIVATE_MAP = new WeakMap<
-  FileSystemProject,
-  { workspaceConfigMap: Record<string, ResolvedWorkspaceConfig> }
->();
-
-const getInstancePrivateMap = (project: FileSystemProject) => {
-  let instancePrivateMap = INSTANCE_PRIVATE_MAP.get(project);
-  if (!instancePrivateMap) {
-    instancePrivateMap = { workspaceConfigMap: {} };
-    INSTANCE_PRIVATE_MAP.set(project, instancePrivateMap);
-  }
-  return instancePrivateMap;
-};
-
-const setInstancePrivateMap = (
-  project: FileSystemProject,
-  instancePrivateMap: {
-    workspaceConfigMap: Record<string, ResolvedWorkspaceConfig>;
-  },
-) => {
-  INSTANCE_PRIVATE_MAP.set(project, instancePrivateMap);
-};
-
 class _FileSystemProject extends ProjectBase implements Project {
   public readonly rootDirectory: string;
   public readonly workspaces: Workspace[];
   public readonly name: string;
   public readonly sourceType = "fileSystem";
+  public readonly config: ProjectConfig;
 
   constructor(
     options: CreateFileSystemProjectOptions & {
@@ -138,13 +116,19 @@ class _FileSystemProject extends ProjectBase implements Project {
       options.rootDirectory ?? "",
     );
 
+    const rootConfig = loadRootConfig(this.rootDirectory);
+
     const { workspaces, workspaceConfigMap } = findWorkspaces({
       rootDirectory: this.rootDirectory,
       workspaceAliases: options.workspaceAliases,
     });
 
     this.workspaces = workspaces;
-    setInstancePrivateMap(this, { workspaceConfigMap });
+
+    this.config = {
+      root: rootConfig,
+      workspaces: workspaceConfigMap,
+    };
 
     if (!options.name) {
       const packageJson = JSON.parse(
@@ -172,7 +156,7 @@ class _FileSystemProject extends ProjectBase implements Project {
     const shell = resolveScriptShell(
       options.inline && typeof options.inline === "object"
         ? options.inline.shell
-        : undefined,
+        : this.config.root.defaults.shell,
     );
 
     logger.debug(
@@ -244,14 +228,10 @@ class _FileSystemProject extends ProjectBase implements Project {
       )
       .sort((a, b) => {
         const aScriptConfig =
-          getInstancePrivateMap(this).workspaceConfigMap[a.name]?.scripts[
-            options.script
-          ];
+          this.config.workspaces[a.name]?.scripts[options.script];
 
         const bScriptConfig =
-          getInstancePrivateMap(this).workspaceConfigMap[b.name]?.scripts[
-            options.script
-          ];
+          this.config.workspaces[b.name]?.scripts[options.script];
 
         if (!aScriptConfig) {
           return bScriptConfig ? 1 : 0;
@@ -264,10 +244,16 @@ class _FileSystemProject extends ProjectBase implements Project {
         return (aScriptConfig.order ?? 0) - (bScriptConfig.order ?? 0);
       });
 
+    if (!workspaces.length) {
+      throw new PROJECT_ERRORS.ProjectWorkspaceNotFound(
+        `No workspaces found for script ${JSON.stringify(options.script)} (available: ${this.workspaces.map((workspace) => workspace.name).join(", ")})`,
+      );
+    }
+
     const shell = resolveScriptShell(
       options.inline && typeof options.inline === "object"
         ? options.inline.shell
-        : undefined,
+        : this.config.root.defaults.shell,
     );
 
     logger.debug(
@@ -324,7 +310,10 @@ class _FileSystemProject extends ProjectBase implements Project {
           shell,
         };
       }),
-      parallel: options.parallel ?? false,
+      parallel:
+        options.parallel === true
+          ? { max: this.config.root.defaults.parallelMax }
+          : (options.parallel ?? false),
     });
 
     return result;

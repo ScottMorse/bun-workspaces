@@ -1,98 +1,46 @@
-import { isJsonObject, type BunWorkspacesError } from "../../internal/core";
-import type { ShellOption } from "../../project";
+import { type FromSchema } from "json-schema-to-ts";
+import validate from "../../internal/generated/ajv/validateRootConfig";
 import {
   determineParallelMax,
   resolveScriptShell,
-  validateScriptShellOption,
+  type ParallelMaxValue,
+  type ScriptShellOption,
 } from "../../runScript";
-import { getUserEnvVar } from "../userEnvVars";
+import type { AjvSchemaValidator } from "../util/ajvTypes";
+import { executeValidator } from "../util/validateConfig";
 import { ROOT_CONFIG_ERRORS } from "./errors";
+import type { ROOT_CONFIG_JSON_SCHEMA } from "./rootConfigSchema";
 
-export type RootConfigDefaults = {
-  parallelMax?: number;
-  shell?: ShellOption;
-};
-
-export type RootConfig = {
-  defaults?: RootConfigDefaults;
-  includeRootWorkspace?: boolean;
-};
+export type RootConfig = FromSchema<typeof ROOT_CONFIG_JSON_SCHEMA>;
 
 export type ResolvedRootConfig = {
-  defaults: Required<RootConfigDefaults>;
-  includeRootWorkspace: boolean;
+  defaults: {
+    parallelMax: number;
+    shell: ScriptShellOption;
+  };
 };
 
-const VALIDATIONS = {
-  defaults: (value: unknown) => {
-    if (!isJsonObject(value)) {
-      return new ROOT_CONFIG_ERRORS.InvalidRootConfig(
-        `Root config "defaults" must be an object`,
-      );
-    }
-    if ("parallelMax" in value && typeof value.parallelMax !== "number") {
-      return new ROOT_CONFIG_ERRORS.InvalidRootConfig(
-        `The "parallelMax" value in root config "defaults" must be a number`,
-      );
-    }
-    if ("shell" in value && typeof value.shell !== "string") {
-      if (typeof value.shell !== "string") {
-        return new ROOT_CONFIG_ERRORS.InvalidRootConfig(
-          `The "shell" value in root config "defaults" must be a string`,
-        );
-      }
-      validateScriptShellOption(value.shell);
-    }
-    return null;
-  },
-  includeRootWorkspace: (value: unknown) => {
-    if (value !== undefined) {
-      if (typeof value !== "boolean") {
-        return new ROOT_CONFIG_ERRORS.InvalidRootConfig(
-          `The "includeRootWorkspace" value in root config must be a boolean`,
-        );
-      }
-    }
-    return null;
-  },
-} as const satisfies Record<
-  keyof RootConfig,
-  (value: unknown) => BunWorkspacesError | null
->;
+export const validateRootConfig = (config: RootConfig) =>
+  executeValidator(
+    validate as unknown as AjvSchemaValidator<RootConfig>,
+    "RootConfig",
+    config,
+    ROOT_CONFIG_ERRORS.InvalidRootConfig,
+  );
 
-export const validateRootConfig = (config: RootConfig) => {
-  if (!isJsonObject(config)) {
-    return [
-      new ROOT_CONFIG_ERRORS.InvalidRootConfig(
-        `Workspace config must be an object`,
-      ),
-    ];
-  }
-
-  const errors: BunWorkspacesError[] = [];
-  for (const [key, value] of Object.entries(config)) {
-    const error = VALIDATIONS[key as keyof RootConfig](value);
-    if (error) errors.push(error);
-  }
-
-  return errors;
-};
+export const createDefaultRootConfig = (): ResolvedRootConfig =>
+  resolveRootConfig({});
 
 export const resolveRootConfig = (config: RootConfig): ResolvedRootConfig => {
-  const includeRootWorkspace =
-    config.includeRootWorkspace ??
-    getUserEnvVar("includeRootWorkspace") === "true";
+  validateRootConfig(config);
 
   return {
     defaults: {
       parallelMax: determineParallelMax(
-        config.defaults?.parallelMax ?? "default",
+        (config.defaults?.parallelMax as ParallelMaxValue) ?? "default",
+        " (set by root config)",
       ),
       shell: resolveScriptShell(config.defaults?.shell),
     },
-    includeRootWorkspace: includeRootWorkspace,
   };
 };
-
-export const createRootConfig = (config?: RootConfig): ResolvedRootConfig =>
-  resolveRootConfig(config ?? {});

@@ -66,7 +66,7 @@ const PLACEHOLDER_STUB_PATH = path.resolve(
 );
 
 export default defineConfig({
-  root: "src/docs",
+  root: "src/pages",
   themeDir: path.join(__dirname, "src/theme"),
   title: TITLE,
   globalStyles: path.resolve("src/theme/css/global.css"),
@@ -79,7 +79,7 @@ export default defineConfig({
   },
   plugins: [
     // TODO: This worked briefly with mismatched versions. This will likely not work again until rspress v2 is out of beta.
-    // * In the meantime, manage src/docs/public/sitemap.xml manually.
+    // * In the meantime, manage src/pages/public/sitemap.xml manually.
     // * And however, be mindful that trailing slashes vs. non-trailing slashes
     // * are important to the Google Search Console. This site works best with non-trailing links
     // * and sitemap.xml references.
@@ -214,7 +214,7 @@ export default defineConfig({
           svg: fs.readFileSync(
             path.resolve(
               __dirname,
-              "src/docs/public/images/external/gh-sponsors.svg",
+              "src/pages/public/images/external/gh-sponsors.svg",
             ),
             "utf8",
           ),
@@ -232,7 +232,7 @@ export default defineConfig({
           svg: fs.readFileSync(
             path.resolve(
               __dirname,
-              "src/docs/public/images/external/npm-logo.svg",
+              "src/pages/public/images/external/npm-logo.svg",
             ),
             "utf8",
           ),
@@ -287,8 +287,20 @@ export default defineConfig({
         activeMatch: "/config",
         items: [
           {
-            text: "Workspace Configuration",
+            text: "General",
             link: "/config",
+          },
+          {
+            text: "Root Configuration",
+            link: "/config/root",
+          },
+          {
+            text: "Workspace Configuration",
+            link: "/config/workspace",
+          },
+          {
+            text: "Environment Variables",
+            link: "/config/env-vars",
           },
         ],
       },

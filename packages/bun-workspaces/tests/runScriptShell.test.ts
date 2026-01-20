@@ -204,11 +204,12 @@ describe("Test run script shell option", () => {
   });
 
   test("API - runWorkspaceScript utilizes shell option", async () => {
-    const project = createFileSystemProject({
-      rootDirectory: getProjectRoot("default"),
-    });
+    const project = () =>
+      createFileSystemProject({
+        rootDirectory: getProjectRoot("default"),
+      });
 
-    const defaultResult = await project.runWorkspaceScript({
+    const defaultResult = await project().runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script: "echo $_BW_SCRIPT_SHELL_OPTION",
       inline: true,
@@ -221,7 +222,7 @@ describe("Test run script shell option", () => {
 
     process.env[getUserEnvVarName("scriptShellDefault")] = "system";
 
-    const osEnvResult = await project.runWorkspaceScript({
+    const osEnvResult = await project().runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script: IS_WINDOWS
         ? `echo %_BW_SCRIPT_SHELL_OPTION%`
@@ -234,7 +235,7 @@ describe("Test run script shell option", () => {
     }
     expect((await osEnvResult.exit).exitCode).toBe(0);
 
-    const explicitDefaultResult = await project.runWorkspaceScript({
+    const explicitDefaultResult = await project().runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script: IS_WINDOWS
         ? `echo %_BW_SCRIPT_SHELL_OPTION%`
@@ -249,7 +250,7 @@ describe("Test run script shell option", () => {
 
     process.env[getUserEnvVarName("scriptShellDefault")] = "bun";
 
-    const bunEnvResult = await project.runWorkspaceScript({
+    const bunEnvResult = await project().runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script: "echo $_BW_SCRIPT_SHELL_OPTION",
       inline: true,
@@ -260,7 +261,7 @@ describe("Test run script shell option", () => {
     }
     expect((await bunEnvResult.exit).exitCode).toBe(0);
 
-    const explicitBunResult = await project.runWorkspaceScript({
+    const explicitBunResult = await project().runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script: "echo $_BW_SCRIPT_SHELL_OPTION",
       inline: { shell: "bun" },
@@ -271,7 +272,7 @@ describe("Test run script shell option", () => {
     }
     expect((await explicitBunResult.exit).exitCode).toBe(0);
 
-    const failingBunResult = await project.runWorkspaceScript({
+    const failingBunResult = await project().runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script: OS_ONLY_COMMAND,
       inline: { shell: "bun" },
@@ -279,7 +280,7 @@ describe("Test run script shell option", () => {
 
     expect((await failingBunResult.exit).exitCode).toBe(1);
 
-    const explicitOsResult = await project.runWorkspaceScript({
+    const explicitOsResult = await project().runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script: IS_WINDOWS
         ? `echo %_BW_SCRIPT_SHELL_OPTION%`
@@ -292,7 +293,7 @@ describe("Test run script shell option", () => {
     }
     expect((await explicitOsResult.exit).exitCode).toBe(0);
 
-    const successfulOsOnlyResult = await project.runWorkspaceScript({
+    const successfulOsOnlyResult = await project().runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script: OS_ONLY_COMMAND,
       inline: { shell: "system" },
@@ -302,11 +303,12 @@ describe("Test run script shell option", () => {
   });
 
   test("API - runScriptAcrossWorkspaces utilizes shell option", async () => {
-    const project = createFileSystemProject({
-      rootDirectory: getProjectRoot("default"),
-    });
+    const project = () =>
+      createFileSystemProject({
+        rootDirectory: getProjectRoot("default"),
+      });
 
-    const defaultResult = await project.runScriptAcrossWorkspaces({
+    const defaultResult = await project().runScriptAcrossWorkspaces({
       workspacePatterns: ["application-a"],
       script: "echo $_BW_SCRIPT_SHELL_OPTION",
       inline: true,
@@ -319,7 +321,7 @@ describe("Test run script shell option", () => {
 
     process.env[getUserEnvVarName("scriptShellDefault")] = "system";
 
-    const osEnvResult = await project.runScriptAcrossWorkspaces({
+    const osEnvResult = await project().runScriptAcrossWorkspaces({
       workspacePatterns: ["application-a"],
       script: IS_WINDOWS
         ? `echo %_BW_SCRIPT_SHELL_OPTION%`
@@ -332,7 +334,7 @@ describe("Test run script shell option", () => {
     }
     expect((await osEnvResult.summary).scriptResults[0].exitCode).toBe(0);
 
-    const explicitDefaultResult = await project.runScriptAcrossWorkspaces({
+    const explicitDefaultResult = await project().runScriptAcrossWorkspaces({
       workspacePatterns: ["application-a"],
       script: IS_WINDOWS
         ? `echo %_BW_SCRIPT_SHELL_OPTION%`
@@ -349,7 +351,7 @@ describe("Test run script shell option", () => {
 
     process.env[getUserEnvVarName("scriptShellDefault")] = "bun";
 
-    const bunEnvResult = await project.runScriptAcrossWorkspaces({
+    const bunEnvResult = await project().runScriptAcrossWorkspaces({
       workspacePatterns: ["application-a"],
       script: "echo $_BW_SCRIPT_SHELL_OPTION",
       inline: true,
@@ -360,7 +362,7 @@ describe("Test run script shell option", () => {
     }
     expect((await bunEnvResult.summary).scriptResults[0].exitCode).toBe(0);
 
-    const explicitBunResult = await project.runScriptAcrossWorkspaces({
+    const explicitBunResult = await project().runScriptAcrossWorkspaces({
       workspacePatterns: ["application-a"],
       script: "echo $_BW_SCRIPT_SHELL_OPTION",
       inline: { shell: "bun" },
@@ -371,7 +373,7 @@ describe("Test run script shell option", () => {
     }
     expect((await explicitBunResult.summary).scriptResults[0].exitCode).toBe(0);
 
-    const failingBunResult = await project.runScriptAcrossWorkspaces({
+    const failingBunResult = await project().runScriptAcrossWorkspaces({
       workspacePatterns: ["application-a"],
       script: OS_ONLY_COMMAND,
       inline: { shell: "bun" },
@@ -379,7 +381,7 @@ describe("Test run script shell option", () => {
 
     expect((await failingBunResult.summary).scriptResults[0].exitCode).toBe(1);
 
-    const explicitOsResult = await project.runScriptAcrossWorkspaces({
+    const explicitOsResult = await project().runScriptAcrossWorkspaces({
       workspacePatterns: ["application-a"],
       script: IS_WINDOWS
         ? `echo %_BW_SCRIPT_SHELL_OPTION%`
@@ -392,7 +394,7 @@ describe("Test run script shell option", () => {
     }
     expect((await explicitOsResult.summary).scriptResults[0].exitCode).toBe(0);
 
-    const successfulOsOnlyResult = await project.runScriptAcrossWorkspaces({
+    const successfulOsOnlyResult = await project().runScriptAcrossWorkspaces({
       workspacePatterns: ["application-a"],
       script: OS_ONLY_COMMAND,
       inline: { shell: "system" },

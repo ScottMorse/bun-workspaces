@@ -1,0 +1,140 @@
+import fs from "fs";
+import path from "path";
+import {
+  defineErrors,
+  parseJSONC,
+  type AnyFunction,
+} from "../../internal/core";
+import { logger } from "../../internal/logger";
+import {
+  CONFIG_LOCATION_TYPES,
+  createConfigLocationPath,
+  type ConfigLocation,
+  type ConfigLocationType,
+} from "./configLocation";
+
+export const InvalidJSONError = defineErrors("InvalidJSON").InvalidJSON;
+
+const parseJSON = (jsonString: string, path: string) => {
+  try {
+    return parseJSONC(jsonString);
+  } catch (error) {
+    throw new InvalidJSONError(
+      `Invalid JSON at ${path}: ${(error as Error).message}`,
+    );
+  }
+};
+
+const LOCATION_FINDERS: Record<
+  ConfigLocationType,
+  (
+    directory: string,
+    fileName: string,
+    packageJsonKey: string,
+  ) => ConfigLocation | null
+> = {
+  jsoncFile: (directory: string, fileName: string) => {
+    const configFilePath = path.join(
+      directory,
+      createConfigLocationPath("jsoncFile", fileName, ""),
+    );
+    if (fs.existsSync(configFilePath)) {
+      return {
+        type: "jsoncFile",
+        content: parseJSON(
+          fs.readFileSync(configFilePath, "utf8"),
+          configFilePath,
+        ),
+        path: path.relative(process.cwd(), configFilePath),
+      };
+    }
+    return null;
+  },
+  jsonFile: (directory: string, fileName: string) => {
+    const configFilePath = path.join(
+      directory,
+      createConfigLocationPath("jsonFile", fileName, ""),
+    );
+    if (fs.existsSync(configFilePath)) {
+      return {
+        type: "jsonFile",
+        content: parseJSON(
+          fs.readFileSync(configFilePath, "utf8"),
+          configFilePath,
+        ),
+        path: path.relative(process.cwd(), configFilePath),
+      };
+    }
+    return null;
+  },
+  packageJson: (
+    directory: string,
+    _fileName: string,
+    packageJsonKey: string,
+  ) => {
+    const packageJsonPath = path.join(directory, "package.json");
+    if (fs.existsSync(packageJsonPath)) {
+      const packageJson = parseJSON(
+        fs.readFileSync(packageJsonPath, "utf8"),
+        packageJsonPath,
+      );
+      if (packageJson[packageJsonKey]) {
+        return {
+          type: "packageJson",
+          path: path.relative(
+            process.cwd(),
+            path.join(
+              directory,
+              createConfigLocationPath("packageJson", "", packageJsonKey),
+            ),
+          ),
+          content: packageJson[packageJsonKey],
+        };
+      }
+    }
+    return null;
+  },
+};
+
+export const getConfigLocation = (
+  name: string,
+  directory: string,
+  fileName: string,
+  packageJsonKey: string,
+): ConfigLocation | null => {
+  const locations: ConfigLocation[] = [];
+  for (const locationType of CONFIG_LOCATION_TYPES) {
+    const location = LOCATION_FINDERS[locationType](
+      directory,
+      fileName,
+      packageJsonKey,
+    );
+    if (location) {
+      locations.push(location);
+    }
+  }
+
+  if (locations.length > 1) {
+    logger.warn(
+      `Found multiple ${name} configs:\n${locations
+        .map((location) => "  " + location.path)
+        .join("\n")}\n  Using config at ${locations[0]?.path}`,
+    );
+  }
+
+  return locations[0] ?? null;
+};
+
+export const loadConfig = <ProcessContent extends AnyFunction>(
+  name: string,
+  directory: string,
+  fileName: string,
+  packageJsonKey: string,
+  processContent: ProcessContent,
+): ReturnType<ProcessContent> | null => {
+  const location = getConfigLocation(name, directory, fileName, packageJsonKey);
+  if (!location) {
+    return null;
+  }
+  return processContent(location.content);
+};

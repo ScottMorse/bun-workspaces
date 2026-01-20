@@ -1,3 +1,4 @@
+import type { ResolvedRootConfig, ResolvedWorkspaceConfig } from "../config";
 import type { ScriptCommand, WorkspaceScriptCommandMethod } from "../runScript";
 import type { Workspace } from "../workspaces";
 
@@ -35,6 +36,13 @@ export type CreateProjectScriptCommandResult = {
   workspace: Workspace;
 };
 
+/** The config for a project and its workspaces */
+export type ProjectConfig = {
+  root: ResolvedRootConfig;
+  /** A map of workspace names to their resolved config */
+  workspaces: Record<string, ResolvedWorkspaceConfig>;
+};
+
 /**
  * A project contains a collection of workspaces and is the core of `bun-workspaces`'s functionality.
  *
@@ -47,6 +55,8 @@ export interface Project {
   rootDirectory: string;
   /** The list of all workspaces in the project */
   workspaces: Workspace[];
+  /** The config for the project and its workspaces */
+  config: ProjectConfig;
   /** The means by which the project was created */
   sourceType: "fileSystem" | "memory";
   /** Find a workspace by its package.json name */

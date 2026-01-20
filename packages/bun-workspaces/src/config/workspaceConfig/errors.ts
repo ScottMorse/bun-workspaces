@@ -1,6 +1,3 @@
 import { defineErrors } from "../../internal/core";
 
-export const WORKSPACE_CONFIG_ERRORS = defineErrors(
-  "InvalidWorkspaceConfig",
-  "InvalidWorkspaceConfigFileFormat",
-);
+export const WORKSPACE_CONFIG_ERRORS = defineErrors("InvalidWorkspaceConfig");

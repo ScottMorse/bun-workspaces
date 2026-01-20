@@ -1,0 +1,29 @@
+---
+title: CLI Global Options
+titleSuffix: " | bun-workspaces"
+description: "Global options documentation for bun-workspaces CLI | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
+pageType: doc
+sidebar: false
+outline: true
+footer: false
+---
+
+import { CliGlobalOptionDoc } from "../../../lib/cli/CliGlobalOptionDoc";
+import { SyntaxHighlighter } from "../../../lib/util/highlight";
+import { CliHeader } from "../../../lib/cli/CliHeader";
+
+<CliHeader activeHref="globalOptions" />
+
+Global options should come before any commands.
+
+### Working Directory
+<CliGlobalOptionDoc option={"cwd"} />
+<hr />
+### Log Level
+<CliGlobalOptionDoc option={"logLevel"} />
+<hr />
+### Config File
+<CliGlobalOptionDoc 
+  option={"configFile"} 
+  deprecationText="Use the new workspace configuration instead to configure workspace aliases."
+/>

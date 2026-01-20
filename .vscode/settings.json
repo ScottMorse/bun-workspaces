@@ -29,6 +29,7 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "cSpell.words": [
+    "arrayable",
     "bunx",
     "bwunster",
     "rslib",

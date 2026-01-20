@@ -1,0 +1,6 @@
+{
+  // Project config
+  "defaults": {
+    "parallelMax": 5,
+  },
+}

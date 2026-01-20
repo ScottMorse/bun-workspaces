@@ -1,0 +1,12 @@
+{
+  "name": "test-root",
+  "workspaces": [
+    "workspaces/*"
+  ],
+  "bw-root": {
+    "defaults": {
+      "parallelMax": 5,
+      "shell": "system"
+    }
+  }
+}

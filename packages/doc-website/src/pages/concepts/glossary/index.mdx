@@ -1,0 +1,62 @@
+---
+title: Concepts > Glossary
+titleSuffix: " | bun-workspaces"
+description: "Glossary | Concepts | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
+pageType: doc
+sidebar: false
+outline: true
+footer: false
+---
+
+import { SyntaxHighlighter } from "../../../lib/util/highlight";
+import { ConceptsHeader } from "../../../lib/concepts/ConceptsHeader";
+import { GLOSSARY_FILE_TREE, GLOSSARY_ROOT_PACKAGE_JSON, GLOSSARY_WORKSPACE_A_PACKAGE_JSON, GLOSSARY_WORKSPACE_B_PACKAGE_JSON } from "../../../lib/concepts/conceptsExamples";
+
+<ConceptsHeader activeHref="glossary" />
+
+## Terms
+
+#### Project
+
+This is typically the same as the root of your git repository for your monorepo. This is where your top-level `package.json` 
+file is located, which contains the `"workspaces"` field. 
+
+[See Bun's documentation for more information on setting up workspaces via package.json](https://bun.sh/docs/install/workspaces).
+
+#### Workspace
+
+A nested package within a project. The root of a workspace is always a nested directory within the project 
+that contains its own `package.json` file. 
+
+A workspace's directory must be matched by the globs in the project root `package.json`'s `"workspaces"` field.
+
+#### Script
+
+In the context of `bun-workspaces`, a "script" generally refers to an entry in the `"scripts"` field in a workspace's `package.json` file by default. 
+
+However, bun-workspaces also supports running ["inline scripts"](/concepts/inline-scripts), one-off shell commands executed from a respective workspace's directory.
+
+## Terms in Action
+
+This is a minimal example of a project structure. 
+
+Placing workspaces in the `packages/` directory is a common convention but not required.
+
+<SyntaxHighlighter language="bash">
+{GLOSSARY_FILE_TREE}
+</SyntaxHighlighter>
+
+The root package.json:
+<SyntaxHighlighter language="json">
+{GLOSSARY_ROOT_PACKAGE_JSON}
+</SyntaxHighlighter>
+
+The workspaces' package.json files:
+<SyntaxHighlighter language="json">
+{GLOSSARY_WORKSPACE_A_PACKAGE_JSON}
+</SyntaxHighlighter>
+
+<SyntaxHighlighter language="json">
+{GLOSSARY_WORKSPACE_B_PACKAGE_JSON}
+</SyntaxHighlighter>
+

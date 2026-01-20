@@ -59,6 +59,10 @@ export default defineConfig({
               to: "../tests",
             },
             {
+              from: path.resolve(__dirname, "scripts"),
+              to: "../scripts",
+            },
+            {
               from: path.resolve(__dirname, "bunfig.toml"),
               to: "../bunfig.toml",
             },

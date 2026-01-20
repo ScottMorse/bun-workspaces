@@ -1,3 +1,4 @@
+import { createDefaultRootConfig } from "../../config";
 import type { Simplify } from "../../internal/core";
 import {
   validateWorkspaceAliases,
@@ -22,6 +23,10 @@ class _MemoryProject extends ProjectBase implements Project {
   public readonly workspaces: Workspace[];
   public readonly name: string;
   public readonly sourceType = "memory";
+  public readonly config = {
+    root: createDefaultRootConfig(),
+    workspaces: {},
+  };
 
   constructor(options: CreateMemoryProjectOptions) {
     super(true);

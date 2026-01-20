@@ -63,7 +63,7 @@ export type ValidateNumberRules = {
   noNegInfinity?: boolean;
 };
 
-export type ValidateJSTypeConfig<T = unknown> = {
+export type ValidateJSTypeConfig = {
   /** For use in error message */
   valueLabel?: string;
   numberRules?: ValidateNumberRules;
@@ -94,7 +94,7 @@ export const validateNumber = (
 export const validateJSType = <T = unknown>(
   value: T,
   typeofName: OptionalArray<JSDataTypeofName>,
-  { allowNull, numberRules, valueLabel }: ValidateJSTypeConfig<T> = {},
+  { allowNull, numberRules, valueLabel }: ValidateJSTypeConfig = {},
 ): InstanceType<typeof InvalidJSTypeError> | null => {
   if (allowNull && value === null) {
     return new InvalidJSTypeError(`${valueLabel ?? "Value"} cannot be null`);

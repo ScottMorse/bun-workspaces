@@ -1,9 +1,6 @@
 import { type OnSearch } from "rspress/theme";
-import {
-  getCliGlobalOptionsContent,
-  getCliCommandsContent,
-} from "../content/cli";
-import { getCommandId, getGlobalOptionId } from "../content/cli/searchIds";
+import { getCliGlobalOptionsContent, getCliCommandsContent } from "../lib/cli";
+import { getCommandId, getGlobalOptionId } from "../lib/cli/searchIds";
 
 const sanitize = (s: string) =>
   s

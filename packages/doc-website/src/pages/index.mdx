@@ -1,0 +1,94 @@
+---
+pageType: doc
+sidebar: false
+outline: false
+---
+
+import { Bwunster } from "../lib/components/Bwunster";
+import { SyntaxHighlighter } from "../lib/util/highlight";
+import { BragTicker } from "../lib/components/BragTicker";
+import { API_QUICKSTART } from '../lib/api/apiExamples';
+import { CLI_QUICKSTART } from '../lib/cli/cliExamples';
+import { Footer } from "../lib/components/Footer";
+import { AnimatedSprite, PixelArtImage } from "../lib/util/pixelArt";
+import { RequiredBunVersion } from "../lib/components/RequiredBunVersion";
+import { SmorsicBanner } from "../lib/components/SmorsicBanner";
+
+<Bwunster/>
+
+<h1 className="home-title" id="home-title">
+  bun-workspaces
+</h1>
+
+<h2 className="home-subtitle">
+  A [monorepo](http://sonarsource.com/resources/library/monorepo/) management tool on top <br/>of native [Bun
+  workspaces](https://bun.sh/docs/install/workspaces)
+</h2>
+
+<div className="home-list-container">
+  <ul className="home-list">
+    <li>Works right away, with no boilerplate required 🍔🍴</li>
+    <li>Get metadata about your monorepo 🤖</li>
+    <li>Run `package.json` scripts across workspaces 📋</li>
+    <li>Run inline [Bun Shell](https://bun.com/docs/runtime/shell) scripts in workspaces ⌨️</li>
+  </ul>
+</div>
+
+
+This tool lets you decide the complexity of how you use it. 
+To get started, all you need is a normal project using [Bun's native workspaces](https://bun.sh/docs/install/workspaces) feature for nested JavaScript/TypeScript packages.
+
+Think of this as a power suit you can snap onto native workspaces, rather than another monorepo framework.
+
+Start running some [CLI commands](/cli) right away in your repo, or take full advantage of the [scripting API](/api) and its features.
+<br/>
+<hr />
+
+<h2 className="whats-new-title">What's New</h2>
+
+<h2 className="whats-new-subtitle">Notable recent updates 📦</h2>
+<div className="whats-new-list">
+- Configuration updates: Added new [project root configuration](/config/root) to set defaults, and JSONC is supported for configuration files.
+- The [Bun Shell](https://bun.com/docs/runtime/shell) is now used by default to run [inline scripts](/concepts/inline-scripts), with the [option](/concepts/inline-scripts#shell) to use the system shell.
+- Increased support for Windows users.
+- You can check out the new [public roadmap](/roadmap) for the future of bun-workspaces!
+- You can now control how many parallel scripts can run at the same time! See [Concepts > Parallel Scripts](/concepts/parallel-scripts).
+</div>
+
+## Quick Start
+
+See the [CLI Quick Start](/cli) and [API Quick Start](/api) for starting examples. See the [Glossary](/concepts/glossary) for more fundamental concepts.
+
+## Installation
+
+<RequiredBunVersion className="home-bun-version bun-version" />
+
+You can install the package in your project or simply use `bunx bun-workspaces` to immediately use the latest version of the [CLI](/cli). Installation is required to use the [API](/api).
+
+<SyntaxHighlighter language="bash">
+{`# Install to use the API and/or lock your CLI version for your project
+bun add --dev bun-workspaces
+
+# Start using the CLI with or without the installation step
+bunx bun-workspaces --help`}
+
+</SyntaxHighlighter>
+
+If you use the CLI frequently, you might consider using a shell alias.
+
+<SyntaxHighlighter language="bash">
+  {`# Add this to .bashrc, .zshrc, or similar 
+# to make it available by default in your shell
+alias bw="bunx bun-workspaces"`}
+</SyntaxHighlighter>
+
+Examples in these docs will use the alias `bw` for `bunx bun-workspaces` for brevity.
+
+<br/>
+_`bun-workspaces` is independent from the [Bun](https://bun.sh) project and is not affiliated with or endorsed by Anthropic. This project aims to enhance enhance the experience of Bun for its users._
+
+<div className="home-smorsic-banner">
+  <span className="home-smorsic-banner-text">Developed By:</span>
+  <SmorsicBanner width="280px" />
+</div>
+

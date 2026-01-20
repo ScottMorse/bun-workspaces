@@ -1,0 +1,54 @@
+---
+title: Root Configuration
+titleSuffix: " | bun-workspaces"
+description: "Root configuration documentation for bun-workspaces | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
+pageType: doc
+sidebar: false
+outline: true
+footer: false
+---
+
+import { ROOT_CONFIG_FILE_NAME, ROOT_CONFIG_PACKAGE_JSON_KEY } from "bun-workspaces/src/config";
+import { exampleRootConfigSimple1, exampleRootConfigSimple2, createPackageJsonExample } from "../../../lib/config/exampleConfig";
+import { SyntaxHighlighter } from "../../../lib/util/highlight";
+import { CONFIG_LOCATION_TYPES, createConfigLocationPath } from 'bun-workspaces/src/config/util'
+import { ROOT_CONFIG_TYPE } from "../../../lib/config/configTypes";
+import { ConfigHeader } from "../../../lib/config/ConfigHeader";
+import { CONFIG_DEFAULTS_KEY } from "../../../lib/config/envVars";
+
+# Configuration > Root
+
+<ConfigHeader activeHref="root"/>
+
+## Project Root Configuration
+
+The root configuration is the general configuration for a [project](/concepts/glossary#project). It is read from a file in the project root directory or the root `package.json` file.
+
+The values in <code>{CONFIG_DEFAULTS_KEY}</code> can also be set by [environment variables](/config/env-vars). Defaults provided in the configuration take precedence over environment variables.
+
+See the [parallel max value](/concepts/parallel-scripts#parallel-max-value) and [shell option for inline scripts](/concepts/inline-scripts#shell) for information on the use of the config values.
+
+### Type Definition
+
+<SyntaxHighlighter language="typescript">
+  {ROOT_CONFIG_TYPE}
+</SyntaxHighlighter>
+
+### Examples:
+#### 1. JSON/JSONC file
+
+<span className="config-path"><code>path/to/your/project/{createConfigLocationPath("jsonFile", ROOT_CONFIG_FILE_NAME, ROOT_CONFIG_PACKAGE_JSON_KEY)}</code></span>
+or:
+<span className="config-path"><code>path/to/your/project/{createConfigLocationPath("jsoncFile", ROOT_CONFIG_FILE_NAME, ROOT_CONFIG_PACKAGE_JSON_KEY)}</code></span>
+
+<SyntaxHighlighter language="json">
+  {JSON.stringify(exampleRootConfigSimple1, null, 2)}
+</SyntaxHighlighter>
+
+#### 2. package.json
+
+<span className="config-path"><code>path/to/your/project/package.json</code></span>
+
+<SyntaxHighlighter language="json">
+  {JSON.stringify(createPackageJsonExample(exampleRootConfigSimple2, "root"), null, 2)}
+</SyntaxHighlighter>

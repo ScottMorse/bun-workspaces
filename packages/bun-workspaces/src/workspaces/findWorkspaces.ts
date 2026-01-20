@@ -2,7 +2,7 @@ import fs from "fs";
 import path from "path";
 import bun from "bun";
 import {
-  createWorkspaceConfig,
+  createDefaultWorkspaceConfig,
   loadWorkspaceConfig,
   type ProjectConfig,
   type ResolvedWorkspaceConfig,
@@ -155,7 +155,7 @@ export const findWorkspaces = ({
       ) {
         workspaces.push(workspace);
         workspaceConfigMap[workspace.name] =
-          workspaceConfig ?? createWorkspaceConfig();
+          workspaceConfig ?? createDefaultWorkspaceConfig();
       }
     }
   }

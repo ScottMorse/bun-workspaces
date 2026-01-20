@@ -1,19 +1,29 @@
 import path from "path";
 import { expect, test, describe, spyOn } from "bun:test";
 import { loadConfigFile } from "../src/config";
+import { InvalidJSONError } from "../src/config/util/loadConfig";
 import {
-  createWorkspaceConfig,
-  getFileConfig,
-  getPackageJsonConfig,
   loadWorkspaceConfig,
+  resolveWorkspaceConfig,
   validateWorkspaceConfig,
   WORKSPACE_CONFIG_ERRORS,
 } from "../src/config/workspaceConfig";
 import { logger } from "../src/internal/logger";
 import { _internalCreateFileSystemProject } from "../src/project";
-import { WORKSPACE_ERRORS, findWorkspaces } from "../src/workspaces";
+import { findWorkspaces } from "../src/workspaces";
 import { getProjectRoot } from "./testProjects";
 import { withWindowsPath } from "./util/windows";
+
+/**
+ * ########
+ * # NOTE #
+ * ########
+ *
+ * The workspace config was the first config to use the current
+ * utils for config loading, so these tests are more thorough/verbose
+ * than for other config types, which helps cover the shared code used
+ * for config loading.
+ */
 
 describe("Test workspace config", () => {
   test("loadWorkspaceConfig", () => {
@@ -123,144 +133,126 @@ describe("Test workspace config", () => {
 
   test("loadWorkspaceConfig with invalid JSON", () => {
     expect(() =>
-      getPackageJsonConfig(
-        path.join(
-          getProjectRoot("workspaceConfigInvalidJson"),
-          withWindowsPath("applications/application-a"),
-        ),
-      ),
-    ).toThrow(WORKSPACE_ERRORS.InvalidPackageJson);
-
-    expect(
       loadWorkspaceConfig(
         path.join(
           getProjectRoot("workspaceConfigInvalidJson"),
           withWindowsPath("applications/application-a"),
         ),
       ),
-    ).toBeNull();
+    ).toThrow(InvalidJSONError);
 
     expect(() =>
-      getFileConfig(
-        path.join(
-          getProjectRoot("workspaceConfigInvalidJson"),
-          withWindowsPath("applications/application-b"),
-        ),
-      ),
-    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfigFileFormat);
-
-    expect(
       loadWorkspaceConfig(
         path.join(
           getProjectRoot("workspaceConfigInvalidJson"),
           withWindowsPath("applications/application-b"),
         ),
       ),
-    ).toBeNull();
+    ).toThrow(InvalidJSONError);
   });
 
   test("validateWorkspaceConfig", () => {
-    const invalidResult1 = validateWorkspaceConfig({
-      // @ts-expect-error - Invalid config
-      alias: [["invalid"]],
-    });
-    expect(invalidResult1).toHaveLength(1);
-    expect(invalidResult1[0]).toBeInstanceOf(
-      WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig,
-    );
+    expect(() =>
+      validateWorkspaceConfig({
+        // @ts-expect-error - Invalid config
+        alias: [["invalid"]],
+      }),
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
 
-    const invalidResult2 = validateWorkspaceConfig({
-      // @ts-expect-error - Invalid config
-      alias: {},
-    });
-    expect(invalidResult2).toHaveLength(1);
-    expect(invalidResult2[0]).toBeInstanceOf(
-      WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig,
-    );
+    expect(() =>
+      validateWorkspaceConfig({
+        // @ts-expect-error - Invalid config
+        alias: {},
+      }),
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
 
-    const invalidResult3 = validateWorkspaceConfig({
-      // @ts-expect-error - Invalid config
-      alias: 123,
-    });
-    expect(invalidResult3).toHaveLength(1);
-    expect(invalidResult3[0]).toBeInstanceOf(
-      WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig,
-    );
+    expect(() =>
+      validateWorkspaceConfig({
+        // @ts-expect-error - Invalid config
+        alias: 123,
+      }),
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
 
-    const invalidResult4 = validateWorkspaceConfig({
-      // @ts-expect-error - Invalid config
-      alias: [123, null],
-    });
-    expect(invalidResult4).toHaveLength(1);
-    expect(invalidResult4[0]).toBeInstanceOf(
-      WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig,
-    );
+    expect(() =>
+      validateWorkspaceConfig({
+        // @ts-expect-error - Invalid config
+        alias: [123, null],
+      }),
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
   });
 
   test("loadWorkspaceConfig with invalid config", () => {
-    const invalidResult = loadWorkspaceConfig(
-      path.join(
-        getProjectRoot("workspaceConfigInvalidConfig"),
-        withWindowsPath("applications/application-a"),
+    expect(() =>
+      loadWorkspaceConfig(
+        path.join(
+          getProjectRoot("workspaceConfigInvalidConfig"),
+          withWindowsPath("applications/application-a"),
+        ),
       ),
-    );
-    expect(invalidResult).toBeNull();
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
 
-    const invalidResult2 = loadWorkspaceConfig(
-      path.join(
-        getProjectRoot("workspaceConfigInvalidConfig"),
-        withWindowsPath("applications/application-b"),
+    expect(() =>
+      loadWorkspaceConfig(
+        path.join(
+          getProjectRoot("workspaceConfigInvalidConfig"),
+          withWindowsPath("applications/application-b"),
+        ),
       ),
-    );
-    expect(invalidResult2).toBeNull();
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
 
-    const invalidResult3 = loadWorkspaceConfig(
-      path.join(
-        getProjectRoot("workspaceConfigInvalidConfig"),
-        withWindowsPath("applications/application-c"),
+    expect(() =>
+      loadWorkspaceConfig(
+        path.join(
+          getProjectRoot("workspaceConfigInvalidConfig"),
+          withWindowsPath("applications/application-c"),
+        ),
       ),
-    );
-    expect(invalidResult3).toBeNull();
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
 
-    const invalidResult4 = loadWorkspaceConfig(
-      path.join(
-        getProjectRoot("workspaceConfigInvalidConfig"),
-        withWindowsPath("applications/application-d"),
+    expect(() =>
+      loadWorkspaceConfig(
+        path.join(
+          getProjectRoot("workspaceConfigInvalidConfig"),
+          withWindowsPath("applications/application-d"),
+        ),
       ),
-    );
-    expect(invalidResult4).toBeNull();
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
 
-    const invalidResult5 = loadWorkspaceConfig(
-      path.join(
-        getProjectRoot("workspaceConfigInvalidConfig"),
-        withWindowsPath("applications/application-e"),
+    expect(() =>
+      loadWorkspaceConfig(
+        path.join(
+          getProjectRoot("workspaceConfigInvalidConfig"),
+          withWindowsPath("applications/application-e"),
+        ),
       ),
-    );
-    expect(invalidResult5).toBeNull();
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
 
-    const invalidResult6 = loadWorkspaceConfig(
-      path.join(
-        getProjectRoot("workspaceConfigInvalidConfig"),
-        withWindowsPath("applications/application-f"),
+    expect(() =>
+      loadWorkspaceConfig(
+        path.join(
+          getProjectRoot("workspaceConfigInvalidConfig"),
+          withWindowsPath("applications/application-f"),
+        ),
       ),
-    );
-    expect(invalidResult6).toBeNull();
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
 
-    const invalidResult7 = loadWorkspaceConfig(
-      path.join(
-        getProjectRoot("workspaceConfigInvalidConfig"),
-        withWindowsPath("applications/application-g"),
+    expect(() =>
+      loadWorkspaceConfig(
+        path.join(
+          getProjectRoot("workspaceConfigInvalidConfig"),
+          withWindowsPath("applications/application-g"),
+        ),
       ),
-    );
-    expect(invalidResult7).toBeNull();
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
 
-    const invalidResult8 = loadWorkspaceConfig(
-      path.join(
-        getProjectRoot("workspaceConfigInvalidConfig"),
-        withWindowsPath("applications/application-h"),
+    expect(() =>
+      loadWorkspaceConfig(
+        path.join(
+          getProjectRoot("workspaceConfigInvalidConfig"),
+          withWindowsPath("applications/application-h"),
+        ),
       ),
-    );
-    expect(invalidResult8).toBeNull();
+    ).toThrow(WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig);
   });
 
   test("findWorkspaces results with workspace configs", () => {
@@ -300,7 +292,7 @@ describe("Test workspace config", () => {
         },
       ],
       workspaceConfigMap: {
-        "application-1a": createWorkspaceConfig({
+        "application-1a": resolveWorkspaceConfig({
           alias: ["appA"],
           scripts: {
             "all-workspaces": {
@@ -308,9 +300,9 @@ describe("Test workspace config", () => {
             },
           },
         }),
-        "application-1b": createWorkspaceConfig({ alias: ["appB"] }),
-        "library-1a": createWorkspaceConfig({ alias: ["libA", "libA2"] }),
-        "library-1b": createWorkspaceConfig({ alias: ["libB"] }),
+        "application-1b": resolveWorkspaceConfig({ alias: ["appB"] }),
+        "library-1a": resolveWorkspaceConfig({ alias: ["libA", "libA2"] }),
+        "library-1b": resolveWorkspaceConfig({ alias: ["libB"] }),
       },
     });
 
@@ -350,10 +342,10 @@ describe("Test workspace config", () => {
         },
       ],
       workspaceConfigMap: {
-        "application-1a": createWorkspaceConfig({ alias: ["appA"] }),
-        "application-1b": createWorkspaceConfig({ alias: ["appB", "appB2"] }),
-        "library-1a": createWorkspaceConfig({ alias: ["libA", "libA2"] }),
-        "library-1b": createWorkspaceConfig({ alias: ["libB"] }),
+        "application-1a": resolveWorkspaceConfig({ alias: ["appA"] }),
+        "application-1b": resolveWorkspaceConfig({ alias: ["appB", "appB2"] }),
+        "library-1a": resolveWorkspaceConfig({ alias: ["libA", "libA2"] }),
+        "library-1b": resolveWorkspaceConfig({ alias: ["libB"] }),
       },
     });
 
@@ -407,7 +399,7 @@ describe("Test workspace config", () => {
         },
       ],
       workspaceConfigMap: {
-        "application-1a": createWorkspaceConfig({
+        "application-1a": resolveWorkspaceConfig({
           alias: ["appA"],
           scripts: {
             "all-workspaces": {
@@ -415,7 +407,7 @@ describe("Test workspace config", () => {
             },
           },
         }),
-        "application-1b": createWorkspaceConfig({
+        "application-1b": resolveWorkspaceConfig({
           alias: ["appB_file"],
           scripts: {
             "all-workspaces": {
@@ -426,11 +418,11 @@ describe("Test workspace config", () => {
             },
           },
         }),
-        "application-1c": createWorkspaceConfig({ alias: [] }),
-        "library-1a": createWorkspaceConfig({
+        "application-1c": resolveWorkspaceConfig({ alias: [] }),
+        "library-1a": resolveWorkspaceConfig({
           alias: ["libA_file"],
         }),
-        "library-1b": createWorkspaceConfig({
+        "library-1b": resolveWorkspaceConfig({
           alias: ["libB", "libB2"],
           scripts: {
             "all-workspaces": {
@@ -441,7 +433,7 @@ describe("Test workspace config", () => {
             },
           },
         }),
-        "library-1c": createWorkspaceConfig({ alias: [] }),
+        "library-1c": resolveWorkspaceConfig({ alias: [] }),
       },
     });
   });
@@ -461,7 +453,11 @@ describe("Test workspace config", () => {
     });
 
     expect(warnSpy).toHaveBeenCalledWith(
-      `Found config for workspace at path "${withWindowsPath(getProjectRoot("workspaceConfigDeprecatedConfigMix") + "/libraries/library-a")}" in both package.json and bw.workspace.json. The config in bw.workspace.json will be used.`,
+      `Found multiple workspace configs:
+  ${withWindowsPath(path.relative(process.cwd(), path.join(getProjectRoot("workspaceConfigDeprecatedConfigMix"), "libraries/library-a") + "/bw.workspace.jsonc"))}
+  ${withWindowsPath(path.relative(process.cwd(), path.join(getProjectRoot("workspaceConfigDeprecatedConfigMix"), "libraries/library-a") + "/bw.workspace.json"))}
+  ${withWindowsPath(path.relative(process.cwd(), path.join(getProjectRoot("workspaceConfigDeprecatedConfigMix"), "libraries/library-a", "package.json") + '["bw"]'))}
+  Using config at ${withWindowsPath(path.relative(process.cwd(), path.join(getProjectRoot("workspaceConfigDeprecatedConfigMix"), "libraries/library-a", "bw.workspace.jsonc")))}`,
     );
 
     expect(project.workspaces).toEqual([

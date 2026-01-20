@@ -18,7 +18,7 @@ const isEscaped = (jsonString: string, quotePosition: number) => {
   return Boolean(backslashCount % 2);
 };
 
-export const convertJsoncToJson = (
+export const convertJSONCToJSON = (
   jsonString: string,
   { whitespace = true } = {},
 ) => {
@@ -129,5 +129,5 @@ export const convertJsoncToJson = (
   return result + buffer + remaining;
 };
 
-export const parseJsonc = (jsonString: string) =>
-  JSON.parse(convertJsoncToJson(jsonString));
+export const parseJSONC = (jsonString: string) =>
+  JSON.parse(convertJSONCToJSON(jsonString));

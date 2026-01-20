@@ -2,24 +2,20 @@ import os from "os";
 import { getUserEnvVar, getUserEnvVarName } from "../config/userEnvVars";
 import { BunWorkspacesError } from "../internal/core";
 
+export const PARALLEL_MAX_VALUES = ["auto", "unbounded", "default"] as const;
+
 export type PercentageValue = `${number}%`;
 
 export type ParallelMaxValue =
   | number
-  | "auto"
-  | "default"
-  | "unbounded"
+  | (typeof PARALLEL_MAX_VALUES)[number]
   | PercentageValue;
 
 /** Should always return at least 1 */
 export const determineParallelMax = (
   value: ParallelMaxValue,
-  fromEnvVar = false,
+  errorMessageSuffix = "",
 ): number => {
-  const errorMessageSuffix = fromEnvVar
-    ? ` (set by env var ${getUserEnvVarName("parallelMaxDefault")})`
-    : "";
-
   if (!isNaN(Number(value))) {
     value = Math.floor(Number(value));
   }
@@ -38,7 +34,7 @@ export const determineParallelMax = (
     if (defaultMax === "default") return determineParallelMax("auto");
     return determineParallelMax(
       (defaultMax as ParallelMaxValue) ?? "auto",
-      true,
+      ` (set by env var ${getUserEnvVarName("parallelMaxDefault")})`,
     );
   }
 
