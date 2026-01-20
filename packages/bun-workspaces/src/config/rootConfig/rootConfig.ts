@@ -48,9 +48,8 @@ export const validateRootConfig = (config: RootConfig) => {
   return [];
 };
 
-export const createDefaultRootConfig = (
-  config?: RootConfig,
-): ResolvedRootConfig => resolveRootConfig(config ?? {});
+export const createDefaultRootConfig = (): ResolvedRootConfig =>
+  resolveRootConfig({});
 
 export const resolveRootConfig = (config: RootConfig): ResolvedRootConfig => {
   validateRootConfig(config);
