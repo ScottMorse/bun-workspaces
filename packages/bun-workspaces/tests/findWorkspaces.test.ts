@@ -1,5 +1,5 @@
 import { expect, test, describe } from "bun:test";
-import { createWorkspaceConfig } from "../src/config";
+import { resolveWorkspaceConfig } from "../src/config";
 import { BUN_LOCK_ERRORS } from "../src/internal/bun";
 import { WORKSPACE_ERRORS } from "../src/workspaces/errors";
 import { findWorkspaces } from "../src/workspaces/findWorkspaces";
@@ -51,11 +51,11 @@ describe("Test finding workspaces", () => {
         },
       ],
       workspaceConfigMap: {
-        "application-a": createWorkspaceConfig(),
-        "application-b": createWorkspaceConfig(),
-        "library-a": createWorkspaceConfig(),
-        "library-b": createWorkspaceConfig(),
-        "library-c": createWorkspaceConfig(),
+        "application-a": resolveWorkspaceConfig({}),
+        "application-b": resolveWorkspaceConfig({}),
+        "library-a": resolveWorkspaceConfig({}),
+        "library-b": resolveWorkspaceConfig({}),
+        "library-c": resolveWorkspaceConfig({}),
       },
     });
 
@@ -103,10 +103,10 @@ describe("Test finding workspaces", () => {
         },
       ],
       workspaceConfigMap: {
-        "application-a": createWorkspaceConfig(),
-        "application-b": createWorkspaceConfig(),
-        "library-a": createWorkspaceConfig(),
-        "library-b": createWorkspaceConfig(),
+        "application-a": resolveWorkspaceConfig({}),
+        "application-b": resolveWorkspaceConfig({}),
+        "library-a": resolveWorkspaceConfig({}),
+        "library-b": resolveWorkspaceConfig({}),
       },
     });
 
@@ -133,8 +133,8 @@ describe("Test finding workspaces", () => {
         },
       ],
       workspaceConfigMap: {
-        "application-a": createWorkspaceConfig(),
-        "application-b": createWorkspaceConfig(),
+        "application-a": resolveWorkspaceConfig({}),
+        "application-b": resolveWorkspaceConfig({}),
       },
     });
   });
@@ -183,11 +183,11 @@ describe("Test finding workspaces", () => {
         },
       ],
       workspaceConfigMap: {
-        "application-a": createWorkspaceConfig(),
-        "application-b": createWorkspaceConfig(),
-        "library-a": createWorkspaceConfig(),
-        "library-b": createWorkspaceConfig(),
-        "library-c": createWorkspaceConfig(),
+        "application-a": resolveWorkspaceConfig({}),
+        "application-b": resolveWorkspaceConfig({}),
+        "library-a": resolveWorkspaceConfig({}),
+        "library-b": resolveWorkspaceConfig({}),
+        "library-c": resolveWorkspaceConfig({}),
       },
     });
   });

@@ -5,14 +5,15 @@ import {
   type WorkspaceConfig,
 } from "./workspaceConfig";
 import {
-  WORKSPACE_CONFIG_FILE_PATH,
+  WORKSPACE_CONFIG_FILE_NAME,
   WORKSPACE_CONFIG_PACKAGE_JSON_KEY,
 } from "./workspaceConfigLocation";
 
-export const loadWorkspaceConfig = () => {
+export const loadWorkspaceConfig = (workspacePath: string) => {
   const config = loadConfig(
-    process.cwd(),
-    WORKSPACE_CONFIG_FILE_PATH,
+    "workspace",
+    workspacePath,
+    WORKSPACE_CONFIG_FILE_NAME,
     WORKSPACE_CONFIG_PACKAGE_JSON_KEY,
     (content) => resolveWorkspaceConfig(content as WorkspaceConfig),
   );

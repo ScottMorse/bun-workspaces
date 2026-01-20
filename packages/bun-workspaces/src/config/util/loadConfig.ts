@@ -1,12 +1,28 @@
 import fs from "fs";
 import path from "path";
-import { parseJSONC, type AnyFunction } from "../../internal/core";
+import {
+  defineErrors,
+  parseJSONC,
+  type AnyFunction,
+} from "../../internal/core";
 import { logger } from "../../internal/logger";
 import {
   CONFIG_LOCATION_TYPES,
   type ConfigLocation,
   type ConfigLocationType,
 } from "./configLocation";
+
+export const InvalidJSONError = defineErrors("InvalidJSON").InvalidJSON;
+
+const parseJSON = (jsonString: string, path: string) => {
+  try {
+    return parseJSONC(jsonString);
+  } catch (error) {
+    throw new InvalidJSONError(
+      `Invalid JSON at ${path}: ${(error as Error).message}`,
+    );
+  }
+};
 
 const LOCATION_FINDERS: Record<
   ConfigLocationType,
@@ -17,22 +33,28 @@ const LOCATION_FINDERS: Record<
   ) => ConfigLocation | null
 > = {
   jsoncFile: (directory: string, fileName: string) => {
-    const configFilePath = path.join(directory, fileName, ".jsonc");
+    const configFilePath = path.join(directory, fileName + ".jsonc");
     if (fs.existsSync(configFilePath)) {
       return {
         type: "jsoncFile",
-        content: parseJSONC(fs.readFileSync(configFilePath, "utf8")),
+        content: parseJSON(
+          fs.readFileSync(configFilePath, "utf8"),
+          configFilePath,
+        ),
         path: path.relative(process.cwd(), configFilePath),
       };
     }
     return null;
   },
   jsonFile: (directory: string, fileName: string) => {
-    const configFilePath = path.join(directory, fileName, ".json");
+    const configFilePath = path.join(directory, fileName + ".json");
     if (fs.existsSync(configFilePath)) {
       return {
         type: "jsonFile",
-        content: parseJSONC(fs.readFileSync(configFilePath, "utf8")),
+        content: parseJSON(
+          fs.readFileSync(configFilePath, "utf8"),
+          configFilePath,
+        ),
         path: path.relative(process.cwd(), configFilePath),
       };
     }
@@ -45,20 +67,19 @@ const LOCATION_FINDERS: Record<
   ) => {
     const packageJsonPath = path.join(directory, "package.json");
     if (fs.existsSync(packageJsonPath)) {
-      try {
-        const packageJson = JSON.parse(
-          fs.readFileSync(packageJsonPath, "utf8"),
-        );
-        if (packageJson[packageJsonKey]) {
-          return {
-            type: "packageJson",
-            path: `package.json["${packageJsonKey}"]`,
-            content: packageJson[packageJsonKey],
-          };
-        }
-      } catch (error) {
-        logger.error(error as Error);
-        return null;
+      const packageJson = parseJSON(
+        fs.readFileSync(packageJsonPath, "utf8"),
+        packageJsonPath,
+      );
+      if (packageJson[packageJsonKey]) {
+        return {
+          type: "packageJson",
+          path: path.relative(
+            process.cwd(),
+            path.join(directory, `package.json["${packageJsonKey}"]`),
+          ),
+          content: packageJson[packageJsonKey],
+        };
       }
     }
     return null;
@@ -66,33 +87,27 @@ const LOCATION_FINDERS: Record<
 };
 
 export const getConfigLocation = (
+  name: string,
   directory: string,
   fileName: string,
   packageJsonKey: string,
 ): ConfigLocation | null => {
   const locations: ConfigLocation[] = [];
   for (const locationType of CONFIG_LOCATION_TYPES) {
-    try {
-      const location = LOCATION_FINDERS[locationType](
-        directory,
-        fileName,
-        packageJsonKey,
-      );
-      if (location) {
-        locations.push(location);
-      }
-    } catch (error) {
-      if (!locations.length) {
-        logger.error(error as Error);
-      }
-      return null;
+    const location = LOCATION_FINDERS[locationType](
+      directory,
+      fileName,
+      packageJsonKey,
+    );
+    if (location) {
+      locations.push(location);
     }
   }
 
   if (locations.length > 1) {
     logger.warn(
-      `Found multiple configs at:\n  ${locations
-        .map((location) => location.path)
+      `Found multiple ${name} configs:\n${locations
+        .map((location) => "  " + location.path)
         .join("\n")}\n  Using config at ${locations[0]?.path}`,
     );
   }
@@ -101,12 +116,13 @@ export const getConfigLocation = (
 };
 
 export const loadConfig = <ProcessContent extends AnyFunction>(
+  name: string,
   directory: string,
   fileName: string,
   packageJsonKey: string,
   processContent: ProcessContent,
 ): ReturnType<ProcessContent> | null => {
-  const location = getConfigLocation(directory, fileName, packageJsonKey);
+  const location = getConfigLocation(name, directory, fileName, packageJsonKey);
   if (!location) {
     return null;
   }
