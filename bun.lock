@@ -22,7 +22,7 @@
     },
     "packages/bun-workspaces": {
       "name": "bun-workspaces",
-      "version": "1.0.0-alpha.31",
+      "version": "1.0.0-alpha.32",
       "bin": {
         "bun-workspaces": "bin/cli.js",
         "bw": "bin/cli.js",

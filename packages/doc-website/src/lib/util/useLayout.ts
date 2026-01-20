@@ -4,9 +4,11 @@ import { useEffect, useState } from "react";
 export const FOOTER_HEIGHT_PX = 50;
 
 export const useLayout = () => {
+  const win = typeof window !== "undefined" ? window : null;
+
   const [windowSize, setWindowSize] = useState({
-    width: window.innerWidth,
-    height: window.innerHeight,
+    width: win?.innerWidth ?? 0,
+    height: win?.innerHeight ?? 0,
   });
 
   useEffect(() => {
