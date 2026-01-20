@@ -41,16 +41,17 @@ export const createPackageJsonExample = (
   target: "workspace" | "root",
 ) => {
   return {
-    name: "@my-organization/my-application",
-    version: "1.0.0",
-    description: "My app",
+    name:
+      target === "workspace" ? "@my-organization/my-application" : "my-project",
+    description: target === "workspace" ? "My app" : "My project root",
+    ...(target === "root"
+      ? {
+          workspaces: ["packages/*"],
+        }
+      : { version: "1.0.0" }),
     [target === "workspace"
       ? WORKSPACE_CONFIG_PACKAGE_JSON_KEY
       : ROOT_CONFIG_PACKAGE_JSON_KEY]: config,
-    scripts: {
-      start: "bun run index.js",
-      test: "bun test",
-    },
   };
 };
 
