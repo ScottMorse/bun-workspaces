@@ -3,11 +3,7 @@ import packageJson from "../../package.json";
 import { validateCurrentBunVersion } from "../internal/bun";
 import { BunWorkspacesError } from "../internal/core";
 import { logger } from "../internal/logger";
-import {
-  defineGlobalCommands,
-  defineProjectCommands,
-  JSON_FLAGS,
-} from "./commands";
+import { defineGlobalCommands, defineProjectCommands } from "./commands";
 import { fatalErrorLogger } from "./fatalErrorLogger";
 import { initializeWithGlobalOptions } from "./globalOptions";
 
