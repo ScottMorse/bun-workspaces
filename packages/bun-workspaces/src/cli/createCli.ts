@@ -3,7 +3,11 @@ import packageJson from "../../package.json";
 import { validateCurrentBunVersion } from "../internal/bun";
 import { BunWorkspacesError } from "../internal/core";
 import { logger } from "../internal/logger";
-import { defineGlobalCommands, defineProjectCommands } from "./commands";
+import {
+  defineGlobalCommands,
+  defineProjectCommands,
+  JSON_FLAGS,
+} from "./commands";
 import { fatalErrorLogger } from "./fatalErrorLogger";
 import { initializeWithGlobalOptions } from "./globalOptions";
 
@@ -65,6 +69,12 @@ export const createCli = ({
         };
       })();
 
+      const forceSilent = JSON_FLAGS.some((flag) => args.includes(flag));
+
+      if (forceSilent) {
+        logger.printLevel = "silent";
+      }
+
       const bunVersionError = validateCurrentBunVersion();
 
       if (bunVersionError) {
@@ -76,6 +86,7 @@ export const createCli = ({
         program,
         args,
         defaultCwd,
+        forceSilent,
       );
 
       defineProjectCommands({

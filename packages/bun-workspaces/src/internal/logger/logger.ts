@@ -63,6 +63,9 @@ export type Logger = {
 
 export const createLogger = (name: string): Logger => new _Logger(name);
 
+const YELLOW = "\x1b[0;33m";
+const NC = "\x1b[0m";
+
 class _Logger implements Logger {
   constructor(public name: string) {}
 
@@ -166,9 +169,11 @@ class _Logger implements Logger {
   // Info prints normally for standard user-facing logs. Debug and Warn are highlighted with a prefix. Errors print as Error instances
   private formatLogMessage(message: Error | string, level: LogLevel): string {
     const content = message instanceof Error ? message.message : message;
-    return level === "debug" || level === "warn"
-      ? `[${this.name} ${level.toUpperCase()}]: ${content}`
-      : content;
+    const prefixed =
+      level === "debug" || level === "warn"
+        ? `[${this.name} ${level.toUpperCase()}]: ${content}`
+        : content;
+    return level === "warn" ? `${YELLOW}${prefixed}${NC}` : prefixed;
   }
 
   private _printLevel: LogLevelSetting = IS_TEST ? "error" : "info";

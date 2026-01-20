@@ -3,11 +3,15 @@ import { SCRIPT_SHELL_OPTIONS } from "../../runScript/scriptShellOption";
 export interface CliCommandConfig {
   command: string;
   isGlobal: boolean;
-  aliases: string[];
+  aliases: string[] | readonly string[];
   description: string;
   options: Record<
     string,
-    { flags: string[]; description: string; values?: string[] }
+    {
+      flags: string[] | readonly string[];
+      description: string;
+      values?: string[];
+    }
   >;
 }
 
@@ -26,6 +30,8 @@ export type CliProjectCommandName = Exclude<
   CliGlobalCommandName
 >;
 
+export const JSON_FLAGS = ["-j", "--json"] as const;
+
 export const CLI_COMMANDS_CONFIG = {
   doctor: {
     command: "doctor",
@@ -34,7 +40,7 @@ export const CLI_COMMANDS_CONFIG = {
     description: "Print diagnostic information",
     options: {
       json: {
-        flags: ["-j", "--json"],
+        flags: JSON_FLAGS,
         description: "Output as JSON",
       },
       pretty: {
@@ -59,7 +65,7 @@ export const CLI_COMMANDS_CONFIG = {
         description: "Only show workspace names",
       },
       json: {
-        flags: ["-j", "--json"],
+        flags: JSON_FLAGS,
         description: "Output as JSON",
       },
       pretty: {
@@ -79,7 +85,7 @@ export const CLI_COMMANDS_CONFIG = {
         description: "Only show script names",
       },
       json: {
-        flags: ["-j", "--json"],
+        flags: JSON_FLAGS,
         description: "Output as JSON",
       },
       pretty: {
@@ -95,7 +101,7 @@ export const CLI_COMMANDS_CONFIG = {
     description: "Show information about a workspace",
     options: {
       json: {
-        flags: ["-j", "--json"],
+        flags: JSON_FLAGS,
         description: "Output as JSON",
       },
       pretty: {
@@ -115,7 +121,7 @@ export const CLI_COMMANDS_CONFIG = {
         description: "Only show script's workspace names",
       },
       json: {
-        flags: ["-j", "--json"],
+        flags: JSON_FLAGS,
         description: "Output as JSON",
       },
       pretty: {
@@ -168,7 +174,7 @@ export const CLI_COMMANDS_CONFIG = {
         description: `When using --inline, the shell to use to run the script`,
       },
       jsonOutfile: {
-        flags: ["-j", "--json-outfile <file>"],
+        flags: ["-J", "--json-outfile <file>"],
         description: "Output results in a JSON file",
       },
     },
