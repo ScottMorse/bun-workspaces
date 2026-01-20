@@ -9,6 +9,7 @@ import type {
   CreateProjectScriptCommandOptions,
   CreateProjectScriptCommandResult,
   Project,
+  ProjectConfig,
   WorkspaceScriptMetadata,
 } from "../project";
 
@@ -20,6 +21,7 @@ export abstract class ProjectBase implements Project {
   public abstract readonly rootDirectory: string;
   public abstract readonly workspaces: Workspace[];
   public abstract readonly sourceType: "fileSystem" | "memory";
+  public abstract readonly config: ProjectConfig;
 
   constructor(_ignoreBunVersion = false) {
     const bunVersionError = validateCurrentBunVersion();
