@@ -1,5 +1,5 @@
-import { readFileSync, writeFileSync, rmSync } from "node:fs";
-import path from "node:path";
+import { readFileSync, writeFileSync, rmSync } from "fs";
+import path from "path";
 import { build } from "@rslib/core";
 import { $ } from "bun";
 

@@ -1,4 +1,4 @@
-import { availableParallelism } from "node:os";
+import { availableParallelism } from "os";
 import { expect, test, describe } from "bun:test";
 import { determineParallelMax } from "../src/runScript/parallel";
 

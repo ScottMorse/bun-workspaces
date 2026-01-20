@@ -2,7 +2,7 @@ import {
   getCliCommandConfig,
   type CliCommandConfig,
   type CliCommandName,
-} from "bun-workspaces/src/cli/commands/commandsConfig";
+} from "bun-workspaces/src/cli";
 import type { CliCommandContent, CliCommandInfo } from "./cliOption";
 
 const defineCommandContent = (

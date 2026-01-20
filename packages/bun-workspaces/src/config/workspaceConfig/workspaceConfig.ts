@@ -58,8 +58,8 @@ export const validateWorkspaceConfig = (config: WorkspaceConfig) => {
           (error) =>
             `${multipleErrors ? "  " : " "}config${
               error.instancePath
-                ?.replace(/\/(\d+)$/, "[$1]")
-                .replace(/^\//, ".") ?? ""
+                ?.replaceAll(/\/(\d+)$/, "[$1]")
+                .replaceAll(/^\//, ".") ?? ""
             } ${error.message}`,
         )
         .join("\n")}`,

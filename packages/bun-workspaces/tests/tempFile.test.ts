@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs from "fs";
 import { expect, test, describe } from "bun:test";
 import { DEFAULT_TEMP_DIR } from "../src/internal/core";
 import { runScript } from "../src/runScript";

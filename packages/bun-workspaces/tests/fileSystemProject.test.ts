@@ -1,5 +1,5 @@
-import { availableParallelism } from "node:os";
-import path from "node:path";
+import { availableParallelism } from "os";
+import path from "path";
 import { expect, test, describe } from "bun:test";
 import { getUserEnvVar } from "../src/config/userEnvVars";
 import { BUN_LOCK_ERRORS } from "../src/internal/bun";

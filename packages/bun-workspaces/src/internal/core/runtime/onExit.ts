@@ -1,4 +1,4 @@
-import type { ProcessEventMap } from "node:process";
+import type { ProcessEventMap } from "process";
 
 export const runOnExit = <
   F extends (exit?: keyof ProcessEventMap | number) => unknown,

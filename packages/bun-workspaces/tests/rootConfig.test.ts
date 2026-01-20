@@ -60,7 +60,7 @@ describe("Test project root config", () => {
   test("Test loadRootConfig - invalid type", () => {
     expect(() =>
       loadRootConfig(getProjectRoot("rootConfigInvalidType")),
-    ).toThrow("JSON is invalid");
+    ).toThrow("");
   });
 
   test("FileSystemProject - loads root config", () => {

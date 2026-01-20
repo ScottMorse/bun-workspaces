@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { Glob } from "bun";
+=======
+import bun from "bun";
+>>>>>>> main
 import { defineErrors, createWildcardRegex } from "../internal/core";
 import type { Workspace } from "./workspace";
 
@@ -77,7 +81,11 @@ export const matchWorkspacesByPattern = (
 
   if (pattern.target === "path") {
     return workspaces.filter((workspace) =>
+<<<<<<< HEAD
       new Glob(pattern.value).match(workspace.path),
+=======
+      new bun.Glob(pattern.value).match(workspace.path),
+>>>>>>> main
     );
   }
 

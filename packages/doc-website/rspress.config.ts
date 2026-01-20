@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs from "fs";
 import path from "path";
 import { pluginSvgr } from "@rsbuild/plugin-svgr";
 import { defineConfig } from "rspress/config";
@@ -58,6 +58,13 @@ const LD_JSON = {
   softwareVersion: packageJson.version,
 };
 
+const NODE_STUBS = ["fs", "path", "process", "os", "bun", "commander"];
+
+const PLACEHOLDER_STUB_PATH = path.resolve(
+  __dirname,
+  "src/stubs/placeholderModule.ts",
+);
+
 export default defineConfig({
   root: "src/pages",
   themeDir: path.join(__dirname, "src/theme"),
@@ -87,6 +94,14 @@ export default defineConfig({
   },
   builderConfig: {
     plugins: [pluginSvgr()],
+    resolve: {
+      alias: {
+        ...NODE_STUBS.reduce<Record<string, string>>((acc, stub) => {
+          acc[stub] = PLACEHOLDER_STUB_PATH;
+          return acc;
+        }, {}),
+      },
+    },
     output: {
       cleanDistPath: true,
     },

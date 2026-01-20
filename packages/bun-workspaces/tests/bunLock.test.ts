@@ -1,4 +1,4 @@
-import path from "node:path";
+import path from "path";
 import { describe, test, expect } from "bun:test";
 import {
   BUN_LOCK_ERRORS,

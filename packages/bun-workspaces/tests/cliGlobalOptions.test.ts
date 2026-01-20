@@ -1,4 +1,4 @@
-import path from "node:path";
+import path from "path";
 import { test, expect, describe } from "bun:test";
 import { getProjectRoot } from "./testProjects";
 import {

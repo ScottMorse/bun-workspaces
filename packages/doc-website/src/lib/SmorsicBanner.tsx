@@ -11,12 +11,9 @@ export const SmorsicBanner = ({
       href="https://smorsic.io"
       target="_blank"
       rel="noopener noreferrer"
+      style={{ width }}
     >
-      <SmorsicBannerLogo
-        className="smorsic-banner-logo"
-        width={width}
-        height="auto"
-      />
+      <SmorsicBannerLogo className="smorsic-banner-logo" width="100%" />
     </a>
   );
 };

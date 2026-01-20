@@ -1,3 +1,4 @@
+import { stripANSI } from "bun";
 import { test, describe, expect, spyOn, beforeAll, afterAll } from "bun:test";
 import { logger, setLogLevel } from "../src/internal/logger";
 
@@ -42,7 +43,9 @@ describe("setLogLevel", () => {
       "[bun-workspaces DEBUG]: test debug 1",
     );
     expect(infoSpy).toHaveBeenCalledWith("test info 1");
-    expect(warnSpy).toHaveBeenCalledWith("[bun-workspaces WARN]: test warn 1");
+    expect(stripANSI(warnSpy.mock.calls[0][0])).toMatch(
+      /^\[bun-workspaces WARN\]: test warn 1$/,
+    );
     expect(errorSpy).toHaveBeenCalledWith("test error 1");
 
     setLogLevel("info");
@@ -54,7 +57,9 @@ describe("setLogLevel", () => {
     logger.error("test error 2");
     expect(debugSpy).toHaveBeenCalledTimes(1);
     expect(infoSpy).toHaveBeenCalledWith("test info 2");
-    expect(warnSpy).toHaveBeenCalledWith("[bun-workspaces WARN]: test warn 2");
+    expect(stripANSI(warnSpy.mock.calls[1][0])).toMatch(
+      /^\[bun-workspaces WARN\]: test warn 2$/,
+    );
     expect(errorSpy).toHaveBeenCalledWith("test error 2");
 
     setLogLevel("warn");
@@ -66,7 +71,9 @@ describe("setLogLevel", () => {
     logger.error("test error 3");
     expect(debugSpy).toHaveBeenCalledTimes(1);
     expect(infoSpy).toHaveBeenCalledTimes(2);
-    expect(warnSpy).toHaveBeenCalledWith("[bun-workspaces WARN]: test warn 3");
+    expect(stripANSI(warnSpy.mock.calls[2][0])).toMatch(
+      /^\[bun-workspaces WARN\]: test warn 3$/,
+    );
     expect(errorSpy).toHaveBeenCalledWith("test error 3");
 
     setLogLevel("error");

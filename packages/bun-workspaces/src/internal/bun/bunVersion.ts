@@ -1,5 +1,5 @@
 import rootPackageJson from "../../../package.json";
-import { defineErrors } from "../core";
+import { defineErrors } from "../core/error";
 
 export const LIBRARY_CONSUMER_BUN_VERSION =
   rootPackageJson._bwInternal.bunVersion.libraryConsumer;
