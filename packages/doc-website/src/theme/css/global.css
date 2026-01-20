@@ -1,3 +1,5 @@
+/* TODO: this file could benefit from splitting up and removing dead selectors */
+
 :root {
   --rp-font-family-base: "IBM Plex Sans", sans-serif;
   --rp-font-family-mono: "UnifontEx", monospace;

@@ -1,4 +1,4 @@
-import { getUserEnvVarName } from "bun-workspaces/src/config/userEnvVars";
+import { ENV_VARS_METADATA } from "../config/envVars";
 
 export const CREATE_FS_PROJECT_EXAMPLE = `
 import { createFileSystemProject } from "bun-workspaces";
@@ -243,7 +243,7 @@ import { createFileSystemProject } from "bun-workspaces";
 const project = createFileSystemProject();
 
 // Run in parallel with the default limit 
-// Equal to "auto" or value of process.env.${getUserEnvVarName("parallelMaxDefault")}
+// Equal to "auto" or value of the root ${ENV_VARS_METADATA.parallelMaxDefault.rootConfigDefaultsKey} or process.env.${ENV_VARS_METADATA.parallelMaxDefault.envVarName}
 project.runScriptAcrossWorkspaces({
   script: "my-script",
   parallel: true,
@@ -285,7 +285,9 @@ import { createFileSystemProject } from "bun-workspaces";
 
 const project = createFileSystemProject();
 
-// This will use the Bun shell unless ${getUserEnvVarName("scriptShellDefault")} is set to "system"
+// This will use the Bun shell, 
+// unless the root${ENV_VARS_METADATA.scriptShellDefault.rootConfigDefaultsKey}
+// or process.env.${ENV_VARS_METADATA.scriptShellDefault.envVarName} is set to "system"
 project.runWorkspaceScript({
   workspaceNameOrAlias: "my-workspace",
   script: "echo 'this is my inline script'",

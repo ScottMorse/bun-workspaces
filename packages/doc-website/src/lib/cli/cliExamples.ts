@@ -1,4 +1,4 @@
-import { getUserEnvVarName } from "bun-workspaces/src/config/userEnvVars";
+import { ENV_VARS_METADATA } from "../config/envVars";
 
 export const CLI_QUICKSTART = `
 # List all workspaces in your project
@@ -47,7 +47,9 @@ bw run "bun run build" --inline
 `.trim();
 
 export const CLI_PARALLEL_SCRIPTS_EXAMPLE = `
-# Run in parallel (default is "auto" or value of ${getUserEnvVarName("parallelMaxDefault")} env var)
+# Run in parallel (default is "auto" or value of 
+the root ${ENV_VARS_METADATA.parallelMaxDefault.rootConfigDefaultsKey} 
+or process.env.${ENV_VARS_METADATA.parallelMaxDefault.envVarName})
 bw run my-script --parallel
 
 # Same as the above command
@@ -67,7 +69,9 @@ bw run my-script --parallel=unbounded
 `.trim();
 
 export const CLI_INLINE_SHELL_EXAMPLE = `
-# This will use the Bun shell unless ${getUserEnvVarName("scriptShellDefault")} is set to "system"
+# This will use the Bun shell, 
+# unless the root ${ENV_VARS_METADATA.scriptShellDefault.rootConfigDefaultsKey}
+# or process.env.${ENV_VARS_METADATA.scriptShellDefault.envVarName} is set to "system"
 bw run "echo 'hello'" --inline
 
 # Same as the above command

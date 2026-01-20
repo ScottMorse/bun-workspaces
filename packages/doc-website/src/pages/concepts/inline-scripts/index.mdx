@@ -7,12 +7,14 @@ sidebar: false
 outline: true
 footer: false
 ---
+
 import { exampleWorkspaceConfigSimple } from '../../../lib/config/exampleConfig'
 import { SyntaxHighlighter } from '../../../lib/util/highlight';
 import { ConceptsHeader } from "../../../lib/concepts/ConceptsHeader";
-import { getUserEnvVarName } from 'bun-workspaces/src/config/userEnvVars';
 import { CLI_INLINE_NAME_EXAMPLE, CLI_INLINE_SHELL_EXAMPLE } from '../../../lib/cli/cliExamples';
 import { API_INLINE_NAME_EXAMPLE, API_INLINE_SHELL_EXAMPLE } from '../../../lib/api/apiExamples';
+import { ENV_VARS_METADATA } from '../../../lib/config/envVars';
+import { Link } from 'rspress/theme';
 
 <ConceptsHeader activeHref="inlineScripts" />
 
@@ -26,7 +28,7 @@ Normally, inline scripts are executed using the [Bun shell](https://bun.com/docs
 
 You can pass `--shell=system` to use the native shell instead. In Unix (Linux, macOS, etc.), `sh -c` is called, while in Windows, `cmd /d /s /c` is called.
 
-You can also set the environment variable <code>{getUserEnvVarName("scriptShellDefault")}</code> to `system` to use the native shell by default.
+You can also set the [root](/config/root) <code>{ENV_VARS_METADATA.scriptShellDefault.rootConfigDefaultsKey}</code> or [environment variable](/config/env-vars) <code>{ENV_VARS_METADATA.scriptShellDefault.envVarName}</code> to `"system"` to use the native shell by default.
 
 ### Examples
 

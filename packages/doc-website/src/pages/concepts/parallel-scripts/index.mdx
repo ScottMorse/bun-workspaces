@@ -10,9 +10,9 @@ footer: false
 import { exampleWorkspaceConfigSimple } from '../../../lib/config/exampleConfig'
 import { SyntaxHighlighter } from '../../../lib/util/highlight';
 import { ConceptsHeader } from "../../../lib/concepts/ConceptsHeader";
-import { getUserEnvVarName } from 'bun-workspaces/src/config/userEnvVars';
 import { CLI_PARALLEL_SCRIPTS_EXAMPLE } from '../../../lib/cli/cliExamples';
 import { API_PARALLEL_SCRIPTS_EXAMPLE } from '../../../lib/api/apiExamples';
+import { ENV_VARS_METADATA } from '../../../lib/config/envVars';
 
 <ConceptsHeader activeHref="parallelScripts" />
 
@@ -37,7 +37,7 @@ to the parallel max option.
 
 A value of `"default"` explicitly references the default limit. 
 
-When the environment variable <code>{getUserEnvVarName("parallelMaxDefault")}</code> is not set, it is equal to `"auto"`. You can set <code>{getUserEnvVarName("parallelMaxDefault")}</code> to any of the valid values listed above.
+When the [root](/config/root) <code>{ENV_VARS_METADATA.parallelMaxDefault.rootConfigDefaultsKey}</code> or [environment variable](/config/env-vars) <code>{ENV_VARS_METADATA.parallelMaxDefault.envVarName}</code> is not set, it is equal to `"auto"`. You can set <code>{ENV_VARS_METADATA.parallelMaxDefault.rootConfigDefaultsKey}</code> or <code>{ENV_VARS_METADATA.parallelMaxDefault.envVarName}</code> to any of the valid values listed above.
 
 ## Examples
 
