@@ -2,7 +2,7 @@
   "alias": "appA",
   "scripts": {
     "all-workspaces": {
-      "order": 1
-    }
-  }
+      "order": 1,
+    },
+  },
 }
