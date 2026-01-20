@@ -1,4 +1,11 @@
-import { readFileSync, writeFileSync, rmSync } from "fs";
+import {
+  readFileSync,
+  writeFileSync,
+  rmSync,
+  renameSync,
+  copyFileSync,
+  mkdirSync,
+} from "fs";
 import path from "path";
 import { build } from "@rslib/core";
 import { $ } from "bun";
@@ -76,6 +83,43 @@ export const runBuild = async () => {
     recursive: true,
     force: true,
   });
+  rmSync(path.resolve(__dirname, outputPath, "src/internal/generated/ajv"), {
+    recursive: true,
+    force: true,
+  });
+
+  mkdirSync(path.resolve(__dirname, outputPath, "src/internal/generated/ajv"), {
+    recursive: true,
+  });
+
+  for (const file of new Bun.Glob(
+    path.resolve(__dirname, "../src/internal/generated/ajv/*"),
+  ).scanSync()) {
+    copyFileSync(
+      file,
+      path.resolve(
+        __dirname,
+        outputPath,
+        "src/internal/generated/ajv/",
+        path.basename(file),
+      ),
+    );
+    renameSync(
+      path.resolve(
+        __dirname,
+        outputPath,
+        "src/internal/generated/ajv/",
+        path.basename(file),
+      ),
+
+      path.resolve(
+        __dirname,
+        outputPath,
+        "src/internal/generated/ajv/",
+        path.basename(file).replace(".js", ".mjs"),
+      ),
+    );
+  }
 };
 
 if (import.meta.main) {
