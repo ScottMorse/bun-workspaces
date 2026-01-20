@@ -24,7 +24,6 @@ for (const file of new Glob("**/*/package.json").scanSync({
             command: "bun install",
             workingDirectory: path.dirname(file),
           },
-          shell: "bun",
         }).exit;
       } catch (error) {
         console.error(`Error installing dependencies for ${file}:`, error);
