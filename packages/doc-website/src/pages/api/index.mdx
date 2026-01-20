@@ -1,0 +1,25 @@
+---
+title: API
+titleSuffix: " | bun-workspaces"
+description: "API documentation for bun-workspaces | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
+pageType: doc
+sidebar: false
+outline: false
+footer: false
+---
+
+import { SyntaxHighlighter } from "../../lib/util/highlight";
+import { ApiHeader } from '../../lib/api/ApiHeader';
+import { API_QUICKSTART } from "../../lib/api/apiExamples";
+
+<ApiHeader activeHref="home" />
+
+### TypeScript
+
+Ensure you have `@types/bun` installed for accurate types. Your `"lib"` field in `tsconfig.json` should ideally include `"ESNext"`.
+
+## Quick Start
+
+<SyntaxHighlighter language="typescript">
+{API_QUICKSTART}
+</SyntaxHighlighter>

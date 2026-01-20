@@ -1,9 +1,6 @@
 import { type OnSearch } from "rspress/theme";
-import {
-  getCliGlobalOptionsContent,
-  getCliCommandsContent,
-} from "../content/cli";
-import { getCommandId, getGlobalOptionId } from "../content/cli/searchIds";
+import { getCliGlobalOptionsContent, getCliCommandsContent } from "../lib/cli";
+import { getCommandId, getGlobalOptionId } from "../lib/cli/searchIds";
 
 const sanitize = (s: string) =>
   s
@@ -27,7 +24,7 @@ const onSearch: OnSearch = async (query, defaultResult) => {
       Object.values(command.options).some(
         (option) =>
           matches(option.flags[option.flags.length - 1], query) ||
-          matches(option.description, query),
+          matches(option.description, query)
       )
     ) {
       defaultResult[0].result?.push({

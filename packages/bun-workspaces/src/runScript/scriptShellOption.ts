@@ -1,5 +1,5 @@
 import { getUserEnvVar, getUserEnvVarName } from "../config/userEnvVars";
-import { BunWorkspacesError } from "../internal/core";
+import { BunWorkspacesError } from "../internal/core/error";
 
 export const SCRIPT_SHELL_OPTIONS = ["bun", "system"] as const;
 

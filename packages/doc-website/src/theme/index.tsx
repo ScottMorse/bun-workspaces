@@ -4,9 +4,9 @@ import { useLocation } from "rspress/runtime";
 import "@fontsource/unifontex";
 import packageJson from "../../../bun-workspaces/package.json";
 import Theme from "rspress/theme";
-import { PixelArtImage } from "../util/pixelArt";
-import { useLayout } from "../util/useLayout";
-import { Footer } from "../content/Footer";
+import { PixelArtImage } from "../lib/util/pixelArt";
+import { useLayout } from "../lib/util/useLayout";
+import { Footer } from "../lib/components/Footer";
 
 const OnPageChange = () => {
   const location = useLocation();
