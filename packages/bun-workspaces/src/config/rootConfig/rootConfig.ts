@@ -1,14 +1,13 @@
 import { type FromSchema, type JSONSchema } from "json-schema-to-ts";
-import _validate from "../../internal/generated/ajv/validateRootConfig";
+import validate from "../../internal/generated/ajv/validateRootConfig";
 import {
   determineParallelMax,
   resolveScriptShell,
   type ScriptShellOption,
 } from "../../runScript";
 import type { AjvSchemaValidator } from "../util/ajvTypes";
+import { executeValidator } from "../util/validateConfig";
 import { ROOT_CONFIG_ERRORS } from "./errors";
-
-const validate = _validate as unknown as AjvSchemaValidator<RootConfig>;
 
 export const ROOT_CONFIG_JSON_SCHEMA = {
   type: "object",
@@ -39,24 +38,13 @@ export type ResolvedRootConfig = {
   };
 };
 
-export const validateRootConfig = (config: RootConfig) => {
-  const isValid = validate(config);
-  if (!isValid) {
-    const multipleErrors = (validate.errors?.length ?? 0) > 1;
-    throw new ROOT_CONFIG_ERRORS.InvalidRootConfig(
-      `Root config is invalid:${multipleErrors ? "\n" : ""}${validate.errors
-        ?.map(
-          (error) =>
-            `${multipleErrors ? "  " : " "}config${
-              error.instancePath
-                ?.replaceAll(/\/(\d+)$/, "[$1]")
-                .replaceAll(/^\//, ".") ?? ""
-            } ${error.message}`,
-        )
-        .join("\n")}`,
-    );
-  }
-};
+export const validateRootConfig = (config: RootConfig) =>
+  executeValidator(
+    validate as unknown as AjvSchemaValidator<RootConfig>,
+    "RootConfig",
+    config,
+    ROOT_CONFIG_ERRORS.InvalidRootConfig,
+  );
 
 export const createDefaultRootConfig = (): ResolvedRootConfig =>
   resolveRootConfig({});

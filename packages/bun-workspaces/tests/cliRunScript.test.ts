@@ -1382,7 +1382,7 @@ this is my inline script for library-1b test-args-library-1b
       "run-script",
       "application-a",
       "-a test-args",
-      "-j",
+      "-J",
       "test-output/results-short.json", // for gitignore
     );
 

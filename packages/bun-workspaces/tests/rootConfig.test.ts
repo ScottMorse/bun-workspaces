@@ -40,7 +40,9 @@ describe("Test project root config", () => {
   test("Test loadRootConfig - invalid parallel max", () => {
     expect(() =>
       loadRootConfig(getProjectRoot("rootConfigInvalidParallel")),
-    ).toThrow('Invalid parallel max value: "something wrong"');
+    ).toThrow(
+      "Root config is invalid: config.defaults.parallelMax must be number",
+    );
   });
 
   test("Test loadRootConfig - invalid shell", () => {
@@ -60,7 +62,7 @@ describe("Test project root config", () => {
   test("Test loadRootConfig - invalid type", () => {
     expect(() =>
       loadRootConfig(getProjectRoot("rootConfigInvalidType")),
-    ).toThrow("");
+    ).toThrow("Root config is invalid: config.defaults must be object");
   });
 
   test("FileSystemProject - loads root config", () => {

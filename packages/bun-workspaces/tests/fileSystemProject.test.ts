@@ -553,30 +553,14 @@ describe("Test FileSystemProject", () => {
       rootDirectory: getProjectRoot("simple1"),
     });
 
-    const { output, summary } = project.runScriptAcrossWorkspaces({
-      workspacePatterns: [],
-      script: "all-workspaces",
-    });
-
-    let count = 0;
-    for await (const _ of output) {
-      count++;
-    }
-
-    expect(count).toBe(0);
-
-    const summaryResult = await summary;
-
-    expect(summaryResult).toEqual({
-      totalCount: 0,
-      successCount: 0,
-      failureCount: 0,
-      allSuccess: true,
-      startTimeISO: expect.any(String),
-      endTimeISO: expect.any(String),
-      durationMs: expect.any(Number),
-      scriptResults: [],
-    });
+    expect(() =>
+      project.runScriptAcrossWorkspaces({
+        workspacePatterns: [],
+        script: "all-workspaces",
+      }),
+    ).toThrow(
+      'No workspaces found for script "all-workspaces" (available: application-1a, application-1b, library-1a, library-1b)',
+    );
   });
 
   test("runScriptAcrossWorkspaces: all workspaces", async () => {

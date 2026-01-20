@@ -1,6 +1,6 @@
-import fs from "node:fs";
-import os from "node:os";
-import path from "node:path";
+import fs from "fs";
+import os from "os";
+import path from "path";
 import { validateCurrentBunVersion } from "../../bun/bunVersion";
 import { logger } from "../../logger";
 import { BUN_WORKSPACES_VERSION } from "../../version";

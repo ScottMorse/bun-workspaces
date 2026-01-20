@@ -2,6 +2,7 @@ import { type FromSchema, type JSONSchema } from "json-schema-to-ts";
 import { resolveOptionalArray } from "../../internal/core";
 import _validate from "../../internal/generated/ajv/validateWorkspaceConfig";
 import type { AjvSchemaValidator } from "../util/ajvTypes";
+import { executeValidator } from "../util/validateConfig";
 import { WORKSPACE_CONFIG_ERRORS } from "./errors";
 
 const validate = _validate as unknown as AjvSchemaValidator<WorkspaceConfig>;
@@ -48,24 +49,13 @@ export type ResolvedWorkspaceConfig = {
 
 export type ScriptConfig = NonNullable<WorkspaceConfig["scripts"]>[string];
 
-export const validateWorkspaceConfig = (config: WorkspaceConfig) => {
-  const isValid = validate(config);
-  if (!isValid) {
-    const multipleErrors = (validate.errors?.length ?? 0) > 1;
-    throw new WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig(
-      `Workspace config is invalid:${multipleErrors ? "\n" : ""}${validate.errors
-        ?.map(
-          (error) =>
-            `${multipleErrors ? "  " : " "}config${
-              error.instancePath
-                ?.replaceAll(/\/(\d+)$/, "[$1]")
-                .replaceAll(/^\//, ".") ?? ""
-            } ${error.message}`,
-        )
-        .join("\n")}`,
-    );
-  }
-};
+export const validateWorkspaceConfig = (config: WorkspaceConfig) =>
+  executeValidator(
+    validate as unknown as AjvSchemaValidator<WorkspaceConfig>,
+    "WorkspaceConfig",
+    config,
+    WORKSPACE_CONFIG_ERRORS.InvalidWorkspaceConfig,
+  );
 
 export const resolveWorkspaceConfig = (
   config: WorkspaceConfig,
