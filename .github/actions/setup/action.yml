@@ -19,9 +19,10 @@ runs:
         echo "Bun version to be installed: $BUN_VERSION"
 
     - name: Install Bun
-      uses: oven-sh/setup-bun@v2
-      with:
-        bun-version: ${{ inputs.bun_version || env.BUN_VERSION }}
+      shell: bash
+      run: |
+        curl -fsSL https://bun.com/install | bash -s "bun-v$BUN_VERSION"
+        echo "$HOME/.bun/bin:$PATH" >> $GITHUB_PATH
 
     - name: Install Dependencies
       id: install-deps
