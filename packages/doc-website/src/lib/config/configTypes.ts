@@ -4,10 +4,7 @@ import {
   PARALLEL_MAX_VALUES,
   SCRIPT_SHELL_OPTIONS,
 } from "bun-workspaces/src/runScript";
-import {
-  formatSimpleTypeToDisplay,
-  type ValueToDisplay,
-} from "../util/displayType";
+import { formatSimpleTypeToDisplay, type ValueToDisplay } from "./displayType";
 
 const rootDisplay: ValueToDisplay<RequiredDeep<RootConfig>> = {
   defaults: {
@@ -26,13 +23,13 @@ export const ROOT_CONFIG_TYPE =
   "type RootConfig = " +
   formatSimpleTypeToDisplay(rootDisplay)
     .replace(
-      "parallelMax: number | string",
-      "parallelMax: number | `${number}%` | " +
+      "parallelMax?: number | string",
+      "parallelMax?: number | `${number}%` | " +
         PARALLEL_MAX_VALUES.map((value) => `"${value}"`).join(" | "),
     )
     .replace(
-      "shell: string",
-      "shell: " +
+      "shell?: string",
+      "shell?: " +
         SCRIPT_SHELL_OPTIONS.map((value) => `"${value}"`).join(" | ") +
         ' | "default"',
     );

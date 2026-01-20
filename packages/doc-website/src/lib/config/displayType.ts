@@ -61,6 +61,7 @@ const _formatSimpleTypeToDisplay = <V extends ValueToDisplay<any>>(
       result +=
         nextIndent +
         key +
+        (key.includes("[") ? "" : "?") +
         ": " +
         _formatSimpleTypeToDisplay(val as ValueToDisplay, "", level + 1) +
         (i < entries.length - 1 ? ",\n" : "");

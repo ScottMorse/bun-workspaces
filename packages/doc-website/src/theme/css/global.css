@@ -94,7 +94,7 @@ h4,
 h5,
 h6 {
   font-family: "Lexend", sans-serif;
-  letter-spacing: 0.001em !important;
+  letter-spacing: 0 !important;
 }
 
 h3,
@@ -595,4 +595,42 @@ hr {
 .lore-credits a {
   margin-right: 0.25rem;
   font-size: 1.1em;
+}
+
+.config-divider {
+  padding-top: 1rem;
+}
+
+#project-root-configuration,
+#workspace-configuration,
+#settable-environment-variables {
+  margin-top: 2rem;
+}
+
+.inline-link {
+  color: var(--rp-c-link);
+  font-weight: 500;
+  transition: color 0.25s;
+}
+
+.inline-link:hover {
+  border-bottom: 1px solid var(--rp-c-brand);
+}
+
+.env-vars-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.env-var-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  line-height: 1.3;
+}
+
+.env-var-item > :first-child {
+  font-size: 1.3rem !important;
+  margin-bottom: 0.25rem;
 }

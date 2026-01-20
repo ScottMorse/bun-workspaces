@@ -1,8 +1,17 @@
-import type {
-  BunWorkspacesConfig,
-  WorkspaceConfig,
+import {
+  type BunWorkspacesConfig,
+  type WorkspaceConfig,
+  type RootConfig,
+  WORKSPACE_CONFIG_PACKAGE_JSON_KEY,
+  ROOT_CONFIG_PACKAGE_JSON_KEY,
 } from "bun-workspaces/src/config";
-import { WORKSPACE_CONFIG_PACKAGE_JSON_KEY } from "bun-workspaces/src/config/workspaceConfig/workspaceConfigLocation";
+
+export const exampleRootConfigSimple: RootConfig = {
+  defaults: {
+    parallelMax: 4,
+    shell: "system",
+  },
+};
 
 export const exampleWorkspaceConfigSimple: WorkspaceConfig = {
   alias: "myApp",
@@ -20,12 +29,17 @@ export const exampleWorkspaceConfigArray: WorkspaceConfig = {
   alias: ["myApp", "my-app"],
 };
 
-export const createPackageJsonExample = (config: WorkspaceConfig) => {
+export const createPackageJsonExample = (
+  config: object,
+  target: "workspace" | "root",
+) => {
   return {
     name: "@my-organization/my-application",
     version: "1.0.0",
     description: "My app",
-    [WORKSPACE_CONFIG_PACKAGE_JSON_KEY]: config,
+    [target === "workspace"
+      ? WORKSPACE_CONFIG_PACKAGE_JSON_KEY
+      : ROOT_CONFIG_PACKAGE_JSON_KEY]: config,
     scripts: {
       start: "bun run index.js",
       test: "bun test",

@@ -1,7 +1,6 @@
 export const USER_ENV_VARS = {
   parallelMaxDefault: "BW_PARALLEL_MAX_DEFAULT",
   scriptShellDefault: "BW_SHELL_DEFAULT",
-  includeRootWorkspace: "BW_INCLUDE_ROOT_WORKSPACE",
 } as const;
 
 export type UserEnvVarName = keyof typeof USER_ENV_VARS;

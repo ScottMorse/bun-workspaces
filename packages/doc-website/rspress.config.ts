@@ -287,8 +287,20 @@ export default defineConfig({
         activeMatch: "/config",
         items: [
           {
-            text: "Workspace Configuration",
+            text: "General",
             link: "/config",
+          },
+          {
+            text: "Root Configuration",
+            link: "/config/root",
+          },
+          {
+            text: "Workspace Configuration",
+            link: "/config/workspace",
+          },
+          {
+            text: "Environment Variables",
+            link: "/config/env-vars",
           },
         ],
       },

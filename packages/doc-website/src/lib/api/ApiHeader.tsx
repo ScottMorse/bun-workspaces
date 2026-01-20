@@ -28,13 +28,6 @@ export const ApiHeader = ({ activeHref, divider }: ApiHeaderProps) => {
         >
           Reference
         </Link>
-        {/* // TODO enable when needed
-         <Link
-          href={LINKS.examples}
-          className={activeHref === "examples" ? "active" : ""}
-        >
-          Examples
-        </Link> */}
       </div>
       <p className="note" style={{ marginTop: "1rem" }}>
         Install the package via <code>bun add --dev bun-workspaces</code> to use
