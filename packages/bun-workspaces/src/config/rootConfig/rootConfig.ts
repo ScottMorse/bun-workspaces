@@ -17,6 +17,7 @@ export type ResolvedRootConfig = {
   defaults: {
     parallelMax: number;
     shell: ScriptShellOption;
+    includeRootWorkspace: boolean;
   };
 };
 
@@ -41,6 +42,7 @@ export const resolveRootConfig = (config: RootConfig): ResolvedRootConfig => {
         " (set by root config)",
       ),
       shell: resolveScriptShell(config.defaults?.shell),
+      includeRootWorkspace: config.defaults?.includeRootWorkspace ?? true,
     },
   };
 };
