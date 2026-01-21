@@ -42,7 +42,7 @@ export const resolveRootConfig = (config: RootConfig): ResolvedRootConfig => {
         " (set by root config)",
       ),
       shell: resolveScriptShell(config.defaults?.shell),
-      includeRootWorkspace: config.defaults?.includeRootWorkspace ?? true,
+      includeRootWorkspace: config.defaults?.includeRootWorkspace ?? false,
     },
   };
 };

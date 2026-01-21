@@ -11,4 +11,5 @@ export const WORKSPACE_ERRORS = defineErrors(
   "InvalidWorkspacePattern",
   "AliasConflict",
   "AliasedWorkspaceNotFound",
+  "RootWorkspaceNotFound",
 );

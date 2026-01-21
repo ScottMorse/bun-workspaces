@@ -261,9 +261,11 @@ describe("Test workspace config", () => {
         rootDirectory: getProjectRoot("workspaceConfigFileOnly"),
       }),
     ).toEqual({
+      rootWorkspace: expect.any(Object),
       workspaces: [
         {
           aliases: ["appA"],
+          isRoot: false,
           matchPattern: "applications/*",
           name: "application-1a",
           path: withWindowsPath("applications/application-a"),
@@ -271,6 +273,7 @@ describe("Test workspace config", () => {
         },
         {
           aliases: ["appB"],
+          isRoot: false,
           matchPattern: "applications/*",
           name: "application-1b",
           path: withWindowsPath("applications/application-b"),
@@ -278,6 +281,7 @@ describe("Test workspace config", () => {
         },
         {
           aliases: ["libA", "libA2"],
+          isRoot: false,
           matchPattern: "libraries/*",
           name: "library-1a",
           path: withWindowsPath("libraries/library-a"),
@@ -285,6 +289,7 @@ describe("Test workspace config", () => {
         },
         {
           aliases: ["libB"],
+          isRoot: false,
           matchPattern: "libraries/*",
           name: "library-1b",
           path: withWindowsPath("libraries/library-b"),
@@ -292,6 +297,7 @@ describe("Test workspace config", () => {
         },
       ],
       workspaceConfigMap: {
+        "test-root": resolveWorkspaceConfig({ alias: [] }),
         "application-1a": resolveWorkspaceConfig({
           alias: ["appA"],
           scripts: {
@@ -311,9 +317,11 @@ describe("Test workspace config", () => {
         rootDirectory: getProjectRoot("workspaceConfigPackageOnly"),
       }),
     ).toEqual({
+      rootWorkspace: expect.any(Object),
       workspaces: [
         {
           aliases: ["appA"],
+          isRoot: false,
           matchPattern: "applications/*",
           name: "application-1a",
           path: withWindowsPath("applications/application-a"),
@@ -321,6 +329,7 @@ describe("Test workspace config", () => {
         },
         {
           aliases: ["appB", "appB2"],
+          isRoot: false,
           matchPattern: "applications/*",
           name: "application-1b",
           path: withWindowsPath("applications/application-b"),
@@ -328,6 +337,7 @@ describe("Test workspace config", () => {
         },
         {
           aliases: ["libA", "libA2"],
+          isRoot: false,
           matchPattern: "libraries/*",
           name: "library-1a",
           path: withWindowsPath("libraries/library-a"),
@@ -335,6 +345,7 @@ describe("Test workspace config", () => {
         },
         {
           aliases: ["libB"],
+          isRoot: false,
           matchPattern: "libraries/*",
           name: "library-1b",
           path: withWindowsPath("libraries/library-b"),
@@ -342,6 +353,7 @@ describe("Test workspace config", () => {
         },
       ],
       workspaceConfigMap: {
+        "test-root": resolveWorkspaceConfig({ alias: [] }),
         "application-1a": resolveWorkspaceConfig({ alias: ["appA"] }),
         "application-1b": resolveWorkspaceConfig({ alias: ["appB", "appB2"] }),
         "library-1a": resolveWorkspaceConfig({ alias: ["libA", "libA2"] }),
@@ -357,6 +369,7 @@ describe("Test workspace config", () => {
       workspaces: [
         {
           aliases: ["appA"],
+          isRoot: false,
           matchPattern: "applications/*",
           name: "application-1a",
           path: withWindowsPath("applications/application-a"),
@@ -364,6 +377,7 @@ describe("Test workspace config", () => {
         },
         {
           aliases: ["appB_file"],
+          isRoot: false,
           matchPattern: "applications/*",
           name: "application-1b",
           path: withWindowsPath("applications/application-b"),
@@ -371,6 +385,7 @@ describe("Test workspace config", () => {
         },
         {
           aliases: [],
+          isRoot: false,
           matchPattern: "applications/*",
           name: "application-1c",
           path: withWindowsPath("applications/application-c"),
@@ -378,6 +393,7 @@ describe("Test workspace config", () => {
         },
         {
           aliases: ["libA_file"],
+          isRoot: false,
           matchPattern: "libraries/*",
           name: "library-1a",
           path: withWindowsPath("libraries/library-a"),
@@ -385,6 +401,7 @@ describe("Test workspace config", () => {
         },
         {
           aliases: ["libB", "libB2"],
+          isRoot: false,
           matchPattern: "libraries/*",
           name: "library-1b",
           path: withWindowsPath("libraries/library-b"),
@@ -392,13 +409,16 @@ describe("Test workspace config", () => {
         },
         {
           aliases: [],
+          isRoot: false,
           matchPattern: "libraries/*",
           name: "library-1c",
           path: withWindowsPath("libraries/library-c"),
           scripts: ["all-workspaces", "c-workspaces", "library-c"],
         },
       ],
+      rootWorkspace: expect.any(Object),
       workspaceConfigMap: {
+        "test-root": resolveWorkspaceConfig({ alias: [] }),
         "application-1a": resolveWorkspaceConfig({
           alias: ["appA"],
           scripts: {
@@ -463,6 +483,7 @@ describe("Test workspace config", () => {
     expect(project.workspaces).toEqual([
       {
         aliases: ["deprecated_appA", "appA"],
+        isRoot: false,
         matchPattern: "applications/*",
         name: "application-1a",
         path: withWindowsPath("applications/application-a"),
@@ -470,6 +491,7 @@ describe("Test workspace config", () => {
       },
       {
         aliases: ["deprecated_appB", "appB_file"],
+        isRoot: false,
         matchPattern: "applications/*",
         name: "application-1b",
         path: withWindowsPath("applications/application-b"),
@@ -477,6 +499,7 @@ describe("Test workspace config", () => {
       },
       {
         aliases: [],
+        isRoot: false,
         matchPattern: "applications/*",
         name: "application-1c",
         path: withWindowsPath("applications/application-c"),
@@ -484,6 +507,7 @@ describe("Test workspace config", () => {
       },
       {
         aliases: ["deprecated_libA", "libA_file"],
+        isRoot: false,
         matchPattern: "libraries/*",
         name: "library-1a",
         path: withWindowsPath("libraries/library-a"),
@@ -491,6 +515,7 @@ describe("Test workspace config", () => {
       },
       {
         aliases: ["deprecated_libB", "libB", "libB2"],
+        isRoot: false,
         matchPattern: "libraries/*",
         name: "library-1b",
         path: withWindowsPath("libraries/library-b"),
@@ -498,6 +523,7 @@ describe("Test workspace config", () => {
       },
       {
         aliases: [],
+        isRoot: false,
         matchPattern: "libraries/*",
         name: "library-1c",
         path: withWindowsPath("libraries/library-c"),

@@ -20,6 +20,7 @@ describe("CLI Log Level", () => {
       JSON.stringify([
         {
           name: "application-a",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -48,6 +49,7 @@ describe("CLI Log Level", () => {
         .stdoutAndErr.raw,
       JSON.stringify({
         name: "application-a",
+        isRoot: false,
         matchPattern: "applications/*",
         path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -156,6 +158,7 @@ application-a`,
       JSON.stringify([
         {
           name: "application-a",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -184,6 +187,7 @@ application-a`,
         .stdoutAndErr.raw,
       JSON.stringify({
         name: "application-a",
+        isRoot: false,
         matchPattern: "applications/*",
         path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],

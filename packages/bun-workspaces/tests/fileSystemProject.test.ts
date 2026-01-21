@@ -71,6 +71,7 @@ describe("Test FileSystemProject", () => {
       metadata: {
         workspace: {
           name: "application-a",
+          isRoot: false,
           path: withWindowsPath("applications/applicationA"),
           matchPattern: "applications/*",
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -110,6 +111,7 @@ describe("Test FileSystemProject", () => {
       metadata: {
         workspace: {
           name: "application-1a",
+          isRoot: false,
           path: withWindowsPath("applications/application-a"),
           matchPattern: "applications/*",
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -184,6 +186,7 @@ describe("Test FileSystemProject", () => {
       metadata: {
         workspace: {
           name: "fail1",
+          isRoot: false,
           path: withWindowsPath("packages/fail1"),
           matchPattern: "packages/**/*",
           scripts: ["test-exit"],
@@ -288,6 +291,7 @@ describe("Test FileSystemProject", () => {
       expect(outputChunk.streamName).toBe("stdout");
       expect(scriptMetadata.workspace).toEqual({
         name: "library-b",
+        isRoot: false,
         path: withWindowsPath("libraries/libraryB"),
         matchPattern: "libraries/**/*",
         scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -315,6 +319,7 @@ describe("Test FileSystemProject", () => {
           metadata: {
             workspace: {
               name: "library-b",
+              isRoot: false,
               path: withWindowsPath("libraries/libraryB"),
               matchPattern: "libraries/**/*",
               scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -379,6 +384,7 @@ describe("Test FileSystemProject", () => {
           metadata: {
             workspace: {
               name: "application-1a",
+              isRoot: false,
               matchPattern: "applications/*",
               path: withWindowsPath("applications/applicationA"),
               scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -396,6 +402,7 @@ describe("Test FileSystemProject", () => {
           metadata: {
             workspace: {
               name: "application-1b",
+              isRoot: false,
               matchPattern: "applications/*",
               path: withWindowsPath("applications/applicationB"),
               scripts: ["all-workspaces", "application-b", "b-workspaces"],
@@ -413,6 +420,7 @@ describe("Test FileSystemProject", () => {
           metadata: {
             workspace: {
               name: "library-1a",
+              isRoot: false,
               matchPattern: "libraries/*",
               path: withWindowsPath("libraries/libraryA"),
               scripts: ["a-workspaces", "all-workspaces", "library-a"],
@@ -430,6 +438,7 @@ describe("Test FileSystemProject", () => {
           metadata: {
             workspace: {
               name: "library-1b",
+              isRoot: false,
               matchPattern: "libraries/*",
               path: withWindowsPath("libraries/libraryB"),
               scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -461,6 +470,7 @@ describe("Test FileSystemProject", () => {
         scriptMetadata: {
           workspace: {
             name: "application-1b",
+            isRoot: false,
             matchPattern: "applications/*",
             path: withWindowsPath("applications/applicationB"),
             scripts: ["all-workspaces", "application-b", "b-workspaces"],
@@ -477,6 +487,7 @@ describe("Test FileSystemProject", () => {
         scriptMetadata: {
           workspace: {
             name: "library-1b",
+            isRoot: false,
             matchPattern: "libraries/*",
             path: withWindowsPath("libraries/libraryB"),
             scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -520,6 +531,7 @@ describe("Test FileSystemProject", () => {
           metadata: {
             workspace: {
               name: "application-1b",
+              isRoot: false,
               matchPattern: "applications/*",
               path: withWindowsPath("applications/applicationB"),
               scripts: ["all-workspaces", "application-b", "b-workspaces"],
@@ -537,6 +549,7 @@ describe("Test FileSystemProject", () => {
           metadata: {
             workspace: {
               name: "library-1b",
+              isRoot: false,
               matchPattern: "libraries/*",
               path: withWindowsPath("libraries/libraryB"),
               scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -583,6 +596,7 @@ describe("Test FileSystemProject", () => {
         scriptMetadata: {
           workspace: {
             name: "application-1a",
+            isRoot: false,
             matchPattern: "applications/*",
             path: withWindowsPath("applications/applicationA"),
             scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -599,6 +613,7 @@ describe("Test FileSystemProject", () => {
         scriptMetadata: {
           workspace: {
             name: "application-1b",
+            isRoot: false,
             matchPattern: "applications/*",
             path: withWindowsPath("applications/applicationB"),
             scripts: ["all-workspaces", "application-b", "b-workspaces"],
@@ -615,6 +630,7 @@ describe("Test FileSystemProject", () => {
         scriptMetadata: {
           workspace: {
             name: "library-1a",
+            isRoot: false,
             matchPattern: "libraries/*",
             path: withWindowsPath("libraries/libraryA"),
             scripts: ["a-workspaces", "all-workspaces", "library-a"],
@@ -631,6 +647,7 @@ describe("Test FileSystemProject", () => {
         scriptMetadata: {
           workspace: {
             name: "library-1b",
+            isRoot: false,
             matchPattern: "libraries/*",
             path: withWindowsPath("libraries/libraryB"),
             scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -675,6 +692,7 @@ describe("Test FileSystemProject", () => {
           metadata: {
             workspace: {
               name: "application-1a",
+              isRoot: false,
               matchPattern: "applications/*",
               path: withWindowsPath("applications/applicationA"),
               scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -692,6 +710,7 @@ describe("Test FileSystemProject", () => {
           metadata: {
             workspace: {
               name: "application-1b",
+              isRoot: false,
               matchPattern: "applications/*",
               path: withWindowsPath("applications/applicationB"),
               scripts: ["all-workspaces", "application-b", "b-workspaces"],
@@ -709,6 +728,7 @@ describe("Test FileSystemProject", () => {
           metadata: {
             workspace: {
               name: "library-1a",
+              isRoot: false,
               matchPattern: "libraries/*",
               path: withWindowsPath("libraries/libraryA"),
               scripts: ["a-workspaces", "all-workspaces", "library-a"],
@@ -726,6 +746,7 @@ describe("Test FileSystemProject", () => {
           metadata: {
             workspace: {
               name: "library-1b",
+              isRoot: false,
               matchPattern: "libraries/*",
               path: withWindowsPath("libraries/libraryB"),
               scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -758,6 +779,7 @@ describe("Test FileSystemProject", () => {
         scriptMetadata: {
           workspace: {
             name: "application-1a",
+            isRoot: false,
             matchPattern: "applications/*",
             path: withWindowsPath("applications/applicationA"),
             scripts: ["test-echo"],
@@ -774,6 +796,7 @@ describe("Test FileSystemProject", () => {
         scriptMetadata: {
           workspace: {
             name: "application-1b",
+            isRoot: false,
             matchPattern: "applications/*",
             path: withWindowsPath("applications/applicationB"),
             scripts: ["test-echo"],
@@ -951,6 +974,7 @@ test-script-metadata-env-b
         scriptMetadata: {
           workspace: {
             name: "fail1",
+            isRoot: false,
             matchPattern: "packages/**/*",
             path: withWindowsPath("packages/fail1"),
             scripts: ["test-exit"],
@@ -967,6 +991,7 @@ test-script-metadata-env-b
         scriptMetadata: {
           workspace: {
             name: "fail2",
+            isRoot: false,
             matchPattern: "packages/**/*",
             path: withWindowsPath("packages/fail2"),
             scripts: ["test-exit"],
@@ -1043,6 +1068,7 @@ test-script-metadata-env-b
           metadata: {
             workspace: {
               name: "fail1",
+              isRoot: false,
               matchPattern: "packages/**/*",
               path: withWindowsPath("packages/fail1"),
               scripts: ["test-exit"],
@@ -1060,6 +1086,7 @@ test-script-metadata-env-b
           metadata: {
             workspace: {
               name: "fail2",
+              isRoot: false,
               matchPattern: "packages/**/*",
               path: withWindowsPath("packages/fail2"),
               scripts: ["test-exit"],
@@ -1077,6 +1104,7 @@ test-script-metadata-env-b
           metadata: {
             workspace: {
               name: "success1",
+              isRoot: false,
               matchPattern: "packages/**/*",
               path: withWindowsPath("packages/success1"),
               scripts: ["test-exit"],
@@ -1094,6 +1122,7 @@ test-script-metadata-env-b
           metadata: {
             workspace: {
               name: "success2",
+              isRoot: false,
               matchPattern: "packages/**/*",
               path: withWindowsPath("packages/success2"),
               scripts: ["test-exit"],
@@ -1237,6 +1266,7 @@ test-script-metadata-env-b
           metadata: {
             workspace: {
               name: "fifth",
+              isRoot: false,
               matchPattern: "packages/**/*",
               path: withWindowsPath("packages/fifth"),
               scripts: ["test-delay"],
@@ -1254,6 +1284,7 @@ test-script-metadata-env-b
           metadata: {
             workspace: {
               name: "first",
+              isRoot: false,
               matchPattern: "packages/**/*",
               path: withWindowsPath("packages/first"),
               scripts: ["test-delay"],
@@ -1271,6 +1302,7 @@ test-script-metadata-env-b
           metadata: {
             workspace: {
               name: "fourth",
+              isRoot: false,
               matchPattern: "packages/**/*",
               path: withWindowsPath("packages/fourth"),
               scripts: ["test-delay"],
@@ -1288,6 +1320,7 @@ test-script-metadata-env-b
           metadata: {
             workspace: {
               name: "second",
+              isRoot: false,
               matchPattern: "packages/**/*",
               path: withWindowsPath("packages/second"),
               scripts: ["test-delay"],
@@ -1305,6 +1338,7 @@ test-script-metadata-env-b
           metadata: {
             workspace: {
               name: "third",
+              isRoot: false,
               matchPattern: "packages/**/*",
               path: withWindowsPath("packages/third"),
               scripts: ["test-delay"],

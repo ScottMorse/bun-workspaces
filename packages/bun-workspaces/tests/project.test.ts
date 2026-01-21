@@ -28,6 +28,7 @@ describe("Test Project utilities", () => {
     expect(project.workspaces).toEqual([
       {
         name: "application-a",
+        isRoot: false,
         matchPattern: "applications/*",
         path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -35,6 +36,7 @@ describe("Test Project utilities", () => {
       },
       {
         name: "application-b",
+        isRoot: false,
         matchPattern: "applications/*",
         path: withWindowsPath("applications/applicationB"),
         scripts: ["all-workspaces", "application-b", "b-workspaces"],
@@ -42,6 +44,7 @@ describe("Test Project utilities", () => {
       },
       {
         name: "library-a",
+        isRoot: false,
         matchPattern: "libraries/**/*",
         path: withWindowsPath("libraries/libraryA"),
         scripts: ["a-workspaces", "all-workspaces", "library-a"],
@@ -49,6 +52,7 @@ describe("Test Project utilities", () => {
       },
       {
         name: "library-b",
+        isRoot: false,
         matchPattern: "libraries/**/*",
         path: withWindowsPath("libraries/libraryB"),
         scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -56,6 +60,7 @@ describe("Test Project utilities", () => {
       },
       {
         name: "library-c",
+        isRoot: false,
         matchPattern: "libraries/**/*",
         path: withWindowsPath("libraries/nested/libraryC"),
         scripts: ["all-workspaces", "c-workspaces", "library-c"],
@@ -143,6 +148,7 @@ describe("Test Project utilities", () => {
     expect(project.listWorkspacesWithScript("all-workspaces")).toEqual([
       {
         name: "application-a",
+        isRoot: false,
         matchPattern: "applications/*",
         path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -150,6 +156,7 @@ describe("Test Project utilities", () => {
       },
       {
         name: "application-b",
+        isRoot: false,
         matchPattern: "applications/*",
         path: withWindowsPath("applications/applicationB"),
         scripts: ["all-workspaces", "application-b", "b-workspaces"],
@@ -157,6 +164,7 @@ describe("Test Project utilities", () => {
       },
       {
         name: "library-a",
+        isRoot: false,
         matchPattern: "libraries/**/*",
         path: withWindowsPath("libraries/libraryA"),
         scripts: ["a-workspaces", "all-workspaces", "library-a"],
@@ -164,6 +172,7 @@ describe("Test Project utilities", () => {
       },
       {
         name: "library-b",
+        isRoot: false,
         matchPattern: "libraries/**/*",
         path: withWindowsPath("libraries/libraryB"),
         scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -171,6 +180,7 @@ describe("Test Project utilities", () => {
       },
       {
         name: "library-c",
+        isRoot: false,
         matchPattern: "libraries/**/*",
         path: withWindowsPath("libraries/nested/libraryC"),
         scripts: ["all-workspaces", "c-workspaces", "library-c"],
@@ -295,6 +305,7 @@ describe("Test Project utilities", () => {
       scriptName: "all-workspaces",
       workspace: {
         name: "application-a",
+        isRoot: false,
         matchPattern: "applications/*",
         path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -320,6 +331,7 @@ describe("Test Project utilities", () => {
       scriptName: "all-workspaces",
       workspace: {
         name: "application-a",
+        isRoot: false,
         matchPattern: "applications/*",
         path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -342,6 +354,7 @@ describe("Test Project utilities", () => {
       scriptName: "all-workspaces",
       workspace: {
         name: "application-a",
+        isRoot: false,
         matchPattern: "applications/*",
         path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -364,6 +377,7 @@ describe("Test Project utilities", () => {
       scriptName: "all-workspaces",
       workspace: {
         name: "application-a",
+        isRoot: false,
         matchPattern: "applications/*",
         path: withWindowsPath("applications/applicationA"),
         scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -389,6 +403,7 @@ describe("Test Project utilities", () => {
       scriptName: "b-workspaces",
       workspace: {
         name: "library-b",
+        isRoot: false,
         matchPattern: "libraries/**/*",
         path: withWindowsPath("libraries/libraryB"),
         scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -411,6 +426,7 @@ describe("Test Project utilities", () => {
       scriptName: "b-workspaces",
       workspace: {
         name: "library-b",
+        isRoot: false,
         matchPattern: "libraries/**/*",
         path: withWindowsPath("libraries/libraryB"),
         scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -451,6 +467,7 @@ describe("Test Project utilities", () => {
 
     const testWs1 = {
       name: "test-1",
+      isRoot: false,
       matchPattern: "test/*",
       scripts: ["test-script"],
       aliases: [],
@@ -458,6 +475,7 @@ describe("Test Project utilities", () => {
     };
     const testWs2 = {
       name: "test-2",
+      isRoot: false,
       matchPattern: "test/*",
       scripts: ["test-script"],
       aliases: ["test-2-alias"],
@@ -571,6 +589,7 @@ describe("Test Project utilities", () => {
       metadata: {
         workspace: {
           name: "application-a",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -606,6 +625,7 @@ describe("Test Project utilities", () => {
       metadata: {
         workspace: {
           name: "application-a",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -647,6 +667,7 @@ describe("Test Project utilities", () => {
       metadata: {
         workspace: {
           name: "application-1a",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationA"),
           scripts: ["test-echo"],
@@ -683,6 +704,7 @@ describe("Test Project utilities", () => {
       metadata: {
         workspace: {
           name: "application-1a",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationA"),
           scripts: ["test-echo"],
@@ -698,6 +720,7 @@ describe("Test Project utilities", () => {
         workspaces: [
           {
             name: "test-1",
+            isRoot: false,
             matchPattern: "test/*",
             scripts: ["test-script"],
             aliases: [],
@@ -705,6 +728,7 @@ describe("Test Project utilities", () => {
           },
           {
             name: "test-1",
+            isRoot: false,
             matchPattern: "test/*",
             scripts: ["test-script"],
             aliases: [],
@@ -719,6 +743,7 @@ describe("Test Project utilities", () => {
         workspaces: [
           {
             name: "test-1",
+            isRoot: false,
             matchPattern: "test/*",
             scripts: ["test-script"],
             aliases: ["test-1-alias"],
@@ -726,6 +751,7 @@ describe("Test Project utilities", () => {
           },
           {
             name: "test-2",
+            isRoot: false,
             matchPattern: "test/*",
             scripts: ["test-script"],
             aliases: ["test-1-alias"],

@@ -1036,6 +1036,7 @@ this is my inline script for library-1b test-args-library-1b
           metadata: {
             workspace: {
               name: "application-1a",
+              isRoot: false,
               matchPattern: "applications/*",
               path: withWindowsPath("applications/applicationA"),
               aliases: ["deprecated_appA"],
@@ -1053,6 +1054,7 @@ this is my inline script for library-1b test-args-library-1b
           metadata: {
             workspace: {
               name: "application-1b",
+              isRoot: false,
               matchPattern: "applications/*",
               path: withWindowsPath("applications/applicationB"),
               aliases: ["deprecated_appB"],
@@ -1070,6 +1072,7 @@ this is my inline script for library-1b test-args-library-1b
           metadata: {
             workspace: {
               name: "library-1a",
+              isRoot: false,
               matchPattern: "libraries/*",
               path: withWindowsPath("libraries/libraryA"),
               aliases: ["deprecated_libA"],
@@ -1087,6 +1090,7 @@ this is my inline script for library-1b test-args-library-1b
           metadata: {
             workspace: {
               name: "library-1b",
+              isRoot: false,
               matchPattern: "libraries/*",
               path: withWindowsPath("libraries/libraryB"),
               aliases: ["deprecated_libB"],
@@ -1132,6 +1136,7 @@ this is my inline script for library-1b test-args-library-1b
           metadata: {
             workspace: {
               name: "application-1a",
+              isRoot: false,
               matchPattern: "applications/*",
               path: withWindowsPath("applications/applicationA"),
               aliases: ["deprecated_appA"],
@@ -1149,6 +1154,7 @@ this is my inline script for library-1b test-args-library-1b
           metadata: {
             workspace: {
               name: "library-1a",
+              isRoot: false,
               matchPattern: "libraries/*",
               path: withWindowsPath("libraries/libraryA"),
               aliases: ["deprecated_libA"],
@@ -1196,6 +1202,7 @@ this is my inline script for library-1b test-args-library-1b
           metadata: {
             workspace: {
               name: "library-1b",
+              isRoot: false,
               matchPattern: "libraries/*",
               path: withWindowsPath("libraries/libraryB"),
               scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -1245,6 +1252,7 @@ this is my inline script for library-1b test-args-library-1b
           metadata: {
             workspace: {
               name: "fail1",
+              isRoot: false,
               matchPattern: "packages/**/*",
               path: withWindowsPath("packages/fail1"),
               aliases: [],
@@ -1262,6 +1270,7 @@ this is my inline script for library-1b test-args-library-1b
           metadata: {
             workspace: {
               name: "fail2",
+              isRoot: false,
               matchPattern: "packages/**/*",
               path: withWindowsPath("packages/fail2"),
               aliases: [],
@@ -1279,6 +1288,7 @@ this is my inline script for library-1b test-args-library-1b
           metadata: {
             workspace: {
               name: "success1",
+              isRoot: false,
               matchPattern: "packages/**/*",
               path: withWindowsPath("packages/success1"),
               aliases: [],
@@ -1296,6 +1306,7 @@ this is my inline script for library-1b test-args-library-1b
           metadata: {
             workspace: {
               name: "success2",
+              isRoot: false,
               matchPattern: "packages/**/*",
               path: withWindowsPath("packages/success2"),
               aliases: [],
@@ -1360,6 +1371,7 @@ this is my inline script for library-1b test-args-library-1b
           metadata: {
             workspace: {
               name: "application-1a",
+              isRoot: false,
               matchPattern: "applications/*",
               path: withWindowsPath("applications/applicationA"),
               aliases: ["deprecated_appA"],
@@ -1410,6 +1422,7 @@ this is my inline script for library-1b test-args-library-1b
           metadata: {
             workspace: {
               name: "application-1a",
+              isRoot: false,
               matchPattern: "applications/*",
               path: withWindowsPath("applications/applicationA"),
               aliases: ["deprecated_appA"],

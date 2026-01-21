@@ -1,6 +1,7 @@
 import fs from "fs";
 import path from "path";
 import { loadRootConfig } from "../../config";
+import { getUserEnvVar } from "../../config/userEnvVars";
 import type { Simplify } from "../../internal/core";
 import { DEFAULT_TEMP_DIR } from "../../internal/core";
 import { logger } from "../../internal/logger";
@@ -33,6 +34,8 @@ export type CreateFileSystemProjectOptions = {
    * By default will use the root package.json name
    */
   name?: string;
+  /** Whether to include the root workspace as a normal workspace. This overrides any config or env var settings. */
+  includeRootWorkspace?: boolean;
 };
 
 export type ShellOption = ScriptShellOption | "default";
@@ -97,6 +100,7 @@ class _FileSystemProject extends ProjectBase implements Project {
   public readonly name: string;
   public readonly sourceType = "fileSystem";
   public readonly config: ProjectConfig;
+  public readonly rootWorkspace: Workspace;
 
   constructor(
     options: CreateFileSystemProjectOptions & {
@@ -118,10 +122,16 @@ class _FileSystemProject extends ProjectBase implements Project {
 
     const rootConfig = loadRootConfig(this.rootDirectory);
 
-    const { workspaces, workspaceConfigMap } = findWorkspaces({
+    const { workspaces, workspaceConfigMap, rootWorkspace } = findWorkspaces({
       rootDirectory: this.rootDirectory,
       workspaceAliases: options.workspaceAliases,
+      includeRootWorkspace:
+        options.includeRootWorkspace ??
+        rootConfig.defaults.includeRootWorkspace ??
+        getUserEnvVar("includeRootWorkspaceDefault") === "true",
     });
+
+    this.rootWorkspace = rootWorkspace;
 
     this.workspaces = workspaces;
 

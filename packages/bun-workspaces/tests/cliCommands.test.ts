@@ -58,6 +58,7 @@ library-1b`,
       const expectedJson = [
         {
           name: "application-1a",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -65,6 +66,7 @@ library-1b`,
         },
         {
           name: "application-1b",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationB"),
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
@@ -72,6 +74,7 @@ library-1b`,
         },
         {
           name: "library-1a",
+          isRoot: false,
           matchPattern: "libraries/*",
           path: withWindowsPath("libraries/libraryA"),
           scripts: ["a-workspaces", "all-workspaces", "library-a"],
@@ -79,6 +82,7 @@ library-1b`,
         },
         {
           name: "library-1b",
+          isRoot: false,
           matchPattern: "libraries/*",
           path: withWindowsPath("libraries/libraryB"),
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -416,6 +420,7 @@ Script: library-b
         jsonResult.stdout.raw,
         JSON.stringify({
           name: "application-1a",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -430,6 +435,7 @@ Script: library-b
         jsonShortResult.stdout.raw,
         JSON.stringify({
           name: "application-1a",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -450,6 +456,7 @@ Script: library-b
         JSON.stringify(
           {
             name: "application-1a",
+            isRoot: false,
             matchPattern: "applications/*",
             path: withWindowsPath("applications/applicationA"),
             scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -473,6 +480,7 @@ Script: library-b
         JSON.stringify(
           {
             name: "application-1a",
+            isRoot: false,
             matchPattern: "applications/*",
             path: withWindowsPath("applications/applicationA"),
             scripts: ["a-workspaces", "all-workspaces", "application-a"],

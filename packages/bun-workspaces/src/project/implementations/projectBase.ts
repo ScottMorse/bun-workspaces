@@ -19,6 +19,7 @@ export const resolveWorkspacePath = (project: Project, workspace: Workspace) =>
 export abstract class ProjectBase implements Project {
   public abstract readonly name: string;
   public abstract readonly rootDirectory: string;
+  public abstract readonly rootWorkspace: Workspace;
   public abstract readonly workspaces: Workspace[];
   public abstract readonly sourceType: "fileSystem" | "memory";
   public abstract readonly config: ProjectConfig;

@@ -13,9 +13,11 @@ describe("Test finding workspaces", () => {
     });
 
     expect(defaultProject).toEqual({
+      rootWorkspace: expect.any(Object),
       workspaces: [
         {
           name: "application-a",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -23,6 +25,7 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "application-b",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationB"),
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
@@ -30,6 +33,7 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "library-a",
+          isRoot: false,
           matchPattern: "libraries/**/*",
           path: withWindowsPath("libraries/libraryA"),
           scripts: ["a-workspaces", "all-workspaces", "library-a"],
@@ -37,6 +41,7 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "library-b",
+          isRoot: false,
           matchPattern: "libraries/**/*",
           path: withWindowsPath("libraries/libraryB"),
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -44,6 +49,7 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "library-c",
+          isRoot: false,
           matchPattern: "libraries/**/*",
           path: withWindowsPath("libraries/nested/libraryC"),
           scripts: ["all-workspaces", "c-workspaces", "library-c"],
@@ -51,6 +57,7 @@ describe("Test finding workspaces", () => {
         },
       ],
       workspaceConfigMap: {
+        "test-root": resolveWorkspaceConfig({ alias: [] }),
         "application-a": resolveWorkspaceConfig({}),
         "application-b": resolveWorkspaceConfig({}),
         "library-a": resolveWorkspaceConfig({}),
@@ -72,9 +79,11 @@ describe("Test finding workspaces", () => {
         workspaceGlobs: ["applications/*", "libraries/*"],
       }),
     ).toEqual({
+      rootWorkspace: expect.any(Object),
       workspaces: [
         {
           name: "application-a",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -82,6 +91,7 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "application-b",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationB"),
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
@@ -89,6 +99,7 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "library-a",
+          isRoot: false,
           matchPattern: "libraries/*",
           path: withWindowsPath("libraries/libraryA"),
           scripts: ["a-workspaces", "all-workspaces", "library-a"],
@@ -96,17 +107,28 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "library-b",
+          isRoot: false,
           matchPattern: "libraries/*",
           path: withWindowsPath("libraries/libraryB"),
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
           aliases: [],
         },
+        {
+          name: "library-c",
+          isRoot: false,
+          matchPattern: "",
+          path: withWindowsPath("libraries/nested/libraryC"),
+          scripts: ["all-workspaces", "c-workspaces", "library-c"],
+          aliases: [],
+        },
       ],
       workspaceConfigMap: {
+        "test-root": resolveWorkspaceConfig({ alias: [] }),
         "application-a": resolveWorkspaceConfig({}),
         "application-b": resolveWorkspaceConfig({}),
         "library-a": resolveWorkspaceConfig({}),
         "library-b": resolveWorkspaceConfig({}),
+        "library-c": resolveWorkspaceConfig({}),
       },
     });
 
@@ -116,9 +138,11 @@ describe("Test finding workspaces", () => {
         workspaceGlobs: ["applications/*"],
       }),
     ).toEqual({
+      rootWorkspace: expect.any(Object),
       workspaces: [
         {
           name: "application-a",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -126,15 +150,44 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "application-b",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationB"),
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
           aliases: [],
         },
+        {
+          name: "library-a",
+          isRoot: false,
+          matchPattern: "",
+          path: withWindowsPath("libraries/libraryA"),
+          scripts: ["a-workspaces", "all-workspaces", "library-a"],
+          aliases: [],
+        },
+        {
+          name: "library-b",
+          isRoot: false,
+          matchPattern: "",
+          path: withWindowsPath("libraries/libraryB"),
+          scripts: ["all-workspaces", "b-workspaces", "library-b"],
+          aliases: [],
+        },
+        {
+          name: "library-c",
+          isRoot: false,
+          matchPattern: "",
+          path: withWindowsPath("libraries/nested/libraryC"),
+          scripts: ["all-workspaces", "c-workspaces", "library-c"],
+          aliases: [],
+        },
       ],
       workspaceConfigMap: {
+        "test-root": resolveWorkspaceConfig({ alias: [] }),
         "application-a": resolveWorkspaceConfig({}),
         "application-b": resolveWorkspaceConfig({}),
+        "library-a": resolveWorkspaceConfig({}),
+        "library-b": resolveWorkspaceConfig({}),
+        "library-c": resolveWorkspaceConfig({}),
       },
     });
   });
@@ -145,9 +198,11 @@ describe("Test finding workspaces", () => {
     });
 
     expect(defaultProject).toEqual({
+      rootWorkspace: expect.any(Object),
       workspaces: [
         {
           name: "application-a",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -155,6 +210,7 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "application-b",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationB"),
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
@@ -162,6 +218,7 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "library-a",
+          isRoot: false,
           matchPattern: "libraries/**/*",
           path: withWindowsPath("libraries/libraryA"),
           scripts: ["a-workspaces", "all-workspaces", "library-a"],
@@ -169,6 +226,7 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "library-b",
+          isRoot: false,
           matchPattern: "libraries/**/*",
           path: withWindowsPath("libraries/libraryB"),
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -176,6 +234,7 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "library-c",
+          isRoot: false,
           matchPattern: "libraries/**/*",
           path: withWindowsPath("libraries/nested/libraryC"),
           scripts: ["all-workspaces", "c-workspaces", "library-c"],
@@ -183,6 +242,7 @@ describe("Test finding workspaces", () => {
         },
       ],
       workspaceConfigMap: {
+        "test-root": resolveWorkspaceConfig({ alias: [] }),
         "application-a": resolveWorkspaceConfig({}),
         "application-b": resolveWorkspaceConfig({}),
         "library-a": resolveWorkspaceConfig({}),
