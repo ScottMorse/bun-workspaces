@@ -273,4 +273,48 @@ describe("Test finding workspaces", () => {
       }),
     ).toThrow(WORKSPACE_ERRORS.AliasedWorkspaceNotFound);
   });
+
+  test("Find workspaces with catalog form of package.json workspaces", async () => {
+    const defaultProject = findWorkspaces({
+      rootDirectory: getProjectRoot("withCatalogSimple"),
+    });
+    expect(defaultProject).toEqual({
+      workspaces: [
+        {
+          name: "application-1a",
+          matchPattern: "applications/*",
+          path: withWindowsPath("applications/applicationA"),
+          scripts: ["a-workspaces", "all-workspaces", "application-a"],
+          aliases: [],
+        },
+        {
+          name: "application-1b",
+          matchPattern: "applications/*",
+          path: withWindowsPath("applications/applicationB"),
+          scripts: ["all-workspaces", "application-b", "b-workspaces"],
+          aliases: [],
+        },
+        {
+          name: "library-1a",
+          matchPattern: "libraries/*",
+          path: withWindowsPath("libraries/libraryA"),
+          scripts: ["a-workspaces", "all-workspaces", "library-a"],
+          aliases: [],
+        },
+        {
+          name: "library-1b",
+          matchPattern: "libraries/*",
+          path: withWindowsPath("libraries/libraryB"),
+          scripts: ["all-workspaces", "b-workspaces", "library-b"],
+          aliases: [],
+        },
+      ],
+      workspaceConfigMap: {
+        "application-1a": resolveWorkspaceConfig({}),
+        "application-1b": resolveWorkspaceConfig({}),
+        "library-1a": resolveWorkspaceConfig({}),
+        "library-1b": resolveWorkspaceConfig({}),
+      },
+    });
+  });
 });

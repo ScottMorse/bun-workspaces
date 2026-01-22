@@ -2,9 +2,13 @@
   "name": "@bw/root",
   "private": true,
   "license": "MIT",
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*"
+    ],
+    "catalog": {},
+    "catalogs": {}
+  },
   "scripts": {
     "bw": "bun cli run -N -W bw",
     "bw:test": "bun cli run -N test bw --",
