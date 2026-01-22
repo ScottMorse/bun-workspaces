@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { isJSONObject } from "../internal/core";
 import { logger } from "../internal/logger";
 import { WORKSPACE_ERRORS } from "./errors";
 
@@ -83,13 +84,23 @@ const validateWorkspacePatterns = (
 ) => {
   const workspaces: string[] = [];
   if (json.workspaces) {
-    if (!Array.isArray(json.workspaces)) {
+    let source: "array" | "catalogObject" = "array";
+    let rawWorkspaces: string[] = [];
+    if (isJSONObject(json.workspaces)) {
+      source = "catalogObject";
+      rawWorkspaces = json.workspaces?.packages as string[];
+    } else {
+      source = "array";
+      rawWorkspaces = json.workspaces as string[];
+    }
+
+    if (!Array.isArray(rawWorkspaces)) {
       throw new WORKSPACE_ERRORS.InvalidWorkspaces(
-        `Expected package.json to have an array "workspaces" field`,
+        `Expected package.json "workspaces${source === "catalogObject" ? ".packages" : ""}" to be an array`,
       );
     }
 
-    for (const workspacePattern of json.workspaces) {
+    for (const workspacePattern of rawWorkspaces) {
       if (validateWorkspacePattern(workspacePattern, rootDirectory)) {
         workspaces.push(workspacePattern);
       }

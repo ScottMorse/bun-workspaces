@@ -52,6 +52,7 @@ const TEST_PROJECTS = {
   rootConfigInvalidShell: "rootConfig/invalidShell",
   rootConfigInvalidParallel: "rootConfig/invalidParallel",
   rootConfigParallelMaxOnly: "rootConfig/parallelMaxOnly",
+  withCatalogSimple: "withCatalog/simple",
 };
 
 export type TestProjectName = keyof typeof TEST_PROJECTS;

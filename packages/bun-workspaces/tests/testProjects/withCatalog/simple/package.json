@@ -1,0 +1,11 @@
+{
+  "name": "test-root",
+  "workspaces": {
+    "packages": [
+      "applications/*",
+      "libraries/*"
+    ],
+    "catalog": {},
+    "catalogs": {}
+  }
+}
