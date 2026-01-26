@@ -152,7 +152,7 @@ const { output, summary } = project.runScriptAcrossWorkspaces({
   script: "my-script",
 
   // Optional. Arguments to add to the command
-  args: "--my --appended --args", // optional, arguments to add to the command
+  args: "--my --appended --args",
 
   // Optional. Whether to run the scripts in parallel
   parallel: true,
