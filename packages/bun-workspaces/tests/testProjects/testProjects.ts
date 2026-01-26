@@ -53,6 +53,8 @@ const TEST_PROJECTS = {
   rootConfigInvalidParallel: "rootConfig/invalidParallel",
   rootConfigParallelMaxOnly: "rootConfig/parallelMaxOnly",
   withCatalogSimple: "withCatalog/simple",
+  withRootWorkspace: "withRootWorkspace/simple",
+  withRootWorkspaceWithConfigFiles: "withRootWorkspace/withConfigFiles",
 };
 
 export type TestProjectName = keyof typeof TEST_PROJECTS;

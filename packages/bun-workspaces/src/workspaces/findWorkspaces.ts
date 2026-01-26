@@ -29,7 +29,10 @@ export interface FindWorkspacesOptions {
 export const sortWorkspaces = (workspaces: Workspace[]) =>
   [...workspaces]
     .sort(
-      (a, b) => a.name.localeCompare(b.name) || a.path.localeCompare(b.path),
+      (a, b) =>
+        (a.isRoot ? -1 : 1) ||
+        a.path.localeCompare(b.path) ||
+        a.name.localeCompare(b.name),
     )
     .reduce<Workspace[]>((acc, workspace, i, arr) => {
       const previousWorkspace = arr[i - 1];

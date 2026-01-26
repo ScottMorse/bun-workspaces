@@ -13,7 +13,14 @@ describe("Test finding workspaces", () => {
     });
 
     expect(defaultProject).toEqual({
-      rootWorkspace: expect.any(Object),
+      rootWorkspace: {
+        name: "test-root",
+        isRoot: true,
+        matchPattern: "",
+        path: "",
+        scripts: [],
+        aliases: [],
+      },
       workspaces: [
         {
           name: "application-a",
@@ -79,7 +86,14 @@ describe("Test finding workspaces", () => {
         workspaceGlobs: ["applications/*", "libraries/*"],
       }),
     ).toEqual({
-      rootWorkspace: expect.any(Object),
+      rootWorkspace: {
+        name: "test-root",
+        isRoot: true,
+        matchPattern: "",
+        path: "",
+        scripts: [],
+        aliases: [],
+      },
       workspaces: [
         {
           name: "application-a",
@@ -138,7 +152,14 @@ describe("Test finding workspaces", () => {
         workspaceGlobs: ["applications/*"],
       }),
     ).toEqual({
-      rootWorkspace: expect.any(Object),
+      rootWorkspace: {
+        name: "test-root",
+        isRoot: true,
+        matchPattern: "",
+        path: "",
+        scripts: [],
+        aliases: [],
+      },
       workspaces: [
         {
           name: "application-a",
@@ -198,7 +219,14 @@ describe("Test finding workspaces", () => {
     });
 
     expect(defaultProject).toEqual({
-      rootWorkspace: expect.any(Object),
+      rootWorkspace: {
+        name: "test-root",
+        isRoot: true,
+        matchPattern: "",
+        path: "",
+        scripts: [],
+        aliases: [],
+      },
       workspaces: [
         {
           name: "application-a",
@@ -339,9 +367,18 @@ describe("Test finding workspaces", () => {
       rootDirectory: getProjectRoot("withCatalogSimple"),
     });
     expect(defaultProject).toEqual({
+      rootWorkspace: {
+        name: "test-root",
+        isRoot: true,
+        matchPattern: "",
+        path: "",
+        scripts: [],
+        aliases: [],
+      },
       workspaces: [
         {
           name: "application-1a",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationA"),
           scripts: ["a-workspaces", "all-workspaces", "application-a"],
@@ -349,6 +386,7 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "application-1b",
+          isRoot: false,
           matchPattern: "applications/*",
           path: withWindowsPath("applications/applicationB"),
           scripts: ["all-workspaces", "application-b", "b-workspaces"],
@@ -356,6 +394,7 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "library-1a",
+          isRoot: false,
           matchPattern: "libraries/*",
           path: withWindowsPath("libraries/libraryA"),
           scripts: ["a-workspaces", "all-workspaces", "library-a"],
@@ -363,6 +402,7 @@ describe("Test finding workspaces", () => {
         },
         {
           name: "library-1b",
+          isRoot: false,
           matchPattern: "libraries/*",
           path: withWindowsPath("libraries/libraryB"),
           scripts: ["all-workspaces", "b-workspaces", "library-b"],
@@ -370,6 +410,73 @@ describe("Test finding workspaces", () => {
         },
       ],
       workspaceConfigMap: {
+        "test-root": resolveWorkspaceConfig({ alias: [] }),
+        "application-1a": resolveWorkspaceConfig({}),
+        "application-1b": resolveWorkspaceConfig({}),
+        "library-1a": resolveWorkspaceConfig({}),
+        "library-1b": resolveWorkspaceConfig({}),
+      },
+    });
+  });
+
+  test("Find workspaces - Include root workspace", async () => {
+    const defaultProject = findWorkspaces({
+      rootDirectory: getProjectRoot("withRootWorkspace"),
+      includeRootWorkspace: true,
+    });
+    expect(defaultProject).toEqual({
+      rootWorkspace: {
+        name: "test-root",
+        isRoot: true,
+        matchPattern: "",
+        path: "",
+        scripts: ["all-workspaces", "root-workspace"],
+        aliases: ["my-root-alias"],
+      },
+      workspaces: [
+        {
+          name: "test-root",
+          isRoot: true,
+          matchPattern: "",
+          path: "",
+          scripts: ["all-workspaces", "root-workspace"],
+          aliases: ["my-root-alias"],
+        },
+        {
+          name: "application-1a",
+          isRoot: false,
+          matchPattern: "applications/*",
+          path: withWindowsPath("applications/applicationA"),
+          scripts: ["a-workspaces", "all-workspaces", "application-a"],
+          aliases: [],
+        },
+        {
+          name: "application-1b",
+          isRoot: false,
+          matchPattern: "applications/*",
+          path: withWindowsPath("applications/applicationB"),
+          scripts: ["all-workspaces", "application-b", "b-workspaces"],
+          aliases: [],
+        },
+        {
+          name: "library-1a",
+          isRoot: false,
+          matchPattern: "libraries/*",
+          path: withWindowsPath("libraries/libraryA"),
+          scripts: ["a-workspaces", "all-workspaces", "library-a"],
+          aliases: [],
+        },
+        {
+          name: "library-1b",
+          isRoot: false,
+          matchPattern: "libraries/*",
+          path: withWindowsPath("libraries/libraryB"),
+          scripts: ["all-workspaces", "b-workspaces", "library-b"],
+          aliases: [],
+        },
+      ],
+      workspaceConfigMap: {
+        "test-root": resolveWorkspaceConfig({ alias: ["my-root-alias"] }),
         "application-1a": resolveWorkspaceConfig({}),
         "application-1b": resolveWorkspaceConfig({}),
         "library-1a": resolveWorkspaceConfig({}),
