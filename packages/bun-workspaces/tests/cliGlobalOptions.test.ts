@@ -1,11 +1,13 @@
 import path from "path";
 import { test, expect, describe } from "bun:test";
+import { getUserEnvVarName } from "../src/config/userEnvVars";
 import { getProjectRoot } from "./testProjects";
 import {
   setupCliTest,
   assertOutputMatches,
   USAGE_OUTPUT_PATTERN,
 } from "./util/cliTestUtils";
+import { withWindowsPath } from "./util/windows";
 
 describe("Test CLI Global Options", () => {
   test("Usage shows", async () => {
@@ -206,6 +208,171 @@ describe("Test CLI Global Options", () => {
     assertOutputMatches(
       result8.stderr.sanitized,
       `Config file: project.workspaceAliases must be an object`,
+    );
+  });
+
+  test.only("Global Option --include-root", async () => {
+    const { run } = setupCliTest({ testProject: "withRootWorkspace" });
+
+    const resultLong = await run("--include-root", "ls", "--json");
+    expect(resultLong.stderr.raw).toBeEmpty();
+    expect(resultLong.exitCode).toBe(0);
+
+    const resultShort = await run("-r", "ls", "--json");
+    expect(resultShort.stderr.raw).toBeEmpty();
+    expect(resultShort.exitCode).toBe(0);
+
+    const resultFalse = await run("ls", "--json");
+    expect(resultFalse.stderr.raw).toBeEmpty();
+    expect(resultFalse.exitCode).toBe(0);
+
+    const { run: runWithEnv } = setupCliTest({
+      testProject: "withRootWorkspace",
+      env: { [getUserEnvVarName("includeRootWorkspaceDefault")]: "true" },
+    });
+
+    const resultEnv = await runWithEnv("ls", "--json");
+    expect(resultEnv.stderr.raw).toBeEmpty();
+    expect(resultEnv.exitCode).toBe(0);
+
+    const resultEnvOverride = await runWithEnv(
+      "--no-include-root",
+      "ls",
+      "--json",
+    );
+    expect(resultEnvOverride.stderr.raw).toBeEmpty();
+    expect(resultEnvOverride.exitCode).toBe(0);
+
+    const { run: runWithEnvFalse } = setupCliTest({
+      testProject: "withRootWorkspace",
+      env: { [getUserEnvVarName("includeRootWorkspaceDefault")]: "false" },
+    });
+
+    const resultEnvFalse = await runWithEnvFalse("ls", "--json");
+    expect(resultEnvFalse.stderr.raw).toBeEmpty();
+    expect(resultEnvFalse.exitCode).toBe(0);
+
+    const expectedWorkspaces = [
+      {
+        name: "application-1a",
+        isRoot: false,
+        matchPattern: "applications/*",
+        path: withWindowsPath("applications/applicationA"),
+        scripts: ["a-workspaces", "all-workspaces", "application-a"],
+        aliases: [],
+      },
+      {
+        name: "application-1b",
+        isRoot: false,
+        matchPattern: "applications/*",
+        path: withWindowsPath("applications/applicationB"),
+        scripts: ["all-workspaces", "application-b", "b-workspaces"],
+        aliases: [],
+      },
+      {
+        name: "library-1a",
+        isRoot: false,
+        matchPattern: "libraries/*",
+        path: withWindowsPath("libraries/libraryA"),
+        scripts: ["a-workspaces", "all-workspaces", "library-a"],
+        aliases: [],
+      },
+      {
+        name: "library-1b",
+        isRoot: false,
+        matchPattern: "libraries/*",
+        path: withWindowsPath("libraries/libraryB"),
+        scripts: ["all-workspaces", "b-workspaces", "library-b"],
+        aliases: [],
+      },
+    ];
+
+    const expectedWithRoot = [
+      {
+        name: "test-root",
+        isRoot: true,
+        matchPattern: "",
+        path: "",
+        scripts: ["all-workspaces", "root-workspace"],
+        aliases: ["my-root-alias"],
+      },
+      ...expectedWorkspaces,
+    ];
+
+    expect(JSON.parse(resultLong.stdout.raw)).toEqual(expectedWithRoot);
+    expect(JSON.parse(resultShort.stdout.raw)).toEqual(expectedWithRoot);
+    expect(JSON.parse(resultFalse.stdout.raw)).toEqual(expectedWorkspaces);
+    expect(JSON.parse(resultEnv.stdout.raw)).toEqual(expectedWithRoot);
+    expect(JSON.parse(resultEnvOverride.stdout.raw)).toEqual(
+      expectedWorkspaces,
+    );
+    expect(JSON.parse(resultEnvFalse.stdout.raw)).toEqual(expectedWorkspaces);
+
+    const { run: runWithConfigFile } = setupCliTest({
+      testProject: "withRootWorkspaceWithConfigFiles",
+    });
+
+    const resultConfigFile = await runWithConfigFile("ls", "--json");
+    expect(resultConfigFile.stderr.raw).toBeEmpty();
+    expect(resultConfigFile.exitCode).toBe(0);
+
+    const resultConfigFileFalse = await runWithConfigFile(
+      "--no-include-root",
+      "ls",
+      "--json",
+    );
+    expect(resultConfigFileFalse.stderr.raw).toBeEmpty();
+    expect(resultConfigFileFalse.exitCode).toBe(0);
+
+    const expectedWithConfigFiles = [
+      {
+        name: "application-1a",
+        isRoot: false,
+        matchPattern: "applications/*",
+        path: withWindowsPath("applications/applicationA"),
+        scripts: ["a-workspaces", "all-workspaces", "application-a"],
+        aliases: ["appA"],
+      },
+      {
+        name: "application-1b",
+        isRoot: false,
+        matchPattern: "applications/*",
+        path: withWindowsPath("applications/applicationB"),
+        scripts: ["all-workspaces", "application-b", "b-workspaces"],
+        aliases: ["appB"],
+      },
+      {
+        name: "library-1a",
+        isRoot: false,
+        matchPattern: "libraries/*",
+        path: withWindowsPath("libraries/libraryA"),
+        scripts: ["a-workspaces", "all-workspaces", "library-a"],
+        aliases: ["libA"],
+      },
+      {
+        name: "library-1b",
+        isRoot: false,
+        matchPattern: "libraries/*",
+        path: withWindowsPath("libraries/libraryB"),
+        scripts: ["all-workspaces", "b-workspaces", "library-b"],
+        aliases: ["libB"],
+      },
+    ];
+
+    expect(JSON.parse(resultConfigFile.stdout.raw)).toEqual([
+      {
+        name: "test-root",
+        isRoot: true,
+        matchPattern: "",
+        path: "",
+        scripts: ["all-workspaces", "root-workspace"],
+        aliases: ["my-root-alias"],
+      },
+      ...expectedWithConfigFiles,
+    ]);
+
+    expect(JSON.parse(resultConfigFileFalse.stdout.raw)).toEqual(
+      expectedWithConfigFiles,
     );
   });
 });
