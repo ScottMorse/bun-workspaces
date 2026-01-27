@@ -16,6 +16,10 @@ export type CreateMemoryProjectOptions = {
   name?: string;
   /** The root directory of the project (not used in any actual file system interactions in a {@link MemoryProject}) */
   rootDirectory?: string;
+  /** The root workspace */
+  rootWorkspace?: Workspace;
+  /** Whether to include the root workspace as a normal workspace. */
+  includeRootWorkspace?: boolean;
 };
 
 class _MemoryProject extends ProjectBase implements Project {
@@ -27,12 +31,21 @@ class _MemoryProject extends ProjectBase implements Project {
     root: createDefaultRootConfig(),
     workspaces: {},
   };
+  public readonly rootWorkspace: Workspace;
 
   constructor(options: CreateMemoryProjectOptions) {
     super(true);
     this.name = options.name ?? "";
     this.rootDirectory = options.rootDirectory ?? "";
     this.workspaces = options.workspaces;
+    this.rootWorkspace = options.rootWorkspace ?? {
+      name: "default-root-workspace",
+      isRoot: true,
+      matchPattern: "",
+      path: "",
+      scripts: [],
+      aliases: [],
+    };
 
     for (const workspace of this.workspaces) {
       if (
@@ -57,6 +70,7 @@ class _MemoryProject extends ProjectBase implements Project {
         },
         {} as Record<string, string>,
       ),
+      this.name,
     );
   }
 }

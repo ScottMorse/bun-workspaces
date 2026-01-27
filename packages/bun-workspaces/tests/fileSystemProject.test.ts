@@ -1,7 +1,7 @@
 import { availableParallelism } from "os";
 import path from "path";
 import { expect, test, describe } from "bun:test";
-import { getUserEnvVar } from "../src/config/userEnvVars";
+import { getUserEnvVar, getUserEnvVarName } from "../src/config/userEnvVars";
 import { BUN_LOCK_ERRORS } from "../src/internal/bun";
 import { createFileSystemProject, PROJECT_ERRORS } from "../src/project";
 import { getProjectRoot } from "./testProjects";
@@ -1389,4 +1389,89 @@ test-script-metadata-env-b
       }
     },
   );
+
+  test("Include root workspace - explicit", () => {
+    const projectExclude = createFileSystemProject({
+      rootDirectory: getProjectRoot("withRootWorkspace"),
+    });
+
+    expect(
+      projectExclude.workspaces.find((w) =>
+        Bun.deepEquals(w, projectExclude.rootWorkspace),
+      ),
+    ).toBeFalsy();
+
+    const projectInclude = createFileSystemProject({
+      rootDirectory: getProjectRoot("withRootWorkspace"),
+      includeRootWorkspace: true,
+    });
+
+    expect(projectInclude.rootWorkspace).toEqual(projectInclude.workspaces[0]);
+  });
+
+  test("Include root workspace - env var", () => {
+    process.env[getUserEnvVarName("includeRootWorkspaceDefault")] = "false";
+
+    const projectExclude = createFileSystemProject({
+      rootDirectory: getProjectRoot("withRootWorkspace"),
+    });
+
+    expect(
+      projectExclude.workspaces.find((w) =>
+        Bun.deepEquals(w, projectExclude.rootWorkspace),
+      ),
+    ).toBeFalsy();
+
+    process.env[getUserEnvVarName("includeRootWorkspaceDefault")] = "true";
+
+    const projectInclude = createFileSystemProject({
+      rootDirectory: getProjectRoot("withRootWorkspace"),
+    });
+
+    expect(projectInclude.rootWorkspace).toEqual(projectInclude.workspaces[0]);
+
+    const projectExcludeOverride = createFileSystemProject({
+      rootDirectory: getProjectRoot("withRootWorkspace"),
+      includeRootWorkspace: false,
+    });
+
+    expect(
+      projectExcludeOverride.workspaces.find((w) =>
+        Bun.deepEquals(w, projectExcludeOverride.rootWorkspace),
+      ),
+    ).toBeFalsy();
+
+    delete process.env[getUserEnvVarName("includeRootWorkspaceDefault")];
+  });
+
+  test("Include root workspace - config file", () => {
+    const project = createFileSystemProject({
+      rootDirectory: getProjectRoot("withRootWorkspaceWithConfigFiles"),
+    });
+
+    expect(project.rootWorkspace).toEqual(project.workspaces[0]);
+
+    process.env[getUserEnvVarName("includeRootWorkspaceDefault")] = "false";
+
+    const projectNotOverridden = createFileSystemProject({
+      rootDirectory: getProjectRoot("withRootWorkspaceWithConfigFiles"),
+    });
+
+    expect(projectNotOverridden.rootWorkspace).toEqual(
+      projectNotOverridden.workspaces[0],
+    );
+
+    const projectOverridden = createFileSystemProject({
+      rootDirectory: getProjectRoot("withRootWorkspaceWithConfigFiles"),
+      includeRootWorkspace: false,
+    });
+
+    expect(
+      projectOverridden.workspaces.find((w) =>
+        Bun.deepEquals(w, projectOverridden.rootWorkspace),
+      ),
+    ).toBeFalsy();
+
+    delete process.env[getUserEnvVarName("includeRootWorkspaceDefault")];
+  });
 });

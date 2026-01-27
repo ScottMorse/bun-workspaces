@@ -18,7 +18,7 @@ describe("Test project root config", () => {
       defaults: {
         parallelMax: 5,
         shell: "system",
-        includeRootWorkspace: false,
+        includeRootWorkspace: true,
       },
     });
 
@@ -90,7 +90,7 @@ describe("Test project root config", () => {
       defaults: {
         parallelMax: 5,
         shell: "system",
-        includeRootWorkspace: false,
+        includeRootWorkspace: true,
       },
     });
   });

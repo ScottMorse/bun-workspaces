@@ -170,7 +170,7 @@ export const findWorkspaces = ({
 
   workspaces = sortWorkspaces(workspaces);
 
-  validateWorkspaceAliases(workspaces, workspaceAliases);
+  validateWorkspaceAliases(workspaces, workspaceAliases, rootWorkspace.name);
 
   return { workspaces, workspaceConfigMap, rootWorkspace };
 };
@@ -178,6 +178,7 @@ export const findWorkspaces = ({
 export const validateWorkspaceAliases = (
   workspaces: Workspace[],
   workspaceAliases: ProjectConfig["workspaceAliases"],
+  rootWorkspaceName: string,
 ) => {
   for (const [alias, name] of Object.entries(workspaceAliases ?? {})) {
     if (workspaces.find((ws) => ws.name === alias)) {
@@ -193,7 +194,10 @@ export const validateWorkspaceAliases = (
         `Workspaces ${JSON.stringify(name)} and ${JSON.stringify(workspaceWithDuplicateAlias.name)} have the same alias ${JSON.stringify(alias)}`,
       );
     }
-    if (!workspaces.find((ws) => ws.name === name)) {
+    if (
+      !workspaces.find((ws) => ws.name === name) &&
+      name !== rootWorkspaceName
+    ) {
       throw new WORKSPACE_ERRORS.AliasedWorkspaceNotFound(
         `Workspace ${JSON.stringify(name)} was aliased by ${JSON.stringify(
           alias,
