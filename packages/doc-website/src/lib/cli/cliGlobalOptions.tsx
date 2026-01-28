@@ -67,7 +67,7 @@ const CLI_GLOBAL_OPTIONS_CONTENT = {
   })),
 } as const satisfies Record<CliGlobalOptionName, CliGlobalOptionContent>;
 
-export const getCliOptionContent = (optionName: CliGlobalOptionName) =>
+export const getCliGlobalOptionContent = (optionName: CliGlobalOptionName) =>
   CLI_GLOBAL_OPTIONS_CONTENT[optionName];
 
 export const getCliGlobalOptionsContent = () =>

@@ -319,6 +319,10 @@ export default defineConfig({
             link: "/concepts/workspace-aliases",
           },
           {
+            text: "Root Workspace",
+            link: "/concepts/root-workspace",
+          },
+          {
             text: "Inline Scripts",
             link: "/concepts/inline-scripts",
           },

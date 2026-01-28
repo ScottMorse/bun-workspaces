@@ -3,6 +3,7 @@ const LINKS = {
   glossary: "/concepts/glossary",
   workspaceAliases: "/concepts/workspace-aliases",
   parallelScripts: "/concepts/parallel-scripts",
+  rootWorkspace: "/concepts/root-workspace",
   scriptRuntimeMetadata: "/concepts/script-runtime-metadata",
   scriptExecutionOrder: "/concepts/script-execution-order",
   inlineScripts: "/concepts/inline-scripts",
@@ -31,6 +32,12 @@ export const ConceptsHeader = ({
           className={activeHref === "workspaceAliases" ? "active" : ""}
         >
           Workspace Aliases
+        </Link>
+        <Link
+          href={LINKS.rootWorkspace}
+          className={activeHref === "rootWorkspace" ? "active" : ""}
+        >
+          Root Workspace
         </Link>
         <Link
           href={LINKS.inlineScripts}

@@ -71,4 +71,17 @@ export const ENV_VARS_METADATA: Record<
       </span>
     ),
   },
+  includeRootWorkspaceDefault: {
+    envVarName: getUserEnvVarName("includeRootWorkspaceDefault"),
+    rootConfigDefaultsKey: `${CONFIG_DEFAULTS_KEY}.includeRootWorkspace`,
+    description: (
+      <span>
+        Whether to include the{" "}
+        <Link href="/concepts/root-workspace" className="inline-link">
+          root workspace
+        </Link>{" "}
+        as a normal workspace.
+      </span>
+    ),
+  },
 } as const;

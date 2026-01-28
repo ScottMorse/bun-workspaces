@@ -1,7 +1,7 @@
 import { type CliGlobalOptionName } from "bun-workspaces/src/cli";
 import { useId } from "react";
 import { SyntaxHighlighter } from "../util/highlight";
-import { getCliOptionContent } from "./cliGlobalOptions";
+import { getCliGlobalOptionContent } from "./cliGlobalOptions";
 import { getGlobalOptionId } from "./searchIds";
 
 export const CliGlobalOptionDoc = ({
@@ -11,7 +11,7 @@ export const CliGlobalOptionDoc = ({
   option: CliGlobalOptionName;
   deprecationText?: React.ReactNode;
 }) => {
-  const content = getCliOptionContent(option);
+  const content = getCliGlobalOptionContent(option);
   const id = useId();
   return (
     <div className="cli-global-option-doc">

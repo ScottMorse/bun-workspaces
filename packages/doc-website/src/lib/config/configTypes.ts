@@ -16,6 +16,10 @@ const rootDisplay: ValueToDisplay<RequiredDeep<RootConfig>> = {
       primitive: true,
       types: ["string"],
     },
+    includeRootWorkspace: {
+      primitive: true,
+      types: ["boolean"],
+    },
   },
 };
 

@@ -309,3 +309,14 @@ project.runWorkspaceScript({
   inline: { shell: "system" },
 });
 `.trim();
+
+export const API_ROOT_SELECTOR_EXAMPLE = `
+import { createFileSystemProject } from "bun-workspaces";
+
+const project = createFileSystemProject();
+
+project.runScriptAcrossWorkspaces({
+  workspacePatterns: ["@root"],
+  script: "lint",
+});
+`.trim();
