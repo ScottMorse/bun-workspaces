@@ -53,6 +53,8 @@ export interface Project {
   name: string;
   /** The root directory of the project */
   rootDirectory: string;
+  /** The root workspace of the project */
+  rootWorkspace: Workspace;
   /** The list of all workspaces in the project */
   workspaces: Workspace[];
   /** The config for the project and its workspaces */

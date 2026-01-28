@@ -2,7 +2,6 @@ import fs from "fs";
 import path from "path";
 import { logger } from "../../internal/logger";
 import type { ParallelMaxValue, ScriptShellOption } from "../../runScript";
-import { sortWorkspaces, type Workspace } from "../../workspaces";
 import {
   commandOutputLogger,
   handleProjectCommand,
@@ -70,67 +69,10 @@ export const runScript = handleProjectCommand(
       } (parallel: ${!!options.parallel}, args: ${JSON.stringify(scriptArgs)})`,
     );
 
-    let workspaces: Workspace[] = workspacePatterns.length
-      ? (workspacePatterns
-          .flatMap((workspacePattern) => {
-            if (workspacePattern.includes("*")) {
-              return project
-                .findWorkspacesByPattern(workspacePattern)
-                .filter(
-                  (workspace) =>
-                    options.inline || workspace.scripts.includes(script),
-                )
-                .map(({ name }) => name);
-            }
-            return [workspacePattern];
-          })
-          .map((workspaceName) => {
-            const workspace = project.findWorkspaceByNameOrAlias(workspaceName);
-            if (!workspace) {
-              logger.error(
-                `Workspace name or alias not found: ${JSON.stringify(workspaceName)}`,
-              );
-              process.exit(1);
-            }
-            return workspace;
-          })
-          .filter(Boolean) as Workspace[])
-      : options.inline
-        ? project.workspaces
-        : project.listWorkspacesWithScript(script);
-
-    workspaces = sortWorkspaces(workspaces);
-
-    if (!workspaces.length) {
-      if (
-        workspacePatterns.length === 1 &&
-        !workspacePatterns[0].includes("*")
-      ) {
-        logger.error(
-          `Workspace not found: ${JSON.stringify(workspacePatterns[0])}`,
-        );
-      } else {
-        logger.error(
-          `No ${workspacePatterns.length ? "matching " : ""}workspaces found${options.inline ? " in the project" : " with script " + JSON.stringify(script)}`,
-        );
-      }
-      process.exit(1);
-    }
-
-    if (
-      !options.inline &&
-      !workspaces.some((workspace) => workspace.scripts.includes(script))
-    ) {
-      logger.error(
-        `Script not found in target workspace${workspaces.length === 1 ? "" : "s"}: ${JSON.stringify(script)}`,
-      );
-      process.exit(1);
-    }
-
-    workspaces.sort((a, b) => a.path.localeCompare(b.path));
-
     const { output, summary } = project.runScriptAcrossWorkspaces({
-      workspacePatterns: workspaces.map(({ name }) => name),
+      workspacePatterns: workspacePatterns.length
+        ? workspacePatterns
+        : undefined,
       script,
       inline: options.inline
         ? options.inlineName || options.shell

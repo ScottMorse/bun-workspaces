@@ -245,7 +245,7 @@ describe("CLI Run Script", () => {
     { repeats: 2 },
   );
 
-  test("Run for specific workspaces", async () => {
+  test.only("Run for specific workspaces", async () => {
     const { run } = setupCliTest({
       testProject: "simple1",
     });

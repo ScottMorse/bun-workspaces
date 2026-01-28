@@ -679,7 +679,7 @@ Script: library-b
       const noScriptResult = await run(command, "no-script");
       assertOutputMatches(
         noScriptResult.stderr.sanitizedCompactLines,
-        `No workspaces found with script "no-script"`,
+        `No matching workspaces found with script "no-script"`,
       );
 
       const noWorkspacesResult = await run(
@@ -699,7 +699,7 @@ Script: library-b
       );
       assertOutputMatches(
         noWorkspaceScriptResult.stderr.sanitizedCompactLines,
-        `Script not found in target workspace: "does-not-exist"`,
+        `No matching workspaces found with script "does-not-exist"`,
       );
     },
   );

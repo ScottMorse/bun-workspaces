@@ -571,9 +571,7 @@ describe("Test FileSystemProject", () => {
         workspacePatterns: [],
         script: "all-workspaces",
       }),
-    ).toThrow(
-      'No workspaces found for script "all-workspaces" (available: application-1a, application-1b, library-1a, library-1b)',
-    );
+    ).toThrow('No matching workspaces found with script "all-workspaces"');
   });
 
   test("runScriptAcrossWorkspaces: all workspaces", async () => {

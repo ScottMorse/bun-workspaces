@@ -19,10 +19,19 @@ import {
   resolveScriptShell,
   type ScriptShellOption,
 } from "../../runScript/scriptShellOption";
-import { findWorkspaces, type Workspace } from "../../workspaces";
+import {
+  findWorkspaces,
+  sortWorkspaces,
+  type Workspace,
+} from "../../workspaces";
 import { PROJECT_ERRORS } from "../errors";
 import type { Project, ProjectConfig } from "../project";
-import { ProjectBase, resolveWorkspacePath } from "./projectBase";
+import {
+  ProjectBase,
+  resolveRootWorkspaceSelector,
+  resolveWorkspacePath,
+  ROOT_WORKSPACE_SELECTOR,
+} from "./projectBase";
 
 /** Arguments for {@link createFileSystemProject} */
 export type CreateFileSystemProjectOptions = {
@@ -153,8 +162,9 @@ class _FileSystemProject extends ProjectBase implements Project {
   runWorkspaceScript(
     options: RunWorkspaceScriptOptions,
   ): RunWorkspaceScriptResult {
-    const workspace = this.findWorkspaceByNameOrAlias(
+    const workspace = resolveRootWorkspaceSelector(
       options.workspaceNameOrAlias,
+      this,
     );
 
     if (!workspace) {
@@ -227,11 +237,14 @@ class _FileSystemProject extends ProjectBase implements Project {
   runScriptAcrossWorkspaces(
     options: RunScriptAcrossWorkspacesOptions,
   ): RunScriptAcrossWorkspacesResult {
-    const workspaces = (
-      options.workspacePatterns ??
-      this.workspaces.map((workspace) => workspace.name)
-    )
-      .flatMap((pattern) => this.findWorkspacesByPattern(pattern))
+    const matchedWorkspaces = sortWorkspaces(
+      (
+        options.workspacePatterns ??
+        this.workspaces.map((workspace) => workspace.name)
+      ).flatMap((pattern) => this.findWorkspacesByPattern(pattern)),
+    );
+
+    const workspaces = matchedWorkspaces
       .filter(
         (workspace) =>
           options.inline || workspace.scripts.includes(options.script),
@@ -255,8 +268,15 @@ class _FileSystemProject extends ProjectBase implements Project {
       });
 
     if (!workspaces.length) {
+      const isSingleMatchNotFound =
+        options.workspacePatterns?.length === 1 &&
+        !options.workspacePatterns[0].includes("*") &&
+        !matchedWorkspaces.length;
+
       throw new PROJECT_ERRORS.ProjectWorkspaceNotFound(
-        `No workspaces found for script ${JSON.stringify(options.script)} (available: ${this.workspaces.map((workspace) => workspace.name).join(", ")})`,
+        isSingleMatchNotFound
+          ? `Workspace name or alias not found: ${JSON.stringify(options?.workspacePatterns?.[0])}`
+          : `No matching workspaces found with script ${JSON.stringify(options.script)}`,
       );
     }
 
@@ -306,7 +326,10 @@ class _FileSystemProject extends ProjectBase implements Project {
               workingDirectory: resolveWorkspacePath(this, workspace),
             }
           : this.createScriptCommand({
-              workspaceNameOrAlias: workspace.name,
+              workspaceNameOrAlias:
+                workspace.name === this.rootWorkspace.name
+                  ? ROOT_WORKSPACE_SELECTOR
+                  : workspace.name,
               scriptName: script,
               args,
             }).commandDetails;

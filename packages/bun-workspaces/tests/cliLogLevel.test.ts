@@ -275,7 +275,7 @@ application-a`,
     assertOutputMatches(
       (await run("--log-level=error", "run-script", "does-not-exist"))
         .stdoutAndErr.sanitized,
-      'No workspaces found with script "does-not-exist"',
+      'No matching workspaces found with script "does-not-exist"',
     );
   });
 });
