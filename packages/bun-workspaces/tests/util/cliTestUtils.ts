@@ -21,6 +21,8 @@ export interface SetupTestOptions {
   testProject?: TestProjectName;
   /** If provided, the test will be run in the given working directory. Cannot be used together with testProject. */
   workingDirectory?: string;
+  /** If provided, the test will be run with the given environment variables. */
+  env?: Record<string, string>;
 }
 
 export interface OutputText {
@@ -60,7 +62,7 @@ const blankOutputText: OutputText = {
 };
 
 export const setupCliTest = (
-  { testProject, workingDirectory }: SetupTestOptions = {
+  { testProject, workingDirectory, env }: SetupTestOptions = {
     testProject: "default",
   },
 ): SetupTestResult => {
@@ -84,7 +86,7 @@ export const setupCliTest = (
       ],
       {
         cwd: testProjectRoot,
-        env: { ...process.env, FORCE_COLOR: "1" },
+        env: { ...process.env, ...env, FORCE_COLOR: "1" },
         stdout: "pipe",
         stderr: "pipe",
       },

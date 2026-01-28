@@ -2,6 +2,8 @@
 export type Workspace = {
   /** The name of the workspace from its `package.json` */
   name: string;
+  /** Whether the workspace is the root workspace */
+  isRoot: boolean;
   /** The relative path to the workspace from the root `package.json` */
   path: string;
   /** The pattern from `"workspaces"` in the root `package.json`that this workspace was matched from*/

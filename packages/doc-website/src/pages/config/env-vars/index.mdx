@@ -22,12 +22,12 @@ import { ENV_VARS_METADATA } from "../../../lib/config/envVars";
 Set these environment variables to override default values used. The [root configuration](/config/root) will take precedence over environment variables, 
 and any values set explicitly in CLI or API arguments will take precedence over both.
 
-<div className="env-vars-list">
+<ul className="env-vars-list">
 {Object.values(ENV_VARS_METADATA).map(envVar => <div key={envVar.envVarName}>
-  <div className="env-var-item" key={envVar.envVarName}>
+  <li className="env-var-item" key={envVar.envVarName}>
     <code>{envVar.envVarName}</code>
     <div>{envVar.description}</div>
     <div>If <code>{envVar.rootConfigDefaultsKey}</code> is set in the <Link href="/config/root" className="inline-link">root configuration</Link>, it will take precedence.</div>
-  </div>
+  </li>
 </div>)}
-</div>
+</ul>

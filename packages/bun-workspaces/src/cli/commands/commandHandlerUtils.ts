@@ -1,4 +1,5 @@
 import { Option, type Command } from "commander";
+import { BunWorkspacesError } from "../../internal/core";
 import { createLogger, logger } from "../../internal/logger";
 import type { FileSystemProject } from "../../project/implementations/fileSystemProject";
 import type { Workspace } from "../../workspaces";
@@ -22,7 +23,7 @@ export type ProjectCommandContext = GlobalCommandContext & {
 };
 
 export const createWorkspaceInfoLines = (workspace: Workspace) => [
-  `Workspace: ${workspace.name}`,
+  `Workspace: ${workspace.name}${workspace.isRoot ? " (root)" : ""}`,
   ` - Aliases: ${workspace.aliases.join(", ")}`,
   ` - Path: ${workspace.path}`,
   ` - Glob Match: ${workspace.matchPattern}`,
@@ -67,9 +68,17 @@ const handleCommand =
       program.addOption(option);
     }
 
-    program = program.action((...actionArgs) =>
-      handler(context, ...(actionArgs as ActionArgs)),
-    );
+    program = program.action(async (...actionArgs) => {
+      try {
+        await handler(context, ...(actionArgs as ActionArgs));
+      } catch (error) {
+        if (error instanceof BunWorkspacesError) {
+          logger.error(error.message);
+          process.exit(1);
+        }
+        throw error;
+      }
+    });
 
     return program;
   };
@@ -93,12 +102,12 @@ export const handleProjectCommand =
   (context: ProjectCommandContext) =>
     handleCommand<ProjectCommandContext, ActionArgs>(
       commandName,
-      (context, ...actionArgs) => {
+      async (context, ...actionArgs) => {
         const { projectError } = context;
         if (projectError) {
           logger.error(projectError.message);
           process.exit(1);
         }
-        handler(context, ...actionArgs);
+        await handler(context, ...actionArgs);
       },
     )(context);

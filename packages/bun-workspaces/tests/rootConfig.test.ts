@@ -10,6 +10,7 @@ describe("Test project root config", () => {
       defaults: {
         parallelMax: determineParallelMax("default"),
         shell: resolveScriptShell("default"),
+        includeRootWorkspace: false,
       },
     });
 
@@ -17,6 +18,7 @@ describe("Test project root config", () => {
       defaults: {
         parallelMax: 5,
         shell: "system",
+        includeRootWorkspace: true,
       },
     });
 
@@ -24,6 +26,7 @@ describe("Test project root config", () => {
       defaults: {
         parallelMax: 5,
         shell: "system",
+        includeRootWorkspace: false,
       },
     });
 
@@ -32,6 +35,7 @@ describe("Test project root config", () => {
         defaults: {
           parallelMax: 5,
           shell: resolveScriptShell("default"),
+          includeRootWorkspace: false,
         },
       },
     );
@@ -74,6 +78,7 @@ describe("Test project root config", () => {
       defaults: {
         parallelMax: determineParallelMax("default"),
         shell: resolveScriptShell("default"),
+        includeRootWorkspace: false,
       },
     });
 
@@ -85,6 +90,7 @@ describe("Test project root config", () => {
       defaults: {
         parallelMax: 5,
         shell: "system",
+        includeRootWorkspace: true,
       },
     });
   });

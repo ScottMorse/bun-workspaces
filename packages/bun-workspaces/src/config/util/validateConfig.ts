@@ -1,5 +1,11 @@
 import type { BunWorkspacesError } from "../../internal/core";
-import type { AjvSchemaValidator } from "./ajvTypes";
+import type { AjvJsonSchemaErrorObject, AjvSchemaValidator } from "./ajvTypes";
+
+const suffixAdditionalPropertyName = (error: AjvJsonSchemaErrorObject) => {
+  return error.params?.additionalProperty
+    ? ` (found "${error.params.additionalProperty}")`
+    : "";
+};
 
 export const executeValidator = <Config extends object>(
   validator: AjvSchemaValidator<Config>,
@@ -18,7 +24,10 @@ export const executeValidator = <Config extends object>(
               error.instancePath
                 ?.replace(/[/|\\](\d+)/g, "[$1]")
                 .replaceAll(/[/|\\]/g, ".") ?? ""
-            }`.replace(/^config[^.]/, "config.")} ${error.message}`,
+            }`.replace(
+              /^config[^.]/,
+              "config.",
+            )} ${error.message?.replace(/NOT/g, "not")}${suffixAdditionalPropertyName(error)}`,
         )
         .join("\n")}`,
     );

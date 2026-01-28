@@ -10,8 +10,11 @@ const pathProject = createFileSystemProject({
   rootDirectory: "./path/to/project/root" // relative from process.cwd()
 });
 
-console.log(pathProject.name); // The name from the root package.json
-console.log(pathProject.workspaces); // An array of workspaces found in the project
+// Include the root workspace as a normal workspace (overrides config/env settings)
+const projectWithRoot = createFileSystemProject({
+  includeRootWorkspace: true,
+});
+
 `.trim();
 
 export const CREATE_MEMORY_PROJECT_EXAMPLE = `
@@ -87,6 +90,9 @@ export const WORKSPACE_EXAMPLE = `
   // The name of the workspace from its package.json
   name: "my-workspace",
 
+  // Whether the workspace is the root workspace
+  isRoot: false,
+
   // The relative path to the workspace from the project root
   path: "my/workspace/path",
 
@@ -152,7 +158,7 @@ const { output, summary } = project.runScriptAcrossWorkspaces({
   script: "my-script",
 
   // Optional. Arguments to add to the command
-  args: "--my --appended --args", // optional, arguments to add to the command
+  args: "--my --appended --args",
 
   // Optional. Whether to run the scripts in parallel
   parallel: true,
@@ -301,5 +307,16 @@ project.runWorkspaceScript({
   script: "echo 'this is my inline script'",
   // Takes "bun", "system", or "default", same as the CLI --shell option
   inline: { shell: "system" },
+});
+`.trim();
+
+export const API_ROOT_SELECTOR_EXAMPLE = `
+import { createFileSystemProject } from "bun-workspaces";
+
+const project = createFileSystemProject();
+
+project.runScriptAcrossWorkspaces({
+  workspacePatterns: ["@root"],
+  script: "lint",
 });
 `.trim();

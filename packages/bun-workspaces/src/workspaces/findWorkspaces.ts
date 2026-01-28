@@ -22,12 +22,17 @@ export interface FindWorkspacesOptions {
   workspaceGlobs?: string[];
   /** @deprecated due to config file changes */
   workspaceAliases?: ProjectConfig["workspaceAliases"];
+  /** Whether to include the root workspace as a normal workspace.*/
+  includeRootWorkspace?: boolean;
 }
 
 export const sortWorkspaces = (workspaces: Workspace[]) =>
   [...workspaces]
     .sort(
-      (a, b) => a.name.localeCompare(b.name) || a.path.localeCompare(b.path),
+      (a, b) =>
+        (a.isRoot ? -1 : 1) ||
+        a.path.localeCompare(b.path) ||
+        a.name.localeCompare(b.name),
     )
     .reduce<Workspace[]>((acc, workspace, i, arr) => {
       const previousWorkspace = arr[i - 1];
@@ -76,11 +81,11 @@ export const findWorkspaces = ({
   rootDirectory,
   workspaceGlobs: _workspaceGlobs,
   workspaceAliases = {},
+  includeRootWorkspace = false,
 }: FindWorkspacesOptions) => {
   rootDirectory = path.resolve(rootDirectory);
 
   let workspaces: Workspace[] = [];
-  const excludedWorkspacePaths: string[] = [];
 
   const workspaceConfigMap: Record<string, ResolvedWorkspaceConfig> = {};
 
@@ -98,13 +103,11 @@ export const findWorkspaces = ({
   const workspaceGlobs =
     _workspaceGlobs ?? getWorkspaceGlobsFromRoot({ rootDirectory });
 
+  let rootWorkspace: Workspace | undefined;
+
   for (const workspacePath of Object.keys(bunLock.workspaces).map((p) =>
     path.join(rootDirectory, p),
   )) {
-    if (workspacePath === rootDirectory) {
-      continue;
-    }
-
     const packageJsonPath = resolvePackageJsonPath(workspacePath);
     if (packageJsonPath) {
       const packageJsonContent = resolvePackageJsonContent(
@@ -131,13 +134,10 @@ export const findWorkspaces = ({
         workspaceGlobs.find((glob) => new bun.Glob(glob).match(relativePath)) ??
         "";
 
-      if (_workspaceGlobs && !matchPattern) {
-        continue;
-      }
-
       const workspace: Workspace = {
         name: packageJsonContent.name ?? "",
-        matchPattern,
+        isRoot: workspacePath === rootDirectory,
+        matchPattern: workspacePath === rootDirectory ? "" : matchPattern,
         path: path.relative(rootDirectory, path.dirname(packageJsonPath)),
         scripts: Object.keys(packageJsonContent.scripts ?? {}).sort(),
         aliases: [
@@ -149,27 +149,36 @@ export const findWorkspaces = ({
           ),
         ],
       };
-      if (
-        !excludedWorkspacePaths.includes(workspace.path) &&
-        validateWorkspace(workspace, workspaces)
-      ) {
-        workspaces.push(workspace);
+
+      if (workspace.isRoot) {
+        rootWorkspace = workspace;
+      }
+
+      if (validateWorkspace(workspace, workspaces)) {
+        if (!workspace.isRoot || includeRootWorkspace) {
+          workspaces.push(workspace);
+        }
         workspaceConfigMap[workspace.name] =
           workspaceConfig ?? createDefaultWorkspaceConfig();
       }
     }
   }
 
+  if (!rootWorkspace) {
+    throw new WORKSPACE_ERRORS.RootWorkspaceNotFound("No root workspace found");
+  }
+
   workspaces = sortWorkspaces(workspaces);
 
-  validateWorkspaceAliases(workspaces, workspaceAliases);
+  validateWorkspaceAliases(workspaces, workspaceAliases, rootWorkspace.name);
 
-  return { workspaces, workspaceConfigMap };
+  return { workspaces, workspaceConfigMap, rootWorkspace };
 };
 
 export const validateWorkspaceAliases = (
   workspaces: Workspace[],
   workspaceAliases: ProjectConfig["workspaceAliases"],
+  rootWorkspaceName: string,
 ) => {
   for (const [alias, name] of Object.entries(workspaceAliases ?? {})) {
     if (workspaces.find((ws) => ws.name === alias)) {
@@ -185,7 +194,10 @@ export const validateWorkspaceAliases = (
         `Workspaces ${JSON.stringify(name)} and ${JSON.stringify(workspaceWithDuplicateAlias.name)} have the same alias ${JSON.stringify(alias)}`,
       );
     }
-    if (!workspaces.find((ws) => ws.name === name)) {
+    if (
+      !workspaces.find((ws) => ws.name === name) &&
+      name !== rootWorkspaceName
+    ) {
       throw new WORKSPACE_ERRORS.AliasedWorkspaceNotFound(
         `Workspace ${JSON.stringify(name)} was aliased by ${JSON.stringify(
           alias,

@@ -42,6 +42,20 @@ const CLI_GLOBAL_OPTIONS_CONTENT = {
       `bw ${shortOption} /path/to/your/project list-workspaces`,
     ],
   })),
+  includeRoot: defineOptionContent(
+    "includeRoot",
+    ({ mainOption, shortOption }) => ({
+      title: "Include Root",
+      description:
+        "Include the root workspace as a normal workspace. This overrides config and environment variable settings.",
+      examples: [
+        `bw ${mainOption} list-workspaces`,
+        `bw ${shortOption} list-workspaces`,
+        "",
+        `bw ${mainOption.replace("--", "--no-")} list-workspaces # disable (to override config/env)`,
+      ],
+    }),
+  ),
   logLevel: defineOptionContent("logLevel", ({ mainOption, shortOption }) => ({
     title: "Log Level",
     description:
@@ -53,7 +67,7 @@ const CLI_GLOBAL_OPTIONS_CONTENT = {
   })),
 } as const satisfies Record<CliGlobalOptionName, CliGlobalOptionContent>;
 
-export const getCliOptionContent = (optionName: CliGlobalOptionName) =>
+export const getCliGlobalOptionContent = (optionName: CliGlobalOptionName) =>
   CLI_GLOBAL_OPTIONS_CONTENT[optionName];
 
 export const getCliGlobalOptionsContent = () =>

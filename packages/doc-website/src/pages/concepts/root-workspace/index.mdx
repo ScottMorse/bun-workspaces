@@ -1,0 +1,60 @@
+---
+title: Concepts > Root Workspace
+titleSuffix: " | bun-workspaces"
+description: "Root Workspace | Concepts | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
+pageType: doc
+sidebar: false
+outline: true
+footer: false
+---
+import { exampleWorkspaceConfigSimple } from '../../../lib/config/exampleConfig'
+import { SyntaxHighlighter } from '../../../lib/util/highlight';
+import { ConceptsHeader } from "../../../lib/concepts/ConceptsHeader";
+import { CLI_RUN_SCRIPT_ROOT_SELECTOR_EXAMPLE } from '../../../lib/cli/cliExamples';
+import { API_ROOT_SELECTOR_EXAMPLE } from '../../../lib/api/apiExamples';
+import { ENV_VARS_METADATA } from '../../../lib/config/envVars';
+import { getCliGlobalOptionContent } from '../../../lib/cli/cliGlobalOptions';
+import { ROOT_WORKSPACE_SELECTOR } from 'bun-workspaces/src/project';
+
+<ConceptsHeader activeHref="rootWorkspace" />
+
+## The Root Workspace
+
+The root workspace is simply a [Workspace](/concepts/glossary#workspace) based on the root `package.json` of your project. 
+
+By default, this is not included in the project's workspaces list, but there
+are ways to either modify or override the default, and it is always possible to directly reference it explicitly.
+
+## Including in the Project's workspaces list
+
+### Including by Default
+
+You can set the default value to include the root workspace to `true` in the [root configuration](/config/root) defaults or [environment variable](/config/env-vars) <code>{ENV_VARS_METADATA.includeRootWorkspaceDefault.envVarName}</code> to include the root workspace by default.
+
+### Including Explicitly
+
+Use the CLI [global option](/cli/global-options#include-root) <code>{getCliGlobalOptionContent("includeRoot").mainOption}</code> to include the root workspace explicitly for a command.
+
+In the API, use the `includeRootWorkspace` option for [createFileSystemProject](/api/reference#createfilesystemproject) to include the root workspace explicitly in the project's workspaces.
+
+## Referencing the Root Workspace
+
+There are ways you can always reference the root workspace, regardless of whether it is included in the project's normal workspaces list or not.
+
+For example, in the API, you can always reference the root workspace by using the `.rootWorkspace` [property](/api/reference#rootworkspace) of a `Project`.
+
+You can also use the selector defined below:
+
+### The Root Selector: {ROOT_WORKSPACE_SELECTOR}
+
+When passing workspace patterns to the CLI for the [run-script](/cli/commands#run-script) command, you can use the `@root` alias to reference the root workspace.
+
+<SyntaxHighlighter language="bash">
+{CLI_RUN_SCRIPT_ROOT_SELECTOR_EXAMPLE}
+</SyntaxHighlighter>
+
+This can also be used similarly in the API:
+
+<SyntaxHighlighter language="typescript">
+{API_ROOT_SELECTOR_EXAMPLE}
+</SyntaxHighlighter>

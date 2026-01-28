@@ -16,9 +16,20 @@ import type {
 export const resolveWorkspacePath = (project: Project, workspace: Workspace) =>
   path.resolve(project.rootDirectory, workspace.path);
 
+export const ROOT_WORKSPACE_SELECTOR = "@root";
+
+export const resolveRootWorkspaceSelector = (
+  workspacePattern: string,
+  project: Project,
+) =>
+  workspacePattern === ROOT_WORKSPACE_SELECTOR
+    ? project.rootWorkspace
+    : project.findWorkspaceByNameOrAlias(workspacePattern);
+
 export abstract class ProjectBase implements Project {
   public abstract readonly name: string;
   public abstract readonly rootDirectory: string;
+  public abstract readonly rootWorkspace: Workspace;
   public abstract readonly workspaces: Workspace[];
   public abstract readonly sourceType: "fileSystem" | "memory";
   public abstract readonly config: ProjectConfig;
@@ -83,6 +94,9 @@ export abstract class ProjectBase implements Project {
   findWorkspacesByPattern(...workspacePatterns: string[]): Workspace[] {
     return sortWorkspaces(
       workspacePatterns.flatMap((pattern) => {
+        const workspace = resolveRootWorkspaceSelector(pattern, this);
+        if (workspace) return [workspace];
+
         if (!pattern) return [];
         if (!pattern.includes("*")) {
           const workspace = this.findWorkspaceByNameOrAlias(pattern);
@@ -99,8 +113,9 @@ export abstract class ProjectBase implements Project {
   createScriptCommand(
     options: CreateProjectScriptCommandOptions,
   ): CreateProjectScriptCommandResult {
-    const workspace = this.findWorkspaceByNameOrAlias(
+    const workspace = resolveRootWorkspaceSelector(
       options.workspaceNameOrAlias,
+      this,
     );
 
     if (!workspace) {

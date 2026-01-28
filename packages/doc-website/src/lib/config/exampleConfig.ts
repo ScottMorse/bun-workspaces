@@ -10,6 +10,7 @@ export const exampleRootConfigSimple1: RootConfig = {
   defaults: {
     parallelMax: 4,
     shell: "system",
+    includeRootWorkspace: false,
   },
 };
 
@@ -17,6 +18,7 @@ export const exampleRootConfigSimple2: RootConfig = {
   defaults: {
     parallelMax: "50%",
     shell: "system",
+    includeRootWorkspace: true,
   },
 };
 

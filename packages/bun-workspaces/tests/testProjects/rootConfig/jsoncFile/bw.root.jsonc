@@ -3,5 +3,6 @@
   "defaults": {
     "parallelMax": 5,
     "shell": "system",
+    "includeRootWorkspace": true
   },
 }

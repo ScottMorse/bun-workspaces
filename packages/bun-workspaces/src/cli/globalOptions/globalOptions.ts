@@ -47,6 +47,13 @@ const addGlobalOption = (
   }
 
   program.addOption(option);
+
+  if (!param) {
+    program.option(
+      mainOption.replace(/^--/, "--no-"),
+      `Set ${mainOption} as false`,
+    );
+  }
 };
 
 const getWorkingDirectoryFromArgs = (
@@ -96,6 +103,7 @@ const defineGlobalOptions = (
   }
 
   addGlobalOption(program, "logLevel");
+  addGlobalOption(program, "includeRoot");
 
   return { cwd, config };
 };
@@ -113,6 +121,7 @@ const applyGlobalOptions = (
     project = _internalCreateFileSystemProject({
       rootDirectory: options.cwd,
       workspaceAliases: config?.project?.workspaceAliases ?? {},
+      includeRootWorkspace: options.includeRoot,
     });
 
     logger.debug(

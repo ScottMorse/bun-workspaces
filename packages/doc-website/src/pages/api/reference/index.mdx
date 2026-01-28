@@ -10,8 +10,21 @@ footer: false
 
 import { SyntaxHighlighter } from "../../../lib/util/highlight";
 import { ApiHeader } from "../../../lib/api/ApiHeader";
-import { CREATE_FS_PROJECT_EXAMPLE, CREATE_SCRIPT_COMMAND_EXAMPLE, FIND_WORKSPACE_BY_ALIAS_EXAMPLE, FIND_WORKSPACE_BY_NAME_EXAMPLE, FIND_WORKSPACE_BY_NAME_OR_ALIAS_EXAMPLE, FIND_WORKSPACES_BY_PATTERN_EXAMPLE, LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE, MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE, RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE, RUN_WORKSPACE_SCRIPT_EXAMPLE, SET_LOG_LEVEL_EXAMPLE, WORKSPACE_EXAMPLE } from '../../../lib/api/apiExamples';
-import { CREATE_MEMORY_PROJECT_EXAMPLE } from '../../../lib/api/apiExamples';
+import { 
+  CREATE_FS_PROJECT_EXAMPLE, 
+  CREATE_SCRIPT_COMMAND_EXAMPLE, 
+  FIND_WORKSPACE_BY_ALIAS_EXAMPLE, 
+  FIND_WORKSPACE_BY_NAME_EXAMPLE, 
+  FIND_WORKSPACE_BY_NAME_OR_ALIAS_EXAMPLE, 
+  FIND_WORKSPACES_BY_PATTERN_EXAMPLE,
+  LIST_WORKSPACES_WITH_SCRIPT_EXAMPLE,
+  MAP_SCRIPTS_TO_WORKSPACES_EXAMPLE,
+  RUN_SCRIPT_ACROSS_WORKSPACES_EXAMPLE,
+  RUN_WORKSPACE_SCRIPT_EXAMPLE,
+  SET_LOG_LEVEL_EXAMPLE,
+  CREATE_MEMORY_PROJECT_EXAMPLE,
+  WORKSPACE_EXAMPLE,
+} from '../../../lib/api/apiExamples';
 
 <ApiHeader activeHref="reference" />
 
@@ -36,6 +49,8 @@ It will also detect and utilize any [root configuration](/config/root) and [work
 An object representing a workspace in a [Project](/api/reference#project).
 
 Set [workspace aliases](/concepts/workspace-aliases) in the [workspace configuration](/config/workspace) to make it easier to reference workspaces.
+
+See more on the [root workspace](/concepts/root-workspace).
 
 <SyntaxHighlighter language="typescript">
 {WORKSPACE_EXAMPLE}
@@ -66,6 +81,12 @@ The given root directory of the project.
 `type: Workspace[]`
 
 The list of all [Workspaces](/api/reference#workspace) in the project.
+<hr className="reference-divider"/>
+
+### .rootWorkspace
+`type: Workspace`
+
+The [root workspace](/concepts/root-workspace) of the project.
 <hr className="reference-divider"/>
 
 ### .findWorkspaceByName

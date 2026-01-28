@@ -3,6 +3,7 @@ import { LOG_LEVELS, type LogLevelSetting } from "../../internal/logger";
 export interface CliGlobalOptions {
   logLevel: LogLevelSetting;
   cwd: string;
+  includeRoot: boolean;
   configFile?: string;
 }
 
@@ -11,7 +12,7 @@ export interface CliGlobalOptionConfig {
   shortOption: string;
   description: string;
   defaultValue: string;
-  values: LogLevelSetting[] | null;
+  values: string[] | null;
   param: string;
 }
 
@@ -21,7 +22,7 @@ const CLI_GLOBAL_OPTIONS_CONFIG = {
     shortOption: "-l",
     description: "Log levels",
     defaultValue: "info",
-    values: [...LOG_LEVELS, "silent"],
+    values: [...LOG_LEVELS, "silent"] satisfies LogLevelSetting[],
     param: "level",
   },
   cwd: {
@@ -31,6 +32,14 @@ const CLI_GLOBAL_OPTIONS_CONFIG = {
     defaultValue: ".",
     values: null,
     param: "path",
+  },
+  includeRoot: {
+    mainOption: "--include-root",
+    shortOption: "-r",
+    description: "Include the root workspace as a normal workspace",
+    defaultValue: "",
+    values: null,
+    param: "",
   },
   configFile: {
     mainOption: "--config-file",

@@ -1,6 +1,7 @@
 import { getDoctorInfo } from "../../doctor";
 import { isJSONObject } from "../../internal/core";
 import { logger } from "../../internal/logger";
+import { ROOT_WORKSPACE_SELECTOR } from "../../project";
 import {
   createJsonLines,
   commandOutputLogger,
@@ -160,7 +161,10 @@ export const workspaceInfo = handleProjectCommand(
       `Command: Workspace info for ${workspaceName} (options: ${JSON.stringify(options)})`,
     );
 
-    const workspace = project.findWorkspaceByNameOrAlias(workspaceName);
+    const workspace =
+      workspaceName === ROOT_WORKSPACE_SELECTOR
+        ? project.rootWorkspace
+        : project.findWorkspaceByNameOrAlias(workspaceName);
     if (!workspace) {
       logger.error(`Workspace ${JSON.stringify(workspaceName)} not found`);
       process.exit(1);

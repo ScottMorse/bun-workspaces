@@ -88,3 +88,11 @@ export const CLI_INLINE_NAME_EXAMPLE = `
 # Pass a name for an inline script
 bw run "echo 'my script: <scriptName>'" --inline --inline-name=my-inline-script
 `.trim();
+
+export const CLI_RUN_SCRIPT_ROOT_SELECTOR_EXAMPLE = `
+# Run the lint script from the root package.json
+bw run lint @root
+
+# Get workspace information for the root workspace
+bw workspace-info @root
+`.trim();

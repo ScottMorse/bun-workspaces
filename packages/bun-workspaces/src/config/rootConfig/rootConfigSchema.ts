@@ -14,6 +14,9 @@ export const ROOT_CONFIG_JSON_SCHEMA = {
         shell: {
           type: "string",
         },
+        includeRootWorkspace: {
+          type: "boolean",
+        },
       },
     },
   },
