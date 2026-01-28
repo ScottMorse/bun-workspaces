@@ -211,7 +211,7 @@ describe("Test CLI Global Options", () => {
     );
   });
 
-  test.only("Global Option --include-root", async () => {
+  test("Global Option --include-root", async () => {
     const { run } = setupCliTest({ testProject: "withRootWorkspace" });
 
     const resultLong = await run("--include-root", "ls", "--json");

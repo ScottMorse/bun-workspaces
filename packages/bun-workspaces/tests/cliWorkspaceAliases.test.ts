@@ -81,7 +81,7 @@ describe("CLI Workspace Aliases", () => {
     );
   });
 
-  test.only("Aliases in run-script", async () => {
+  test("Aliases in run-script", async () => {
     const { run } = setupCliTest({
       testProject: "workspaceConfigPackageFileMix",
     });

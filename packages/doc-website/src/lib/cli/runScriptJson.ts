@@ -25,6 +25,7 @@ export const RUN_SCRIPT_EXAMPLE_JSON_OUTPUT: Awaited<
       metadata: {
         workspace: {
           name: "my-workspace-a",
+          isRoot: false,
           matchPattern: "packages/**/*",
           path: "packages/my-workspace-a",
           scripts: ["my-script"],
@@ -42,6 +43,7 @@ export const RUN_SCRIPT_EXAMPLE_JSON_OUTPUT: Awaited<
       metadata: {
         workspace: {
           name: "my-workspace-b",
+          isRoot: false,
           matchPattern: "packages/**/*",
           path: "packages/my-workspace-b",
           scripts: ["my-script"],
