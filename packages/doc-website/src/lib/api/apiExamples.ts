@@ -10,8 +10,11 @@ const pathProject = createFileSystemProject({
   rootDirectory: "./path/to/project/root" // relative from process.cwd()
 });
 
-console.log(pathProject.name); // The name from the root package.json
-console.log(pathProject.workspaces); // An array of workspaces found in the project
+// Include the root workspace as a normal workspace (overrides config/env settings)
+const projectWithRoot = createFileSystemProject({
+  includeRootWorkspace: true,
+});
+
 `.trim();
 
 export const CREATE_MEMORY_PROJECT_EXAMPLE = `
@@ -86,6 +89,9 @@ export const WORKSPACE_EXAMPLE = `
 {
   // The name of the workspace from its package.json
   name: "my-workspace",
+
+  // Whether the workspace is the root workspace
+  isRoot: false,
 
   // The relative path to the workspace from the project root
   path: "my/workspace/path",
