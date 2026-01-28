@@ -23,7 +23,7 @@ export type ProjectCommandContext = GlobalCommandContext & {
 };
 
 export const createWorkspaceInfoLines = (workspace: Workspace) => [
-  `Workspace: ${workspace.name}`,
+  `Workspace: ${workspace.name}${workspace.isRoot ? " (root)" : ""}`,
   ` - Aliases: ${workspace.aliases.join(", ")}`,
   ` - Path: ${workspace.path}`,
   ` - Glob Match: ${workspace.matchPattern}`,
