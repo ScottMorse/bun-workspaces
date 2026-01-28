@@ -8,8 +8,8 @@ import type { CliGlobalOptionContent, CliGlobalOptionInfo } from "./cliOption";
 const defineOptionContent = (
   optionName: CliGlobalOptionName,
   factory: (
-    optionConfig: CliGlobalOptionConfig,
-  ) => Omit<CliGlobalOptionInfo, "optionName">,
+    optionConfig: CliGlobalOptionConfig
+  ) => Omit<CliGlobalOptionInfo, "optionName">
 ): CliGlobalOptionContent => {
   const config = getCliGlobalOptionConfig(optionName);
   const content = factory(config);
@@ -31,7 +31,7 @@ const CLI_GLOBAL_OPTIONS_CONTENT = {
         `bw ${mainOption}=/path/to/your/config.json list-workspaces`,
         `bw ${shortOption} /path/to/your/config.json list-workspaces`,
       ],
-    }),
+    })
   ),
   cwd: defineOptionContent("cwd", ({ mainOption, shortOption }) => ({
     title: "Working Directory",
@@ -42,6 +42,20 @@ const CLI_GLOBAL_OPTIONS_CONTENT = {
       `bw ${shortOption} /path/to/your/project list-workspaces`,
     ],
   })),
+  includeRoot: defineOptionContent(
+    "includeRoot",
+    ({ mainOption, shortOption }) => ({
+      title: "Include Root",
+      description:
+        "Include the root workspace as a normal workspace. This overrides config and environment variable settings.",
+      examples: [
+        `bw ${mainOption} list-workspaces`,
+        `bw ${shortOption} list-workspaces`,
+        "",
+        `bw ${mainOption.replace("--", "--no-")} list-workspaces # disable (to override config/env)`,
+      ],
+    })
+  ),
   logLevel: defineOptionContent("logLevel", ({ mainOption, shortOption }) => ({
     title: "Log Level",
     description:
