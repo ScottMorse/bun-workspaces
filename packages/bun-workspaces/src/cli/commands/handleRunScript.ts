@@ -11,8 +11,8 @@ export const runScript = handleProjectCommand(
   "runScript",
   async (
     { project, postTerminatorArgs },
-    _script: string,
-    _workspacePatterns: string[],
+    positionalScript: string,
+    positionalWorkspacePatterns: string[],
     options: {
       script: string | undefined;
       workspacePatterns: string | undefined;
@@ -33,11 +33,12 @@ export const runScript = handleProjectCommand(
         ? options.parallel.trim()
         : options.parallel;
 
-    if (_script && options.script) {
-      _workspacePatterns.splice(0, 0, _script);
+    if (positionalScript && options.script) {
+      // If script is provided via options, then the first positional argument is actually a workspace pattern
+      positionalWorkspacePatterns.splice(0, 0, positionalScript);
     }
 
-    const script = options.script || _script;
+    const script = options.script || positionalScript;
 
     if (postTerminatorArgs.length && options.args) {
       logger.error(
@@ -50,16 +51,19 @@ export const runScript = handleProjectCommand(
       ? postTerminatorArgs.join(" ")
       : options.args;
 
-    if (_workspacePatterns.length && options.workspacePatterns) {
+    if (positionalWorkspacePatterns.length && options.workspacePatterns) {
       logger.error(
         "CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-W option",
       );
       process.exit(1);
     }
 
-    const workspacePatterns = _workspacePatterns?.length
-      ? _workspacePatterns
-      : (options.workspacePatterns?.split(",") ?? []);
+    const workspacePatterns = positionalWorkspacePatterns?.length
+      ? positionalWorkspacePatterns
+      : // split by whitespace, but allow escaping via backslash
+        (options.workspacePatterns?.split(/(?<!\\)\s/) ?? [])
+          .filter(Boolean)
+          .map((pattern) => pattern.replace(/\\\s/g, " "));
 
     logger.debug(
       `Command: Run script ${JSON.stringify(script)} for ${
