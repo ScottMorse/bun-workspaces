@@ -1,12 +1,40 @@
 import { createDefaultRootConfig } from "../../config";
 import type { Simplify } from "../../internal/core";
+import type { OutputStreamName } from "../../runScript";
 import {
   validateWorkspaceAliases,
   WORKSPACE_ERRORS,
   type Workspace,
 } from "../../workspaces";
 import type { Project } from "../project";
+import type { ShellOption } from "./fileSystemProject";
 import { ProjectBase } from "./projectBase";
+
+export type ScriptContext = {
+  script: string;
+  inline: boolean;
+  shell: ShellOption;
+  args: string;
+  workspace: Workspace;
+};
+
+export type ScriptHandlerResult = {
+  exitCode: number;
+  signal?: NodeJS.Signals;
+};
+
+export type ScriptHandlerOutputChunk = {
+  /** The content of the output chunk. */
+  content: string;
+  /** The stream name of the output chunk. Defaults to `"stdout"`. */
+  streamName?: OutputStreamName;
+};
+
+export type ScriptHandler = (
+  context: ScriptContext,
+) =>
+  | Promise<ScriptHandlerResult>
+  | AsyncIterable<ScriptHandlerOutputChunk, ScriptHandlerResult>;
 
 /** Arguments for {@link createMemoryProject} */
 export type CreateMemoryProjectOptions = {
@@ -20,6 +48,22 @@ export type CreateMemoryProjectOptions = {
   rootWorkspace?: Workspace;
   /** Whether to include the root workspace as a normal workspace. */
   includeRootWorkspace?: boolean;
+  /**
+   * A function to handle the execution of a script.
+   * If not provided, all scripts will throw an error.
+   *
+   * @example
+   * const project = createMemoryProject({
+   *   workspaces: myWorkspaces,
+   *   scriptHandler: async function* myScriptHandler(context) => {
+   *     yield { content: "Hello, world!" };
+   *     yield { content: "Goodbye, world!", streamName: "stderr" };
+   *     return { exitCode: 0 };
+   *   },
+   * });
+   *
+   */
+  scriptHandler?: ScriptHandler;
 };
 
 class _MemoryProject extends ProjectBase implements Project {
