@@ -14,7 +14,7 @@ export type WorkspacePattern = {
   isNegated: boolean;
 };
 
-const SEPARATOR = ":";
+export const WORKSPACE_PATTERN_SEPARATOR = ":";
 
 export const parseWorkspacePattern = (pattern: string): WorkspacePattern => {
   const isNegated = pattern.startsWith("!");
@@ -22,7 +22,7 @@ export const parseWorkspacePattern = (pattern: string): WorkspacePattern => {
   const patternValue = isNegated ? pattern.slice(1) : pattern;
 
   const target = TARGETS.find((target) =>
-    patternValue.startsWith(target + SEPARATOR),
+    patternValue.startsWith(target + WORKSPACE_PATTERN_SEPARATOR),
   );
 
   if (!target) {
@@ -33,7 +33,9 @@ export const parseWorkspacePattern = (pattern: string): WorkspacePattern => {
     };
   }
 
-  const value = patternValue.slice(target.length + SEPARATOR.length);
+  const value = patternValue.slice(
+    target.length + WORKSPACE_PATTERN_SEPARATOR.length,
+  );
 
   return {
     target,
@@ -45,7 +47,7 @@ export const parseWorkspacePattern = (pattern: string): WorkspacePattern => {
 export const stringifyWorkspacePattern = (
   pattern: WorkspacePattern,
 ): string => {
-  return `${pattern.target}${SEPARATOR}${pattern.value}`;
+  return `${pattern.target}${WORKSPACE_PATTERN_SEPARATOR}${pattern.value}`;
 };
 
 const PATTERN_TARGET_HANDLERS: Record<
