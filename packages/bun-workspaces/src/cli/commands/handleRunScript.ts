@@ -5,6 +5,7 @@ import type { ParallelMaxValue, ScriptShellOption } from "../../runScript";
 import {
   commandOutputLogger,
   handleProjectCommand,
+  splitWorkspacePatterns,
 } from "./commandHandlerUtils";
 
 export const runScript = handleProjectCommand(
@@ -60,10 +61,7 @@ export const runScript = handleProjectCommand(
 
     const workspacePatterns = positionalWorkspacePatterns?.length
       ? positionalWorkspacePatterns
-      : // split by whitespace, but allow escaping via backslash
-        (options.workspacePatterns?.split(/(?<!\\)\s/) ?? [])
-          .filter(Boolean)
-          .map((pattern) => pattern.replace(/\\\s/g, " "));
+      : splitWorkspacePatterns(options.workspacePatterns ?? "");
 
     logger.debug(
       `Command: Run script ${JSON.stringify(script)} for ${

@@ -9,6 +9,7 @@ import {
   createWorkspaceInfoLines,
   handleProjectCommand,
   handleGlobalCommand,
+  splitWorkspacePatterns,
 } from "./commandHandlerUtils";
 
 export const doctor = handleGlobalCommand(
@@ -47,7 +48,7 @@ export const listWorkspaces = handleProjectCommand(
   "listWorkspaces",
   (
     { project },
-    workspacePatterns: string[] | undefined,
+    positionalWorkspacePatterns: string[] | undefined,
     options: {
       workspacePatterns: string | undefined;
       nameOnly: boolean;
@@ -61,16 +62,19 @@ export const listWorkspaces = handleProjectCommand(
 
     const lines: string[] = [];
 
-    if (workspacePatterns?.length && options.workspacePatterns?.length) {
+    if (
+      positionalWorkspacePatterns?.length &&
+      options.workspacePatterns?.length
+    ) {
       logger.error(
         "CLI syntax error: Cannot use both inline workspace patterns and --workspace-patterns|-W option",
       );
       process.exit(1);
     }
 
-    const patterns = workspacePatterns?.length
-      ? workspacePatterns
-      : options.workspacePatterns?.split(",");
+    const patterns = positionalWorkspacePatterns?.length
+      ? positionalWorkspacePatterns
+      : splitWorkspacePatterns(options.workspacePatterns ?? "");
 
     const workspaces = patterns?.length
       ? project.findWorkspacesByPattern(...patterns)

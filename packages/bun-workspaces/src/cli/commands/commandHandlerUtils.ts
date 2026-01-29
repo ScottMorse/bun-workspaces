@@ -22,6 +22,13 @@ export type ProjectCommandContext = GlobalCommandContext & {
   projectError: Error | null;
 };
 
+/** Splits workspace patterns by whitespace, but allows escaping spaces via backslash */
+export const splitWorkspacePatterns = (workspacePatterns: string) =>
+  workspacePatterns
+    .split(/(?<!\\)\s+/)
+    .filter(Boolean)
+    .map((pattern) => pattern.replace(/\\\s/g, " "));
+
 export const createWorkspaceInfoLines = (workspace: Workspace) => [
   `Workspace: ${workspace.name}${workspace.isRoot ? " (root)" : ""}`,
   ` - Aliases: ${workspace.aliases.join(", ")}`,
