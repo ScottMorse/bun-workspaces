@@ -1,0 +1,6 @@
+{
+  "name": "c-depends-e",
+  "devDependencies": {
+    "e": "workspace:*"
+  }
+}

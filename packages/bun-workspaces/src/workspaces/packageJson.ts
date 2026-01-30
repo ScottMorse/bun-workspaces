@@ -18,6 +18,10 @@ export type ResolvedPackageJsonContent = {
   name: string;
   workspaces: string[];
   scripts: Record<string, string>;
+  dependencies: Record<string, string>;
+  devDependencies: Record<string, string>;
+  peerDependencies: Record<string, string>;
+  optionalDependencies: Record<string, string>;
 } & Record<string, unknown>;
 
 type UnknownPackageJson = Record<string, unknown>;
@@ -160,6 +164,13 @@ export const resolvePackageJsonContent = (
 
   return {
     ...json,
+    // Dependency data types are validated by bun install
+    // TODO investigate whether we need to validate any of these fields in the first place
+    dependencies: (json.dependencies as Record<string, string>) ?? {},
+    devDependencies: (json.devDependencies as Record<string, string>) ?? {},
+    peerDependencies: (json.peerDependencies as Record<string, string>) ?? {},
+    optionalDependencies:
+      (json.optionalDependencies as Record<string, string>) ?? {},
     name: validations.includes("name")
       ? validateName(json)
       : ((json.name as string) ?? ""),

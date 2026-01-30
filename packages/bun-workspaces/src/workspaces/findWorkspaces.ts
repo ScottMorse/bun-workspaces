@@ -9,6 +9,10 @@ import {
 } from "../config";
 import { BUN_LOCK_ERRORS, readBunLockfile } from "../internal/bun";
 import { BunWorkspacesError } from "../internal/core";
+import {
+  resolveWorkspaceDependencies,
+  type WorkspaceMap,
+} from "./dependencyGraph";
 import { WORKSPACE_ERRORS } from "./errors";
 import {
   resolvePackageJsonContent,
@@ -86,7 +90,7 @@ export const findWorkspaces = ({
 
   let workspaces: Workspace[] = [];
 
-  const workspaceConfigMap: Record<string, ResolvedWorkspaceConfig> = {};
+  const workspaceMap: WorkspaceMap = {};
 
   const bunLock = readBunLockfile(rootDirectory);
 
@@ -124,6 +128,7 @@ export const findWorkspaces = ({
           workspaceAliases[alias] = packageJsonContent.name;
         }
       }
+
       const relativePath = path.relative(
         rootDirectory,
         path.dirname(packageJsonPath),
@@ -147,6 +152,8 @@ export const findWorkspaces = ({
               .concat(workspaceConfig?.aliases ?? []),
           ),
         ],
+        dependsOn: [],
+        dependents: [],
       };
 
       if (workspace.isRoot) {
@@ -157,8 +164,11 @@ export const findWorkspaces = ({
         if (!workspace.isRoot || includeRootWorkspace) {
           workspaces.push(workspace);
         }
-        workspaceConfigMap[workspace.name] =
-          workspaceConfig ?? createDefaultWorkspaceConfig();
+        workspaceMap[workspace.name] = {
+          workspace,
+          config: workspaceConfig ?? createDefaultWorkspaceConfig(),
+          packageJson: packageJsonContent,
+        };
       }
     }
   }
@@ -167,11 +177,11 @@ export const findWorkspaces = ({
     throw new WORKSPACE_ERRORS.RootWorkspaceNotFound("No root workspace found");
   }
 
-  workspaces = sortWorkspaces(workspaces);
+  workspaces = sortWorkspaces(resolveWorkspaceDependencies(workspaceMap));
 
   validateWorkspaceAliases(workspaces, workspaceAliases, rootWorkspace.name);
 
-  return { workspaces, workspaceConfigMap, rootWorkspace };
+  return { workspaces, workspaceConfigMap: workspaceMap, rootWorkspace };
 };
 
 export const validateWorkspaceAliases = (

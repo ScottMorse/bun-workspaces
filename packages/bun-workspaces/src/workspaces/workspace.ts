@@ -12,4 +12,8 @@ export type Workspace = {
   scripts: string[];
   /** Aliases assigned to the workspace via the `"workspaceAliases"` field in the config */
   aliases: string[];
+  /** Names of workspaces that this workspace depends on */
+  dependsOn: string[];
+  /** Names of workspaces that depend on this workspace */
+  dependents: string[];
 };

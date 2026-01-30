@@ -1,0 +1,6 @@
+{
+  "name": "d-depends-e",
+  "peerDependencies": {
+    "e": "workspace:*"
+  }
+}
