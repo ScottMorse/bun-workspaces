@@ -129,7 +129,7 @@ this method can still unambiguously find a workspace.
 
 Find a list of [Workspaces](/api/reference#workspace) by their name, using a wildcard pattern.
 
-To prevent ambiguity, this method does not match workspace [aliases](/concepts/workspace-aliases).
+See more on the syntax of [workspace patterns](/concepts/workspace-patterns).
 <SyntaxHighlighter language="typescript">
 {FIND_WORKSPACES_BY_PATTERN_EXAMPLE}
 </SyntaxHighlighter>
@@ -200,6 +200,7 @@ Run a script in all workspaces that have it in their package.json "scripts" fiel
 
 ### More Info
 
+* See more on the syntax of [workspace patterns](/concepts/workspace-patterns) for selecting workspaces to run.
 * See more on running [inline scripts](/concepts/inline-scripts).
 * See more on running [parallel scripts](/concepts/parallel-scripts).
 * See more on [script runtime metadata](/concepts/script-runtime-metadata), such as environment variables available in scripts and interpolating values in inline scripts and args such as `<workspaceName>`.<br/>

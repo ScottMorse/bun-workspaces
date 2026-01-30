@@ -55,7 +55,11 @@ project.findWorkspacesByPattern(
 );
 
 project.runScriptAcrossWorkspaces({
-  workspacePatterns: ["name:my-workspace-*", "alias:my-alias-*", "path:packages/**/*"],
+  workspacePatterns: [
+    "name:my-workspace-*",
+    "alias:my-alias-*",
+    "path:packages/**/*",
+  ],
   script: "bun lint",
 });
 `.trim();
