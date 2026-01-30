@@ -49,6 +49,7 @@ You can also use the selector defined below:
 
 When passing workspace patterns to the CLI for the [run-script](/cli/commands#run-script) command, you can use the `@root` alias to reference the root workspace.
 
+
 <SyntaxHighlighter language="bash">
 {CLI_RUN_SCRIPT_ROOT_SELECTOR_EXAMPLE}
 </SyntaxHighlighter>
@@ -58,3 +59,6 @@ This can also be used similarly in the API:
 <SyntaxHighlighter language="typescript">
 {API_ROOT_SELECTOR_EXAMPLE}
 </SyntaxHighlighter>
+
+Note that in the off chance you have a workspace named <code>{ROOT_WORKSPACE_SELECTOR}</code>, you can more explicitly reference it via name using the [workspace pattern](/concepts/workspace-patterns#name) specifier 
+<code>"name:{ROOT_WORKSPACE_SELECTOR}"</code>.

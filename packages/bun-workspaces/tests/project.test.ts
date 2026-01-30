@@ -94,7 +94,7 @@ describe("Test Project utilities", () => {
     expect(deprecated_libC?.matchPattern).toEqual("libraries/**/*");
   });
 
-  test.only("Project.prototype.findWorkspacesByPattern", async () => {
+  test("Project.prototype.findWorkspacesByPattern", async () => {
     const project = createDefaultProject();
 
     expect(project.findWorkspacesByPattern("not-a-workspace")).toEqual([]);
