@@ -319,6 +319,10 @@ export default defineConfig({
             link: "/concepts/workspace-aliases",
           },
           {
+            text: "Workspace Patterns",
+            link: "/concepts/workspace-patterns",
+          },
+          {
             text: "Root Workspace",
             link: "/concepts/root-workspace",
           },
