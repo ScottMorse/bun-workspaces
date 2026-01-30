@@ -57,8 +57,7 @@ export const CLI_COMMANDS_CONFIG = {
     options: {
       workspacePatterns: {
         flags: ["-W", "--workspace-patterns <patterns>"],
-        description:
-          "Workspace patterns to filter workspaces by, separated by commas",
+        description: "Workspace patterns to match, separated by spaces",
       },
       nameOnly: {
         flags: ["-n", "--name-only"],
@@ -143,8 +142,7 @@ export const CLI_COMMANDS_CONFIG = {
       },
       workspacePatterns: {
         flags: ["-W", "--workspace-patterns <patterns>"],
-        description:
-          "Workspace patterns to filter workspaces by, separated by commas",
+        description: "Workspace patterns to match, separated by spaces.",
       },
       parallel: {
         flags: ["-P", "--parallel [max]"],
