@@ -36,13 +36,18 @@ $ bunx bun-workspaces --help
 [Full CLI documentation here](https://bunworkspaces.com/cli)
 
 ```bash
-alias bw="bunx bun-workspaces" # can place in .zshrc, .bashrc, or similar
-
 # List all workspaces in your project
 bw list-workspaces
 
 # ls is an alias for list-workspaces
 bw ls --json --pretty # Output as formatted JSON
+
+# Get info about a workspace
+bw workspace-info my-workspace
+bw info my-workspace --json --pretty # info is alias for workspace-info
+
+# Get info about a script, such as the workspaces that have it
+bw script-info my-script
 
 # Run the lint script for all workspaces
 # that have it in their package.json "scripts" field
@@ -51,11 +56,18 @@ bw run-script lint
 # run is an alias for run-script
 bw run lint my-workspace # Run for a single workspace
 bw run lint my-workspace-a my-workspace-b # Run for multiple workspaces
+bw run lint my-alias-a my-alias-b # Run by alias (set by optional config)
+
 bw run lint "my-workspace-*" # Run for matching workspace names
-bw run lint --parallel # Run at the same time
+bw run lint "alias:my-alias-pattern-*" "path:my-glob/**/*" # Use matching specifiers
+
 bw run lint --args="--my-appended-args" # Add args to each script call
 bw run lint --args="--my-arg=<workspaceName>" # Use the workspace name in args
+
 bw run "bun build" --inline --inline-name=build # Run an inline command
+
+bw run lint --parallel # Run in parallel (default is "auto")
+bw run lint --parallel=2 # Run in parallel with a max of 2 concurrent scripts
 
 # Show usage (you can pass --help to any command)
 bw help
@@ -102,23 +114,23 @@ const runSingleScript = async () => {
   });
 
   // Get a stream of the script subprocess's output
-  for await (const chunk of output) {
-    console.log(chunk.raw); // The raw output content (Uint8Array)
-    console.log(chunk.decode()); // The output chunk's content (string)
-    console.log(chunk.decode({ stripAnsi: true })); // Text with ANSI codes sanitized
-    console.log(chunk.streamName); // The output stream, "stdout" or "stderr"
+  for await (const { outputChunk } of output) {
+    // outputChunk.raw // The raw output content (Uint8Array)
+    // outputChunk.decode() // The output chunk's content (string)
+    // outputChunk.decode({ stripAnsi: true }) // Text with ANSI codes sanitized (string)
+    // outputChunk.streamName // The output stream, "stdout" or "stderr"
   }
 
   // Get data about the script execution after it exits
   const exitResult = await exit;
 
-  console.log(exitResult.exitCode); // The exit code (number)
-  console.log(exitResult.signal); // The exit signal (string), or null
-  console.log(exitResult.success); // true if exit code was 0
-  console.log(exitResult.startTimeISO); // Start time (string)
-  console.log(exitResult.endTimeISO); // End time (string)
-  console.log(exitResult.durationMs); // Duration in milliseconds (number)
-  console.log(exitResult.metadata.workspace); // The target workspace (Workspace)
+  // exitResult.exitCode // The exit code (number)
+  // exitResult.signal // The exit signal (string), or null
+  // exitResult.success // true if exit code was 0
+  // exitResult.startTimeISO // Start time (string)
+  // exitResult.endTimeISO // End time (string)
+  // exitResult.durationMs // Duration in milliseconds (number)
+  // exitResult.metadata.workspace // The target workspace (Workspace)
 };
 
 // Run a script in all workspaces that have it in their package.json "scripts" field
@@ -127,13 +139,13 @@ const runManyScripts = async () => {
     // Optional. This will run in all matching workspaces that have my-script
     // Accepts same values as the CLI run-script command's workspace patterns
     // When not provided, all workspaces that have the script will be used.
-    workspacePatterns: ["my-workspace", "my-pattern-*"],
+    workspacePatterns: ["my-workspace", "my-name-pattern-*"],
 
     // Required. The package.json "scripts" field name to run
     script: "my-script",
 
     // Optional. Arguments to add to the command
-    args: "--my --appended --args", // optional, arguments to add to the command
+    args: "--my --appended --args",
 
     // Optional. Whether to run the scripts in parallel
     parallel: true,
@@ -141,36 +153,34 @@ const runManyScripts = async () => {
 
   // Get a stream of script output
   for await (const { outputChunk, scriptMetadata } of output) {
-    console.log(outputChunk.raw); // The raw output content (Uint8Array)
-    console.log(outputChunk.decode()); // the output chunk's content (string)
-    console.log(outputChunk.decode({ stripAnsi: true })); // text with ANSI codes sanitized (string)
-    console.log(outputChunk.streamName); // "stdout" or "stderr"
-
+    // outputChunk.decode() // the output chunk's content (string)
+    // outputChunk.decode({ stripAnsi: true }) // text with ANSI codes sanitized (string)
+    // outputChunk.streamName // "stdout" or "stderr"
     // The metadata can distinguish which workspace script
     // the current output chunk came from
-    console.log(scriptMetadata.workspace); // Workspace object
+    // scriptMetadata.workspace // Workspace object
   }
 
   // Get final summary data and script exit details after all scripts have completed
   const summaryResult = await summary;
 
-  console.log(summaryResult.totalCount); // Total number of scripts
-  console.log(summaryResult.allSuccess); // true if all scripts succeeded
-  console.log(summaryResult.successCount); // Number of scripts that succeeded
-  console.log(summaryResult.failureCount); // Number of scripts that failed
-  console.log(summaryResult.startTimeISO); // Start time (string)
-  console.log(summaryResult.endTimeISO); // End time (string)
-  console.log(summaryResult.durationMs); // Total duration in milliseconds (number)
+  // summaryResult.totalCount // Total number of scripts
+  // summaryResult.allSuccess // true if all scripts succeeded
+  // summaryResult.successCount // Number of scripts that succeeded
+  // summaryResult.failureCount // Number of scripts that failed
+  // summaryResult.startTimeISO // Start time (string)
+  // summaryResult.endTimeISO // End time (string)
+  // summaryResult.durationMs // Total duration in milliseconds (number)
 
   // The exit details of each workspace script
   for (const exitResult of summaryResult.scriptResults) {
-    console.log(exitResult.exitCode); // The exit code (number)
-    console.log(exitResult.signal); // The exit signal (string), or null
-    console.log(exitResult.success); // true if exit code was 0
-    console.log(exitResult.startTimeISO); // Start time (ISO string)
-    console.log(exitResult.endTimeISO); // End time (ISO string)
-    console.log(exitResult.durationMs); // Duration in milliseconds (number)
-    console.log(exitResult.metadata.workspace); // The target workspace (Workspace)
+    // exitResult.exitCode // The exit code (number)
+    // exitResult.signal // The exit signal (string), or null
+    // exitResult.success // true if exit code was 0
+    // exitResult.startTimeISO // Start time (ISO string)
+    // exitResult.endTimeISO // End time (ISO string)
+    // exitResult.durationMs // Duration in milliseconds (number)
+    // exitResult.metadata.workspace // The target workspace (Workspace)
   }
 };
 ```
