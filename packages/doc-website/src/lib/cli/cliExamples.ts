@@ -7,6 +7,13 @@ bw list-workspaces
 # ls is an alias for list-workspaces
 bw ls --json --pretty # Output as formatted JSON
 
+# Get info about a workspace
+bw workspace-info my-workspace
+bw info my-workspace --json --pretty # info is alias for workspace-info
+
+# Get info about a script, such as the workspaces that have it
+bw script-info my-script
+
 # Run the lint script for all workspaces
 # that have it in their package.json "scripts" field
 bw run-script lint
@@ -14,16 +21,18 @@ bw run-script lint
 # run is an alias for run-script
 bw run lint my-workspace # Run for a single workspace
 bw run lint my-workspace-a my-workspace-b # Run for multiple workspaces
+bw run lint my-alias-a my-alias-b # Run by alias (set by optional config)
+
 bw run lint "my-workspace-*" # Run for matching workspace names
+bw run lint "alias:my-alias-pattern-*" "path:my-glob/**/*" # Use matching specifiers
+
 bw run lint --args="--my-appended-args" # Add args to each script call
 bw run lint --args="--my-arg=<workspaceName>" # Use the workspace name in args
+
 bw run "bun build" --inline --inline-name=build # Run an inline command
 
 bw run lint --parallel # Run in parallel (default is "auto")
 bw run lint --parallel=2 # Run in parallel with a max of 2 concurrent scripts
-bw run lint --parallel=auto # Run in parallel with a max of the available CPUs
-bw run lint --parallel=50% # Run in parallel with a max of 50% of the available CPUs
-bw run lint --parallel=unbounded # Run every script in parallel (use with caution)
 
 # Show usage (you can pass --help to any command)
 bw help

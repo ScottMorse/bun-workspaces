@@ -1,28 +1,23 @@
 import path from "path";
-import { expect, test as _test, describe } from "bun:test";
+import { expect, test, describe } from "bun:test";
 import type { Workspace, WorkspaceScriptMetadata } from "../src";
-import {
-  createFileSystemProject,
-  createMemoryProject,
-  type FileSystemProject,
-} from "../src/project";
+import { createFileSystemProject, createMemoryProject } from "../src/project";
 import { PROJECT_ERRORS } from "../src/project/errors";
 import { WORKSPACE_ERRORS } from "../src/workspaces";
 import { getProjectRoot } from "./testProjects";
 import { withWindowsPath } from "./util/windows";
 
-const test = (name: string, callback: (project: FileSystemProject) => void) =>
-  _test(name, async () => {
-    const project = createFileSystemProject({
-      rootDirectory: getProjectRoot("fullProject"),
-    });
-    return callback(project);
+const createDefaultProject = () =>
+  createFileSystemProject({
+    rootDirectory: getProjectRoot("fullProject"),
   });
 
 const stripToName = (workspace: Workspace) => workspace.name;
 
 describe("Test Project utilities", () => {
-  test("Project properties", async (project) => {
+  test("Project properties", async () => {
+    const project = createDefaultProject();
+
     expect(project.rootDirectory).toEqual(getProjectRoot("fullProject"));
     expect(project.sourceType).toEqual("fileSystem");
     expect(project.workspaces).toEqual([
@@ -69,7 +64,9 @@ describe("Test Project utilities", () => {
     ]);
   });
 
-  test("Project.prototype.findWorkspaceByName", async (project) => {
+  test("Project.prototype.findWorkspaceByName", async () => {
+    const project = createDefaultProject();
+
     expect(project.findWorkspaceByName("not-a-workspace")).toBeNull();
 
     const deprecated_appA = project.findWorkspaceByName("application-a");
@@ -97,7 +94,9 @@ describe("Test Project utilities", () => {
     expect(deprecated_libC?.matchPattern).toEqual("libraries/**/*");
   });
 
-  test("Project.prototype.findWorkspacesByPattern", async (project) => {
+  test("Project.prototype.findWorkspacesByPattern", async () => {
+    const project = createDefaultProject();
+
     expect(project.findWorkspacesByPattern("not-a-workspace")).toEqual([]);
 
     expect(project.findWorkspacesByPattern("").map(stripToName)).toEqual([]);
@@ -142,9 +141,37 @@ describe("Test Project utilities", () => {
     expect(
       project.findWorkspacesByPattern("**b****-*b**").map(stripToName),
     ).toEqual(["library-b"]);
+
+    expect(
+      project
+        .findWorkspacesByPattern("path:libraries/*", "name:*-a")
+        .map(stripToName),
+    ).toEqual(["application-a", "library-a", "library-b"]);
+
+    expect(
+      project
+        .findWorkspacesByPattern("path:libraries/**/*", "alias:does-not-exist")
+        .map(stripToName),
+    ).toEqual(["library-a", "library-b", "library-c"]);
+
+    const projectWithAliases = createFileSystemProject({
+      rootDirectory: getProjectRoot("workspaceConfigFileOnly"),
+    });
+
+    expect(
+      projectWithAliases
+        .findWorkspacesByPattern(
+          "alias:libA",
+          "name:library-1b",
+          "path:applications/*a",
+        )
+        .map(stripToName),
+    ).toEqual(["application-1a", "library-1a", "library-1b"]);
   });
 
-  test("Project.prototype.listWorkspacesWithScript", async (project) => {
+  test("Project.prototype.listWorkspacesWithScript", async () => {
+    const project = createDefaultProject();
+
     expect(project.listWorkspacesWithScript("all-workspaces")).toEqual([
       {
         name: "application-a",
@@ -237,7 +264,9 @@ describe("Test Project utilities", () => {
       {},
     );
 
-  test("Project.prototype.mapScriptsToWorkspaces", async (project) => {
+  test("Project.prototype.mapScriptsToWorkspaces", async () => {
+    const project = createDefaultProject();
+
     expect(
       stripMetadataToWorkspaceNames(project.mapScriptsToWorkspaces()),
     ).toEqual({
@@ -286,7 +315,9 @@ describe("Test Project utilities", () => {
     });
   });
 
-  test("Project.prototype.createScriptCommand", async (project) => {
+  test("Project.prototype.createScriptCommand", async () => {
+    const project = createDefaultProject();
+
     expect(
       project.createScriptCommand({
         args: "",
@@ -564,7 +595,9 @@ describe("Test Project utilities", () => {
   // Note that a lot more tests around running scripts are present in other files
   // These are mainly sanity tests that the glue code is correct and options are followed
 
-  test("FileSystemProject.runWorkspaceScript - simple", async (project) => {
+  test("FileSystemProject.runWorkspaceScript - simple", async () => {
+    const project = createDefaultProject();
+
     const { output, exit } = project.runWorkspaceScript({
       workspaceNameOrAlias: "application-a",
       script: "a-workspaces",
@@ -599,7 +632,9 @@ describe("Test Project utilities", () => {
     });
   });
 
-  test("FileSystemProject.runWorkspaceScript - inline", async (project) => {
+  test("FileSystemProject.runWorkspaceScript - inline", async () => {
+    const project = createDefaultProject();
+
     const echo = `this is my inline script ${Math.round(Math.random() * 1000000)}`;
 
     const { output, exit } = project.runWorkspaceScript({

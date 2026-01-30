@@ -1,0 +1,47 @@
+---
+title: Concepts > Workspace Patterns
+titleSuffix: " | bun-workspaces"
+description: "Workspace Patterns | Concepts | Documentation for bun-workspaces: A CLI and API to help manage Bun monorepos"
+pageType: doc
+sidebar: false
+outline: true
+footer: false
+---
+import { WORKSPACE_PATTERN_API_EXAMPLE, WorkspacePatternDoc } from "../../../lib/concepts/workspacePatterns";
+import { ConceptsHeader } from "../../../lib/concepts/ConceptsHeader";
+import { SyntaxHighlighter } from "../../../lib/util/highlight";
+
+<ConceptsHeader activeHref="workspacePatterns" />
+
+## Workspace Patterns
+
+Workspace patterns are used to match workspaces when running commands such as [run-script](/cli/commands#run-script) or [list-workspaces](/cli/commands#list-workspaces).
+
+### Default Matching
+
+By default, workspace patterns match the workspace name or alias, but if a wildcard is provided, it will only match the name.
+
+<SyntaxHighlighter language="bash">
+  {`bw run lint my-name-or-alias "my-name-pattern-*"`}
+</SyntaxHighlighter>
+
+However, you can use the following matching specifiers to match workspaces by different criteria:
+
+### Matching Specifiers
+
+#### Name
+<WorkspacePatternDoc target="name" />
+
+#### Alias
+<WorkspacePatternDoc target="alias" />
+
+#### Path
+<WorkspacePatternDoc target="path" />
+
+#### In the API
+
+These same matching patterns can be used in the API.
+
+<SyntaxHighlighter language="typescript">
+  {WORKSPACE_PATTERN_API_EXAMPLE}
+</SyntaxHighlighter>

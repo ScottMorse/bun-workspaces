@@ -14,72 +14,121 @@ export type WorkspacePattern = {
   isNegated: boolean;
 };
 
-const SEPARATOR = ":";
+export const WORKSPACE_PATTERN_SEPARATOR = ":";
 
-export const parseStringWorkspacePattern = (
-  pattern: string,
-): WorkspacePattern => {
-  const target = TARGETS.find((target) => pattern.startsWith(target));
+export const parseWorkspacePattern = (pattern: string): WorkspacePattern => {
+  const isNegated = pattern.startsWith("!");
+
+  const patternValue = isNegated ? pattern.slice(1) : pattern;
+
+  const target = TARGETS.find((target) =>
+    patternValue.startsWith(target + WORKSPACE_PATTERN_SEPARATOR),
+  );
+
   if (!target) {
     return {
       target: "default",
-      value: pattern,
+      value: patternValue,
       isNegated: pattern.startsWith("!"),
     };
   }
 
-  const value = pattern.slice(target.length + SEPARATOR.length);
+  const value = patternValue.slice(
+    target.length + WORKSPACE_PATTERN_SEPARATOR.length,
+  );
 
   return {
     target,
     value,
-    isNegated: value.startsWith("!"),
+    isNegated,
   };
 };
 
 export const stringifyWorkspacePattern = (
   pattern: WorkspacePattern,
 ): string => {
-  return `${pattern.target}${SEPARATOR}${pattern.value}`;
+  return `${pattern.target}${WORKSPACE_PATTERN_SEPARATOR}${pattern.value}`;
 };
 
-export const matchWorkspacesByPattern = (
-  pattern: WorkspacePattern,
-  workspaces: Workspace[],
-) => {
-  const hasWildcard = pattern.value.includes("*");
-  const wildcardRegex = createWildcardRegex(pattern.value);
-
-  if (pattern.target === "default") {
+const PATTERN_TARGET_HANDLERS: Record<
+  WorkspacePatternTarget | "default",
+  (
+    pattern: WorkspacePattern,
+    workspaces: Workspace[],
+    wildcardRegex: RegExp,
+  ) => Workspace[]
+> = {
+  default: (pattern, workspaces, wildcardRegex) => {
     return workspaces.filter((workspace) => {
-      return hasWildcard
-        ? wildcardRegex.test(workspace.name)
-        : workspace.name === pattern.value ||
-            workspace.aliases.includes(pattern.value);
+      return (
+        (pattern.value.includes("*")
+          ? wildcardRegex.test(workspace.name)
+          : workspace.name === pattern.value) ||
+        workspace.aliases.some((alias) =>
+          pattern.value.includes("*")
+            ? wildcardRegex.test(alias)
+            : alias === pattern.value,
+        )
+      );
     });
-  }
-
-  if (pattern.target === "name") {
+  },
+  name: (pattern, workspaces, wildcardRegex) => {
     return workspaces.filter((workspace) => {
-      return hasWildcard
+      return pattern.value.includes("*")
         ? wildcardRegex.test(workspace.name)
         : workspace.name === pattern.value;
     });
-  }
-
-  if (pattern.target === "alias") {
+  },
+  alias: (pattern, workspaces, wildcardRegex) => {
     return workspaces.filter((workspace) => {
-      return hasWildcard
+      return pattern.value.includes("*")
         ? workspace.aliases.some((alias) => wildcardRegex.test(alias))
         : workspace.aliases.includes(pattern.value);
     });
-  }
-
-  if (pattern.target === "path") {
+  },
+  path: (pattern, workspaces) => {
     return workspaces.filter((workspace) =>
       new bun.Glob(pattern.value).match(workspace.path),
     );
-  }
+  },
+};
 
-  return [];
+const matchWorkspacesByPattern = (
+  pattern: WorkspacePattern,
+  workspaces: Workspace[],
+) =>
+  PATTERN_TARGET_HANDLERS[pattern.target](
+    pattern,
+    workspaces,
+    createWildcardRegex(pattern.value),
+  );
+
+export const matchWorkspacesByPatterns = (
+  patterns: string[],
+  workspaces: Workspace[],
+) => {
+  const parsedPatterns = patterns.map(parseWorkspacePattern);
+
+  const excludePatterns = parsedPatterns.filter((pattern) => pattern.isNegated);
+  const includePatterns = parsedPatterns.filter(
+    (pattern) => !pattern.isNegated,
+  );
+
+  const excludeWorkspaces = excludePatterns.flatMap((pattern) =>
+    matchWorkspacesByPattern(pattern, workspaces),
+  );
+
+  const includeWorkspaces = includePatterns.flatMap((pattern) =>
+    matchWorkspacesByPattern(pattern, workspaces),
+  );
+
+  return includeWorkspaces.filter(
+    (workspace, index, arr) =>
+      !excludeWorkspaces.some(
+        (excludeWorkspace) => excludeWorkspace.name === workspace.name,
+      ) &&
+      !arr
+        .slice(index + 1)
+        .some((nextWorkspace) => nextWorkspace.name === workspace.name),
+  );
 };

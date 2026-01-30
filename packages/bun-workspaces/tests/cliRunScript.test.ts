@@ -86,7 +86,7 @@ describe("CLI Run Script", () => {
 
     const scriptAndWorkspaceOptionResult = await run(
       "run-script",
-      "--workspace-patterns=library-1a,library-*",
+      "--workspace-patterns=library-1a library-*",
       "--script=all-workspaces",
     );
     expect(scriptAndWorkspaceOptionResult.exitCode).toBe(0);
@@ -102,7 +102,7 @@ describe("CLI Run Script", () => {
     const scriptAndWorkspaceOptionAndScriptOptionResult = await run(
       "run-script",
       "all-workspaces",
-      "--workspace-patterns=library-1a,library-*",
+      "--workspace-patterns=library-1a library-*",
       "--script=all-workspaces",
     );
     expect(scriptAndWorkspaceOptionAndScriptOptionResult.exitCode).toBe(1);
@@ -339,7 +339,7 @@ describe("CLI Run Script", () => {
     const resultWorkspacePatterns = await run(
       "run-script",
       "all-workspaces",
-      "--workspace-patterns=application-*,library-1b",
+      "--workspace-patterns=path:applications/* library-1b",
     );
     expect(resultWorkspacePatterns.exitCode).toBe(0);
     assertOutputMatches(
@@ -357,7 +357,7 @@ describe("CLI Run Script", () => {
       "run-script",
       "all-workspaces",
       "-W",
-      "application-*,library-1b",
+      "path:applications/* library-1b",
     );
     expect(resultWorkspacePatternsShort.exitCode).toBe(0);
     assertOutputMatches(
@@ -374,7 +374,7 @@ describe("CLI Run Script", () => {
     const resultWorkspacePatternsAndOption = await run(
       "run-script",
       "all-workspaces",
-      "--workspace-patterns=application-*,library-1b",
+      "--workspace-patterns=path:applications/* library-1b",
       "application-*",
       "library-1b",
     );
