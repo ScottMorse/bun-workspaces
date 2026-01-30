@@ -190,7 +190,7 @@ Workspace: library-1b
 
       const workspacePatternsOptionResult = await run(
         command,
-        "--workspace-patterns=application-*,library-1b",
+        "--workspace-patterns=application-* library-1b",
       );
       expect(workspacePatternsOptionResult.stderr.raw).toBeEmpty();
       expect(workspacePatternsOptionResult.exitCode).toBe(0);
@@ -202,7 +202,7 @@ Workspace: library-1b
       const workspacePatternsOptionShortResult = await run(
         command,
         "-W",
-        "application-*,library-1b",
+        "application-* library-1b",
       );
       expect(workspacePatternsOptionShortResult.stderr.raw).toBeEmpty();
       expect(workspacePatternsOptionShortResult.exitCode).toBe(0);
@@ -213,7 +213,7 @@ Workspace: library-1b
 
       const workspacePatternsOptionAndPatternResult = await run(
         command,
-        "--workspace-patterns=application-*,library-1b",
+        "--workspace-patterns=application-* library-1b",
         "application-*",
         "library-1b",
       );

@@ -86,35 +86,35 @@ describe("CLI Workspace Aliases", () => {
       testProject: "workspaceConfigPackageFileMix",
     });
 
-    //     const result = await run("run-script", "all-workspaces", "appA");
-    //     expect(result.exitCode).toBe(0);
-    //     assertOutputMatches(
-    //       result.stdout.sanitizedCompactLines,
-    //       `[application-1a:all-workspaces] script for all workspaces
-    // ✅ application-1a: all-workspaces
-    // 1 script ran successfully`,
-    //     );
+    const result = await run("run-script", "all-workspaces", "alias:*A");
+    expect(result.exitCode).toBe(0);
+    assertOutputMatches(
+      result.stdout.sanitizedCompactLines,
+      `[application-1a:all-workspaces] script for all workspaces
+✅ application-1a: all-workspaces
+1 script ran successfully`,
+    );
 
-    //     const result2 = await run(
-    //       "run-script",
-    //       "b-workspaces",
-    //       "appB_file",
-    //       "library-1b",
-    //     );
-    //     expect(result2.exitCode).toBe(0);
-    //     assertOutputMatches(
-    //       result2.stdout.sanitizedCompactLines,
-    //       `[application-1b:b-workspaces] script for b workspaces
-    // [library-1b:b-workspaces] script for b workspaces
-    // ✅ application-1b: b-workspaces
-    // ✅ library-1b: b-workspaces
-    // 2 scripts ran successfully`,
-    //     );
+    const result2 = await run(
+      "run-script",
+      "b-workspaces",
+      "appB_file",
+      "library-1b",
+    );
+    expect(result2.exitCode).toBe(0);
+    assertOutputMatches(
+      result2.stdout.sanitizedCompactLines,
+      `[application-1b:b-workspaces] script for b workspaces
+[library-1b:b-workspaces] script for b workspaces
+✅ application-1b: b-workspaces
+✅ library-1b: b-workspaces
+2 scripts ran successfully`,
+    );
 
     const result3 = await run(
       "run-script",
       "all-workspaces",
-      "libA_file",
+      "alias:libA_file",
       "application-*",
     );
     expect(result3.exitCode).toBe(0);
@@ -122,12 +122,12 @@ describe("CLI Workspace Aliases", () => {
       result3.stdout.sanitizedCompactLines,
       `[application-1b:all-workspaces] script for all workspaces
 [application-1a:all-workspaces] script for all workspaces
-[library-1a:all-workspaces] script for all workspaces
 [application-1c:all-workspaces] script for all workspaces
+[library-1a:all-workspaces] script for all workspaces
 ✅ application-1b: all-workspaces
 ✅ application-1a: all-workspaces
-✅ library-1a: all-workspaces
 ✅ application-1c: all-workspaces
+✅ library-1a: all-workspaces
 4 scripts ran successfully`,
     );
   });
